@@ -2,7 +2,7 @@ import React from 'react';
 import Typography from '../Typography/Typography';
 import './Footer.css';
 
-// Importando los 7 iconos de redes sociales
+// Importando los 8 iconos de redes sociales (incluyendo WhatsApp)
 import {
   FaFacebook,
   FaTwitter,
@@ -11,6 +11,7 @@ import {
   FaGithub,
   FaYoutube,
   FaTiktok,
+  FaWhatsapp, // <-- AÑADIDO: Icono de WhatsApp
 } from 'react-icons/fa';
 
 const Footer: React.FC = () => {
@@ -44,6 +45,10 @@ const Footer: React.FC = () => {
         </a>
         <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="social-icon social-icon--tiktok">
           <FaTiktok />
+        </a>
+        {/* AÑADIDO: Icono de WhatsApp */}
+        <a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer" className="social-icon social-icon--whatsapp">
+          <FaWhatsapp />
         </a>
       </div>
     </footer>

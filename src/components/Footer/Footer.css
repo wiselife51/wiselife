@@ -70,3 +70,7 @@
 .social-icon--tiktok:hover {
   filter: drop-shadow(0 0 8px #00f2ea) drop-shadow(0 0 5px #fe2c55);
 }
+
+.social-icon--whatsapp {
+  color: #25D366; /* Verde WhatsApp */
+}

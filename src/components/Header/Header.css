@@ -1,47 +1,72 @@
 .header {
-  display: flex; /* <-- CAMBIO: Usar Flexbox */
-  justify-content: space-between; /* <-- CAMBIO: Distribuir espacio */
-  align-items: center;
-  padding: 1.5rem 2rem;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  box-sizing: border-box; /* <-- AÑADIDO: Para evitar problemas con el padding */
-  z-index: 20;
-  background-color: rgba(17, 24, 39, 0.2); /* Fondo oscuro semitransparente */
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-}
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 20;
+    background-color: rgba(17, 24, 39, 0.2);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+  }
+  
+  .header__logo {
+    font-weight: 700;
+    text-decoration: none;
+  }
+  
+  .header__nav {
+    display: flex;
+    gap: 2.5rem;
+  }
+  
+  .navList {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 2.5rem;
+  }
+  
+  .navLink {
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .navLink:hover {
+    color: #ffffff;
+  }
+  
+  .header__actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .language-switcher {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  /* Estilos para los botones de idioma */
+  .language-switcher .btn {
+    min-height: 26px; /* Altura más pequeña */
+    padding: 0 10px;  /* Padding horizontal reducido */
+  }
+  
+  /* AÚN MÁS PEQUEÑO: Apuntando directamente al texto dentro del botón */
+  .language-switcher .btn .typography {
+    font-size: 12px !important; /* Letra de 10px, !important para asegurar que se aplique */
+    line-height: 1;
+  }
 
-
-
-.logo {
-  font-weight: 700;
-  text-decoration: none;
-}
-
-
-.navList {
-  display: flex;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  gap: 2.5rem;
-}
-
-.navLink {
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.navLink:hover {
-  color: #ffffff;
-}
-
-/* --- Sección Derecha: Acciones --- */
-.header__actions {
-  /* justify-self: end; <-- ELIMINADO: No se usa en Flexbox */
-  display: flex;
-  gap: 1rem;
-}
+  .header__divider {
+    height: 1.5rem;
+    width: 1px;
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  

@@ -1,9 +1,16 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import Typography from '../Typography/Typography';
 import Button from '../Button/Button';
 import './Header.css';
 
 const Header: React.FC = () => {
+  const { t, i18n } = useTranslation();
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+  };
+
   return (
     <header className="header">
       {/* --- 1. Sección Izquierda (Logo) --- */}
@@ -18,17 +25,17 @@ const Header: React.FC = () => {
         <ul className="navList">
           <li className="navItem">
             <Typography as="a" href="#" variant="body2" color="secondary" className="navLink">
-              Features
+              {t('features')}
             </Typography>
           </li>
           <li className="navItem">
             <Typography as="a" href="#" variant="body2" color="secondary" className="navLink">
-              Pricing
+              {t('pricing')}
             </Typography>
           </li>
           <li className="navItem">
             <Typography as="a" href="#" variant="body2" color="secondary" className="navLink">
-              Contact
+              {t('contact')}
             </Typography>
           </li>
         </ul>
@@ -36,15 +43,26 @@ const Header: React.FC = () => {
 
       {/* --- 3. Sección Derecha (Acciones) --- */}
       <div className="header__actions">
-        <Button variant="secondary">
-          Sign In
-        </Button>
-        <Button variant="primary">
-          Sign Up
-        </Button>
+        <div className="language-switcher">
+          <Button
+            variant={i18n.language === 'es' ? 'primary' : 'secondary'}
+            onClick={() => changeLanguage('es')}
+          >
+            ES
+          </Button>
+          <Button
+            variant={i18n.language === 'en' ? 'primary' : 'secondary'}
+            onClick={() => changeLanguage('en')}
+          >
+            EN
+          </Button>
+        </div>
+        <div className="header__divider" />
+        <Button variant="secondary">{t('signIn')}</Button>
+        <Button variant="primary">{t('signUp')}</Button>
       </div>
     </header>
   );
-}
+};
 
 export default Header;
