@@ -24,17 +24,17 @@ const Header: React.FC = () => {
       <nav className="header__nav">
         <ul className="navList">
           <li className="navItem">
-            <Typography as="a" href="#" variant="body2" color="secondary" className="navLink">
+            <Typography as="a" href="#" variant="body2" color="primary" className="navLink">
               {t('features')}
             </Typography>
           </li>
           <li className="navItem">
-            <Typography as="a" href="#" variant="body2" color="secondary" className="navLink">
+            <Typography as="a" href="#" variant="body2" color="primary" className="navLink">
               {t('pricing')}
             </Typography>
           </li>
           <li className="navItem">
-            <Typography as="a" href="#" variant="body2" color="secondary" className="navLink">
+            <Typography as="a" href="#" variant="body2" color="primary" className="navLink">
               {t('contact')}
             </Typography>
           </li>

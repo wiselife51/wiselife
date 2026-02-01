@@ -18,7 +18,7 @@ const Footer: React.FC = () => {
   return (
     <footer className="footer">
       <div className="footer__copyright">
-        <Typography variant="body2" color="secondary">
+        <Typography variant="body2" color="primary">
           © 2024 Wiselife. All rights reserved.
         </Typography>
       </div>

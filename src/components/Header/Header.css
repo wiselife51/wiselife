@@ -9,7 +9,7 @@
     width: 100%;
     box-sizing: border-box;
     z-index: 20;
-    background-color: rgba(17, 24, 39, 0.2);
+    background-color: rgba(17, 24, 39, 0.1);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
   }

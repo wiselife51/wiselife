@@ -1,13 +1,19 @@
-import './App.css'
-import Home from './pages/Home/Home'
+import React from 'react';
+import './App.css';
+import Home from './pages/Home/Home';
 
-function App() {
-
+const App: React.FC = () => {
   return (
-    <>
-      <Home />
-    </>
-  )
-}
+    <div className="app-container">
+      <video autoPlay loop muted className="app-video-background">
+        <source src="/assets/VideoFondo.mp4" type="video/mp4" />
+        Tu navegador no soporta el video.
+      </video>
+      <div className="app-content">
+        <Home />
+      </div>
+    </div>
+  );
+};
 
-export default App
+export default App;

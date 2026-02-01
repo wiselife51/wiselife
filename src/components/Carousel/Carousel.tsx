@@ -1,41 +1,29 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
-import Card from '../Card/Card';
 import './Carousel.css';
 
-const cardData = [
-  {
-    title: 'Intuitive Design',
-    description: 'Experience a seamless and visually stunning interface, crafted for optimal user engagement and accessibility.'
-  },
-  {
-    title: 'Powerful Features',
-    description: 'Unlock a suite of advanced tools designed to boost your productivity and streamline your workflow effortlessly.'
-  },
-  {
-    title: 'Secure & Reliable',
-    description: 'Built on a robust and secure architecture, ensuring your data is always safe and the service is always available.'
-  }
-];
+interface CarouselProps {
+  children: React.ReactNode;
+}
 
-const duplicatedCardData = [...cardData, ...cardData];
-
-const Carousel: React.FC = () => {
+const Carousel: React.FC<CarouselProps> = ({ children }) => {
   const carouselVariants = {
     animate: {
-      // --- CORRECCIÓN --- 
-      // Animamos desde la posición inicial (0) hasta la mitad del track (-50%)
-      x: ['0%', '-50%'], 
+      x: ['0%', '-100%'], // Animamos sobre el ancho original
       transition: {
         x: {
           repeat: Infinity,
           repeatType: 'loop',
-          duration: 20, // Movimiento más lento para un efecto suave
-          ease: 'linear'
-        }
-      }
-    }
+          duration: 25, // Duración ajustada para el nuevo ancho
+          ease: 'linear',
+        },
+      },
+    },
   };
+
+  // Duplicamos los children para crear el efecto de bucle infinito
+  const duplicatedChildren = React.Children.toArray(children);
 
   return (
     <div className="carousel-container">
@@ -44,13 +32,13 @@ const Carousel: React.FC = () => {
         variants={carouselVariants}
         animate="animate"
       >
-        {/* Usamos el array duplicado para el bucle infinito */}
-        {duplicatedCardData.map((card, index) => (
-          <Card key={index} title={card.title} description={card.description} />
-        ))}
+        {/* Renderizamos los hijos duplicados dos veces */} 
+        {duplicatedChildren}
+        {duplicatedChildren}
       </motion.div>
     </div>
   );
 };
 
 export default Carousel;
+

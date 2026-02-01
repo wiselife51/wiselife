@@ -1,11 +1,47 @@
+
 .carousel-container {
+  position: relative;
   width: 100%;
-  overflow: hidden; /* Oculta las tarjetas que están fuera de la pantalla */
-  padding: 2rem 0;
+  overflow: hidden; /* SOLUCIÓN: Oculta el desbordamiento y elimina las barras de scroll */
+  padding: 0;
+  margin: 0;
 }
 
 .carousel-track {
   display: flex;
-  gap: 2rem; /* Espacio entre las tarjetas */
-  width: max-content; /* El ancho del track se ajusta a su contenido */
+  transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+  margin: 0;
+  padding: 0;
+}
+
+.carousel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: background-color 0.2s ease;
+}
+
+.carousel-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.carousel-button.prev {
+  left: 1rem;
+}
+
+.carousel-button.next {
+  right: 1rem;
 }
