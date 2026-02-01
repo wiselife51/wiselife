@@ -1,0 +1,40 @@
+.card {
+  background-color: rgba(255, 255, 255, 0.05); /* Un blanco muy sutil */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px; /* Bordes más redondeados */
+  padding: 2rem;
+  width: 350px; /* Ancho fijo para cada tarjeta */
+  height: 450px; /* Altura fija para cada tarjeta */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Espacio entre el contenido y el botón */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); /* Sombra para dar profundidad */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-10px); /* Efecto de "levantar" la tarjeta */
+  box-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.5); /* Sombra más pronunciada */
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.card-title {
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.card-description {
+  flex-grow: 1; /* Permite que la descripción ocupe el espacio disponible */
+}
+
+.card-button {
+  margin-top: auto; /* Empuja el botón hacia la parte inferior */
+  width: fit-content; /* El botón se ajusta a su contenido */
+}

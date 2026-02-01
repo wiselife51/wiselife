@@ -1,0 +1,63 @@
+:root {
+  /* Paleta de colores para el texto */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: rgba(255, 255, 255, 0.7);
+  --color-button-text: #111827; /* Texto oscuro para botones claros */
+}
+
+.typography {
+  margin: 0;
+  padding: 0;
+  line-height: 1.5;
+}
+
+/* --- Variantes de Color --- */
+.typography--color-primary {
+  color: var(--color-text-primary);
+}
+
+.typography--color-secondary {
+  color: var(--color-text-secondary);
+}
+
+.typography--color-dark {
+  color: var(--color-button-text);
+}
+
+/* --- Variantes de Estilo/Tamaño --- */
+.typography--variant-heroTitle {
+  font-size: 4rem; /* 64px */
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.typography--variant-heroSubtitle {
+  font-size: 1.25rem; /* 20px */
+  font-weight: 400;
+  max-width: 600px; /* Ancho máximo para el subtítulo */
+}
+
+.typography--variant-body1 {
+  font-size: 1rem; /* 16px */
+}
+
+.typography--variant-body2 {
+  font-size: 0.875rem; /* 14px */
+}
+
+.typography--variant-caption {
+  font-size: 0.875rem; /* 14px */
+  font-weight: 600; /* Texto de botón un poco más grueso */
+  letter-spacing: 0.5px;
+}
+
+/* Media Queries para Responsividad */
+@media (max-width: 768px) {
+  .typography--variant-heroTitle {
+    font-size: 3rem; /* 48px */
+  }
+
+  .typography--variant-heroSubtitle {
+    font-size: 1.125rem; /* 18px */
+  }
+}

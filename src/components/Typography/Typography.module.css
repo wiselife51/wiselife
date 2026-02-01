@@ -1,0 +1,34 @@
+.typography {
+  margin: 0;
+  padding: 0;
+}
+
+/* Variants: Definen el tamaño y peso de la fuente */
+.display {
+  font-size: var(--font-size-5xl);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.title {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+}
+
+.body {
+  font-size: var(--font-size-lg);
+  line-height: 1.6;
+}
+
+.caption {
+  font-size: var(--font-size-base);
+}
+
+/* Colors: Definen el color del texto */
+.primary {
+  color: var(--color-text-primary);
+}
+
+.secondary {
+  color: var(--color-text-secondary);
+}

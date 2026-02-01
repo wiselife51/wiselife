@@ -1,0 +1,11 @@
+.carousel-container {
+  width: 100%;
+  overflow: hidden; /* Oculta las tarjetas que están fuera de la pantalla */
+  padding: 2rem 0;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 2rem; /* Espacio entre las tarjetas */
+  width: max-content; /* El ancho del track se ajusta a su contenido */
+}

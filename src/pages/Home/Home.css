@@ -1,0 +1,22 @@
+.home-container {
+  /* Este contenedor ahora solo envuelve, sin padding. */
+  position: relative;
+  width: 100%;
+  height: 100vh;
+}
+
+.home-video-background {
+  position: fixed; /* Fija el video al viewport */
+  top: 0;
+  left: 0;
+  width: 100vw; /* 100% del ancho del viewport */
+  height: 100vh; /* 100% de la altura del viewport */
+  object-fit: cover; /* Asegura que el video cubra el espacio sin deformarse */
+  z-index: -1; /* Lo pone detrás de todo el contenido */
+}
+
+.home-content-overlay {
+  /* Este div contiene el contenido que va sobre el video */
+  position: relative;
+  z-index: 1;
+}
