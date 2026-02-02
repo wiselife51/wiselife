@@ -1,72 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.5rem 2rem;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    box-sizing: border-box;
-    z-index: 20;
-    background-color: rgba(17, 24, 39, 0.1);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-  }
-  
-  .header__logo {
-    font-weight: 700;
-    text-decoration: none;
-  }
-  
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 2rem;
+  background-color: rgba(17, 24, 39, 0.3);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-family: 'Inter', sans-serif;
+}
+
+/* Logo */
+.header__logo .logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-decoration: none;
+  background: linear-gradient(135deg, #4dd0e1 0%, #42a5f5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transition: all 0.3s ease;
+}
+
+.header__logo .logo:hover {
+  filter: brightness(1.2);
+}
+
+/* Navegación */
+.header__nav {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.navList {
+  display: flex;
+  gap: 2.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+}
+
+.navLink {
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.navLink::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #4dd0e1 0%, #42a5f5 100%);
+  transition: width 0.3s ease;
+}
+
+.navLink:hover {
+  color: #4dd0e1;
+}
+
+.navLink:hover::after {
+  width: 100%;
+}
+
+/* Acciones */
+.header__actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-btn-secondary,
+.header-btn-primary {
+  padding: 0.625rem 1.5rem;
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+}
+
+.header-btn-secondary {
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+.header-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.header-btn-primary {
+  background: linear-gradient(135deg, #4dd0e1 0%, #42a5f5 100%);
+  color: white;
+  box-shadow: 0 5px 15px rgba(77, 208, 225, 0.3);
+}
+
+.header-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(77, 208, 225, 0.5);
+  filter: brightness(1.1);
+}
+
+/* Responsive */
+@media (max-width: 968px) {
   .header__nav {
-    display: flex;
-    gap: 2.5rem;
-  }
-  
-  .navList {
-    display: flex;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    gap: 2.5rem;
-  }
-  
-  .navLink {
-    text-decoration: none;
-    transition: color 0.3s ease;
-  }
-  
-  .navLink:hover {
-    color: #ffffff;
-  }
-  
-  .header__actions {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-  
-  .language-switcher {
-    display: flex;
-    gap: 0.5rem;
-  }
-  
-  /* Estilos para los botones de idioma */
-  .language-switcher .btn {
-    min-height: 26px; /* Altura más pequeña */
-    padding: 0 10px;  /* Padding horizontal reducido */
-  }
-  
-  /* AÚN MÁS PEQUEÑO: Apuntando directamente al texto dentro del botón */
-  .language-switcher .btn .typography {
-    font-size: 12px !important; /* Letra de 10px, !important para asegurar que se aplique */
-    line-height: 1;
+    display: none;
   }
 
-  .header__divider {
-    height: 1.5rem;
-    width: 1px;
-    background-color: rgba(255, 255, 255, 0.2);
+  .header__actions {
+    gap: 0.75rem;
   }
-  
+
+  .header-btn-secondary,
+  .header-btn-primary {
+    padding: 0.5rem 1.25rem;
+    font-size: 0.8125rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .header {
+    padding: 1rem 1.5rem;
+  }
+
+  .header__logo .logo {
+    font-size: 1.25rem;
+  }
+
+  .header-btn-secondary {
+    display: none;
+  }
+}

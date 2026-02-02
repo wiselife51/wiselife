@@ -1,65 +1,47 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import Typography from '../Typography/Typography';
-import Button from '../Button/Button';
 import './Header.css';
 
 const Header: React.FC = () => {
-  const { t, i18n } = useTranslation();
-
-  const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(lng);
-  };
-
   return (
     <header className="header">
-      {/* --- 1. Sección Izquierda (Logo) --- */}
+      {/* Logo */}
       <div className="header__logo">
         <Typography as="a" href="#" variant="body1" color="primary" className="logo">
-          Pointer
+          Psic. Nombre
         </Typography>
       </div>
 
-      {/* --- 2. Sección Central (Navegación) --- */}
+      {/* Navegación */}
       <nav className="header__nav">
         <ul className="navList">
           <li className="navItem">
-            <Typography as="a" href="#" variant="body2" color="primary" className="navLink">
-              {t('features')}
+            <Typography as="a" href="#servicios" variant="body2" color="primary" className="navLink">
+              Servicios
             </Typography>
           </li>
           <li className="navItem">
-            <Typography as="a" href="#" variant="body2" color="primary" className="navLink">
-              {t('pricing')}
+            <Typography as="a" href="#proceso" variant="body2" color="primary" className="navLink">
+              Proceso
             </Typography>
           </li>
           <li className="navItem">
-            <Typography as="a" href="#" variant="body2" color="primary" className="navLink">
-              {t('contact')}
+            <Typography as="a" href="#testimonios" variant="body2" color="primary" className="navLink">
+              Testimonios
+            </Typography>
+          </li>
+          <li className="navItem">
+            <Typography as="a" href="#contacto" variant="body2" color="primary" className="navLink">
+              Contacto
             </Typography>
           </li>
         </ul>
       </nav>
 
-      {/* --- 3. Sección Derecha (Acciones) --- */}
+      {/* Acciones */}
       <div className="header__actions">
-        <div className="language-switcher">
-          <Button
-            variant={i18n.language === 'es' ? 'primary' : 'secondary'}
-            onClick={() => changeLanguage('es')}
-          >
-            ES
-          </Button>
-          <Button
-            variant={i18n.language === 'en' ? 'primary' : 'secondary'}
-            onClick={() => changeLanguage('en')}
-          >
-            EN
-          </Button>
-        </div>
-        <div className="header__divider" />
-        <Button variant="secondary">{t('signIn')}</Button>
-        <Button variant="primary">{t('signUp')}</Button>
+        <button className="header-btn-secondary">Iniciar Sesión</button>
+        <button className="header-btn-primary">Agendar Cita</button>
       </div>
     </header>
   );

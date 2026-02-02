@@ -2,16 +2,13 @@ import React from 'react';
 import Typography from '../Typography/Typography';
 import './Footer.css';
 
-// Importando los 8 iconos de redes sociales (incluyendo WhatsApp)
 import {
   FaFacebook,
   FaTwitter,
   FaInstagram,
   FaLinkedin,
-  FaGithub,
-  FaYoutube,
+  FaWhatsapp,
   FaTiktok,
-  FaWhatsapp, // <-- AÑADIDO: Icono de WhatsApp
 } from 'react-icons/fa';
 
 const Footer: React.FC = () => {
@@ -19,12 +16,11 @@ const Footer: React.FC = () => {
     <footer className="footer">
       <div className="footer__copyright">
         <Typography variant="body2" color="primary">
-          © 2024 Wiselife. All rights reserved.
+          © 2024 Psicología Clínica. Todos los derechos reservados.
         </Typography>
       </div>
 
       <div className="footer__socials">
-        {/* AÑADIDO: Clases específicas para cada icono */}
         <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="social-icon social-icon--facebook">
           <FaFacebook />
         </a>
@@ -37,17 +33,10 @@ const Footer: React.FC = () => {
         <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="social-icon social-icon--linkedin">
           <FaLinkedin />
         </a>
-        <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="social-icon social-icon--github">
-          <FaGithub />
-        </a>
-        <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="social-icon social-icon--youtube">
-          <FaYoutube />
-        </a>
         <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="social-icon social-icon--tiktok">
           <FaTiktok />
         </a>
-        {/* AÑADIDO: Icono de WhatsApp */}
-        <a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer" className="social-icon social-icon--whatsapp">
+        <a href="https://wa.me/573001234567" target="_blank" rel="noopener noreferrer" className="social-icon social-icon--whatsapp">
           <FaWhatsapp />
         </a>
       </div>

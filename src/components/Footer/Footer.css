@@ -1,76 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 .footer {
+  position: relative;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   padding: 1.5rem 2rem;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  box-sizing: border-box;
-  z-index: 20;
-  background-color: rgba(17, 24, 39, 0.2);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
+  background-color: rgba(17, 24, 39, 0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-family: 'Inter', sans-serif;
 }
 
+/* Copyright */
 .footer__copyright {
-  /* No se necesita estilo específico */
+  color: rgba(255, 255, 255, 0.7);
 }
 
+/* Social Icons */
 .footer__socials {
   display: flex;
+  gap: 1rem;
   align-items: center;
-  gap: 1.5rem;
 }
 
 .social-icon {
-  font-size: 1.5rem;
-  text-decoration: none;
-  transition: transform 0.3s ease, filter 0.3s ease; /* Transición para el filtro */
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.25rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* --- EFECTO HOVER MEJORADO --- */
 .social-icon:hover {
-  transform: scale(1.2) translateY(-2px); /* Un poco más de movimiento */
-  /* Usamos drop-shadow para crear un "glow" con el color del icono */
-  filter: drop-shadow(0 0 8px currentColor);
+  transform: translateY(-3px);
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
-/* --- COLORES DE MARCA PARA CADA ICONO --- */
-.social-icon--facebook {
-  color: #1877F2; /* Azul Facebook */
+/* Colores específicos por red social */
+.social-icon--facebook:hover {
+  background-color: #1877f2;
+  border-color: #1877f2;
+  color: white;
 }
 
-.social-icon--twitter {
-  color: #1DA1F2; /* Azul Twitter */
+.social-icon--twitter:hover {
+  background-color: #1da1f2;
+  border-color: #1da1f2;
+  color: white;
 }
 
-.social-icon--instagram {
-  color: #E4405F; /* Rosa Instagram */
+.social-icon--instagram:hover {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  border-color: #bc1888;
+  color: white;
 }
 
-.social-icon--linkedin {
-  color: #0A66C2; /* Azul LinkedIn */
-}
-
-.social-icon--github {
-  color: #E8E8E8; /* Gris claro para GitHub (casi blanco) */
-}
-
-.social-icon--youtube {
-  color: #FF0000; /* Rojo YouTube */
-}
-
-.social-icon--tiktok {
-  color: #00f2ea; /* Turquesa de TikTok, con una sombra negra para el logo */
-  filter: drop-shadow(2px 2px 2px #fe2c55) drop-shadow(-2px -2px 2px #000000);
+.social-icon--linkedin:hover {
+  background-color: #0077b5;
+  border-color: #0077b5;
+  color: white;
 }
 
 .social-icon--tiktok:hover {
-  filter: drop-shadow(0 0 8px #00f2ea) drop-shadow(0 0 5px #fe2c55);
+  background-color: #000000;
+  border-color: #00f2ea;
+  color: #00f2ea;
 }
 
-.social-icon--whatsapp {
-  color: #25D366; /* Verde WhatsApp */
+.social-icon--whatsapp:hover {
+  background-color: #25d366;
+  border-color: #25d366;
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .footer {
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .footer__socials {
+    gap: 0.875rem;
+  }
+
+  .social-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1.125rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 1.25rem 1rem;
+  }
+
+  .footer__socials {
+    gap: 0.75rem;
+  }
+
+  .social-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 1rem;
+  }
 }

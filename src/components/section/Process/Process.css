@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-.specialists-section {
+.process-section {
   width: 100%;
   min-height: 100vh;
   display: flex;
@@ -11,7 +11,7 @@
   font-family: 'Inter', sans-serif;
 }
 
-.specialists-container {
+.process-container {
   max-width: 1400px;
   width: 100%;
   display: flex;
@@ -19,8 +19,8 @@
   gap: 2.5rem;
 }
 
-/* Header Section */
-.specialists-header {
+/* Header */
+.process-header {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -40,12 +40,12 @@
   }
 }
 
-.specialists-title {
+.process-title {
   animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s backwards;
   text-shadow: 0 2px 30px rgba(0, 0, 0, 0.5);
 }
 
-.specialists-title-gradient {
+.process-title-gradient {
   background: linear-gradient(135deg, #4dd0e1 0%, #42a5f5 35%, #5c6bc0 70%, #7e57c2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -53,7 +53,7 @@
   filter: drop-shadow(0 0 30px rgba(77, 208, 225, 0.6));
 }
 
-.specialists-description {
+.process-description {
   max-width: 700px;
   animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s backwards;
   text-shadow: 0 1px 10px rgba(0, 0, 0, 0.4);
@@ -100,8 +100,8 @@
   right: -25px;
 }
 
-/* Carrusel de Servicios */
-.services-carousel {
+/* Carrusel de Proceso */
+.process-carousel {
   display: flex;
   gap: 1.25rem;
   overflow-x: auto;
@@ -111,12 +111,12 @@
   -ms-overflow-style: none;
 }
 
-.services-carousel::-webkit-scrollbar {
+.process-carousel::-webkit-scrollbar {
   display: none;
 }
 
-/* Tarjeta de Servicio - MÁS COMPACTA */
-.service-card {
+/* Step Card - MÁS COMPACTA */
+.process-step {
   position: relative;
   min-width: 320px;
   max-width: 320px;
@@ -128,55 +128,42 @@
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
   gap: 1rem;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   flex-shrink: 0;
 }
 
-.service-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #4dd0e1 0%, #42a5f5 50%, #7e57c2 100%);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  border-radius: 18px 18px 0 0;
-}
-
-.service-card:hover {
+.process-step:hover {
   transform: translateY(-8px);
   border-color: rgba(255, 255, 255, 0.25);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
 }
 
-.service-card:hover::before {
-  opacity: 1;
-}
-
-/* Highlight Badge */
-.service-highlight {
+/* Step Number */
+.step-number {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  padding: 0.3rem 0.75rem;
+  top: -12px;
+  right: 15px;
+  width: 45px;
+  height: 45px;
   background: linear-gradient(135deg, #4dd0e1 0%, #42a5f5 100%);
-  color: white;
-  font-size: 0.65rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.125rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-radius: 20px;
-  box-shadow: 0 4px 15px rgba(77, 208, 225, 0.4);
+  color: white;
+  box-shadow: 0 5px 20px rgba(77, 208, 225, 0.5);
 }
 
-/* Icono del Servicio - MÁS PEQUEÑO */
-.service-icon {
-  width: 60px;
-  height: 60px;
+/* Step Icon */
+.step-icon {
+  width: 65px;
+  height: 65px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -187,20 +174,19 @@
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.service-card:hover .service-icon {
+.process-step:hover .step-icon {
   transform: scale(1.1) rotate(5deg);
   box-shadow: 0 10px 30px rgba(77, 208, 225, 0.3);
 }
 
-/* Contenido del Servicio - MÁS COMPACTO */
-.service-content {
+/* Step Content */
+.step-content {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  flex: 1;
+  gap: 0.625rem;
 }
 
-.service-title {
+.step-title {
   font-size: 1.25rem;
   font-weight: 700;
   color: white;
@@ -209,77 +195,58 @@
   text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
 }
 
-.service-description {
+.step-description {
   font-size: 0.875rem;
-  line-height: 1.4;
+  line-height: 1.5;
   color: rgba(255, 255, 255, 0.8);
   margin: 0;
-  min-height: 40px;
 }
 
-/* Features List - MÁS COMPACTA */
-.service-features {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+/* CTA */
+.process-cta {
   display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
+  justify-content: center;
+  animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.4s backwards;
 }
 
-.service-feature {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.85);
-}
-
-.service-feature svg {
-  flex-shrink: 0;
-  color: #4dd0e1;
-}
-
-/* Botón del Servicio - MÁS COMPACTO */
-.service-btn {
+.process-cta-btn {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
-  background: transparent;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 10px;
+  gap: 0.75rem;
+  padding: 1.125rem 2.25rem;
+  background: linear-gradient(135deg, #4dd0e1 0%, #42a5f5 35%, #5c6bc0 70%, #7e57c2 100%);
+  border: none;
+  border-radius: 12px;
   color: white;
   font-family: 'Inter', sans-serif;
-  font-size: 0.8125rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  margin-top: auto;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 30px rgba(77, 208, 225, 0.4);
 }
 
-.service-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.6);
-  transform: translateY(-2px);
+.process-cta-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(77, 208, 225, 0.6);
+  filter: brightness(1.1);
 }
 
-.service-btn svg {
-  transition: transform 0.3s ease;
+.process-cta-btn svg {
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.service-btn:hover svg {
-  transform: translateX(4px);
+.process-cta-btn:hover svg {
+  transform: translateX(5px);
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .specialists-section {
+  .process-section {
     padding: 60px 1.5rem 50px;
   }
 
-  .specialists-container {
+  .process-container {
     gap: 2rem;
   }
 
@@ -287,29 +254,34 @@
     display: none;
   }
 
-  .services-carousel {
+  .process-carousel {
     padding: 0.75rem 0;
   }
 
-  .service-card {
+  .process-step {
     min-width: 280px;
     max-width: 280px;
     padding: 1.25rem;
   }
 
-  .service-icon {
-    width: 55px;
-    height: 55px;
+  .step-icon {
+    width: 60px;
+    height: 60px;
   }
 }
 
 @media (max-width: 480px) {
-  .specialists-section {
+  .process-section {
     padding: 50px 1rem 40px;
   }
 
-  .service-card {
+  .process-step {
     min-width: 260px;
     max-width: 260px;
+  }
+
+  .process-cta-btn {
+    width: 100%;
+    justify-content: center;
   }
 }
