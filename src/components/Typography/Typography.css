@@ -26,9 +26,9 @@
 
 /* --- Variantes de Estilo/Tamaño --- */
 .typography--variant-heroTitle {
-  font-size: 4rem; /* 64px */
-  font-weight: 700;
-  line-height: 1.2;
+  font-size: 3.5rem; /* 64px */
+  font-weight: 600;
+  line-height: 1;
 }
 
 .typography--variant-heroSubtitle {

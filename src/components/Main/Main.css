@@ -1,29 +1,18 @@
-.main {
+.main-content {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Estilos base para todas las secciones */
+.main-content > section {
+  width: 100%;
+  min-height: 100vh;
+  scroll-snap-align: start;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  /* --- CORRECCIÓN --- */
-  /* Aumentamos el padding vertical para dar más espacio respecto al Header y Footer */
-  padding: 8rem 2rem;
-  text-align: center;
-  overflow-x: hidden;
-  box-sizing: border-box; /* Buena práctica para que el padding no afecte el tamaño total */
-}
-
-.main__content {
-  max-width: 1200px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-.main__title {
-  font-weight: 800; /* Hacemos el título más impactante */
-}
-
-.main__subtitle {
-  max-width: 600px; /* Limitamos el ancho para mejor legibilidad */
+  padding: 80px 20px 60px; /* Espacio para header y footer */
+  box-sizing: border-box;
 }

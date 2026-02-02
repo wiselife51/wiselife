@@ -1,0 +1,173 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+.hero-section {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 2rem 60px;
+  position: relative;
+  font-family: 'Inter', sans-serif;
+}
+
+.hero-container {
+  max-width: 900px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Contenido Principal */
+.hero-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 2rem;
+  animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Título */
+.hero-title {
+  animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s backwards;
+  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.5);
+}
+
+.hero-title-gradient {
+    background: linear-gradient(135deg, #4dd0e1 0%, #42a5f5 35%, #5c6bc0 70%, #7e57c2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 30px rgba(77, 208, 225, 0.6));
+  }
+
+/* Descripción */
+.hero-description {
+  animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s backwards;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.4);
+  margin: 0 auto;
+}
+
+/* Features inline - Glass style profesional */
+.hero-features-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin: 0.5rem 0;
+  animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s backwards;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.5rem;
+  background-color: rgba(17, 24, 39, 0.1);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+  background-color: rgba(17, 24, 39, 0.4);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.feature-icon {
+  flex-shrink: 0;
+  color: #a78bfa;
+  filter: drop-shadow(0 0 8px rgba(167, 139, 250, 0.4));
+}
+
+/* Botones mejorados */
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 0.5rem;
+  animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.4s backwards;
+}
+
+.hero-buttons button,
+.hero-buttons .btn-outline-custom {
+  min-width: 220px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 600;
+}
+
+
+
+.btn-text {
+  display: inline-block;
+  line-height: 1;
+}
+
+
+.hero-buttons button:hover svg,
+.btn-outline-custom:hover svg {
+  transform: translateX(4px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 90px 1.5rem 50px;
+  }
+
+  .hero-content {
+    gap: 1.75rem;
+  }
+
+  .hero-features-inline {
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .feature-item {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    width: 100%;
+    max-width: 350px;
+  }
+
+  .hero-buttons button,
+  .btn-outline-custom {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-section {
+    padding: 80px 1.25rem 40px;
+  }
+}

@@ -7,7 +7,11 @@ import './Home.css';
 const Home: React.FC = () => {
   return (
     <div className="home-container">
-      <div className="home-content-overlay">
+      <video autoPlay loop muted className="home-video-background">
+        <source src="/assets/VideoFondo.mp4" type="video/mp4" />
+        Tu navegador no soporta el video.
+      </video>
+      <div className="home-content">
         <Header />
         <Main />
         <Footer />

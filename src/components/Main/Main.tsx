@@ -1,13 +1,13 @@
-
 import React from 'react';
-import Hero from '../../sections/Hero/Hero';
 import './Main.css';
+import Hero from '../section/Hero/Hero';
+
 
 const Main: React.FC = () => {
   return (
     <main className="main-content">
       <Hero />
-      {/* Aquí se agregarán las futuras secciones */}
+      
     </main>
   );
 };
