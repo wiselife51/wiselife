@@ -162,8 +162,9 @@ const HowItWorks: React.FC = () => {
                     <ul className="step-features">
                       {step.features.map((feature, featureIndex) => (
                         <li key={featureIndex} className="step-feature">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                            <polyline points="20 6 9 17 4 12"/>
+                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
                           </svg>
                           <span>{feature}</span>
                         </li>
