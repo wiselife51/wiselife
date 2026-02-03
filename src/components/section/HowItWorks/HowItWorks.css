@@ -9,8 +9,8 @@
   padding: 40px 2rem 30px; /* Reduced vertical padding */
   position: relative;
   font-family: 'Inter', sans-serif;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .how-it-works-container {

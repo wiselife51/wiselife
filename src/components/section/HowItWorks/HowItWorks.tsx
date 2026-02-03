@@ -82,7 +82,7 @@ const HowItWorks: React.FC = () => {
             color="primary"
             className="how-it-works-title"
           >
-            Un Camino Claro Hacia Tu <span className="how-it-works-title-gradient">Bienestar</span>
+            Un camino claro hacia tu <span className="how-it-works-title-gradient">Bienestar</span>
           </Typography>
           
           <Typography 
