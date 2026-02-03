@@ -26,7 +26,7 @@
 
 /* --- Variantes de Estilo/Tamaño --- */
 .typography--variant-heroTitle {
-  font-size: 3.5rem; /* 64px */
+  font-size: 2.75rem; /* Reducido de 3.5rem */
   font-weight: 600;
   line-height: 1;
 }
@@ -54,7 +54,7 @@
 /* Media Queries para Responsividad */
 @media (max-width: 768px) {
   .typography--variant-heroTitle {
-    font-size: 3rem; /* 48px */
+    font-size: 2.25rem; /* Reducido de 3rem */
   }
 
   .typography--variant-heroSubtitle {

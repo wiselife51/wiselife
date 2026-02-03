@@ -21,13 +21,6 @@
   flex-direction: column;
   min-height: 100vh;
   width: 100%;
-  
-  /* SCROLL SNAP - MUY IMPORTANTE */
-  height: 100vh;
-  overflow-y: scroll;
-  scroll-snap-type: y mandatory;
-  scroll-behavior: smooth;
-  
   background: rgba(0, 0, 0, 0.2);
 }
 
