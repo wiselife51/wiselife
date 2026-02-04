@@ -13,61 +13,56 @@ import './HowItWorks.css';
 const HowItWorks: React.FC = () => {
   const steps = [
     {
+      image: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=800&q=80',
+      number: '01',
+      title: 'Consulta Inicial Gratuita',
+      description: 'Agenda una primera sesión sin costo para conocernos, discutir tus objetivos y resolver tus dudas.',
       icon: (
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
           <circle cx="12" cy="7" r="4"/>
           <path d="M22 11l-3 3-2-2"/>
         </svg>
-      ),
-      title: 'Consulta Inicial Gratuita',
-      description: 'Agenda una primera sesión sin costo para conocernos, discutir tus objetivos y resolver tus dudas.',
-      features: ['Sin compromiso', 'Virtual o presencial', '30 min'],
-      highlight: 'Gratis',
-      step: '01'
+      )
     },
     {
+      image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80',
+      number: '02',
+      title: 'Plan Terapéutico Personalizado',
+      description: 'Diseñamos un plan de terapia único enfocado en tus necesidades y metas específicas.',
       icon: (
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
           <polyline points="14 2 14 8 20 8"/>
           <line x1="16" y1="13" x2="8" y2="13"/>
           <line x1="16" y1="17" x2="8" y2="17"/>
-          <polyline points="10 9 9 9 8 9"/>
         </svg>
-      ),
-      title: 'Plan Terapéutico Personalizado',
-      description: 'Diseñamos un plan de terapia único enfocado en tus necesidades y metas específicas.',
-      features: ['A tu medida', 'Objetivos claros', 'Flexible'],
-      highlight: null,
-      step: '02'
+      )
     },
     {
+      image: 'https://images.unsplash.com/photo-1527689368864-3a821dbccc34?w=800&q=80',
+      number: '03',
+      title: 'Sesiones de Acompañamiento',
+      description: 'Proporcionamos herramientas y apoyo continuo para tu proceso de sanación y crecimiento.',
       icon: (
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
           <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
           <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
           <circle cx="12" cy="12" r="3"/>
         </svg>
-      ),
-      title: 'Sesiones de Acompañamiento',
-      description: 'Proporcionamos herramientas y apoyo continuo para tu proceso de sanación y crecimiento.',
-      features: ['Seguimiento', 'Herramientas prácticas', 'Soporte constante'],
-      highlight: null,
-      step: '03'
+      )
     },
     {
+      image: 'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=800&q=80',
+      number: '04',
+      title: 'Bienestar y Autonomía',
+      description: 'Desarrolla resiliencia y habilidades para gestionar tus emociones de forma autónoma y saludable.',
       icon: (
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
           <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
           <circle cx="12" cy="12" r="2"/>
         </svg>
-      ),
-      title: 'Bienestar y Autonomía',
-      description: 'Desarrolla resiliencia y habilidades para gestionar tus emociones de forma autónoma y saludable.',
-      features: ['Independencia', 'Herramientas de vida', 'Crecimiento'],
-      highlight: 'Objetivo',
-      step: '04'
+      )
     }
   ];
 
@@ -120,11 +115,11 @@ const HowItWorks: React.FC = () => {
               dynamicBullets: true,
             }}
             navigation={{
-              nextEl: '.swiper-button-next-custom',
-              prevEl: '.swiper-button-prev-custom',
+              nextEl: '.swiper-button-next-howitworks',
+              prevEl: '.swiper-button-prev-howitworks',
             }}
             modules={[EffectCoverflow, Pagination, Autoplay, Navigation]}
-            className="steps-swiper"
+            className="howitworks-swiper"
             breakpoints={{
               320: {
                 slidesPerView: 1,
@@ -144,34 +139,27 @@ const HowItWorks: React.FC = () => {
           >
             {steps.map((step, index) => (
               <SwiperSlide key={index}>
-                <div className="step-card">
-                  {step.highlight && (
-                    <div className="step-highlight">{step.highlight}</div>
-                  )}
+                <div className="howitworks-card">
+                  <div className="howitworks-number">{step.number}</div>
                   
-                  <div className="step-number">{step.step}</div>
-                  
-                  <div className="step-icon">
-                    {step.icon}
+                  <div className="howitworks-image-container">
+                    <img 
+                      src={step.image} 
+                      alt={step.title}
+                      className="howitworks-image"
+                    />
+                    <div className="howitworks-image-overlay"></div>
                   </div>
                   
-                  <div className="step-content">
-                    <h3 className="step-title">{step.title}</h3>
-                    <p className="step-description">{step.description}</p>
+                  <div className="howitworks-content">
+                    <div className="howitworks-icon">
+                      {step.icon}
+                    </div>
                     
-                    <ul className="step-features">
-                      {step.features.map((feature, featureIndex) => (
-                        <li key={featureIndex} className="step-feature">
-                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                          </svg>
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
+                    <h3 className="howitworks-title">{step.title}</h3>
+                    <p className="howitworks-description">{step.description}</p>
 
-                    <button className="step-btn">
+                    <button className="howitworks-btn">
                       <span>Comenzar</span>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                         <line x1="5" y1="12" x2="19" y2="12"/>
@@ -184,13 +172,13 @@ const HowItWorks: React.FC = () => {
             ))}
           </Swiper>
 
-          {/* Botones de navegación personalizados - Estilo Specialists */}
-          <button className="swiper-button-prev-custom">
+          {/* Botones de navegación personalizados */}
+          <button className="swiper-button-prev-howitworks">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
               <polyline points="15 18 9 12 15 6"/>
             </svg>
           </button>
-          <button className="swiper-button-next-custom">
+          <button className="swiper-button-next-howitworks">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
               <polyline points="9 18 15 12 9 6"/>
             </svg>

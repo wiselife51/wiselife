@@ -1,12 +1,16 @@
-import { useState, useRef, useEffect } from 'react';
-import './Specialists.css';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { EffectCoverflow, Pagination, Autoplay, Navigation } from 'swiper/modules';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/effect-coverflow';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+
 import Typography from '../../Typography/Typography';
+import './Specialists.css';
 
-const Specialists = () => {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
-
+const Specialists: React.FC = () => {
   const services = [
     {
       icon: (
@@ -17,8 +21,7 @@ const Specialists = () => {
       ),
       title: "Terapia Individual",
       description: "Sesiones personalizadas enfocadas en tus necesidades específicas.",
-      features: ["50 min", "Seguimiento", "Herramientas"],
-      highlight: "Popular"
+      features: ["50 min", "Seguimiento", "Herramientas"]
     },
     {
       icon: (
@@ -30,8 +33,7 @@ const Specialists = () => {
       ),
       title: "Terapia de Pareja",
       description: "Mejora la comunicación y fortalece el vínculo en tu relación.",
-      features: ["60 min", "Ambos", "Plan conjunto"],
-      highlight: null
+      features: ["60 min", "Ambos", "Plan conjunto"]
     },
     {
       icon: (
@@ -42,8 +44,7 @@ const Specialists = () => {
       ),
       title: "Evaluación Psicológica",
       description: "Valoración completa con herramientas diagnósticas profesionales.",
-      features: ["Entrevista", "Pruebas", "Informe"],
-      highlight: null
+      features: ["Entrevista", "Pruebas", "Informe"]
     },
     {
       icon: (
@@ -53,8 +54,7 @@ const Specialists = () => {
       ),
       title: "Terapia Cognitivo Conductual",
       description: "Enfoque basado en evidencia científica para modificar patrones.",
-      features: ["Comprobadas", "Medibles", "Práctico"],
-      highlight: "Especialidad"
+      features: ["Comprobadas", "Medibles", "Práctico"]
     },
     {
       icon: (
@@ -64,8 +64,7 @@ const Specialists = () => {
       ),
       title: "Intervención en Crisis",
       description: "Atención inmediata y contención emocional en momentos críticos.",
-      features: ["Rápida", "Disponible", "Efectiva"],
-      highlight: null
+      features: ["Rápida", "Disponible", "Efectiva"]
     },
     {
       icon: (
@@ -77,56 +76,9 @@ const Specialists = () => {
       ),
       title: "Orientación Vocacional",
       description: "Acompañamiento en decisiones sobre tu carrera profesional.",
-      features: ["Test", "Entrevistas", "Plan"],
-      highlight: null
+      features: ["Test", "Entrevistas", "Plan"]
     }
   ];
-
-  // Duplicar servicios para loop infinito
-  const duplicatedServices = [...services, ...services];
-
-  const scroll = (direction: 'left' | 'right') => {
-    if (scrollContainerRef.current) {
-      const scrollAmount = 360;
-      const newScrollLeft = direction === 'left' 
-        ? scrollContainerRef.current.scrollLeft - scrollAmount
-        : scrollContainerRef.current.scrollLeft + scrollAmount;
-      
-      scrollContainerRef.current.scrollTo({
-        left: newScrollLeft,
-        behavior: 'smooth'
-      });
-    }
-  };
-
-  const handleScroll = () => {
-    if (scrollContainerRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
-      const maxScroll = scrollWidth - clientWidth;
-      const halfScroll = scrollWidth / 2;
-
-      // Loop infinito
-      if (scrollLeft >= halfScroll - 10) {
-        scrollContainerRef.current.scrollLeft = 10;
-      } else if (scrollLeft <= 10) {
-        scrollContainerRef.current.scrollLeft = halfScroll - 10;
-      }
-
-      setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft < maxScroll - 10);
-    }
-  };
-
-  // Auto-scroll
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (scrollContainerRef.current) {
-        scrollContainerRef.current.scrollLeft += 1;
-      }
-    }, 30);
-
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <section className="specialists-section">
@@ -153,64 +105,98 @@ const Specialists = () => {
           </Typography>
         </div>
 
-        <div className="carousel-wrapper">
-          {canScrollLeft && (
-            <button className="carousel-btn carousel-btn-left" onClick={() => scroll('left')}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                <polyline points="15 18 9 12 15 6"/>
-              </svg>
-            </button>
-          )}
-
-          <div 
-            ref={scrollContainerRef}
-            className="services-carousel" 
-            onScroll={handleScroll}
+        <div className="carousel-wrapper-specialists">
+          <Swiper
+            effect={'coverflow'}
+            grabCursor={true}
+            centeredSlides={true}
+            slidesPerView={'auto'}
+            loop={true}
+            coverflowEffect={{
+              rotate: 0,
+              stretch: 0,
+              depth: 200,
+              modifier: 1.5,
+              slideShadows: true,
+            }}
+            autoplay={{
+              delay: 3500,
+              disableOnInteraction: false,
+              pauseOnMouseEnter: true,
+            }}
+            pagination={{
+              clickable: true,
+              dynamicBullets: true,
+            }}
+            navigation={{
+              nextEl: '.swiper-button-next-specialists',
+              prevEl: '.swiper-button-prev-specialists',
+            }}
+            modules={[EffectCoverflow, Pagination, Autoplay, Navigation]}
+            className="specialists-swiper"
+            breakpoints={{
+              320: {
+                slidesPerView: 1,
+                coverflowEffect: {
+                  depth: 150,
+                  modifier: 1,
+                }
+              },
+              768: {
+                slidesPerView: 'auto',
+                coverflowEffect: {
+                  depth: 200,
+                  modifier: 1.5,
+                }
+              }
+            }}
           >
-            {duplicatedServices.map((service, index) => (
-              <div key={index} className="service-card">
-                {service.highlight && (
-                  <div className="service-highlight">{service.highlight}</div>
-                )}
-                
-                <div className="service-icon">
-                  {service.icon}
-                </div>
-                
-                <div className="service-content">
-                  <h3 className="service-title">{service.title}</h3>
-                  <p className="service-description">{service.description}</p>
+            {services.map((service, index) => (
+              <SwiperSlide key={index}>
+                <div className="service-card">
+                  <div className="service-icon">
+                    {service.icon}
+                  </div>
                   
-                  <ul className="service-features">
-                    {service.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="service-feature">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                          <polyline points="20 6 9 17 4 12"/>
-                        </svg>
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <div className="service-content">
+                    <h3 className="service-title">{service.title}</h3>
+                    <p className="service-description">{service.description}</p>
 
-                  <button className="service-btn">
-                    <span>Agendar</span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <line x1="5" y1="12" x2="19" y2="12"/>
-                      <polyline points="12 5 19 12 12 19"/>
-                    </svg>
-                  </button>
+                    <ul className="service-features">
+                      {service.features.map((feature, featureIndex) => (
+                        <li key={featureIndex} className="service-feature">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                            <polyline points="20 6 9 17 4 12"/>
+                          </svg>
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <button className="service-btn">
+                      <span>Agendar</span>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                        <polyline points="12 5 19 12 12 19"/>
+                      </svg>
+                    </button>
+                  </div>
                 </div>
-              </div>
+              </SwiperSlide>
             ))}
-          </div>
+          </Swiper>
 
-          {canScrollRight && (
-            <button className="carousel-btn carousel-btn-right" onClick={() => scroll('right')}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                <polyline points="9 18 15 12 9 6"/>
-              </svg>
-            </button>
-          )}
+          {/* Botones de navegación personalizados */}
+          <button className="swiper-button-prev-specialists">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+          </button>
+          <button className="swiper-button-next-specialists">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </button>
         </div>
 
       </div>

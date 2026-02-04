@@ -1,17 +1,22 @@
-import { useState, useRef, useEffect } from 'react';
-import './Process.css';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { EffectCoverflow, Pagination, Autoplay, Navigation } from 'swiper/modules';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/effect-coverflow';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+
 import Typography from '../../Typography/Typography';
+import './Process.css';
 
-const Process = () => {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
-
+const Process: React.FC = () => {
   const steps = [
     {
-      number: "01",
-      title: "Evalúa disponibilidad",
-      description: "Revisa horarios disponibles en tiempo real para sesiones presenciales u online.",
+      image: 'https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=800&q=80',
+      number: '01',
+      title: 'Evalúa disponibilidad',
+      description: 'Revisa horarios disponibles en tiempo real para sesiones presenciales u online.',
       icon: (
         <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
           <circle cx="12" cy="12" r="10"/>
@@ -20,9 +25,10 @@ const Process = () => {
       )
     },
     {
-      number: "02",
-      title: "Agenda tu cita",
-      description: "Elige el horario que mejor se adapte a ti. Presencial en Bogotá o virtual.",
+      image: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=800&q=80',
+      number: '02',
+      title: 'Agenda tu cita',
+      description: 'Elige el horario que mejor se adapte a ti. Presencial en Bogotá o virtual.',
       icon: (
         <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
           <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
@@ -33,9 +39,10 @@ const Process = () => {
       )
     },
     {
-      number: "03",
-      title: "Primera sesión",
-      description: "Sesión de valoración confidencial donde conoceré tu situación y objetivos.",
+      image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80',
+      number: '03',
+      title: 'Primera sesión',
+      description: 'Sesión de valoración confidencial donde conoceré tu situación y objetivos.',
       icon: (
         <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
@@ -43,9 +50,10 @@ const Process = () => {
       )
     },
     {
-      number: "04",
-      title: "Plan personalizado",
-      description: "Diseñamos juntos un plan terapéutico con objetivos claros y medibles.",
+      image: 'https://images.unsplash.com/photo-1527689368864-3a821dbccc34?w=800&q=80',
+      number: '04',
+      title: 'Plan personalizado',
+      description: 'Diseñamos juntos un plan terapéutico con objetivos claros y medibles.',
       icon: (
         <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -56,9 +64,10 @@ const Process = () => {
       )
     },
     {
-      number: "05",
-      title: "Proceso terapéutico",
-      description: "Sesiones regulares con técnicas de TCC para alcanzar tus objetivos.",
+      image: 'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=800&q=80',
+      number: '05',
+      title: 'Proceso terapéutico',
+      description: 'Sesiones regulares con técnicas de TCC para alcanzar tus objetivos.',
       icon: (
         <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
           <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
@@ -68,121 +77,120 @@ const Process = () => {
     }
   ];
 
-  // Duplicar para loop infinito
-  const duplicatedSteps = [...steps, ...steps];
-
-  const scroll = (direction: 'left' | 'right') => {
-    if (scrollContainerRef.current) {
-      const scrollAmount = 340;
-      const newScrollLeft = direction === 'left' 
-        ? scrollContainerRef.current.scrollLeft - scrollAmount
-        : scrollContainerRef.current.scrollLeft + scrollAmount;
-      
-      scrollContainerRef.current.scrollTo({
-        left: newScrollLeft,
-        behavior: 'smooth'
-      });
-    }
-  };
-
-  const handleScroll = () => {
-    if (scrollContainerRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
-      const maxScroll = scrollWidth - clientWidth;
-      const halfScroll = scrollWidth / 2;
-
-      // Loop infinito
-      if (scrollLeft >= halfScroll - 10) {
-        scrollContainerRef.current.scrollLeft = 10;
-      } else if (scrollLeft <= 10) {
-        scrollContainerRef.current.scrollLeft = halfScroll - 10;
-      }
-
-      setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft < maxScroll - 10);
-    }
-  };
-
-  // Auto-scroll
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (scrollContainerRef.current) {
-        scrollContainerRef.current.scrollLeft += 1;
-      }
-    }, 35);
-
-    return () => clearInterval(interval);
-  }, []);
-
   return (
-    <section className="process-section">
-      <div className="process-container">
+    <section className="how-it-works-process-section">
+      <div className="how-it-works-process-container">
         
-        <div className="process-header">
+        <div className="how-it-works-process-header">
           <Typography 
             as="h2" 
             variant="heroTitle" 
             color="primary"
-            className="process-title"
+            className="how-it-works-process-title"
           >
-            ¿Cómo <span className="process-title-gradient">funciona?</span>
+            ¿Cómo <span className="how-it-works-process-title-gradient">funciona?</span>
           </Typography>
           
           <Typography 
             as="p" 
             variant="heroSubtitle" 
             color="secondary"
-            className="process-description"
+            className="how-it-works-process-description"
           >
             Un proceso simple y transparente para comenzar tu camino hacia el bienestar emocional.
           </Typography>
         </div>
 
-        <div className="carousel-wrapper">
-          {canScrollLeft && (
-            <button className="carousel-btn carousel-btn-left" onClick={() => scroll('left')}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                <polyline points="15 18 9 12 15 6"/>
-              </svg>
-            </button>
-          )}
-
-          <div 
-            ref={scrollContainerRef}
-            className="process-carousel" 
-            onScroll={handleScroll}
+        <div className="carousel-wrapper-process">
+          <Swiper
+            effect={'coverflow'}
+            grabCursor={true}
+            centeredSlides={true}
+            slidesPerView={'auto'}
+            loop={true}
+            coverflowEffect={{
+              rotate: 0,
+              stretch: 0,
+              depth: 200,
+              modifier: 1.5,
+              slideShadows: true,
+            }}
+            autoplay={{
+              delay: 3500,
+              disableOnInteraction: false,
+              pauseOnMouseEnter: true,
+            }}
+            pagination={{
+              clickable: true,
+              dynamicBullets: true,
+            }}
+            navigation={{
+              nextEl: '.swiper-button-next-process',
+              prevEl: '.swiper-button-prev-process',
+            }}
+            modules={[EffectCoverflow, Pagination, Autoplay, Navigation]}
+            className="process-swiper"
+            breakpoints={{
+              320: {
+                slidesPerView: 1,
+                coverflowEffect: {
+                  depth: 150,
+                  modifier: 1,
+                }
+              },
+              768: {
+                slidesPerView: 'auto',
+                coverflowEffect: {
+                  depth: 200,
+                  modifier: 1.5,
+                }
+              }
+            }}
           >
-            {duplicatedSteps.map((step, index) => (
-              <div key={index} className="process-step">
-                <div className="step-number">{step.number}</div>
-                
-                <div className="step-icon">
-                  {step.icon}
-                </div>
+            {steps.map((step, index) => (
+              <SwiperSlide key={index}>
+                <div className="process-card">
+                  <div className="process-number">{step.number}</div>
+                  
+                  <div className="process-image-container">
+                    <img 
+                      src={step.image} 
+                      alt={step.title}
+                      className="process-image"
+                    />
+                    <div className="process-image-overlay"></div>
+                  </div>
+                  
+                  <div className="process-content">
+                    <div className="process-icon">
+                      {step.icon}
+                    </div>
+                    
+                    <h3 className="process-title">{step.title}</h3>
+                    <p className="process-description">{step.description}</p>
 
-                <div className="step-content">
-                  <h3 className="step-title">{step.title}</h3>
-                  <p className="step-description">{step.description}</p>
+                    <button className="process-btn">
+                      <span>Comenzar</span>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                        <polyline points="12 5 19 12 12 19"/>
+                      </svg>
+                    </button>
+                  </div>
                 </div>
-              </div>
+              </SwiperSlide>
             ))}
-          </div>
+          </Swiper>
 
-          {canScrollRight && (
-            <button className="carousel-btn carousel-btn-right" onClick={() => scroll('right')}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                <polyline points="9 18 15 12 9 6"/>
-              </svg>
-            </button>
-          )}
-        </div>
-
-        <div className="process-cta">
-          <button className="process-cta-btn">
-            <span>Comienza ahora</span>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <line x1="5" y1="12" x2="19" y2="12"/>
-              <polyline points="12 5 19 12 12 19"/>
+          {/* Botones de navegación personalizados */}
+          <button className="swiper-button-prev-process">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+          </button>
+          <button className="swiper-button-next-process">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+              <polyline points="9 18 15 12 9 6"/>
             </svg>
           </button>
         </div>
