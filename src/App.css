@@ -7,4 +7,5 @@
 .app-container {
   width: 100%;
   min-height: 100vh;
+  padding-bottom: 100px; /* Add padding to prevent content from being hidden by the fixed footer */
 }

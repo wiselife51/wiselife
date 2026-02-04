@@ -166,7 +166,7 @@ const Specialists: React.FC = () => {
                       {service.features.map((feature, featureIndex) => (
                         <li key={featureIndex} className="service-feature">
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                            <polyline points="20 6 9 17 4 12"/>
+                            <polyline points="20 6 9 17 4 12"></polyline>
                           </svg>
                           <span>{feature}</span>
                         </li>

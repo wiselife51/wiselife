@@ -23,7 +23,6 @@ const Hero = () => {
             color="primary"
             className="hero-description"
           >
-            Terapia psicológica personalizada con enfoque en Terapia Cognitivo Conductual. 
             Te ofrezco un espacio seguro, confidencial y profesional para trabajar en tu 
             salud mental y crecimiento personal.
           </Typography>
