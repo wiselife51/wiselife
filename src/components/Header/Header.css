@@ -23,7 +23,6 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
-/* Logo */
 .header__logo {
   z-index: 1002;
 }
@@ -43,7 +42,6 @@
   filter: brightness(1.2);
 }
 
-/* Navegación Desktop */
 .header__nav {
   flex: 1;
   display: flex;
@@ -92,7 +90,6 @@
   width: 100%;
 }
 
-/* Acciones Desktop */
 .header__actions {
   display: flex;
   align-items: center;
@@ -134,7 +131,6 @@
   filter: brightness(1.1);
 }
 
-/* Botón Hamburguesa */
 .hamburger {
   display: none;
   flex-direction: column;
@@ -174,7 +170,6 @@
   transform: translateY(-9.5px) rotate(-45deg);
 }
 
-/* Menú Mobile */
 .mobile-menu {
   position: fixed;
   top: 0;
@@ -182,24 +177,50 @@
   width: 85%;
   max-width: 400px;
   height: 100vh;
-  background-color: rgba(17, 24, 39, 0.98);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
   transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1001;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.mobile-menu__background-video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: translate(-50%, -50%);
+  z-index: -2;
+}
+
+.mobile-menu::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(10, 15, 25, 0.65);
+  z-index: -1;
 }
 
 .mobile-menu--open {
   right: 0;
 }
 
+.mobile-menu__nav,
+.mobile-menu__actions {
+  position: relative;
+  z-index: 1;
+}
+
 .mobile-menu__nav {
-  display: flex;
-  flex-direction: column;
   padding: 6rem 2rem 2rem;
-  height: 100%;
+  flex-grow: 1;
+  overflow-y: auto;
 }
 
 .mobile-navList {
@@ -209,7 +230,6 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  flex: 1;
 }
 
 .mobile-navItem {
@@ -237,7 +257,7 @@
   gap: 1rem;
   padding: 1rem 1.25rem;
   text-decoration: none;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--color-text-primary, #e6edf3);
   font-size: 1.125rem;
   font-weight: 500;
   border-radius: 12px;
@@ -260,7 +280,7 @@
 
 .mobile-navLink:hover {
   background: rgba(77, 208, 225, 0.1);
-  color: #4dd0e1;
+  color: white;
   padding-left: 1.5rem;
 }
 
@@ -269,7 +289,6 @@
 }
 
 .mobile-navLink svg {
-  color: #4dd0e1;
   transition: transform 0.3s ease;
 }
 
@@ -277,12 +296,12 @@
   transform: scale(1.15);
 }
 
-/* Acciones Mobile */
 .mobile-menu__actions {
+  flex-shrink: 0; 
   display: flex;
   flex-direction: column;
   gap: 0.875rem;
-  padding-top: 2rem;
+  padding: 1.5rem 2rem 10rem; /* MAX PADDING INCREASE */
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -322,78 +341,39 @@
   filter: brightness(1.1);
 }
 
-/* Overlay */
 .mobile-menu__overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
   z-index: 1000;
   animation: fadeIn 0.3s ease;
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-/* Responsive */
 @media (max-width: 968px) {
-  .header__nav {
-    display: none;
-  }
-
-  .header__actions {
-    display: none;
-  }
-
-  .hamburger {
-    display: flex;
-  }
+  .header__nav, .header__actions { display: none; }
+  .hamburger { display: flex; }
 }
 
 @media (max-width: 640px) {
-  .header {
-    padding: 1rem 1.5rem;
-  }
-
-  .header__logo .logo {
-    font-size: 1.25rem;
-  }
-
-  .mobile-menu {
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .mobile-menu__nav {
-    padding: 5rem 1.5rem 1.5rem;
-  }
-
-  .mobile-navLink {
-    font-size: 1rem;
-    padding: 0.875rem 1rem;
-  }
+  .header { padding: 1rem 1.5rem; }
+  .header__logo .logo { font-size: 1.25rem; }
+  .mobile-menu { width: 100%; max-width: 100%; }
+  .mobile-menu__nav { padding: 5rem 1.5rem 1.5rem; }
+  .mobile-navLink { font-size: 1rem; padding: 0.875rem 1rem; }
 }
 
 @media (max-width: 400px) {
-  .header {
-    padding: 0.875rem 1rem;
-  }
-
-  .hamburger {
-    width: 26px;
-    height: 20px;
-  }
-
-  .hamburger__line {
-    height: 2.5px;
-  }
+  .header { padding: 0.875rem 1rem; }
+  .hamburger { width: 26px; height: 20px; }
+  .hamburger__line { height: 2.5px; }
 }

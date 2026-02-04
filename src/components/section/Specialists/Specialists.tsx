@@ -81,7 +81,7 @@ const Specialists: React.FC = () => {
   ];
 
   return (
-    <section className="specialists-section">
+    <section id="especialistas" className="specialists-section">
       <div className="specialists-container">
         
         <div className="specialists-header">

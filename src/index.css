@@ -1,3 +1,7 @@
+html {
+  scroll-behavior: smooth;
+}
+
 :root {
   /* Colores Base */
   --color-primary: #8a2be2; /* Un morado vibrante */

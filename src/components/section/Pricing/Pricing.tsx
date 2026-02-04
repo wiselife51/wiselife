@@ -124,7 +124,7 @@ const Pricing: React.FC = () => {
   ];
 
   return (
-    <section className="pricing-section">
+    <section id="precios" className="pricing-section">
       <div className="pricing-container">
         
         <div className="pricing-header">

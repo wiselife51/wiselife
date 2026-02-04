@@ -50,7 +50,7 @@ const Testimonials: React.FC = () => {
   ];
 
   return (
-    <section className="testimonials-section">
+    <section id="testimonios" className="testimonials-section">
       <div className="testimonials-container">
         
         <div className="testimonials-header">

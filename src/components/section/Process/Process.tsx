@@ -78,7 +78,7 @@ const Process: React.FC = () => {
   ];
 
   return (
-    <section className="how-it-works-process-section">
+    <section id="proceso" className="how-it-works-process-section">
       <div className="how-it-works-process-container">
         
         <div className="how-it-works-process-header">

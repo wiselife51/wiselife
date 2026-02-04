@@ -67,7 +67,7 @@ const HowItWorks: React.FC = () => {
   ];
 
   return (
-    <section className="how-it-works-section">
+    <section id="servicios" className="how-it-works-section">
       <div className="how-it-works-container">
         
         <div className="how-it-works-header">
