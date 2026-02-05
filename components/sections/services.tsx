@@ -4,7 +4,7 @@ import { services } from "@/lib/data"
 import { Icons, type IconName } from "@/components/icons"
 import { cn } from "@/lib/utils"
 
-export function Services() {
+export function ServicesSection() {
   return (
     <section id="servicios" className="relative py-20 lg:py-28">
       {/* Background */}

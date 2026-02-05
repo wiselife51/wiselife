@@ -113,7 +113,7 @@ export function Header() {
 
       {/* Desktop Actions */}
       <div className="hidden lg:flex items-center gap-3">
-        <Link href="/login">
+        <Link href="/auth/login">
           <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-transparent border border-white/20 text-white/90 transition-all duration-300 hover:bg-white/10 hover:border-white/40 hover:text-white">
             <Icons.user className="w-4 h-4" />
             Iniciar Sesion

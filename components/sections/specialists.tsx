@@ -4,23 +4,24 @@ import { Carousel } from "@/components/carousel"
 import { services } from "@/lib/data"
 import { cn } from "@/lib/utils"
 import {
-  PlusIcon,
+  BrainIcon,
   UsersIcon,
-  GridIcon,
-  MessageSquareIcon,
-  PhoneIcon,
-  HelpCircleIcon,
+  HeartHandshakeIcon,
+  MessageCircleHeartIcon,
+  PhoneCallIcon,
+  CompassIcon,
+  ClipboardCheckIcon,
   CheckIcon,
   ArrowRightIcon,
 } from "@/components/icons"
 
 const iconMap: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
-  plus: PlusIcon,
-  users: UsersIcon,
-  grid: GridIcon,
-  message: MessageSquareIcon,
-  phone: PhoneIcon,
-  help: HelpCircleIcon,
+  brain: BrainIcon,
+  heart: HeartHandshakeIcon,
+  clipboard: ClipboardCheckIcon,
+  message: MessageCircleHeartIcon,
+  phone: PhoneCallIcon,
+  compass: CompassIcon,
 }
 
 interface ServiceCardProps {
@@ -29,7 +30,7 @@ interface ServiceCardProps {
 }
 
 function ServiceCard({ service, isActive }: ServiceCardProps) {
-  const Icon = iconMap[service.icon] || PlusIcon
+  const Icon = iconMap[service.icon] || BrainIcon
 
   return (
     <div

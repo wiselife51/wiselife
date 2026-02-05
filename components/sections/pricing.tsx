@@ -1,10 +1,10 @@
 "use client"
 
 import { Carousel } from "@/components/carousel"
-import { plans } from "@/lib/data"
+import { pricingPlans } from "@/lib/data"
 import { cn } from "@/lib/utils"
 import {
-  ShieldIcon,
+  ShieldCheckIcon,
   UserIcon,
   UsersIcon,
   CalendarIcon,
@@ -15,7 +15,7 @@ import {
 } from "@/components/icons"
 
 const iconMap: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
-  shield: ShieldIcon,
+  shield: ShieldCheckIcon,
   user: UserIcon,
   users: UsersIcon,
   calendar: CalendarIcon,
@@ -24,12 +24,12 @@ const iconMap: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>
 }
 
 interface PricingCardProps {
-  plan: (typeof plans)[0]
+  plan: (typeof pricingPlans)[0]
   isActive: boolean
 }
 
 function PricingCard({ plan, isActive }: PricingCardProps) {
-  const Icon = iconMap[plan.icon] || ShieldIcon
+  const Icon = iconMap[plan.icon] || ShieldCheckIcon
 
   return (
     <div
@@ -114,7 +114,7 @@ export function PricingSection() {
         {/* Carousel */}
         <Carousel
           id="pricing"
-          items={plans}
+          items={pricingPlans}
           renderItem={(plan, index, isActive) => (
             <PricingCard key={index} plan={plan} isActive={isActive} />
           )}

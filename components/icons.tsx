@@ -544,3 +544,83 @@ export function AlertCircleIcon(props: IconProps) {
     </svg>
   )
 }
+
+// ============================================
+// ICONS OBJECT FOR EASY ACCESS
+// ============================================
+
+export const Icons = {
+  // Brand & Navigation
+  logo: LogoIcon,
+  heartPulse: HeartPulseIcon,
+  menu: MenuIcon,
+  x: XIcon,
+  chevronRight: ChevronRightIcon,
+  chevronLeft: ChevronLeftIcon,
+  chevronDown: ChevronDownIcon,
+  arrowRight: ArrowRightIcon,
+  externalLink: ExternalLinkIcon,
+  link: ExternalLinkIcon, // alias
+  
+  // Service Icons
+  brain: BrainIcon,
+  heartHandshake: HeartHandshakeIcon,
+  clipboardCheck: ClipboardCheckIcon,
+  messageCircleHeart: MessageCircleHeartIcon,
+  phoneCall: PhoneCallIcon,
+  compass: CompassIcon,
+  sparkles: SparklesIcon,
+  
+  // Pricing & Features
+  shieldCheck: ShieldCheckIcon,
+  user: UserIcon,
+  users: UsersIcon,
+  calendar: CalendarIcon,
+  calendarCheck: CalendarCheckIcon,
+  clock: ClockIcon,
+  fileText: FileTextIcon,
+  badgeCheck: BadgeCheckIcon,
+  check: CheckIcon,
+  checkCircle: CheckCircleIcon,
+  
+  // Contact & Location
+  mapPin: MapPinIcon,
+  mail: MailIcon,
+  phone: PhoneIcon,
+  globe: GlobeIcon,
+  monitor: MonitorIcon,
+  
+  // Testimonials & Misc
+  star: StarIcon,
+  quote: QuoteIcon,
+  layers: LayersIcon,
+  list: ListIcon,
+  target: TargetIcon,
+  award: AwardIcon,
+  
+  // Auth & User
+  lock: LockIcon,
+  eye: EyeIcon,
+  eyeOff: EyeOffIcon,
+  logIn: LogInIcon,
+  logOut: LogOutIcon,
+  userPlus: UserPlusIcon,
+  
+  // Social Media
+  facebook: FacebookIcon,
+  instagram: InstagramIcon,
+  linkedin: LinkedInIcon,
+  linkedIn: LinkedInIcon,
+  twitter: TwitterXIcon,
+  twitterX: TwitterXIcon,
+  tikTok: TikTokIcon,
+  whatsApp: WhatsAppIcon,
+  youtube: YouTubeIcon,
+  youTube: YouTubeIcon,
+  
+  // Loading & Status
+  loader: LoaderIcon,
+  alertCircle: AlertCircleIcon,
+}
+
+export type IconName = keyof typeof Icons

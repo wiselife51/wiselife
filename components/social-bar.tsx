@@ -1,10 +1,10 @@
 import {
   FacebookIcon,
-  TwitterIcon,
+  TwitterXIcon,
   InstagramIcon,
-  LinkedinIcon,
-  TiktokIcon,
-  WhatsappIcon,
+  LinkedInIcon,
+  TikTokIcon,
+  WhatsAppIcon,
 } from "@/components/icons"
 import { cn } from "@/lib/utils"
 
@@ -18,10 +18,10 @@ const socialLinks = [
   },
   {
     href: "https://twitter.com",
-    icon: TwitterIcon,
+    icon: TwitterXIcon,
     label: "Twitter",
-    bgColor: "bg-[#1da1f2]",
-    glowColor: "shadow-[0_0_8px_rgba(29,161,242,0.6)] hover:shadow-[0_0_12px_rgba(29,161,242,0.9),0_0_22px_rgba(29,161,242,0.5)]",
+    bgColor: "bg-black",
+    glowColor: "shadow-[0_0_8px_rgba(255,255,255,0.3)] hover:shadow-[0_0_12px_rgba(255,255,255,0.5),0_0_22px_rgba(255,255,255,0.3)]",
   },
   {
     href: "https://instagram.com",
@@ -32,21 +32,21 @@ const socialLinks = [
   },
   {
     href: "https://linkedin.com",
-    icon: LinkedinIcon,
+    icon: LinkedInIcon,
     label: "LinkedIn",
     bgColor: "bg-[#0077b5]",
     glowColor: "shadow-[0_0_8px_rgba(0,119,181,0.6)] hover:shadow-[0_0_12px_rgba(0,119,181,0.9),0_0_22px_rgba(0,119,181,0.5)]",
   },
   {
     href: "https://tiktok.com",
-    icon: TiktokIcon,
+    icon: TikTokIcon,
     label: "TikTok",
     bgColor: "bg-black",
     glowColor: "shadow-[0_0_8px_rgba(0,242,234,0.7),0_0_10px_rgba(255,0,80,0.5)] hover:shadow-[0_0_12px_rgba(0,242,234,1),0_0_22px_rgba(255,0,80,0.7)]",
   },
   {
     href: "https://wa.me/573001234567",
-    icon: WhatsappIcon,
+    icon: WhatsAppIcon,
     label: "WhatsApp",
     bgColor: "bg-[#25d366]",
     glowColor: "shadow-[0_0_8px_rgba(37,211,102,0.6)] hover:shadow-[0_0_12px_rgba(37,211,102,0.9),0_0_22px_rgba(37,211,102,0.5)]",

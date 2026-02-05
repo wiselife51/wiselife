@@ -56,8 +56,8 @@ export default function LoginPage() {
         <div className="glass-card rounded-3xl p-8 md:p-10">
           {/* Logo */}
           <Link href="/" className="flex items-center justify-center gap-3 mb-8">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center">
-              <Icons.Brain className="w-7 h-7 text-white" />
+            <div className="w-12 h-12 rounded-xl bg-gradient-brand flex items-center justify-center">
+              <Icons.brain className="w-7 h-7 text-white" />
             </div>
             <span className="text-2xl font-semibold text-white font-serif">
               Vida Sabia
@@ -78,7 +78,7 @@ export default function LoginPage() {
           <form onSubmit={handleLogin} className="space-y-5">
             {error && (
               <div className="bg-red-500/20 border border-red-500/50 rounded-xl p-4 text-red-200 text-sm flex items-center gap-2">
-                <Icons.AlertCircle className="w-5 h-5 flex-shrink-0" />
+                <Icons.alertCircle className="w-5 h-5 flex-shrink-0" />
                 {error}
               </div>
             )}
@@ -88,7 +88,7 @@ export default function LoginPage() {
                 Correo electronico
               </label>
               <div className="relative">
-                <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
+                <Icons.mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
                 <input
                   id="email"
                   type="email"
@@ -106,7 +106,7 @@ export default function LoginPage() {
                 Contrasena
               </label>
               <div className="relative">
-                <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
+                <Icons.lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
@@ -122,9 +122,9 @@ export default function LoginPage() {
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white/80 transition-colors"
                 >
                   {showPassword ? (
-                    <Icons.EyeOff className="w-5 h-5" />
+                    <Icons.eyeOff className="w-5 h-5" />
                   ) : (
-                    <Icons.Eye className="w-5 h-5" />
+                    <Icons.eye className="w-5 h-5" />
                   )}
                 </button>
               </div>
@@ -143,17 +143,17 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-400 hover:to-teal-500 text-white font-semibold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-teal-500/25"
+              className="w-full py-3.5 bg-gradient-brand text-white font-semibold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-brand hover:shadow-brand-lg"
             >
               {loading ? (
                 <>
-                  <Icons.Spinner className="w-5 h-5 animate-spin" />
+                  <Icons.loader className="w-5 h-5 animate-spin" />
                   Iniciando sesion...
                 </>
               ) : (
                 <>
                   Iniciar Sesion
-                  <Icons.ArrowRight className="w-5 h-5" />
+                  <Icons.arrowRight className="w-5 h-5" />
                 </>
               )}
             </button>
@@ -169,11 +169,11 @@ export default function LoginPage() {
           {/* Social Login */}
           <div className="grid grid-cols-2 gap-3">
             <button className="flex items-center justify-center gap-2 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-white transition-all">
-              <Icons.Google className="w-5 h-5" />
+              <Icons.globe className="w-5 h-5" />
               <span className="text-sm font-medium">Google</span>
             </button>
             <button className="flex items-center justify-center gap-2 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-white transition-all">
-              <Icons.Facebook className="w-5 h-5" />
+              <Icons.facebook className="w-5 h-5" />
               <span className="text-sm font-medium">Facebook</span>
             </button>
           </div>

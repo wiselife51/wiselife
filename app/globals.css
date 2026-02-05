@@ -88,6 +88,11 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  
+  /* Brand Colors for Tailwind */
+  --color-brand-primary: #4dd0e1;
+  --color-brand-accent: #7e57c2;
+  --color-brand-dark: #5c6bc0;
 }
 
 * {
@@ -206,6 +211,34 @@ body {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
+.bg-gradient-brand-short {
+  background: var(--gradient-primary-short);
+}
+
+.shadow-brand-lg {
+  box-shadow: var(--shadow-primary-lg);
+}
+
+.text-brand-primary {
+  color: #4dd0e1;
+}
+
+.text-brand-accent {
+  color: #7e57c2;
+}
+
+.border-brand-primary\/30 {
+  border-color: rgba(77, 208, 225, 0.3);
+}
+
+.bg-brand-primary\/10 {
+  background-color: rgba(77, 208, 225, 0.1);
+}
+
+.bg-brand-primary\/20 {
+  background-color: rgba(77, 208, 225, 0.2);
+}
+
 /* Primary Button Styles */
 .btn-primary {
   display: inline-flex;
@@ -305,6 +338,10 @@ body {
 
 .animate-fade-in {
   animation: fadeIn 0.3s ease;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.4s ease forwards;
 }
 
 /* Section Base Styles */

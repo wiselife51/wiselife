@@ -2,12 +2,12 @@
 
 import Image from "next/image"
 import { Carousel } from "@/components/carousel"
-import { processSteps } from "@/lib/data"
+import { appointmentSteps } from "@/lib/data"
 import { cn } from "@/lib/utils"
 import {
   ClockIcon,
   CalendarIcon,
-  MessageSquareIcon,
+  MessageCircleHeartIcon,
   FileTextIcon,
   CheckCircleIcon,
   ArrowRightIcon,
@@ -16,13 +16,13 @@ import {
 const iconMap: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
   clock: ClockIcon,
   calendar: CalendarIcon,
-  message: MessageSquareIcon,
+  message: MessageCircleHeartIcon,
   file: FileTextIcon,
   check: CheckCircleIcon,
 }
 
 interface ProcessCardProps {
-  step: (typeof processSteps)[0]
+  step: (typeof appointmentSteps)[0]
   isActive: boolean
 }
 
@@ -107,7 +107,7 @@ export function ProcessSection() {
         {/* Carousel */}
         <Carousel
           id="process"
-          items={processSteps}
+          items={appointmentSteps}
           renderItem={(step, index, isActive) => (
             <ProcessCard key={index} step={step} isActive={isActive} />
           )}

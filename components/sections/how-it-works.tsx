@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 import {
   UserIcon,
   FileTextIcon,
-  MessageSquareIcon,
+  MessageCircleHeartIcon,
   HeartPulseIcon,
   ArrowRightIcon,
 } from "@/components/icons"
@@ -15,8 +15,8 @@ import {
 const iconMap: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
   user: UserIcon,
   file: FileTextIcon,
-  message: MessageSquareIcon,
-  heartpulse: HeartPulseIcon,
+  message: MessageCircleHeartIcon,
+  heart: HeartPulseIcon,
 }
 
 interface StepCardProps {
