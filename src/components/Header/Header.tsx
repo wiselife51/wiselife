@@ -185,10 +185,6 @@ const Header: React.FC = () => {
         </video>
         <div className="mobile-menu__overlay-inner" />
 
-        <div className="mobile-menu__header">
-          <span className="mobile-menu__title">Menú</span>
-        </div>
-
         <nav className="mobile-menu__nav" aria-label="Navegación móvil">
           <ul className="mobile-nav-list">
             {navItems.map((item, index) => (

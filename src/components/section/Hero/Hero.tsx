@@ -47,12 +47,6 @@ const Hero = () => {
       </div>
 
       <div className="hero__container">
-        {/* Badge */}
-        <div className="hero__badge">
-          <span className="hero__badge-dot" />
-          <span>Psicología clínica profesional</span>
-        </div>
-
         {/* Title */}
         <h1 className="hero__title">
           <span className="hero__title-line">Comienza el camino hacia tu</span>
