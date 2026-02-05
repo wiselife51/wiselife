@@ -100,7 +100,10 @@ const Specialists: React.FC = () => {
       <div className="specialists-container">
         
         <div className="specialists-header">
-          <span className="specialists-badge">Servicios Profesionales</span>
+          <div className="specialists-badge">
+            <span className="specialists-badge-dot" />
+            <span>Servicios Profesionales</span>
+          </div>
           <h2 className="specialists-title">
             ¿En qué puedo <span className="specialists-title-gradient">ayudarte?</span>
           </h2>
