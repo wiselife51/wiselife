@@ -1,44 +1,67 @@
-import { updateSession } from '@/lib/supabase/proxy'
-import { type NextRequest, NextResponse } from 'next/server'
+import { createServerClient } from '@supabase/ssr'
+import { NextResponse, type NextRequest } from 'next/server'
 
 // Routes that require authentication
 const protectedRoutes = ['/dashboard', '/psychologists/book']
 
-// Routes that should redirect to dashboard if already authenticated
+// Routes that should redirect to dashboard if already authenticated  
 const authRoutes = ['/auth/login', '/auth/register']
 
 export async function middleware(request: NextRequest) {
-  const response = await updateSession(request)
-  
+  let supabaseResponse = NextResponse.next({
+    request,
+  })
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll()
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value),
+          )
+          supabaseResponse = NextResponse.next({
+            request,
+          })
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options),
+          )
+        },
+      },
+    },
+  )
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
   const { pathname } = request.nextUrl
 
   // Check if accessing a protected route
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route))
   const isAuthRoute = authRoutes.some(route => pathname.startsWith(route))
 
-  // Get auth status from cookie (set by updateSession)
-  const supabaseAuth = request.cookies.get('sb-access-token')?.value || 
-                       request.cookies.getAll().find(c => c.name.includes('auth-token'))?.value
-
-  if (isProtectedRoute && !supabaseAuth) {
+  // Redirect to login if accessing protected route without auth
+  if (isProtectedRoute && !user) {
     const redirectUrl = new URL('/auth/login', request.url)
     redirectUrl.searchParams.set('redirect', pathname)
     return NextResponse.redirect(redirectUrl)
   }
 
-  return response
+  // Redirect to dashboard if accessing auth routes while logged in
+  if (isAuthRoute && user) {
+    return NextResponse.redirect(new URL('/dashboard', request.url))
+  }
+
+  return supabaseResponse
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - images - .svg, .png, .jpg, .jpeg, .gif, .webp
-     * - assets folder
-     */
     '/((?!_next/static|_next/image|favicon.ico|assets|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mp4)$).*)',
   ],
 }
