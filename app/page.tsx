@@ -1,6 +1,7 @@
 import { Header } from "@/components/header"
 import { VideoBackground } from "@/components/video-background"
 import { HeroSection } from "@/components/sections/hero"
+import { ServicesSection } from "@/components/sections/services"
 import { SpecialistsSection } from "@/components/sections/specialists"
 import { HowItWorksSection } from "@/components/sections/how-it-works"
 import { PricingSection } from "@/components/sections/pricing"
@@ -17,6 +18,7 @@ export default function Home() {
         <Header />
         <main className="flex-1 flex flex-col pt-20">
           <HeroSection />
+          <ServicesSection />
           <SpecialistsSection />
           <HowItWorksSection />
           <PricingSection />

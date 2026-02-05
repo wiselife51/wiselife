@@ -15,7 +15,7 @@ function TestimonialCard({ testimonial, isActive }: TestimonialCardProps) {
   return (
     <div
       className={cn(
-        "relative w-full glass-card p-4 flex flex-col gap-3",
+        "relative w-full glass-card p-5 flex flex-col gap-3 h-full min-h-[280px]",
         "transition-all duration-400",
         isActive && "scale-105 border-white/30 shadow-glass-hover",
         // Gradient line on top when active
@@ -56,7 +56,7 @@ function TestimonialCard({ testimonial, isActive }: TestimonialCardProps) {
       </div>
 
       {/* Text */}
-      <p className="text-[0.8rem] leading-relaxed text-white/90 m-0 flex-1 italic min-h-[80px]">
+      <p className="text-[0.85rem] leading-relaxed text-white/90 m-0 flex-1 italic">
         "{testimonial.text}"
       </p>
 

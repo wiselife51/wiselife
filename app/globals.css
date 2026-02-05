@@ -173,6 +173,39 @@ body {
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
 }
 
+/* Card with uniform height */
+.card-uniform {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 380px;
+}
+
+.card-uniform-sm {
+  min-height: 320px;
+}
+
+.card-uniform-lg {
+  min-height: 440px;
+}
+
+/* Brand gradient utilities */
+.bg-gradient-brand {
+  background: var(--gradient-primary);
+}
+
+.shadow-brand {
+  box-shadow: var(--shadow-primary);
+}
+
+.shadow-glass-hover {
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(77, 208, 225, 0.15);
+}
+
+.text-shadow-sm {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
 /* Primary Button Styles */
 .btn-primary {
   display: inline-flex;

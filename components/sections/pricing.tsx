@@ -34,7 +34,7 @@ function PricingCard({ plan, isActive }: PricingCardProps) {
   return (
     <div
       className={cn(
-        "relative w-full glass-card p-4 flex flex-col gap-1.5",
+        "relative w-full glass-card p-5 flex flex-col gap-2 h-full min-h-[400px]",
         "transition-all duration-400",
         isActive && "scale-105 border-white/30 shadow-glass-hover",
         // Gradient line on top when active
