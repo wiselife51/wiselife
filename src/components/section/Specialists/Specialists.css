@@ -8,13 +8,15 @@
 
 .specialists-section {
   width: 100%;
-  min-height: auto;
+  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 60px 2rem 40px;
+  padding: 5rem 2rem 4rem;
   position: relative;
   font-family: 'Inter', sans-serif;
+  scroll-snap-align: start;
 }
 
 .specialists-container {
