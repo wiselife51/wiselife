@@ -25,13 +25,15 @@
 /* Responsive para moviles */
 @media (max-width: 768px) {
   .main-content {
-    scroll-snap-type: y proximity;
+    scroll-snap-type: y mandatory;
   }
   
   .main-content > section {
     padding: 70px 16px 70px;
-    min-height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
     scroll-snap-align: start;
+    scroll-snap-stop: always;
   }
 }
 
