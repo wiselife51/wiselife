@@ -96,11 +96,14 @@ const services: Service[] = [
 
 const Specialists: React.FC = () => {
   return (
-    <section id="especialistas" className="specialists-section">
+    <section id="servicios" className="specialists-section">
       <div className="specialists-container">
         
         <div className="specialists-header">
-          <span className="specialists-badge">Servicios Profesionales</span>
+          <div className="specialists-badge specialists-badge--mobile">
+            <span className="specialists-badge-dot" />
+            <span>Servicios Profesionales</span>
+          </div>
           <h2 className="specialists-title">
             ¿En qué puedo <span className="specialists-title-gradient">ayudarte?</span>
           </h2>
@@ -171,8 +174,9 @@ const Specialists: React.FC = () => {
                     <ul className="service-features">
                       {service.features.map((feature, featureIndex) => (
                         <li key={featureIndex} className="service-feature">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                            <polyline points="20 6 9 17 4 12"></polyline>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.15" />
+                            <circle cx="12" cy="12" r="4" fill="currentColor" />
                           </svg>
                           <span>{feature}</span>
                         </li>

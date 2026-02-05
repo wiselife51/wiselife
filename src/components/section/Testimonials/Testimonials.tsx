@@ -7,70 +7,62 @@ import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
-import Typography from '../../Typography/Typography';
 import './Testimonials.css';
 
-const Testimonials: React.FC = () => {
-  const testimonials = [
-    {
-      name: "María Rodríguez",
-      role: "Paciente desde 2023",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop",
-      rating: 5,
-      text: "La terapia me ayudó a superar mi ansiedad social. Ahora me siento más segura y capaz de enfrentar situaciones."
-    },
-    {
-      name: "Carlos Mendoza",
-      role: "Paciente desde 2022",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop",
-      rating: 5,
-      text: "Después de años luchando con depresión, finalmente encontré el apoyo que necesitaba."
-    },
-    {
-      name: "Ana Martínez",
-      role: "Terapia de pareja 2024",
-      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop",
-      rating: 5,
-      text: "La terapia de pareja salvó nuestra relación. Aprendimos a comunicarnos mejor."
-    },
-    {
-      name: "Jorge Silva",
-      role: "Paciente desde 2023",
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop",
-      rating: 5,
-      text: "El proceso terapéutico me dio herramientas para manejar el estrés laboral."
-    },
-    {
-      name: "Laura Gómez",
-      role: "Paciente desde 2024",
-      image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop",
-      rating: 5,
-      text: "La orientación vocacional me ayudó a tomar la mejor decisión para mi futuro."
-    }
-  ];
+interface Testimonial {
+  name: string;
+  role: string;
+  image: string;
+  rating: number;
+  text: string;
+}
 
+const testimonials: Testimonial[] = [
+  {
+    name: 'Maria Rodriguez',
+    role: 'Paciente desde 2023',
+    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
+    rating: 5,
+    text: 'La terapia me ayudo a superar mi ansiedad social. Me siento mas segura.',
+  },
+  {
+    name: 'Carlos Mendoza',
+    role: 'Paciente desde 2022',
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
+    rating: 5,
+    text: 'Despues de anos luchando con depresion, encontre el apoyo que necesitaba.',
+  },
+  {
+    name: 'Ana Martinez',
+    role: 'Terapia de pareja 2024',
+    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
+    rating: 5,
+    text: 'La terapia de pareja salvo nuestra relacion. Aprendimos a comunicarnos.',
+  },
+  {
+    name: 'Jorge Silva',
+    role: 'Paciente desde 2023',
+    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop',
+    rating: 5,
+    text: 'El proceso terapeutico me dio herramientas para manejar el estres.',
+  },
+];
+
+const Testimonials: React.FC = () => {
   return (
     <section id="testimonios" className="testimonials-section">
       <div className="testimonials-container">
-        
         <div className="testimonials-header">
-          <Typography 
-            as="h2" 
-            variant="heroTitle" 
-            color="primary"
-            className="testimonials-title"
-          >
+          <div className="testimonials-badge testimonials-badge--mobile">
+            <span className="testimonials-badge-dot" />
+            <span>Testimonios</span>
+          </div>
+          <h2 className="testimonials-title">
             Lo que dicen <span className="testimonials-title-gradient">mis pacientes</span>
-          </Typography>
-          
-          <Typography 
-            as="p" 
-            variant="heroSubtitle" 
-            color="secondary"
-            className="testimonials-description"
-          >
-            Testimonios reales de personas que han transformado su vida a través de la terapia.
-          </Typography>
+          </h2>
+          <p className="testimonials-description">
+            Testimonios reales de personas que han transformado su vida.
+          </p>
         </div>
 
         <div className="carousel-wrapper-testimonials">
