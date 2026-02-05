@@ -79,6 +79,10 @@ const Process: React.FC = () => {
     <section id="proceso" className="how-it-works-process-section">
       <div className="how-it-works-process-container">
         <div className="how-it-works-process-header">
+          <div className="process-badge process-badge--mobile">
+            <span className="process-badge-dot" />
+            <span>Como Funciona</span>
+          </div>
           <h2 className="how-it-works-process-title">
             Tu camino hacia el <span className="how-it-works-process-title-gradient">bienestar</span>
           </h2>

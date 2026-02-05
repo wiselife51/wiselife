@@ -21,6 +21,35 @@
   gap: 1.25rem;
 }
 
+/* Process Badge - only visible on mobile */
+.process-badge {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.process-badge-dot {
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(135deg, #5c6bc0 0%, #7e57c2 50%, #9c27b0 100%);
+  border-radius: 50%;
+  animation: pulse-dot-process 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot-process {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
 /* Header Section */
 .how-it-works-process-header {
   display: flex;
@@ -43,9 +72,13 @@
 }
 
 .how-it-works-process-title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  line-height: 1.2;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
   animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s backwards;
-  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.5);
-  font-size: calc(1.2rem + 1.8vw);
 }
 
 .how-it-works-process-title-gradient {
@@ -102,7 +135,7 @@
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   height: auto;
-  max-height: 340px;
+  max-height: 320px;
   overflow: hidden;
 }
 
@@ -412,6 +445,12 @@
 @media (max-width: 480px) {
   .how-it-works-process-section {
     padding: 25px 1rem 20px;
+  }
+
+  .process-badge {
+    display: inline-flex;
+    font-size: 0.6875rem;
+    padding: 0.375rem 0.75rem;
   }
   
   .how-it-works-process-title {
