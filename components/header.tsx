@@ -3,31 +3,39 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
-import {
-  HeartPulseIcon,
-  LayersIcon,
-  ClockIcon,
-  DollarSignIcon,
-  MessageSquareIcon,
-  UsersIcon,
-  ChevronRightIcon,
-} from "@/components/icons"
+import { Icons } from "@/components/icons"
 
 const navLinks = [
-  { href: "#servicios", label: "Servicios", icon: LayersIcon },
-  { href: "#proceso", label: "Proceso", icon: ClockIcon },
-  { href: "#precios", label: "Precios", icon: DollarSignIcon },
-  { href: "#testimonios", label: "Testimonios", icon: MessageSquareIcon },
-  { href: "#especialistas", label: "Especialistas", icon: UsersIcon },
+  { href: "#inicio", label: "Inicio" },
+  { href: "#servicios", label: "Servicios" },
+  { href: "#especialistas", label: "Especialistas" },
+  { href: "#planes", label: "Planes" },
+  { href: "#testimonios", label: "Testimonios" },
+  { href: "#proceso", label: "Proceso" },
+  { href: "#contacto", label: "Contacto" },
 ]
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [activeSection, setActiveSection] = useState("inicio")
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20)
+      
+      // Detect active section
+      const sections = navLinks.map(n => n.href.replace("#", ""))
+      for (const section of [...sections].reverse()) {
+        const element = document.getElementById(section)
+        if (element) {
+          const rect = element.getBoundingClientRect()
+          if (rect.top <= 150) {
+            setActiveSection(section)
+            break
+          }
+        }
+      }
     }
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
@@ -40,69 +48,92 @@ export function Header() {
     }
   }, [isMenuOpen])
 
-  const handleLinkClick = () => {
+  const handleLinkClick = (href: string) => {
     setIsMenuOpen(false)
+    const element = document.getElementById(href.replace("#", ""))
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" })
+    }
   }
 
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-5",
+        "fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 lg:px-8 py-4",
         "bg-gray-900/30 backdrop-blur-xl border-b border-white/10 transition-all duration-300",
-        isScrolled && "bg-gray-900/60 shadow-lg shadow-black/30"
+        isScrolled && "bg-gray-900/80 shadow-lg shadow-black/30"
       )}
     >
       {/* Logo */}
       <Link
         href="/"
-        className="flex items-center gap-2 text-2xl font-bold no-underline transition-all duration-300 hover:scale-105 z-[1002]"
+        className="flex items-center gap-3 no-underline transition-all duration-300 hover:scale-105 z-[1002] group"
       >
-        <HeartPulseIcon
-          className="w-8 h-8 text-brand-primary drop-shadow-[0_0_8px_rgba(77,208,225,0.4)] transition-transform duration-300 group-hover:scale-110 group-hover:rotate-5"
-          style={{
-            filter: "drop-shadow(0 0 8px rgba(77, 208, 225, 0.4))",
-          }}
-        />
-        <span className="bg-gradient-brand bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(77,208,225,0.3)]">
-          Vida Sabia
-        </span>
+        <div className="relative">
+          <div className="w-10 h-10 rounded-xl bg-gradient-brand flex items-center justify-center shadow-lg shadow-brand-primary/25 group-hover:shadow-brand-primary/40 transition-all duration-300">
+            <Icons.brain className="w-6 h-6 text-white" />
+          </div>
+          <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-gray-900 flex items-center justify-center">
+            <Icons.heartPulse className="w-2.5 h-2.5 text-white" />
+          </div>
+        </div>
+        <div className="flex flex-col">
+          <span className="text-lg font-bold bg-gradient-brand bg-clip-text text-transparent leading-tight">
+            Vida Sabia
+          </span>
+          <span className="text-[10px] text-white/60 leading-tight tracking-wide uppercase">
+            Psicologia Clinica
+          </span>
+        </div>
       </Link>
 
       {/* Desktop Navigation */}
       <nav className="hidden lg:flex flex-1 justify-center">
-        <ul className="flex gap-10 list-none m-0 p-0">
+        <ul className="flex gap-1 list-none m-0 p-0">
           {navLinks.map((link) => (
-            <li key={link.href} className="flex items-center">
-              <Link
-                href={link.href}
-                className="relative text-white/90 text-[0.9375rem] font-medium no-underline py-1 transition-all duration-300 hover:text-brand-primary group"
+            <li key={link.href}>
+              <button
+                onClick={() => handleLinkClick(link.href)}
+                className={cn(
+                  "relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300",
+                  activeSection === link.href.replace("#", "")
+                    ? "text-brand-primary bg-brand-primary/10"
+                    : "text-white/80 hover:text-white hover:bg-white/5"
+                )}
               >
                 {link.label}
-                <span className="absolute bottom-[-4px] left-0 w-0 h-0.5 bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-accent transition-all duration-300 group-hover:w-full" />
-              </Link>
+                {activeSection === link.href.replace("#", "") && (
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-brand-primary" />
+                )}
+              </button>
             </li>
           ))}
         </ul>
       </nav>
 
       {/* Desktop Actions */}
-      <div className="hidden lg:flex items-center gap-4">
-        <button className="px-6 py-2.5 rounded-[10px] text-sm font-semibold bg-transparent border-2 border-white/30 text-white transition-all duration-300 hover:bg-white/10 hover:border-white/60">
-          Iniciar Sesion
-        </button>
-        <button className="px-6 py-2.5 rounded-[10px] text-sm font-semibold bg-gradient-brand text-white shadow-brand transition-all duration-300 hover:translate-y-[-2px] hover:shadow-brand-lg hover:brightness-110">
+      <div className="hidden lg:flex items-center gap-3">
+        <Link href="/login">
+          <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-transparent border border-white/20 text-white/90 transition-all duration-300 hover:bg-white/10 hover:border-white/40 hover:text-white">
+            <Icons.user className="w-4 h-4" />
+            Iniciar Sesion
+          </button>
+        </Link>
+        <button 
+          onClick={() => handleLinkClick("#contacto")}
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-gradient-brand text-white shadow-brand transition-all duration-300 hover:translate-y-[-2px] hover:shadow-brand-lg hover:brightness-110"
+        >
+          <Icons.calendar className="w-4 h-4" />
           Agendar Cita
         </button>
       </div>
 
       {/* Hamburger Button */}
       <button
-        className={cn(
-          "lg:hidden flex flex-col justify-between w-7 h-[22px] bg-transparent border-none cursor-pointer p-0 z-[1002] transition-all duration-300"
-        )}
+        className="lg:hidden flex flex-col justify-between w-7 h-[22px] bg-transparent border-none cursor-pointer p-0 z-[1002]"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
         aria-expanded={isMenuOpen}
-        aria-label="Toggle menu"
+        aria-label={isMenuOpen ? "Cerrar menu" : "Abrir menu"}
       >
         <div
           className={cn(
@@ -144,54 +175,53 @@ export function Header() {
         </video>
 
         {/* Overlay */}
-        <div className="absolute inset-0 bg-[rgba(10,15,25,0.65)] -z-10" />
+        <div className="absolute inset-0 bg-[rgba(10,15,25,0.85)] backdrop-blur-sm -z-10" />
 
         {/* Mobile Nav */}
-        <nav className="relative z-10 pt-16 px-8 pb-3 flex-grow-0 flex-shrink overflow-y-auto flex flex-col justify-start max-h-[40vh]">
-          <ul className="list-none m-0 p-0 flex flex-col gap-2.5 mt-6">
-            {navLinks.map((link, index) => {
-              const Icon = link.icon
-              return (
-                <li
-                  key={link.href}
+        <nav className="relative z-10 pt-20 px-6 pb-4 flex-1 overflow-y-auto">
+          <ul className="list-none m-0 p-0 flex flex-col gap-2">
+            {navLinks.map((link, index) => (
+              <li
+                key={link.href}
+                className={cn(
+                  "opacity-0 translate-x-8",
+                  isMenuOpen && "animate-slide-in-right"
+                )}
+                style={{
+                  animationDelay: isMenuOpen ? `${0.1 + index * 0.05}s` : "0s",
+                  animationFillMode: "forwards",
+                }}
+              >
+                <button
+                  onClick={() => handleLinkClick(link.href)}
                   className={cn(
-                    "opacity-0 translate-x-8",
-                    isMenuOpen && "animate-slide-in-right"
+                    "w-full flex items-center justify-between p-4 text-left text-base font-medium rounded-xl transition-all duration-300 border",
+                    activeSection === link.href.replace("#", "")
+                      ? "bg-brand-primary/20 text-brand-primary border-brand-primary/30"
+                      : "bg-white/[0.03] border-white/[0.05] text-white hover:bg-brand-primary/10 hover:text-brand-primary hover:border-brand-primary/30"
                   )}
-                  style={{
-                    animationDelay: isMenuOpen ? `${0.1 + index * 0.05}s` : "0s",
-                    animationFillMode: "forwards",
-                  }}
                 >
-                  <Link
-                    href={link.href}
-                    className="flex items-center justify-between p-3.5 no-underline text-white text-base font-medium rounded-xl transition-all duration-300 bg-white/[0.03] border border-white/[0.05] hover:bg-brand-primary/10 hover:text-brand-primary hover:border-brand-primary/30 hover:translate-x-1.5 group"
-                    onClick={handleLinkClick}
-                  >
-                    <div className="flex items-center gap-3.5">
-                      <Icon className="w-[22px] h-[22px] flex-shrink-0 text-brand-primary transition-transform duration-300 group-hover:scale-110 group-hover:rotate-5" />
-                      <span>{link.label}</span>
-                    </div>
-                    <ChevronRightIcon className="w-5 h-5 opacity-70 transition-all duration-300 group-hover:translate-x-1.5 group-hover:opacity-100" />
-                  </Link>
-                </li>
-              )
-            })}
+                  <span>{link.label}</span>
+                  <Icons.chevronRight className="w-5 h-5 opacity-60" />
+                </button>
+              </li>
+            ))}
           </ul>
         </nav>
 
         {/* Mobile Actions */}
-        <div className="relative z-10 flex flex-col gap-3.5 p-8 pt-6 mt-4 border-t border-white/10 bg-gray-900/50 backdrop-blur-[10px]">
+        <div className="relative z-10 flex flex-col gap-3 p-6 border-t border-white/10 bg-gray-900/60 backdrop-blur-xl">
+          <Link href="/login" className="w-full" onClick={() => setIsMenuOpen(false)}>
+            <button className="w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl text-base font-semibold bg-transparent border border-white/20 text-white transition-all duration-300 hover:bg-white/10 hover:border-white/40">
+              <Icons.user className="w-5 h-5" />
+              Iniciar Sesion
+            </button>
+          </Link>
           <button
-            className="w-full py-3.5 px-6 rounded-xl text-[0.95rem] font-semibold bg-transparent border-2 border-white/30 text-white transition-all duration-300 hover:bg-white/10 hover:border-white/60"
-            onClick={handleLinkClick}
+            className="w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl text-base font-semibold bg-gradient-brand text-white shadow-brand transition-all duration-300 hover:shadow-brand-lg"
+            onClick={() => handleLinkClick("#contacto")}
           >
-            Iniciar Sesion
-          </button>
-          <button
-            className="w-full py-3.5 px-6 rounded-xl text-[0.95rem] font-semibold bg-gradient-brand text-white shadow-brand transition-all duration-300 hover:translate-y-[-2px] hover:shadow-brand-lg hover:brightness-110"
-            onClick={handleLinkClick}
-          >
+            <Icons.calendar className="w-5 h-5" />
             Agendar Cita
           </button>
         </div>
