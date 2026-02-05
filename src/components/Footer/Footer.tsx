@@ -1,5 +1,4 @@
 import React from 'react';
-import Typography from '../Typography/Typography';
 import './Footer.css';
 
 import {
@@ -14,12 +13,6 @@ import {
 const Footer: React.FC = () => {
   return (
     <footer className="footer">
-      <div className="footer__copyright">
-        <Typography variant="body2" color="primary">
-          © 2024 Psicología Clínica. Todos los derechos reservados.
-        </Typography>
-      </div>
-
       <div className="footer__socials">
         <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="social-icon social-icon--facebook">
           <FaFacebook />

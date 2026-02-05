@@ -6,6 +6,7 @@ import Testimonials from '../section/Testimonials/Testimonials';
 import Process from '../section/Process/Process';
 import HowItWorks from '../section/HowItWorks/HowItWorks';
 import Pricing from '../section/Pricing/Pricing';
+import Footer from '../section/Footer/Footer';
 
 const Main: React.FC = () => {
   return (
@@ -16,6 +17,7 @@ const Main: React.FC = () => {
       <Pricing />
       <Testimonials />
       <Process />
+      <Footer />
     </main>
   );
 };

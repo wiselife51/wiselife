@@ -28,7 +28,9 @@ const Header: React.FC = () => {
       <defs>
         <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" style={{ stopColor: '#4dd0e1' }} />
-          <stop offset="100%" style={{ stopColor: '#42a5f5' }} />
+          <stop offset="35%" style={{ stopColor: '#42a5f5' }} />
+          <stop offset="70%" style={{ stopColor: '#5c6bc0' }} />
+          <stop offset="100%" style={{ stopColor: '#7e57c2' }} />
         </linearGradient>
       </defs>
     </svg>
@@ -39,7 +41,10 @@ const Header: React.FC = () => {
       <SvgGradient />
       <div className="header__logo">
         <Typography as="a" href="#" variant="body1" color="primary" className="logo">
-          Psic. Spthefanie Rincon
+          <svg className="logo-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+          </svg>
+          <span className="logo-text">Vida Sabia</span>
         </Typography>
       </div>
 
@@ -70,7 +75,7 @@ const Header: React.FC = () => {
       </button>
 
       <div className={`mobile-menu ${isMenuOpen ? 'mobile-menu--open' : ''}`}>
-        <video autoPlay loop muted className="mobile-menu__background-video">
+        <video autoPlay loop muted playsInline className="mobile-menu__background-video">
           <source src="/assets/VideoFondo.mp4" type="video/mp4" />
         </video>
         
@@ -78,32 +83,74 @@ const Header: React.FC = () => {
           <ul className="mobile-navList">
             <li className="mobile-navItem">
               <a href="#servicios" className="mobile-navLink" onClick={handleLinkClick}>
-                <svg stroke={`url(#${gradientId})`} width="24" height="24" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 7h20v14H2zM16 2v5M8 2v5"/></svg>
-                <span>Servicios</span>
+                <div className="mobile-navLink-content">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                    <path d="M2 17l10 5 10-5"/>
+                    <path d="M2 12l10 5 10-5"/>
+                  </svg>
+                  <span>Servicios</span>
+                </div>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
               </a>
             </li>
             <li className="mobile-navItem">
               <a href="#proceso" className="mobile-navLink" onClick={handleLinkClick}>
-                <svg stroke={`url(#${gradientId})`} width="24" height="24" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6l3 6h12l3-6M12 2v20"/></svg>
-                <span>Proceso</span>
+                <div className="mobile-navLink-content">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  <span>Proceso</span>
+                </div>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
               </a>
             </li>
             <li className="mobile-navItem">
               <a href="#precios" className="mobile-navLink" onClick={handleLinkClick}>
-                <svg stroke={`url(#${gradientId})`} width="24" height="24" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7" y2="7"/></svg>
-                <span>Precios</span>
+                <div className="mobile-navLink-content">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="12" y1="1" x2="12" y2="23"/>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                  </svg>
+                  <span>Precios</span>
+                </div>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
               </a>
             </li>
             <li className="mobile-navItem">
               <a href="#testimonios" className="mobile-navLink" onClick={handleLinkClick}>
-                <svg stroke={`url(#${gradientId})`} width="24" height="24" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                <span>Testimonios</span>
+                <div className="mobile-navLink-content">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                  </svg>
+                  <span>Testimonios</span>
+                </div>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
               </a>
             </li>
             <li className="mobile-navItem">
               <a href="#especialistas" className="mobile-navLink" onClick={handleLinkClick}>
-                <svg stroke={`url(#${gradientId})`} width="24" height="24" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                <span>Especialistas</span>
+                <div className="mobile-navLink-content">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                  </svg>
+                  <span>Especialistas</span>
+                </div>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
               </a>
             </li>
           </ul>

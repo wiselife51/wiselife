@@ -91,14 +91,7 @@ const Process: React.FC = () => {
             ¿Cómo <span className="how-it-works-process-title-gradient">funciona?</span>
           </Typography>
           
-          <Typography 
-            as="p" 
-            variant="heroSubtitle" 
-            color="secondary"
-            className="how-it-works-process-description"
-          >
-            Un proceso simple y transparente para comenzar tu camino hacia el bienestar emocional.
-          </Typography>
+
         </div>
 
         <div className="carousel-wrapper-process">
