@@ -50,7 +50,7 @@ const Hero = () => {
         {/* Title */}
         <h1 className="hero__title">
           <span className="hero__title-line">Comienza el camino hacia tu</span>
-          <span className="hero__title-highlight">bienestar emocional</span>
+          <span className="hero__title-highlight">Bienestar emocional</span>
         </h1>
 
         {/* Description */}
