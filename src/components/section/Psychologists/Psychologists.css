@@ -1,0 +1,525 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+.psychologists-section {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem 3rem;
+  position: relative;
+  font-family: 'Inter', sans-serif;
+  scroll-snap-align: start;
+}
+
+/* Section Badge - only visible on mobile */
+.psychologists-badge {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.psychologists-badge-dot {
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(135deg, #5c6bc0 0%, #7e57c2 50%, #9c27b0 100%);
+  border-radius: 50%;
+  animation: pulse-dot-psychologists 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot-psychologists {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+.psychologists-container {
+  max-width: 1400px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Header Section */
+.psychologists-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.psychologists-title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  line-height: 1.2;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+  animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s backwards;
+}
+
+.psychologists-title-gradient {
+  background: linear-gradient(135deg, #4dd0e1 0%, #42a5f5 35%, #5c6bc0 70%, #7e57c2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 30px rgba(77, 208, 225, 0.6));
+}
+
+.psychologists-description {
+  max-width: 700px;
+  animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s backwards;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.4);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* Carousel Wrapper */
+.carousel-wrapper-psychologists {
+  position: relative;
+  animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s backwards;
+  padding: 1rem 0;
+}
+
+/* Swiper Container */
+.psychologists-swiper {
+  width: 100%;
+  padding: 1rem 0 2rem;
+  overflow: visible;
+}
+
+.psychologists-swiper .swiper-slide {
+  width: 300px;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Psychologist Card */
+.psychologist-card {
+  position: relative;
+  width: 100%;
+  background-color: rgba(17, 24, 39, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  height: auto;
+  max-height: 380px;
+  overflow: hidden;
+}
+
+.psychologist-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #5c6bc0 0%, #7e57c2 50%, #9c27b0 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  border-radius: 16px 16px 0 0;
+  z-index: 2;
+}
+
+.swiper-slide-active .psychologist-card {
+  transform: scale(1.05);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.swiper-slide-active .psychologist-card::before {
+  opacity: 1;
+}
+
+/* Psychologist Image Container */
+.psychologist-image-container {
+  position: relative;
+  width: 100%;
+  height: 120px;
+  overflow: hidden;
+  border-radius: 16px 16px 0 0;
+}
+
+.psychologist-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.swiper-slide-active .psychologist-image {
+  transform: scale(1.1);
+}
+
+.psychologist-image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, 
+    rgba(17, 24, 39, 0) 0%, 
+    rgba(17, 24, 39, 0.3) 50%,
+    rgba(17, 24, 39, 0.8) 100%
+  );
+  pointer-events: none;
+}
+
+/* Rating Badge */
+.psychologist-rating {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #fbbf24;
+  z-index: 3;
+}
+
+.psychologist-rating svg {
+  color: #fbbf24;
+}
+
+/* Psychologist Content */
+.psychologist-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  flex: 1;
+  text-align: center;
+  padding: 0.875rem;
+}
+
+.psychologist-name {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.psychologist-title {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #7e57c2;
+  margin: 0;
+}
+
+.psychologist-specialty {
+  font-size: 0.6875rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+}
+
+/* Stats */
+.psychologist-stats {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin: 0.25rem 0;
+}
+
+.psychologist-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-value {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #4dd0e1;
+}
+
+.stat-label {
+  font-size: 0.625rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Tags */
+.psychologist-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.375rem;
+  margin: 0.25rem 0;
+}
+
+.psychologist-tag {
+  padding: 0.2rem 0.5rem;
+  background: rgba(126, 87, 194, 0.15);
+  border: 1px solid rgba(126, 87, 194, 0.3);
+  border-radius: 9999px;
+  font-size: 0.625rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Button */
+.psychologist-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.875rem;
+  background: linear-gradient(135deg, rgba(92, 107, 192, 0.2) 0%, rgba(126, 87, 194, 0.25) 100%);
+  border: 1px solid rgba(126, 87, 194, 0.3);
+  border-radius: 10px;
+  color: white;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-top: auto;
+  width: 100%;
+}
+
+.psychologist-btn:hover {
+  background: linear-gradient(135deg, rgba(92, 107, 192, 0.3) 0%, rgba(126, 87, 194, 0.35) 100%);
+  border-color: rgba(126, 87, 194, 0.5);
+  transform: translateY(-2px);
+}
+
+.psychologist-btn svg {
+  transition: transform 0.3s ease;
+}
+
+.psychologist-btn:hover svg {
+  transform: translateX(4px);
+}
+
+/* Navigation Buttons */
+.swiper-button-prev-psychologists,
+.swiper-button-next-psychologists {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: rgba(17, 24, 39, 0.8);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.swiper-button-prev-psychologists:hover,
+.swiper-button-next-psychologists:hover {
+  background-color: rgba(126, 87, 194, 0.3);
+  border-color: rgba(126, 87, 194, 0.5);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.swiper-button-prev-psychologists {
+  left: -25px;
+}
+
+.swiper-button-next-psychologists {
+  right: -25px;
+}
+
+/* Hide native Swiper buttons */
+.psychologists-swiper .swiper-button-prev,
+.psychologists-swiper .swiper-button-next {
+  display: none;
+}
+
+/* Swiper Pagination */
+.psychologists-swiper .swiper-pagination {
+  bottom: 0;
+}
+
+.psychologists-swiper .swiper-pagination-bullet {
+  width: 10px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.3);
+  opacity: 1;
+  transition: all 0.3s ease;
+}
+
+.psychologists-swiper .swiper-pagination-bullet-active {
+  background: linear-gradient(135deg, #5c6bc0 0%, #7e57c2 100%);
+  width: 30px;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(126, 87, 194, 0.5);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .psychologists-title {
+    font-size: 1.8rem;
+  }
+  .psychologists-description {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .psychologists-section {
+    padding: 30px 1.5rem 25px;
+  }
+
+  .psychologists-container {
+    gap: 1rem;
+  }
+  
+  .psychologists-title {
+    font-size: 1.7rem;
+  }
+  .psychologists-description {
+    font-size: 0.9rem;
+  }
+
+  .carousel-wrapper-psychologists {
+    padding: 0.5rem 0;
+  }
+
+  .psychologists-swiper {
+    padding: 1rem 0 1.5rem;
+  }
+
+  .psychologists-swiper .swiper-slide {
+    width: 280px;
+  }
+
+  .psychologist-card {
+    max-height: 360px;
+  }
+
+  .psychologist-image-container {
+    height: 110px;
+  }
+
+  .psychologist-content {
+    padding: 0.75rem;
+    gap: 0.3rem;
+  }
+
+  .swiper-button-prev-psychologists,
+  .swiper-button-next-psychologists {
+    width: 40px;
+    height: 40px;
+  }
+
+  .swiper-button-prev-psychologists svg,
+  .swiper-button-next-psychologists svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .psychologists-section {
+    padding: 25px 1rem 20px;
+  }
+
+  .psychologists-badge {
+    display: inline-flex;
+    font-size: 0.6875rem;
+    padding: 0.375rem 0.75rem;
+  }
+  
+  .psychologists-title {
+    font-size: 1.5rem;
+  }
+  .psychologists-description {
+    font-size: 0.85rem;
+  }
+
+  .psychologists-swiper .swiper-slide {
+    width: 260px;
+  }
+
+  .psychologist-card {
+    max-height: 340px;
+  }
+
+  .psychologist-image-container {
+    height: 100px;
+  }
+
+  .psychologist-content {
+    padding: 0.625rem;
+  }
+
+  .psychologist-name {
+    font-size: 0.875rem;
+  }
+
+  .psychologist-title {
+    font-size: 0.6875rem;
+  }
+
+  .psychologist-specialty {
+    font-size: 0.625rem;
+  }
+
+  .stat-value {
+    font-size: 0.8125rem;
+  }
+
+  .stat-label {
+    font-size: 0.5625rem;
+  }
+
+  .psychologist-tag {
+    font-size: 0.5625rem;
+    padding: 0.15rem 0.4rem;
+  }
+
+  .swiper-button-prev-psychologists,
+  .swiper-button-next-psychologists {
+    display: none;
+  }
+}

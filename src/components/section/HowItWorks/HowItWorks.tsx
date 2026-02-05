@@ -79,7 +79,10 @@ const HowItWorks: React.FC = () => {
     <section id="servicios" className="how-it-works-section">
       <div className="how-it-works-container">
         <div className="how-it-works-header">
-          <span className="section-badge">Tu Proceso</span>
+          <div className="howitworks-badge howitworks-badge--mobile">
+            <span className="howitworks-badge-dot" />
+            <span>Tu Proceso</span>
+          </div>
           <h2 className="how-it-works-title">
             Un camino claro hacia tu <span className="how-it-works-title-gradient">Bienestar</span>
           </h2>

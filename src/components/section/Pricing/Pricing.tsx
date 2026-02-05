@@ -84,7 +84,10 @@ const Pricing: React.FC = () => {
     <section id="precios" className="pricing-section">
       <div className="pricing-container">
         <div className="pricing-header">
-          <span className="section-badge">Precios</span>
+          <div className="pricing-badge pricing-badge--mobile">
+            <span className="pricing-badge-dot" />
+            <span>Precios</span>
+          </div>
           <h2 className="pricing-title">
             Invierte en tu <span className="pricing-title-gradient">Bienestar</span>
           </h2>

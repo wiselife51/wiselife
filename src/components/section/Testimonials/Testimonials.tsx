@@ -53,7 +53,10 @@ const Testimonials: React.FC = () => {
     <section id="testimonios" className="testimonials-section">
       <div className="testimonials-container">
         <div className="testimonials-header">
-          <span className="section-badge">Testimonios</span>
+          <div className="testimonials-badge testimonials-badge--mobile">
+            <span className="testimonials-badge-dot" />
+            <span>Testimonios</span>
+          </div>
           <h2 className="testimonials-title">
             Lo que dicen <span className="testimonials-title-gradient">mis pacientes</span>
           </h2>
