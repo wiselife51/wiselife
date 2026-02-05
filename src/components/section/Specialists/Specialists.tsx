@@ -96,7 +96,7 @@ const services: Service[] = [
 
 const Specialists: React.FC = () => {
   return (
-    <section id="especialistas" className="specialists-section">
+    <section id="servicios" className="specialists-section">
       <div className="specialists-container">
         
         <div className="specialists-header">
