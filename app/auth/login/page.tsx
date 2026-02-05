@@ -45,7 +45,7 @@ export default function LoginPage() {
         playsInline
         className="absolute inset-0 w-full h-full object-cover"
       >
-        <source src="/assets/videos/Psicologia.mp4" type="video/mp4" />
+        <source src="/assets/VideoFondo.mp4" type="video/mp4" />
       </video>
       
       {/* Overlay */}

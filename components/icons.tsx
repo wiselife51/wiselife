@@ -1,6 +1,8 @@
+"use client"
+
 import { SVGProps } from "react"
 
-type IconProps = SVGProps<SVGSVGElement>
+export type IconProps = SVGProps<SVGSVGElement>
 
 // ============================================
 // BRAND & NAVIGATION ICONS

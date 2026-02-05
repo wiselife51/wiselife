@@ -12,7 +12,7 @@ export default function AuthErrorPage() {
         playsInline
         className="absolute inset-0 w-full h-full object-cover"
       >
-        <source src="/assets/videos/Psicologia.mp4" type="video/mp4" />
+        <source src="/assets/VideoFondo.mp4" type="video/mp4" />
       </video>
       
       {/* Overlay */}
@@ -23,7 +23,7 @@ export default function AuthErrorPage() {
         <div className="glass-card rounded-3xl p-8 md:p-10 text-center">
           {/* Icon */}
           <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center">
-            <Icons.AlertCircle className="w-10 h-10 text-white" />
+            <Icons.alertCircle className="w-10 h-10 text-white" />
           </div>
 
           {/* Title */}

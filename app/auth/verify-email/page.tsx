@@ -12,7 +12,7 @@ export default function VerifyEmailPage() {
         playsInline
         className="absolute inset-0 w-full h-full object-cover"
       >
-        <source src="/assets/videos/Psicologia.mp4" type="video/mp4" />
+        <source src="/assets/VideoFondo.mp4" type="video/mp4" />
       </video>
       
       {/* Overlay */}
@@ -23,7 +23,7 @@ export default function VerifyEmailPage() {
         <div className="glass-card rounded-3xl p-8 md:p-10 text-center">
           {/* Icon */}
           <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center">
-            <Icons.Mail className="w-10 h-10 text-white" />
+            <Icons.mail className="w-10 h-10 text-white" />
           </div>
 
           {/* Title */}
@@ -41,15 +41,15 @@ export default function VerifyEmailPage() {
             <p className="text-white/80 text-sm mb-2 font-medium">No encuentras el correo?</p>
             <ul className="text-white/60 text-sm space-y-1">
               <li className="flex items-center gap-2">
-                <Icons.Check className="w-4 h-4 text-teal-400" />
+                <Icons.check className="w-4 h-4 text-teal-400" />
                 Revisa tu carpeta de spam
               </li>
               <li className="flex items-center gap-2">
-                <Icons.Check className="w-4 h-4 text-teal-400" />
+                <Icons.check className="w-4 h-4 text-teal-400" />
                 Verifica que el correo sea correcto
               </li>
               <li className="flex items-center gap-2">
-                <Icons.Check className="w-4 h-4 text-teal-400" />
+                <Icons.check className="w-4 h-4 text-teal-400" />
                 Espera unos minutos e intenta de nuevo
               </li>
             </ul>
