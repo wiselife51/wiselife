@@ -1,0 +1,243 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+.profile-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 700px;
+  margin: 0 auto;
+  font-family: 'Inter', sans-serif;
+}
+
+/* User Card */
+.profile-user-card {
+  background: #ffffff;
+  border: 1px solid #ede8f5;
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+
+.profile-user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.profile-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ede8f5;
+}
+
+.profile-avatar-placeholder {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #e8dff5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: #5c3d8f;
+}
+
+.profile-user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.profile-user-name {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #2d1347;
+  margin: 0;
+}
+
+.profile-user-email {
+  font-size: 0.8125rem;
+  color: #7a6891;
+  margin: 0;
+}
+
+.profile-manage-link {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-top: 0.25rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #3d1e5c;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.2s;
+}
+
+.profile-manage-link:hover {
+  color: #7e57c2;
+}
+
+/* Referral Card */
+.profile-referral-card {
+  background: #ffffff;
+  border: 1px solid #ede8f5;
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.profile-referral-icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0ebf8;
+  border-radius: 12px;
+  color: #7e57c2;
+}
+
+.profile-referral-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.profile-referral-text h3 {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #2d1347;
+  margin: 0;
+}
+
+.profile-referral-text p {
+  font-size: 0.8125rem;
+  color: #7a6891;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.profile-referral-link {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-top: 0.25rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #5c3d8f;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.2s;
+}
+
+.profile-referral-link:hover {
+  color: #7e57c2;
+}
+
+/* Section title */
+.profile-section-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #2d1347;
+  margin: 0.5rem 0 0;
+  text-align: center;
+}
+
+/* Menu list */
+.profile-menu-list {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid #ede8f5;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.profile-menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #f3eff9;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+
+.profile-menu-item:last-child {
+  border-bottom: none;
+}
+
+.profile-menu-item:hover {
+  background: #faf7fd;
+}
+
+.profile-menu-item-left {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  color: #3d1e5c;
+}
+
+.profile-menu-item-left svg {
+  color: #7a6891;
+}
+
+.profile-menu-item-left span {
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+
+.profile-menu-item > svg {
+  color: #bfadd6;
+}
+
+/* Logout button */
+.profile-logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem;
+  background: #fff5f5;
+  border: 1px solid #fde0e0;
+  border-radius: 12px;
+  color: #d32f2f;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 0.5rem;
+}
+
+.profile-logout-btn:hover {
+  background: #ffebee;
+  border-color: #ef9a9a;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .profile-page {
+    gap: 1rem;
+  }
+
+  .profile-user-card,
+  .profile-referral-card {
+    padding: 1.125rem;
+  }
+
+  .profile-menu-item {
+    padding: 0.875rem 1.125rem;
+  }
+}

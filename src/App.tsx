@@ -9,6 +9,7 @@ import Onboarding from './pages/Onboarding/Onboarding';
 import ReferralSurvey from './pages/ReferralSurvey/ReferralSurvey';
 import MotivationSurvey from './pages/MotivationSurvey/MotivationSurvey';
 import Dashboard from './pages/Dashboard/Dashboard';
+import Profile from './pages/Profile/Profile';
 
 const App: React.FC = () => {
   return (
@@ -23,6 +24,7 @@ const App: React.FC = () => {
             <Route path="/referral-survey" element={<ReferralSurvey />} />
             <Route path="/motivation-survey" element={<MotivationSurvey />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/mi-perfil" element={<Profile />} />
           </Routes>
         </div>
       </AuthProvider>
