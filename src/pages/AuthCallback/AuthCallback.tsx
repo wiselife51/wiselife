@@ -29,7 +29,7 @@ const AuthCallback: React.FC = () => {
         } else if (!profile?.referral_completed) {
           navigate('/referral-survey');
         } else {
-          navigate('/dashboard');
+          navigate('/');
         }
       } else {
         navigate('/login');

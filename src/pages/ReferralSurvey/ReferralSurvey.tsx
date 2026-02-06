@@ -145,7 +145,7 @@ const ReferralSurvey: React.FC = () => {
         return;
       }
 
-      navigate('/dashboard');
+      navigate('/');
     } catch {
       setError('Ocurrio un error. Intenta de nuevo.');
       setSaving(false);
@@ -160,7 +160,7 @@ const ReferralSurvey: React.FC = () => {
       .update({ referral_completed: true })
       .eq('id', user.id);
 
-    navigate('/dashboard');
+    navigate('/');
   };
 
   const userName = user?.user_metadata?.full_name
