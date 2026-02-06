@@ -1,7 +1,6 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCoverflow, Pagination, Autoplay, Navigation } from 'swiper/modules';
 
-// Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
@@ -15,6 +14,7 @@ interface Testimonial {
   image: string;
   rating: number;
   text: string;
+  color: string;
 }
 
 const testimonials: Testimonial[] = [
@@ -23,28 +23,32 @@ const testimonials: Testimonial[] = [
     role: 'Paciente desde 2023',
     image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
     rating: 5,
-    text: 'La terapia me ayudo a superar mi ansiedad social. Me siento mas segura.',
+    text: 'La terapia me ayudo a superar mi ansiedad social. Me siento mas segura y confiada en mi dia a dia.',
+    color: '#7e57c2',
   },
   {
     name: 'Carlos Mendoza',
     role: 'Paciente desde 2022',
     image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
     rating: 5,
-    text: 'Despues de anos luchando con depresion, encontre el apoyo que necesitaba.',
+    text: 'Despues de anos luchando con depresion, encontre el apoyo profesional que realmente necesitaba.',
+    color: '#5c6bc0',
   },
   {
     name: 'Ana Martinez',
     role: 'Terapia de pareja 2024',
     image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
     rating: 5,
-    text: 'La terapia de pareja salvo nuestra relacion. Aprendimos a comunicarnos.',
+    text: 'La terapia de pareja salvo nuestra relacion. Aprendimos a comunicarnos de forma saludable.',
+    color: '#42a5f5',
   },
   {
     name: 'Jorge Silva',
     role: 'Paciente desde 2023',
     image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop',
     rating: 5,
-    text: 'El proceso terapeutico me dio herramientas para manejar el estres.',
+    text: 'El proceso terapeutico me dio herramientas concretas para manejar el estres laboral.',
+    color: '#26a69a',
   },
 ];
 
@@ -97,68 +101,67 @@ const Testimonials: React.FC = () => {
             breakpoints={{
               320: {
                 slidesPerView: 1,
-                coverflowEffect: {
-                  depth: 150,
-                  modifier: 1,
-                }
+                coverflowEffect: { depth: 150, modifier: 1 }
               },
               768: {
                 slidesPerView: 'auto',
-                coverflowEffect: {
-                  depth: 200,
-                  modifier: 1.5,
-                }
+                coverflowEffect: { depth: 200, modifier: 1.5 }
               }
             }}
           >
             {testimonials.map((testimonial, index) => (
               <SwiperSlide key={index}>
-                <div className="testimonial-card">
-                  <div className="testimonial-header">
-                    <img 
-                      src={testimonial.image} 
-                      alt={testimonial.name}
-                      className="testimonial-image"
-                    />
-                    <div className="testimonial-info">
-                      <h4 className="testimonial-name">{testimonial.name}</h4>
-                      <p className="testimonial-role">{testimonial.role}</p>
-                    </div>
-                  </div>
-
-                  <div className="testimonial-rating">
-                    {Array.from({ length: testimonial.rating }).map((_, i) => (
-                      <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                      </svg>
-                    ))}
-                  </div>
-
-                  <p className="testimonial-text">"{testimonial.text}"</p>
-
-                  <div className="testimonial-quote-icon">
-                    <svg width="35" height="35" viewBox="0 0 24 24" fill="currentColor" opacity="0.1">
-                      <path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z"/>
+                <div
+                  className="testimonial-card"
+                  style={{ '--testimonial-color': testimonial.color } as React.CSSProperties}
+                >
+                  {/* Quote icon */}
+                  <div className="testimonial-quote">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z" />
                     </svg>
+                  </div>
+
+                  {/* Avatar */}
+                  <div className="testimonial-avatar-ring">
+                    <img
+                      src={testimonial.image}
+                      alt={testimonial.name}
+                      className="testimonial-avatar"
+                    />
+                  </div>
+
+                  <div className="testimonial-content">
+                    <h3 className="testimonial-name">{testimonial.name}</h3>
+                    <p className="testimonial-role">{testimonial.role}</p>
+
+                    {/* Stars */}
+                    <div className="testimonial-stars">
+                      {Array.from({ length: testimonial.rating }).map((_, i) => (
+                        <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                        </svg>
+                      ))}
+                    </div>
+
+                    <p className="testimonial-text">"{testimonial.text}"</p>
                   </div>
                 </div>
               </SwiperSlide>
             ))}
           </Swiper>
 
-          {/* Botones de navegación personalizados */}
           <button className="swiper-button-prev-testimonials">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-              <polyline points="15 18 9 12 15 6"/>
+              <polyline points="15 18 9 12 15 6" />
             </svg>
           </button>
           <button className="swiper-button-next-testimonials">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-              <polyline points="9 18 15 12 9 6"/>
+              <polyline points="9 18 15 12 9 6" />
             </svg>
           </button>
         </div>
-
       </div>
     </section>
   );
