@@ -2,7 +2,6 @@ import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCoverflow, Pagination, Autoplay, Navigation } from 'swiper/modules';
 
-// Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
@@ -29,7 +28,7 @@ const plans: Plan[] = [
     highlight: 'Gratis',
     color: '#26a69a',
     icon: (
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
       </svg>
     ),
@@ -42,7 +41,7 @@ const plans: Plan[] = [
     highlight: null,
     color: '#5c6bc0',
     icon: (
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
         <circle cx="12" cy="7" r="4" />
       </svg>
@@ -56,7 +55,7 @@ const plans: Plan[] = [
     highlight: 'Mas Popular',
     color: '#7e57c2',
     icon: (
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
         <circle cx="9" cy="7" r="4" />
         <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
@@ -71,7 +70,7 @@ const plans: Plan[] = [
     highlight: 'Mejor Valor',
     color: '#42a5f5',
     icon: (
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
         <circle cx="12" cy="12" r="10" />
         <polyline points="12 6 12 12 16 14" />
       </svg>
@@ -128,41 +127,37 @@ const Pricing: React.FC = () => {
             breakpoints={{
               320: {
                 slidesPerView: 1,
-                coverflowEffect: {
-                  depth: 150,
-                  modifier: 1,
-                }
+                coverflowEffect: { depth: 150, modifier: 1 }
               },
               768: {
                 slidesPerView: 'auto',
-                coverflowEffect: {
-                  depth: 200,
-                  modifier: 1.5,
-                }
+                coverflowEffect: { depth: 200, modifier: 1.5 }
               }
             }}
           >
             {plans.map((plan, index) => (
               <SwiperSlide key={index}>
-                <div className="pricing-card">
+                <div
+                  className="pricing-card"
+                  style={{ '--plan-color': plan.color } as React.CSSProperties}
+                >
                   {plan.highlight && (
                     <div className="pricing-highlight">{plan.highlight}</div>
                   )}
-                  
-                  <div className="pricing-icon">
-                    {plan.icon}
-                  </div>
-                  
+
+                  <div className="pricing-icon">{plan.icon}</div>
+
                   <div className="pricing-content">
                     <h3 className="plan-name">{plan.name}</h3>
                     <div className="plan-price">{plan.price}</div>
                     <p className="plan-period">{plan.period}</p>
-                    
+
                     <ul className="plan-features">
-                      {plan.features.map((feature, featureIndex) => (
-                        <li key={featureIndex} className="plan-feature">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                            <polyline points="20 6 9 17 4 12"></polyline>
+                      {plan.features.map((feature, i) => (
+                        <li key={i} className="plan-feature">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.15" />
+                            <polyline points="8 12 11 15 16 9" stroke="currentColor" strokeWidth="2.5" fill="none" />
                           </svg>
                           <span>{feature}</span>
                         </li>
@@ -172,8 +167,8 @@ const Pricing: React.FC = () => {
                     <button className="pricing-btn">
                       <span>Seleccionar</span>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <line x1="5" y1="12" x2="19" y2="12"/>
-                        <polyline points="12 5 19 12 12 19"/>
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
                       </svg>
                     </button>
                   </div>
@@ -182,19 +177,17 @@ const Pricing: React.FC = () => {
             ))}
           </Swiper>
 
-          {/* Botones de navegación personalizados */}
           <button className="swiper-button-prev-pricing">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-              <polyline points="15 18 9 12 15 6"/>
+              <polyline points="15 18 9 12 15 6" />
             </svg>
           </button>
           <button className="swiper-button-next-pricing">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-              <polyline points="9 18 15 12 9 6"/>
+              <polyline points="9 18 15 12 9 6" />
             </svg>
           </button>
         </div>
-
       </div>
     </section>
   );
