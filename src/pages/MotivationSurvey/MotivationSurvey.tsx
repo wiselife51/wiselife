@@ -82,7 +82,7 @@ const MotivationSurvey: React.FC = () => {
         return;
       }
 
-      navigate('/');
+      navigate('/dashboard');
     } catch {
       setError('Ocurrio un error. Intenta de nuevo.');
       setSaving(false);
@@ -97,7 +97,7 @@ const MotivationSurvey: React.FC = () => {
       .update({ motivation_completed: true })
       .eq('id', user.id);
 
-    navigate('/');
+    navigate('/dashboard');
   };
 
   if (loading) return null;

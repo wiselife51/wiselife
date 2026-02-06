@@ -43,15 +43,42 @@ const Onboarding: React.FC = () => {
     setSaving(true);
 
     try {
-      const { error: updateError } = await supabase
+      // Verificar si existe el perfil
+      const { data: existingProfile } = await supabase
         .from('profiles')
-        .update({
-          phone: formData.phone || null,
-          date_of_birth: formData.dateOfBirth || null,
-          gender: formData.gender || null,
-          onboarding_completed: true,
-        })
-        .eq('id', user.id);
+        .select('id')
+        .eq('id', user.id)
+        .single();
+
+      let updateError;
+
+      if (!existingProfile) {
+        const { error: insertErr } = await supabase
+          .from('profiles')
+          .insert({
+            id: user.id,
+            full_name: user.user_metadata?.full_name || user.user_metadata?.name || null,
+            email: user.email || null,
+            avatar_url: user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
+            provider: user.app_metadata?.provider || 'google',
+            phone: formData.phone || null,
+            date_of_birth: formData.dateOfBirth || null,
+            gender: formData.gender || null,
+            onboarding_completed: true,
+          });
+        updateError = insertErr;
+      } else {
+        const { error: updErr } = await supabase
+          .from('profiles')
+          .update({
+            phone: formData.phone || null,
+            date_of_birth: formData.dateOfBirth || null,
+            gender: formData.gender || null,
+            onboarding_completed: true,
+          })
+          .eq('id', user.id);
+        updateError = updErr;
+      }
 
       if (updateError) {
         setError(updateError.message);
