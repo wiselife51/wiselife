@@ -68,13 +68,20 @@ const MotivationSurvey: React.FC = () => {
     setSaving(true);
 
     try {
-      const { error: updateError } = await supabase
+      console.log("[v0] MotivationSurvey - user.id:", user.id);
+      console.log("[v0] MotivationSurvey - selected:", selected);
+
+      const { error: updateError, data: updateData } = await supabase
         .from('profiles')
         .update({
           motivation: selected,
           motivation_completed: true,
         })
-        .eq('id', user.id);
+        .eq('id', user.id)
+        .select();
+
+      console.log("[v0] MotivationSurvey - updateError:", updateError);
+      console.log("[v0] MotivationSurvey - updateData:", updateData);
 
       if (updateError) {
         setError(updateError.message);

@@ -43,15 +43,53 @@ const Onboarding: React.FC = () => {
     setSaving(true);
 
     try {
-      const { error: updateError } = await supabase
+      console.log("[v0] Onboarding - user.id:", user.id);
+      console.log("[v0] Onboarding - formData:", formData);
+
+      // Primero verificamos si existe el perfil
+      const { data: existingProfile, error: selectError } = await supabase
         .from('profiles')
-        .update({
-          phone: formData.phone || null,
-          date_of_birth: formData.dateOfBirth || null,
-          gender: formData.gender || null,
-          onboarding_completed: true,
-        })
-        .eq('id', user.id);
+        .select('id')
+        .eq('id', user.id)
+        .single();
+
+      console.log("[v0] Onboarding - existing profile:", existingProfile, "selectError:", selectError);
+
+      let updateError;
+
+      if (!existingProfile) {
+        // Si no existe el perfil, lo creamos con insert
+        console.log("[v0] Onboarding - Profile not found, inserting...");
+        const { error: insertErr } = await supabase
+          .from('profiles')
+          .insert({
+            id: user.id,
+            full_name: user.user_metadata?.full_name || user.user_metadata?.name || null,
+            email: user.email || null,
+            avatar_url: user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
+            provider: user.app_metadata?.provider || 'google',
+            phone: formData.phone || null,
+            date_of_birth: formData.dateOfBirth || null,
+            gender: formData.gender || null,
+            onboarding_completed: true,
+          });
+        updateError = insertErr;
+      } else {
+        // Si existe, hacemos update
+        console.log("[v0] Onboarding - Profile found, updating...");
+        const { error: updErr } = await supabase
+          .from('profiles')
+          .update({
+            phone: formData.phone || null,
+            date_of_birth: formData.dateOfBirth || null,
+            gender: formData.gender || null,
+            onboarding_completed: true,
+          })
+          .eq('id', user.id);
+        updateError = updErr;
+      }
+
+      console.log("[v0] Onboarding - updateError:", updateError);
 
       if (updateError) {
         setError(updateError.message);
