@@ -59,7 +59,7 @@ const Onboarding: React.FC = () => {
         return;
       }
 
-      navigate('/dashboard');
+      navigate('/referral-survey');
     } catch {
       setError('Ocurrio un error. Intenta de nuevo.');
       setSaving(false);

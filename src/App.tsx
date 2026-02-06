@@ -6,6 +6,7 @@ import Home from './pages/Home/Home';
 import Login from './pages/Login/Login';
 import AuthCallback from './pages/AuthCallback/AuthCallback';
 import Onboarding from './pages/Onboarding/Onboarding';
+import ReferralSurvey from './pages/ReferralSurvey/ReferralSurvey';
 
 const App: React.FC = () => {
   return (
@@ -17,6 +18,7 @@ const App: React.FC = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/onboarding" element={<Onboarding />} />
+            <Route path="/referral-survey" element={<ReferralSurvey />} />
           </Routes>
         </div>
       </AuthProvider>
