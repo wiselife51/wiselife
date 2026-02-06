@@ -121,8 +121,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           </svg>
           <span>Cerrar sesion</span>
         </button>
-      </aside>
-    </>
+    </aside>
   );
 };
 
