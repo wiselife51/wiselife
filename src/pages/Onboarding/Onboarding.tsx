@@ -43,23 +43,16 @@ const Onboarding: React.FC = () => {
     setSaving(true);
 
     try {
-      console.log("[v0] Onboarding - user.id:", user.id);
-      console.log("[v0] Onboarding - formData:", formData);
-
-      // Primero verificamos si existe el perfil
-      const { data: existingProfile, error: selectError } = await supabase
+      // Verificar si existe el perfil
+      const { data: existingProfile } = await supabase
         .from('profiles')
         .select('id')
         .eq('id', user.id)
         .single();
 
-      console.log("[v0] Onboarding - existing profile:", existingProfile, "selectError:", selectError);
-
       let updateError;
 
       if (!existingProfile) {
-        // Si no existe el perfil, lo creamos con insert
-        console.log("[v0] Onboarding - Profile not found, inserting...");
         const { error: insertErr } = await supabase
           .from('profiles')
           .insert({
@@ -75,8 +68,6 @@ const Onboarding: React.FC = () => {
           });
         updateError = insertErr;
       } else {
-        // Si existe, hacemos update
-        console.log("[v0] Onboarding - Profile found, updating...");
         const { error: updErr } = await supabase
           .from('profiles')
           .update({
@@ -88,8 +79,6 @@ const Onboarding: React.FC = () => {
           .eq('id', user.id);
         updateError = updErr;
       }
-
-      console.log("[v0] Onboarding - updateError:", updateError);
 
       if (updateError) {
         setError(updateError.message);

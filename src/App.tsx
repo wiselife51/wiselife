@@ -8,6 +8,7 @@ import AuthCallback from './pages/AuthCallback/AuthCallback';
 import Onboarding from './pages/Onboarding/Onboarding';
 import ReferralSurvey from './pages/ReferralSurvey/ReferralSurvey';
 import MotivationSurvey from './pages/MotivationSurvey/MotivationSurvey';
+import Dashboard from './pages/Dashboard/Dashboard';
 
 const App: React.FC = () => {
   return (
@@ -21,6 +22,7 @@ const App: React.FC = () => {
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/referral-survey" element={<ReferralSurvey />} />
             <Route path="/motivation-survey" element={<MotivationSurvey />} />
+            <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
         </div>
       </AuthProvider>

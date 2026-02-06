@@ -17,10 +17,10 @@ const AuthCallback: React.FC = () => {
       }
 
       if (session?.user) {
-        // Verificar estado del onboarding y referral
+        // Verificar estado del onboarding, referral y motivation
         const { data: profile } = await supabase
           .from('profiles')
-          .select('onboarding_completed, referral_completed')
+          .select('onboarding_completed, referral_completed, motivation_completed')
           .eq('id', session.user.id)
           .single();
 
@@ -28,8 +28,10 @@ const AuthCallback: React.FC = () => {
           navigate('/onboarding');
         } else if (!profile?.referral_completed) {
           navigate('/referral-survey');
+        } else if (!profile?.motivation_completed) {
+          navigate('/motivation-survey');
         } else {
-          navigate('/');
+          navigate('/dashboard');
         }
       } else {
         navigate('/login');

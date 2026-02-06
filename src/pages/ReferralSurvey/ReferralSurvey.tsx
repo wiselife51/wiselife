@@ -131,21 +131,13 @@ const ReferralSurvey: React.FC = () => {
     setSaving(true);
 
     try {
-      console.log("[v0] ReferralSurvey - user.id:", user.id);
-      console.log("[v0] ReferralSurvey - selected:", selected);
-
-      const { error: updateError, data: updateData, count } = await supabase
+      const { error: updateError } = await supabase
         .from('profiles')
         .update({
           referral_sources: selected,
           referral_completed: true,
         })
-        .eq('id', user.id)
-        .select();
-
-      console.log("[v0] ReferralSurvey - updateError:", updateError);
-      console.log("[v0] ReferralSurvey - updateData:", updateData);
-      console.log("[v0] ReferralSurvey - count:", count);
+        .eq('id', user.id);
 
       if (updateError) {
         setError(updateError.message);

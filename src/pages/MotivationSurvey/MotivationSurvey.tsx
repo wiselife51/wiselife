@@ -68,20 +68,13 @@ const MotivationSurvey: React.FC = () => {
     setSaving(true);
 
     try {
-      console.log("[v0] MotivationSurvey - user.id:", user.id);
-      console.log("[v0] MotivationSurvey - selected:", selected);
-
-      const { error: updateError, data: updateData } = await supabase
+      const { error: updateError } = await supabase
         .from('profiles')
         .update({
           motivation: selected,
           motivation_completed: true,
         })
-        .eq('id', user.id)
-        .select();
-
-      console.log("[v0] MotivationSurvey - updateError:", updateError);
-      console.log("[v0] MotivationSurvey - updateData:", updateData);
+        .eq('id', user.id);
 
       if (updateError) {
         setError(updateError.message);
@@ -89,7 +82,7 @@ const MotivationSurvey: React.FC = () => {
         return;
       }
 
-      navigate('/');
+      navigate('/dashboard');
     } catch {
       setError('Ocurrio un error. Intenta de nuevo.');
       setSaving(false);
@@ -104,7 +97,7 @@ const MotivationSurvey: React.FC = () => {
       .update({ motivation_completed: true })
       .eq('id', user.id);
 
-    navigate('/');
+    navigate('/dashboard');
   };
 
   if (loading) return null;
