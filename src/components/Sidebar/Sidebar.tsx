@@ -1,42 +1,34 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './Sidebar.css';
 
-const Sidebar: React.FC = () => {
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const { signOut } = useAuth();
   const navigate = useNavigate();
-  const [collapsed, setCollapsed] = useState(false);
 
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
   };
 
+  const handleNavClick = () => {
+    onClose();
+  };
+
   return (
-    <>
-      <button
-        className="sidebar-mobile-toggle"
-        onClick={() => setCollapsed(!collapsed)}
-        type="button"
-        aria-label="Abrir menu"
-      >
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="3" y1="12" x2="21" y2="12" />
-          <line x1="3" y1="6" x2="21" y2="6" />
-          <line x1="3" y1="18" x2="21" y2="18" />
-        </svg>
-      </button>
-
-      {collapsed && <div className="sidebar-backdrop" onClick={() => setCollapsed(false)} />}
-
-      <aside className={`sidebar ${collapsed ? 'sidebar--open' : ''}`}>
+    <aside className={`sidebar ${isOpen ? 'sidebar--open' : ''}`}>
         <div className="sidebar-logo">
           <span className="sidebar-logo-text">Vida Sabia</span>
         </div>
 
         <nav className="sidebar-nav">
-          <NavLink to="/dashboard" className={({ isActive }) => `sidebar-link ${isActive ? 'sidebar-link--active' : ''}`} onClick={() => setCollapsed(false)}>
+          <NavLink to="/dashboard" className={({ isActive }) => `sidebar-link ${isActive ? 'sidebar-link--active' : ''}`} onClick={handleNavClick}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
               <polyline points="9 22 9 12 15 12 15 22" />
@@ -44,14 +36,14 @@ const Sidebar: React.FC = () => {
             <span>Inicio</span>
           </NavLink>
 
-          <NavLink to="/para-ti" className={({ isActive }) => `sidebar-link ${isActive ? 'sidebar-link--active' : ''}`} onClick={() => setCollapsed(false)}>
+          <NavLink to="/para-ti" className={({ isActive }) => `sidebar-link ${isActive ? 'sidebar-link--active' : ''}`} onClick={handleNavClick}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
             </svg>
             <span>Para ti</span>
           </NavLink>
 
-          <NavLink to="/especialistas" className={({ isActive }) => `sidebar-link ${isActive ? 'sidebar-link--active' : ''}`} onClick={() => setCollapsed(false)}>
+          <NavLink to="/especialistas" className={({ isActive }) => `sidebar-link ${isActive ? 'sidebar-link--active' : ''}`} onClick={handleNavClick}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
               <circle cx="9" cy="7" r="4" />
@@ -61,7 +53,7 @@ const Sidebar: React.FC = () => {
             <span>Especialistas</span>
           </NavLink>
 
-          <NavLink to="/mis-citas" className={({ isActive }) => `sidebar-link ${isActive ? 'sidebar-link--active' : ''}`} onClick={() => setCollapsed(false)}>
+          <NavLink to="/mis-citas" className={({ isActive }) => `sidebar-link ${isActive ? 'sidebar-link--active' : ''}`} onClick={handleNavClick}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
               <line x1="16" y1="2" x2="16" y2="6" />
@@ -71,7 +63,7 @@ const Sidebar: React.FC = () => {
             <span>Mis citas</span>
           </NavLink>
 
-          <NavLink to="/mis-paquetes" className={({ isActive }) => `sidebar-link ${isActive ? 'sidebar-link--active' : ''}`} onClick={() => setCollapsed(false)}>
+          <NavLink to="/mis-paquetes" className={({ isActive }) => `sidebar-link ${isActive ? 'sidebar-link--active' : ''}`} onClick={handleNavClick}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
               <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
@@ -80,7 +72,7 @@ const Sidebar: React.FC = () => {
             <span>Mis paquetes</span>
           </NavLink>
 
-          <NavLink to="/mis-especialistas" className={({ isActive }) => `sidebar-link ${isActive ? 'sidebar-link--active' : ''}`} onClick={() => setCollapsed(false)}>
+          <NavLink to="/mis-especialistas" className={({ isActive }) => `sidebar-link ${isActive ? 'sidebar-link--active' : ''}`} onClick={handleNavClick}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
               <circle cx="9" cy="7" r="4" />
@@ -90,7 +82,7 @@ const Sidebar: React.FC = () => {
             <span>Mis especialistas</span>
           </NavLink>
 
-          <NavLink to="/pagos" className={({ isActive }) => `sidebar-link ${isActive ? 'sidebar-link--active' : ''}`} onClick={() => setCollapsed(false)}>
+          <NavLink to="/pagos" className={({ isActive }) => `sidebar-link ${isActive ? 'sidebar-link--active' : ''}`} onClick={handleNavClick}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="12" y1="1" x2="12" y2="23" />
               <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
