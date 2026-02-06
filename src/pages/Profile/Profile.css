@@ -11,8 +11,10 @@
 
 /* User Card */
 .profile-user-card {
-  background: #ffffff;
-  border: 1px solid #ede8f5;
+  background: rgba(17, 24, 39, 0.5);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
   padding: 1.5rem;
 }
@@ -28,20 +30,20 @@
   height: 56px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #ede8f5;
+  border: 2px solid rgba(126, 87, 194, 0.5);
 }
 
 .profile-avatar-placeholder {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: #e8dff5;
+  background: linear-gradient(135deg, #5c6bc0, #7e57c2);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.375rem;
   font-weight: 700;
-  color: #5c3d8f;
+  color: #ffffff;
 }
 
 .profile-user-details {
@@ -53,13 +55,13 @@
 .profile-user-name {
   font-size: 1.125rem;
   font-weight: 700;
-  color: #2d1347;
+  color: #ffffff;
   margin: 0;
 }
 
 .profile-user-email {
   font-size: 0.8125rem;
-  color: #7a6891;
+  color: rgba(255, 255, 255, 0.55);
   margin: 0;
 }
 
@@ -71,20 +73,22 @@
   font-family: 'Inter', sans-serif;
   font-size: 0.8125rem;
   font-weight: 500;
-  color: #3d1e5c;
+  color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
   text-align: left;
   transition: color 0.2s;
 }
 
 .profile-manage-link:hover {
-  color: #7e57c2;
+  color: #b388ff;
 }
 
 /* Referral Card */
 .profile-referral-card {
-  background: #ffffff;
-  border: 1px solid #ede8f5;
+  background: rgba(17, 24, 39, 0.5);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
   padding: 1.25rem 1.5rem;
   display: flex;
@@ -99,9 +103,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f0ebf8;
+  background: rgba(126, 87, 194, 0.15);
   border-radius: 12px;
-  color: #7e57c2;
+  color: #b388ff;
 }
 
 .profile-referral-text {
@@ -113,13 +117,13 @@
 .profile-referral-text h3 {
   font-size: 0.9375rem;
   font-weight: 700;
-  color: #2d1347;
+  color: #ffffff;
   margin: 0;
 }
 
 .profile-referral-text p {
   font-size: 0.8125rem;
-  color: #7a6891;
+  color: rgba(255, 255, 255, 0.55);
   margin: 0;
   line-height: 1.5;
 }
@@ -132,21 +136,21 @@
   font-family: 'Inter', sans-serif;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #5c3d8f;
+  color: #b388ff;
   cursor: pointer;
   text-align: left;
   transition: color 0.2s;
 }
 
 .profile-referral-link:hover {
-  color: #7e57c2;
+  color: #ce93d8;
 }
 
 /* Section title */
 .profile-section-title {
   font-size: 1.125rem;
   font-weight: 700;
-  color: #2d1347;
+  color: rgba(255, 255, 255, 0.9);
   margin: 0.5rem 0 0;
   text-align: center;
 }
@@ -155,8 +159,10 @@
 .profile-menu-list {
   display: flex;
   flex-direction: column;
-  background: #ffffff;
-  border: 1px solid #ede8f5;
+  background: rgba(17, 24, 39, 0.5);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
   overflow: hidden;
 }
@@ -168,7 +174,7 @@
   padding: 1rem 1.5rem;
   background: none;
   border: none;
-  border-bottom: 1px solid #f3eff9;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   cursor: pointer;
   transition: background 0.2s;
   font-family: 'Inter', sans-serif;
@@ -179,18 +185,18 @@
 }
 
 .profile-menu-item:hover {
-  background: #faf7fd;
+  background: rgba(126, 87, 194, 0.1);
 }
 
 .profile-menu-item-left {
   display: flex;
   align-items: center;
   gap: 0.875rem;
-  color: #3d1e5c;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .profile-menu-item-left svg {
-  color: #7a6891;
+  color: rgba(255, 255, 255, 0.45);
 }
 
 .profile-menu-item-left span {
@@ -199,7 +205,7 @@
 }
 
 .profile-menu-item > svg {
-  color: #bfadd6;
+  color: rgba(255, 255, 255, 0.25);
 }
 
 /* Logout button */
@@ -209,10 +215,10 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 0.875rem;
-  background: #fff5f5;
-  border: 1px solid #fde0e0;
+  background: rgba(239, 83, 80, 0.1);
+  border: 1px solid rgba(239, 83, 80, 0.2);
   border-radius: 12px;
-  color: #d32f2f;
+  color: #ef5350;
   font-family: 'Inter', sans-serif;
   font-size: 0.9375rem;
   font-weight: 600;
@@ -222,8 +228,8 @@
 }
 
 .profile-logout-btn:hover {
-  background: #ffebee;
-  border-color: #ef9a9a;
+  background: rgba(239, 83, 80, 0.2);
+  border-color: rgba(239, 83, 80, 0.4);
 }
 
 /* Responsive */
