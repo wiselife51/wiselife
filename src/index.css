@@ -1,5 +1,6 @@
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 :root {
@@ -32,10 +33,9 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: transparent; /* CAMBIADO: Ahora es transparente para ver el video */
+  background-color: transparent;
   color: var(--color-text-primary);
-  
-  /* Ya no necesitas padding-bottom porque el Footer es fixed */
+  overflow-x: hidden;
   padding-bottom: 0;
 }
 

@@ -1,18 +1,25 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
 import './App.css';
 import Home from './pages/Home/Home';
 import Login from './pages/Login/Login';
+import AuthCallback from './pages/AuthCallback/AuthCallback';
+import Onboarding from './pages/Onboarding/Onboarding';
 
 const App: React.FC = () => {
   return (
     <BrowserRouter>
-      <div className="app-container">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-        </Routes>
-      </div>
+      <AuthProvider>
+        <div className="app-container">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/onboarding" element={<Onboarding />} />
+          </Routes>
+        </div>
+      </AuthProvider>
     </BrowserRouter>
   );
 };
