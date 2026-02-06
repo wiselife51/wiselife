@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import './Login.css';
 
 type AuthMode = 'login' | 'register';
@@ -7,11 +8,51 @@ type AuthMode = 'login' | 'register';
 const Login: React.FC = () => {
   const [mode, setMode] = useState<AuthMode>('login');
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { signInWithGoogle, signInWithFacebook, signInWithEmail, signUpWithEmail } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Pendiente: conectar con backend
+    setError(null);
+    setLoading(true);
+
+    try {
+      if (mode === 'login') {
+        const { error: loginError } = await signInWithEmail(email, password);
+        if (loginError) {
+          setError(loginError);
+          setLoading(false);
+          return;
+        }
+        navigate('/onboarding');
+      } else {
+        const { error: signupError } = await signUpWithEmail(email, password, name);
+        if (signupError) {
+          setError(signupError);
+          setLoading(false);
+          return;
+        }
+        navigate('/onboarding');
+      }
+    } catch {
+      setError('Ocurrio un error inesperado');
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setError(null);
+    await signInWithGoogle();
+  };
+
+  const handleFacebookLogin = async () => {
+    setError(null);
+    await signInWithFacebook();
   };
 
   const handleGoHome = () => {
@@ -83,7 +124,7 @@ const Login: React.FC = () => {
 
           {/* Social buttons */}
           <div className="login-social">
-            <button className="login-social-btn" type="button">
+            <button className="login-social-btn" type="button" onClick={handleGoogleLogin}>
               <svg width="20" height="20" viewBox="0 0 24 24">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />
                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
@@ -92,13 +133,16 @@ const Login: React.FC = () => {
               </svg>
               <span>Google</span>
             </button>
-            <button className="login-social-btn" type="button">
+            <button className="login-social-btn" type="button" onClick={handleFacebookLogin}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
               </svg>
               <span>Facebook</span>
             </button>
           </div>
+
+          {/* Error message */}
+          {error && <p className="login-error">{error}</p>}
 
           {/* Divider */}
           <div className="login-divider">
@@ -123,6 +167,8 @@ const Login: React.FC = () => {
                     className="login-input"
                     placeholder="Tu nombre"
                     autoComplete="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                   />
                 </div>
               </div>
@@ -141,6 +187,9 @@ const Login: React.FC = () => {
                   className="login-input"
                   placeholder="tu@email.com"
                   autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
                 />
               </div>
             </div>
@@ -163,6 +212,9 @@ const Login: React.FC = () => {
                   className="login-input"
                   placeholder="Tu contrasena"
                   autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
                 />
                 <button
                   type="button"
@@ -185,11 +237,20 @@ const Login: React.FC = () => {
               </div>
             </div>
 
-            <button className="login-submit" type="submit">
-              <span>{mode === 'login' ? 'Iniciar Sesion' : 'Crear Cuenta'}</span>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
+            <button className="login-submit" type="submit" disabled={loading}>
+              {loading ? (
+                <>
+                  <span className="login-btn-spinner" />
+                  <span>Cargando...</span>
+                </>
+              ) : (
+                <>
+                  <span>{mode === 'login' ? 'Iniciar Sesion' : 'Crear Cuenta'}</span>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </>
+              )}
             </button>
           </form>
 

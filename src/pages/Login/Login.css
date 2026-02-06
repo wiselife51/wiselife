@@ -401,6 +401,37 @@
   color: #9c27b0;
 }
 
+/* Error message */
+.login-error {
+  font-size: 0.8125rem;
+  color: #ef5350;
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  background: rgba(239, 83, 80, 0.1);
+  border: 1px solid rgba(239, 83, 80, 0.2);
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* Button spinner */
+.login-btn-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: loginSpin 0.6s linear infinite;
+}
+
+@keyframes loginSpin {
+  to { transform: rotate(360deg); }
+}
+
+.login-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 480px) {
   .login-content {
