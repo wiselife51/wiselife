@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Header.css';
 
 interface NavItem {
@@ -78,6 +79,7 @@ const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -154,10 +156,10 @@ const Header: React.FC = () => {
 
       {/* Desktop Actions */}
       <div className="header__actions">
-        <button className="btn btn--ghost" type="button">
-          <span>Iniciar Sesión</span>
+        <button className="btn btn--ghost" type="button" onClick={() => navigate('/login')}>
+          <span>Iniciar Sesion</span>
         </button>
-        <button className="btn btn--primary" type="button">
+        <button className="btn btn--primary" type="button" onClick={() => navigate('/login')}>
           <span>Agendar Cita</span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <path d="M5 12h14M12 5l7 7-7 7" />
@@ -206,10 +208,10 @@ const Header: React.FC = () => {
         </nav>
 
         <div className="mobile-menu__actions">
-          <button className="btn btn--ghost btn--full" onClick={handleLinkClick} type="button">
-            Iniciar Sesión
+          <button className="btn btn--ghost btn--full" onClick={() => { handleLinkClick(); navigate('/login'); }} type="button">
+            Iniciar Sesion
           </button>
-          <button className="btn btn--primary btn--full" onClick={handleLinkClick} type="button">
+          <button className="btn btn--primary btn--full" onClick={() => { handleLinkClick(); navigate('/login'); }} type="button">
             <span>Agendar Cita</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M5 12h14M12 5l7 7-7 7" />
