@@ -759,6 +759,60 @@
   gap: 1.25rem;
 }
 
+.sp-nequi-dest {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.75rem 1rem;
+  background: rgba(230, 0, 126, 0.08);
+  border: 1px solid rgba(230, 0, 126, 0.2);
+  border-radius: 10px;
+  width: 100%;
+}
+
+.sp-nequi-dest-label {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.sp-nequi-dest-phone {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ff4081;
+  letter-spacing: 0.03em;
+}
+
+.sp-payment-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.sp-payment-divider::before,
+.sp-payment-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sp-payment-divider span {
+  font-size: 0.6875rem;
+  color: rgba(255, 255, 255, 0.35);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.sp-payment-ref-help {
+  font-size: 0.6875rem;
+  color: rgba(255, 255, 255, 0.3);
+  margin-top: -0.25rem;
+}
+
 .sp-nequi-logo {
   display: flex;
   align-items: center;

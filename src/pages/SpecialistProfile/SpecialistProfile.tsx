@@ -253,12 +253,34 @@ const SpecialistProfile: React.FC = () => {
   };
 
   const handleNequiPayment = () => {
-    // Open Nequi deep link for payment
     const amount = psy?.session_price || 0;
-    const nequiPhone = psy?.phone || '';
-    // Nequi push payment URL - redirects to Nequi app
-    const nequiUrl = `https://recarga.nequi.com.co/bdigitalpay?phone=${nequiPhone}&value=${amount}&reference=${createdApptId}`;
-    window.open(nequiUrl, '_blank');
+    // Usar el numero configurado del negocio (variable de entorno) o el del psicologo
+    const nequiPhone = import.meta.env.VITE_NEQUI_PHONE || psy?.phone || '';
+    const ref = createdApptId || 'cita';
+
+    // Detectar si es movil para usar deep link de la app Nequi
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    if (isMobile) {
+      // Deep link que abre directamente la app Nequi instalada
+      // Si no esta instalada, abre la pagina web de Nequi
+      const deepLink = `nequi://payments?phoneNumber=${nequiPhone}&amount=${amount}&reference=${ref}`;
+      const webFallback = `https://recarga.nequi.com.co/bdigitalpay?phone=${nequiPhone}&value=${amount}&reference=${ref}`;
+
+      // Intentar abrir la app, si falla ir al web
+      const timeout = setTimeout(() => {
+        window.open(webFallback, '_blank');
+      }, 2500);
+
+      window.location.href = deepLink;
+
+      // Si la app se abrio, cancelar el fallback
+      window.addEventListener('blur', () => clearTimeout(timeout), { once: true });
+    } else {
+      // En desktop: abrir la pagina web de Nequi
+      const webUrl = `https://recarga.nequi.com.co/bdigitalpay?phone=${nequiPhone}&value=${amount}&reference=${ref}`;
+      window.open(webUrl, '_blank');
+    }
   };
 
   const handleConfirmPayment = async () => {
@@ -634,26 +656,31 @@ const SpecialistProfile: React.FC = () => {
                     </div>
                     <p className="sp-payment-amount">${psy.session_price?.toLocaleString()} COP</p>
 
+                    <div className="sp-nequi-dest">
+                      <span className="sp-nequi-dest-label">Enviar a Nequi:</span>
+                      <span className="sp-nequi-dest-phone">{import.meta.env.VITE_NEQUI_PHONE || psy?.phone || 'No configurado'}</span>
+                    </div>
+
                     <div className="sp-payment-steps">
                       <div className="sp-payment-step">
                         <span className="sp-step-num">1</span>
                         <div>
-                          <strong>Abre Nequi en tu celular</strong>
-                          <p>O haz click en el boton para ir a Nequi</p>
+                          <strong>Haz click en "Pagar con Nequi"</strong>
+                          <p>Se abrira Nequi automaticamente en tu celular</p>
                         </div>
                       </div>
                       <div className="sp-payment-step">
                         <span className="sp-step-num">2</span>
                         <div>
-                          <strong>Realiza el pago</strong>
-                          <p>Envia ${psy.session_price?.toLocaleString()} COP</p>
+                          <strong>Confirma el pago en Nequi</strong>
+                          <p>Envia exactamente ${psy.session_price?.toLocaleString()} COP al numero indicado</p>
                         </div>
                       </div>
                       <div className="sp-payment-step">
                         <span className="sp-step-num">3</span>
                         <div>
-                          <strong>Ingresa la referencia</strong>
-                          <p>Copia el numero de transaccion de Nequi</p>
+                          <strong>Ingresa la referencia aqui</strong>
+                          <p>Copia el numero de transaccion que te da Nequi</p>
                         </div>
                       </div>
                     </div>
@@ -664,18 +691,23 @@ const SpecialistProfile: React.FC = () => {
                         <polyline points="15 3 21 3 21 9" />
                         <line x1="10" y1="14" x2="21" y2="3" />
                       </svg>
-                      Ir a Nequi para pagar
+                      Pagar con Nequi
                     </button>
 
+                    <div className="sp-payment-divider">
+                      <span>Despues de pagar</span>
+                    </div>
+
                     <div className="sp-payment-ref">
-                      <label htmlFor="payment-ref">Referencia de pago Nequi</label>
+                      <label htmlFor="payment-ref">Numero de referencia / transaccion Nequi</label>
                       <input
                         id="payment-ref"
                         type="text"
-                        placeholder="Ej: 123456789"
+                        placeholder="Ej: NQI123456789"
                         value={paymentRef}
                         onChange={(e) => setPaymentRef(e.target.value)}
                       />
+                      <span className="sp-payment-ref-help">Lo encuentras en el comprobante de Nequi despues de pagar</span>
                     </div>
                   </div>
                 </div>
