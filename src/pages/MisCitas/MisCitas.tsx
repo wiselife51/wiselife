@@ -7,6 +7,7 @@ import './MisCitas.css';
 
 interface AppointmentWithPsy {
   id: string;
+  psychologist_id: string;
   appointment_date: string;
   start_time: string;
   end_time: string;
@@ -21,6 +22,24 @@ interface AppointmentWithPsy {
     phone: string | null;
     specialties: string[];
   } | null;
+}
+
+interface AvailSlot {
+  id: string;
+  day_of_week: number;
+  start_time: string;
+  end_time: string;
+}
+
+interface ScheduleBlock {
+  block_date: string;
+  start_time: string;
+  end_time: string;
+}
+
+interface TakenSlot {
+  appointment_date: string;
+  start_time: string;
 }
 
 const DAY_NAMES_SHORT = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
@@ -77,6 +96,19 @@ const MisCitas: React.FC = () => {
   const [calView, setCalView] = useState<CalView>('month');
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedAppt, setSelectedAppt] = useState<AppointmentWithPsy | null>(null);
+
+  // Reschedule state
+  const [rescheduleMode, setRescheduleMode] = useState(false);
+  const [rescheduleAvail, setRescheduleAvail] = useState<AvailSlot[]>([]);
+  const [rescheduleBlocks, setRescheduleBlocks] = useState<ScheduleBlock[]>([]);
+  const [rescheduleTaken, setRescheduleTaken] = useState<TakenSlot[]>([]);
+  const [rescheduleDay, setRescheduleDay] = useState<{ date: Date; dayOfWeek: number } | null>(null);
+  const [rescheduleSaving, setRescheduleSaving] = useState(false);
+  const [rescheduleLoading, setRescheduleLoading] = useState(false);
+
+  // Cancel state
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [cancelLoading, setCancelLoading] = useState(false);
 
   const today = useMemo(() => new Date(), []);
 
@@ -156,6 +188,154 @@ const MisCitas: React.FC = () => {
     const clean = phone.replace(/[^0-9]/g, '');
     const msg = encodeURIComponent(`Hola ${psyName}, tengo una cita agendada contigo en Vida Sabia. `);
     window.open(`https://wa.me/${clean}?text=${msg}`, '_blank');
+  };
+
+  // Reschedule: load psychologist availability
+  const startReschedule = async () => {
+    if (!selectedAppt) return;
+    setRescheduleMode(true);
+    setRescheduleLoading(true);
+    setRescheduleDay(null);
+
+    const psyId = selectedAppt.psychologist_id;
+
+    const { data: availData } = await supabase
+      .from('psychologist_availability')
+      .select('*')
+      .eq('psychologist_id', psyId)
+      .eq('is_available', true)
+      .order('day_of_week')
+      .order('start_time');
+
+    setRescheduleAvail(availData || []);
+
+    const todayStr = new Date().toISOString().split('T')[0];
+    const twoWeeks = new Date();
+    twoWeeks.setDate(twoWeeks.getDate() + 14);
+    const twoWeeksStr = twoWeeks.toISOString().split('T')[0];
+
+    const { data: blockData } = await supabase
+      .from('schedule_blocks')
+      .select('block_date, start_time, end_time')
+      .eq('psychologist_id', psyId)
+      .gte('block_date', todayStr)
+      .lte('block_date', twoWeeksStr);
+
+    setRescheduleBlocks(blockData || []);
+
+    const { data: takenData } = await supabase
+      .from('appointments')
+      .select('appointment_date, start_time')
+      .eq('psychologist_id', psyId)
+      .in('status', ['pendiente_pago', 'confirmada'])
+      .neq('id', selectedAppt.id)
+      .gte('appointment_date', todayStr)
+      .lte('appointment_date', twoWeeksStr);
+
+    setRescheduleTaken(takenData || []);
+    setRescheduleLoading(false);
+  };
+
+  const getRescheduleDays = () => {
+    const days: { date: Date; dayOfWeek: number; label: string }[] = [];
+    const now = new Date();
+    for (let i = 1; i < 15; i++) {
+      const d = new Date(now);
+      d.setDate(now.getDate() + i);
+      const hasAvail = rescheduleAvail.some((a) => a.day_of_week === d.getDay());
+      if (hasAvail) {
+        days.push({
+          date: d,
+          dayOfWeek: d.getDay(),
+          label: `${DAY_NAMES_SHORT[d.getDay()]} ${d.getDate()}/${d.getMonth() + 1}`,
+        });
+      }
+    }
+    return days;
+  };
+
+  const getRescheduleSlotsForDay = (day: { date: Date; dayOfWeek: number } | null) => {
+    if (!day) return [];
+    const daySlots = rescheduleAvail.filter((a) => a.day_of_week === day.dayOfWeek);
+    const dateStr = day.date.toISOString().split('T')[0];
+
+    return daySlots.filter((slot) => {
+      const isBlocked = rescheduleBlocks.some(
+        (b) => b.block_date === dateStr && b.start_time <= slot.start_time && b.end_time >= slot.end_time
+      );
+      const isTaken = rescheduleTaken.some(
+        (a) => a.appointment_date === dateStr && a.start_time === slot.start_time
+      );
+      return !isBlocked && !isTaken;
+    });
+  };
+
+  const confirmReschedule = async (slot: AvailSlot) => {
+    if (!selectedAppt || !rescheduleDay) return;
+    setRescheduleSaving(true);
+
+    const newDate = rescheduleDay.date.toISOString().split('T')[0];
+    const { error } = await supabase
+      .from('appointments')
+      .update({
+        appointment_date: newDate,
+        start_time: slot.start_time,
+        end_time: slot.end_time,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', selectedAppt.id);
+
+    setRescheduleSaving(false);
+
+    if (error) {
+      alert('Error al reprogramar la cita. Intenta de nuevo.');
+      return;
+    }
+
+    // Update local state
+    setAppointments((prev) =>
+      prev.map((a) =>
+        a.id === selectedAppt.id
+          ? { ...a, appointment_date: newDate, start_time: slot.start_time, end_time: slot.end_time }
+          : a
+      )
+    );
+    setRescheduleMode(false);
+    setSelectedAppt(null);
+  };
+
+  // Cancel appointment
+  const handleCancel = async () => {
+    if (!selectedAppt) return;
+    setCancelLoading(true);
+
+    const { error } = await supabase
+      .from('appointments')
+      .update({
+        status: 'cancelada',
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', selectedAppt.id);
+
+    setCancelLoading(false);
+
+    if (error) {
+      alert('Error al cancelar la cita. Intenta de nuevo.');
+      return;
+    }
+
+    setAppointments((prev) =>
+      prev.map((a) => (a.id === selectedAppt.id ? { ...a, status: 'cancelada' } : a))
+    );
+    setShowCancelConfirm(false);
+    setSelectedAppt(null);
+  };
+
+  const closeModal = () => {
+    setSelectedAppt(null);
+    setRescheduleMode(false);
+    setShowCancelConfirm(false);
+    setRescheduleDay(null);
   };
 
   const calTitle = calView === 'month'
@@ -353,76 +533,178 @@ const MisCitas: React.FC = () => {
 
       {/* Appointment Detail Modal */}
       {selectedAppt && (
-        <div className="mc-modal-overlay" onClick={() => setSelectedAppt(null)}>
+        <div className="mc-modal-overlay" onClick={closeModal}>
           <div className="mc-modal" onClick={(e) => e.stopPropagation()}>
             <div className="mc-modal-header">
-              <h3>Detalle de cita</h3>
-              <button className="mc-modal-close" onClick={() => setSelectedAppt(null)} type="button" aria-label="Cerrar">
+              <h3>{rescheduleMode ? 'Reprogramar cita' : showCancelConfirm ? 'Cancelar cita' : 'Detalle de cita'}</h3>
+              <button className="mc-modal-close" onClick={closeModal} type="button" aria-label="Cerrar">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
               </button>
             </div>
 
             <div className="mc-modal-body">
-              <div className="mc-modal-psy">
-                <div className="mc-modal-psy-avatar">
-                  {selectedAppt.psychologist?.avatar_url ? (
-                    <img src={selectedAppt.psychologist.avatar_url} alt="" crossOrigin="anonymous" />
-                  ) : (
-                    <span>{(selectedAppt.psychologist?.full_name || 'P').charAt(0)}</span>
-                  )}
+              {/* CANCEL CONFIRMATION */}
+              {showCancelConfirm && !rescheduleMode && (
+                <div className="mc-cancel-section">
+                  <div className="mc-cancel-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10" /><line x1="15" y1="9" x2="9" y2="15" /><line x1="9" y1="9" x2="15" y2="15" /></svg>
+                  </div>
+                  <p className="mc-cancel-text">{'Estas seguro de que deseas cancelar tu cita con'} <strong>{selectedAppt.psychologist?.full_name}</strong> {'del'} <strong>{selectedAppt.appointment_date.split('-').reverse().join('/')}</strong> {'a las'} <strong>{formatTime(selectedAppt.start_time)}</strong>?</p>
+                  <p className="mc-cancel-warning">Esta accion no se puede deshacer. Si ya pagaste, contacta al psicologo para el reembolso.</p>
+                  <div className="mc-cancel-btns">
+                    <button className="mc-cancel-no-btn" onClick={() => setShowCancelConfirm(false)} type="button">
+                      No, mantener cita
+                    </button>
+                    <button className="mc-cancel-yes-btn" onClick={handleCancel} disabled={cancelLoading} type="button">
+                      {cancelLoading ? 'Cancelando...' : 'Si, cancelar cita'}
+                    </button>
+                  </div>
                 </div>
-                <div>
-                  <h4>{selectedAppt.psychologist?.full_name || 'Psicologo'}</h4>
-                  {selectedAppt.psychologist?.specialties && (
-                    <div className="mc-modal-specs">
-                      {selectedAppt.psychologist.specialties.slice(0, 3).map((s) => (
-                        <span key={s} className="mc-modal-spec-tag">{s}</span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="mc-modal-details">
-                <div className="mc-modal-detail">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
-                  <span>{selectedAppt.appointment_date.split('-').reverse().join('/')}</span>
-                </div>
-                <div className="mc-modal-detail">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
-                  <span>{formatTime(selectedAppt.start_time)} - {formatTime(selectedAppt.end_time)}</span>
-                </div>
-                <div className="mc-modal-detail">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
-                  <span>${selectedAppt.payment_amount?.toLocaleString()} COP</span>
-                  <span className={`mc-modal-pay-badge mc-modal-pay-badge--${selectedAppt.payment_status}`}>
-                    {selectedAppt.payment_status === 'pagado' ? 'Pagado' : selectedAppt.payment_status === 'procesando' ? 'Procesando' : 'Pendiente'}
-                  </span>
-                </div>
-                <div className="mc-modal-detail">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
-                  <span className={`mc-modal-status mc-modal-status--${selectedAppt.status}`}>
-                    {statusLabel(selectedAppt.status)}
-                  </span>
-                </div>
-              </div>
-
-              {/* WhatsApp - only if confirmed or completed */}
-              {selectedAppt.psychologist?.phone && (selectedAppt.status === 'confirmada' || selectedAppt.status === 'completada') && (
-                <button
-                  className="mc-wa-btn"
-                  onClick={() => handleOpenWhatsApp(selectedAppt.psychologist?.phone, selectedAppt.psychologist?.full_name || 'Psicologo')}
-                  type="button"
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                  </svg>
-                  Chatear con tu psicologo por WhatsApp
-                </button>
               )}
 
-              {selectedAppt.status === 'pendiente_pago' && (
-                <p className="mc-modal-note">Tu pago esta siendo verificado. Una vez confirmado podras chatear con tu psicologo.</p>
+              {/* RESCHEDULE VIEW */}
+              {rescheduleMode && !showCancelConfirm && (
+                <div className="mc-reschedule-section">
+                  {rescheduleLoading ? (
+                    <div className="mc-reschedule-loading">
+                      <div className="dash-loading-spinner" />
+                      <p>Cargando disponibilidad...</p>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="mc-reschedule-intro">Selecciona un nuevo dia y horario para tu cita con <strong>{selectedAppt.psychologist?.full_name}</strong>:</p>
+
+                      <div className="mc-reschedule-days">
+                        {getRescheduleDays().map((d) => (
+                          <button
+                            key={d.date.toISOString()}
+                            className={`mc-reschedule-day ${rescheduleDay?.date.toDateString() === d.date.toDateString() ? 'mc-reschedule-day--active' : ''}`}
+                            onClick={() => setRescheduleDay(d)}
+                            type="button"
+                          >
+                            <span className="mc-reschedule-day-name">{DAY_NAMES_SHORT[d.dayOfWeek]}</span>
+                            <span className="mc-reschedule-day-num">{d.date.getDate()}</span>
+                          </button>
+                        ))}
+                      </div>
+
+                      {rescheduleDay && (
+                        <div className="mc-reschedule-slots">
+                          <h4 className="mc-reschedule-slots-title">
+                            {DAY_NAMES_FULL[rescheduleDay.dayOfWeek]} {rescheduleDay.date.getDate()}/{rescheduleDay.date.getMonth() + 1}
+                          </h4>
+                          {getRescheduleSlotsForDay(rescheduleDay).length === 0 ? (
+                            <p className="mc-reschedule-empty">No hay horarios disponibles este dia.</p>
+                          ) : (
+                            <div className="mc-reschedule-slots-grid">
+                              {getRescheduleSlotsForDay(rescheduleDay).map((slot) => (
+                                <button
+                                  key={slot.id}
+                                  className="mc-reschedule-slot"
+                                  onClick={() => confirmReschedule(slot)}
+                                  disabled={rescheduleSaving}
+                                  type="button"
+                                >
+                                  {rescheduleSaving ? '...' : `${formatTime(slot.start_time)} - ${formatTime(slot.end_time)}`}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      <button className="mc-reschedule-back" onClick={() => setRescheduleMode(false)} type="button">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
+                        Volver al detalle
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {/* DEFAULT DETAIL VIEW */}
+              {!rescheduleMode && !showCancelConfirm && (
+                <>
+                  <div className="mc-modal-psy">
+                    <div className="mc-modal-psy-avatar">
+                      {selectedAppt.psychologist?.avatar_url ? (
+                        <img src={selectedAppt.psychologist.avatar_url} alt="" crossOrigin="anonymous" />
+                      ) : (
+                        <span>{(selectedAppt.psychologist?.full_name || 'P').charAt(0)}</span>
+                      )}
+                    </div>
+                    <div>
+                      <h4>{selectedAppt.psychologist?.full_name || 'Psicologo'}</h4>
+                      {selectedAppt.psychologist?.specialties && (
+                        <div className="mc-modal-specs">
+                          {selectedAppt.psychologist.specialties.slice(0, 3).map((s) => (
+                            <span key={s} className="mc-modal-spec-tag">{s}</span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="mc-modal-details">
+                    <div className="mc-modal-detail">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
+                      <span>{selectedAppt.appointment_date.split('-').reverse().join('/')}</span>
+                    </div>
+                    <div className="mc-modal-detail">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+                      <span>{formatTime(selectedAppt.start_time)} - {formatTime(selectedAppt.end_time)}</span>
+                    </div>
+                    <div className="mc-modal-detail">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
+                      <span>${selectedAppt.payment_amount?.toLocaleString()} COP</span>
+                      <span className={`mc-modal-pay-badge mc-modal-pay-badge--${selectedAppt.payment_status}`}>
+                        {selectedAppt.payment_status === 'pagado' ? 'Pagado' : selectedAppt.payment_status === 'procesando' ? 'Procesando' : 'Pendiente'}
+                      </span>
+                    </div>
+                    <div className="mc-modal-detail">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
+                      <span className={`mc-modal-status mc-modal-status--${selectedAppt.status}`}>
+                        {statusLabel(selectedAppt.status)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Action buttons for active appointments */}
+                  {(selectedAppt.status === 'confirmada' || selectedAppt.status === 'pendiente_pago') && (
+                    <div className="mc-modal-actions">
+                      <button className="mc-reschedule-btn" onClick={startReschedule} type="button">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="23 4 23 10 17 10" /><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" /></svg>
+                        Reprogramar cita
+                      </button>
+                      <button className="mc-cancel-btn" onClick={() => setShowCancelConfirm(true)} type="button">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="15" y1="9" x2="9" y2="15" /><line x1="9" y1="9" x2="15" y2="15" /></svg>
+                        Cancelar cita
+                      </button>
+                    </div>
+                  )}
+
+                  {/* WhatsApp */}
+                  {selectedAppt.psychologist?.phone && (selectedAppt.status === 'confirmada' || selectedAppt.status === 'completada') && (
+                    <button
+                      className="mc-wa-btn"
+                      onClick={() => handleOpenWhatsApp(selectedAppt.psychologist?.phone, selectedAppt.psychologist?.full_name || 'Psicologo')}
+                      type="button"
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                      </svg>
+                      Chatear por WhatsApp
+                    </button>
+                  )}
+
+                  {selectedAppt.status === 'pendiente_pago' && (
+                    <p className="mc-modal-note">Tu pago esta siendo verificado. Una vez confirmado podras chatear con tu psicologo.</p>
+                  )}
+
+                  {selectedAppt.status === 'cancelada' && (
+                    <p className="mc-modal-note mc-modal-note--cancelled">Esta cita fue cancelada.</p>
+                  )}
+                </>
               )}
             </div>
           </div>

@@ -109,11 +109,6 @@ const SpecialistProfile: React.FC = () => {
   const monthDays = getMonthDays(calMonth.getFullYear(), calMonth.getMonth());
   const todayDate = new Date();
 
-  const getAvailDaysInMonth = () => {
-    const availDays = new Set(availability.map((a) => a.day_of_week));
-    return monthDays.filter((d) => d && availDays.has(d.getDay()) && d >= todayDate);
-  };
-
   const handleMonthDayClick = (d: Date) => {
     const dayAvail = availability.some((a) => a.day_of_week === d.getDay());
     if (!dayAvail || d < todayDate) return;
