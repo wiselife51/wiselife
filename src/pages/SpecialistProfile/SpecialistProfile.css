@@ -173,6 +173,172 @@
   flex-shrink: 0;
 }
 
+/* Schedule header with view toggle */
+.sp-schedule-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.sp-view-toggle {
+  display: flex;
+  gap: 0.25rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 0.2rem;
+  flex-shrink: 0;
+}
+
+.sp-view-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: none;
+  background: none;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sp-view-btn:hover {
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.sp-view-btn--active {
+  background: rgba(126, 87, 194, 0.2);
+  color: #b388ff;
+}
+
+/* Month view inside schedule */
+.sp-month-view {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sp-month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sp-month-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sp-month-nav-btn:hover {
+  background: rgba(126, 87, 194, 0.12);
+  border-color: rgba(126, 87, 194, 0.3);
+  color: #b388ff;
+}
+
+.sp-month-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.sp-month-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.sp-month-day-label {
+  text-align: center;
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.375rem 0;
+}
+
+.sp-month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+}
+
+.sp-month-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.125rem;
+  padding: 0.5rem 0.25rem;
+  border-radius: 8px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+
+.sp-month-cell--empty {
+  cursor: default;
+}
+
+.sp-month-cell--unavailable {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.sp-month-cell--available:hover {
+  background: rgba(126, 87, 194, 0.12);
+}
+
+.sp-month-cell--today .sp-month-date {
+  background: rgba(126, 87, 194, 0.3);
+  color: #ffffff;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sp-month-cell--selected {
+  background: rgba(126, 87, 194, 0.2);
+  border: 1px solid rgba(126, 87, 194, 0.4);
+}
+
+.sp-month-date {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.sp-month-avail-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #66bb6a;
+}
+
+.sp-month-legend {
+  font-size: 0.6875rem;
+  color: rgba(255, 255, 255, 0.35);
+  text-align: center;
+  margin: 0;
+  line-height: 1.4;
+}
+
 /* Schedule card */
 .sp-schedule-card {
   background: rgba(17, 24, 39, 0.5);
@@ -591,6 +757,60 @@
   flex-direction: column;
   align-items: center;
   gap: 1.25rem;
+}
+
+.sp-nequi-dest {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.75rem 1rem;
+  background: rgba(230, 0, 126, 0.08);
+  border: 1px solid rgba(230, 0, 126, 0.2);
+  border-radius: 10px;
+  width: 100%;
+}
+
+.sp-nequi-dest-label {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.sp-nequi-dest-phone {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ff4081;
+  letter-spacing: 0.03em;
+}
+
+.sp-payment-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.sp-payment-divider::before,
+.sp-payment-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sp-payment-divider span {
+  font-size: 0.6875rem;
+  color: rgba(255, 255, 255, 0.35);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.sp-payment-ref-help {
+  font-size: 0.6875rem;
+  color: rgba(255, 255, 255, 0.3);
+  margin-top: -0.25rem;
 }
 
 .sp-nequi-logo {
