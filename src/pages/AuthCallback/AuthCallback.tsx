@@ -1,14 +1,16 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import './AuthCallback.css';
 
 const AuthCallback: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     const handleCallback = async () => {
       const { data: { session }, error } = await supabase.auth.getSession();
+      const nextPath = searchParams.get('next');
 
       if (error) {
         console.error('Error en auth callback:', error);
@@ -17,7 +19,23 @@ const AuthCallback: React.FC = () => {
       }
 
       if (session?.user) {
-        // Verificar estado del onboarding, referral y motivation
+        // Si viene del flujo de psicologos
+        if (nextPath && nextPath.startsWith('/psicologo')) {
+          const { data: psyProfile } = await supabase
+            .from('psychologists')
+            .select('onboarding_completed')
+            .eq('user_id', session.user.id)
+            .single();
+
+          if (!psyProfile || !psyProfile.onboarding_completed) {
+            navigate('/psicologo/onboarding');
+          } else {
+            navigate('/psicologo/dashboard');
+          }
+          return;
+        }
+
+        // Flujo normal de usuarios
         const { data: profile } = await supabase
           .from('profiles')
           .select('onboarding_completed, referral_completed, motivation_completed')
@@ -39,7 +57,7 @@ const AuthCallback: React.FC = () => {
     };
 
     handleCallback();
-  }, [navigate]);
+  }, [navigate, searchParams]);
 
   return (
     <div className="callback-container">

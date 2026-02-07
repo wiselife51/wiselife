@@ -173,6 +173,12 @@ const Header: React.FC = () => {
 
       {/* Desktop Actions */}
       <div className="header__actions">
+        <button className="btn btn--outline-accent" type="button" onClick={() => navigate('/psicologo/login')}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+          </svg>
+          <span>Soy Psicologo</span>
+        </button>
         <button className="btn btn--ghost" type="button" onClick={() => navigate('/login')}>
           <span>Iniciar Sesion</span>
         </button>
@@ -225,6 +231,12 @@ const Header: React.FC = () => {
         </nav>
 
         <div className="mobile-menu__actions">
+          <button className="btn btn--outline-accent btn--full" onClick={() => { handleLinkClick(); navigate('/psicologo/login'); }} type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+            </svg>
+            <span>Soy Psicologo</span>
+          </button>
           <button className="btn btn--ghost btn--full" onClick={() => { handleLinkClick(); navigate('/login'); }} type="button">
             Iniciar Sesion
           </button>

@@ -191,6 +191,19 @@
   transition: all 0.3s var(--transition-smooth);
 }
 
+.btn--outline-accent {
+  background: rgba(126, 87, 194, 0.08);
+  color: #b388ff;
+  border: 1.5px solid rgba(126, 87, 194, 0.35);
+}
+
+.btn--outline-accent:hover {
+  background: rgba(126, 87, 194, 0.18);
+  border-color: rgba(179, 136, 255, 0.6);
+  color: #ce93d8;
+  box-shadow: 0 4px 16px rgba(126, 87, 194, 0.2);
+}
+
 .btn--ghost {
   background: transparent;
   color: rgba(255, 255, 255, 0.85);
