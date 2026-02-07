@@ -4,6 +4,223 @@
   margin: 0 auto;
 }
 
+/* Stats */
+.mc-stats {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.mc-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background: rgba(15, 20, 35, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+}
+
+.mc-stat-num {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.mc-stat-label {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin-top: 0.125rem;
+}
+
+/* Calendar Controls */
+.mc-cal-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.mc-cal-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mc-cal-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mc-cal-nav-btn:hover {
+  background: rgba(92, 107, 192, 0.12);
+  border-color: rgba(92, 107, 192, 0.3);
+  color: #7986cb;
+}
+
+.mc-cal-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #ffffff;
+  min-width: 200px;
+  text-align: center;
+  margin: 0;
+}
+
+.mc-cal-today-btn {
+  padding: 0.375rem 0.875rem;
+  border-radius: 8px;
+  border: 1px solid rgba(92, 107, 192, 0.3);
+  background: rgba(92, 107, 192, 0.08);
+  color: #7986cb;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mc-cal-today-btn:hover {
+  background: rgba(92, 107, 192, 0.2);
+}
+
+.mc-cal-views {
+  display: flex;
+  gap: 0.25rem;
+  background: rgba(15, 20, 35, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 0.25rem;
+}
+
+.mc-cal-view-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  background: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mc-cal-view-btn:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.mc-cal-view-btn--active {
+  background: rgba(92, 107, 192, 0.2);
+  color: #7986cb;
+}
+
+/* Month dots */
+.mc-month-dots {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  flex-wrap: wrap;
+}
+
+.mc-month-dot--confirmada {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #66bb6a;
+}
+
+.mc-month-dot--pendiente_pago {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffc107;
+}
+
+.mc-month-dot--completada {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #7986cb;
+}
+
+.mc-month-more {
+  font-size: 0.5625rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* Day view class fix */
+.mc-day-view {
+  display: flex;
+  flex-direction: column;
+  background: rgba(15, 20, 35, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* Modal specialist tags */
+.mc-modal-specs {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
+}
+
+.mc-modal-spec-tag {
+  font-size: 0.625rem;
+  padding: 0.15rem 0.5rem;
+  background: rgba(92, 107, 192, 0.15);
+  border-radius: 100px;
+  color: #7986cb;
+}
+
+.mc-modal-pay-badge {
+  font-size: 0.625rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 100px;
+  margin-left: 0.375rem;
+}
+
+.mc-modal-pay-badge--pagado {
+  background: rgba(76, 175, 80, 0.15);
+  color: #66bb6a;
+}
+
+.mc-modal-pay-badge--procesando {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+}
+
+.mc-modal-pay-badge--pendiente {
+  background: rgba(239, 83, 80, 0.1);
+  color: #ef5350;
+}
+
+.mc-modal-note {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 193, 7, 0.06);
+  border: 1px solid rgba(255, 193, 7, 0.1);
+  border-radius: 10px;
+}
+
 /* Controls */
 .mc-controls {
   display: flex;
