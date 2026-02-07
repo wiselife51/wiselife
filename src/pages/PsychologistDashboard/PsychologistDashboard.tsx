@@ -135,6 +135,14 @@ const PsychologistDashboard: React.FC = () => {
   const [newSlotEnd, setNewSlotEnd] = useState('09:00');
   const [savingSlot, setSavingSlot] = useState(false);
 
+  // Quick add from calendar
+  const handleQuickAdd = (dayOfWeek: number, hour: number) => {
+    setNewSlotDay(dayOfWeek);
+    setNewSlotStart(`${hour.toString().padStart(2, '0')}:00`);
+    setNewSlotEnd(`${(hour + 1).toString().padStart(2, '0')}:00`);
+    setShowAddSlot(true);
+  };
+
   const today = useMemo(() => new Date(), []);
 
   const fetchData = useCallback(async () => {
@@ -517,14 +525,29 @@ const PsychologistDashboard: React.FC = () => {
                         const ds = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
                         const hourAppts = appointments.filter((a) => a.appointment_date === ds && parseInt(a.start_time.split(':')[0], 10) === h);
                         const hourBlocks = blocks.filter((b) => b.block_date === ds && parseInt(b.start_time.split(':')[0], 10) <= h && parseInt(b.end_time.split(':')[0], 10) > h);
+                        const hasAvail = availability.some((av) => av.day_of_week === d.getDay() && parseInt(av.start_time.split(':')[0], 10) === h && av.is_available);
                         return (
-                          <div key={`${ds}-${h}`} className={`psy-week-cell ${hourBlocks.length > 0 ? 'psy-week-cell--blocked' : ''}`}>
+                          <div
+                            key={`${ds}-${h}`}
+                            className={`psy-week-cell ${hourBlocks.length > 0 ? 'psy-week-cell--blocked' : ''} ${hourAppts.length === 0 && hourBlocks.length === 0 && !hasAvail ? 'psy-week-cell--addable' : ''}`}
+                            onClick={() => {
+                              if (hourAppts.length === 0 && hourBlocks.length === 0 && !hasAvail) {
+                                handleQuickAdd(d.getDay(), h);
+                              }
+                            }}
+                            role={hourAppts.length === 0 && hourBlocks.length === 0 && !hasAvail ? 'button' : undefined}
+                            tabIndex={hourAppts.length === 0 && hourBlocks.length === 0 && !hasAvail ? 0 : undefined}
+                            title={hourAppts.length === 0 && hourBlocks.length === 0 && !hasAvail ? 'Click para agregar disponibilidad' : undefined}
+                          >
                             {hourAppts.map((a) => (
-                              <button key={a.id} className={`psy-week-appt psy-week-appt--${a.status}`} onClick={() => setSelectedAppt(a)} type="button">
+                              <button key={a.id} className={`psy-week-appt psy-week-appt--${a.status}`} onClick={(e) => { e.stopPropagation(); setSelectedAppt(a); }} type="button">
                                 <span className="psy-week-appt-name">{a.patient?.full_name?.split(' ')[0] || 'Pac.'}</span>
                                 <span className="psy-week-appt-time">{formatTime(a.start_time)}</span>
                               </button>
                             ))}
+                            {hasAvail && hourAppts.length === 0 && hourBlocks.length === 0 && (
+                              <span className="psy-week-avail-dot" title="Disponible" />
+                            )}
                           </div>
                         );
                       })}
@@ -575,6 +598,16 @@ const PsychologistDashboard: React.FC = () => {
                         ))}
                         {hourAppts.length === 0 && hourBlocks.length === 0 && dayAvail.length > 0 && (
                           <div className="psy-day-avail-label">Disponible</div>
+                        )}
+                        {hourAppts.length === 0 && hourBlocks.length === 0 && dayAvail.length === 0 && (
+                          <button
+                            className="psy-day-add-btn"
+                            onClick={() => handleQuickAdd(currentDate.getDay(), h)}
+                            type="button"
+                          >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                            Agregar disponibilidad
+                          </button>
                         )}
                       </div>
                     </div>

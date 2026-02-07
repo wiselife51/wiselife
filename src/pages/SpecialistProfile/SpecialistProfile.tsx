@@ -43,6 +43,17 @@ interface ExistingAppointment {
 }
 
 const DAY_NAMES = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
+const DAY_NAMES_SHORT = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
+const MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+function getMonthDays(year: number, month: number): (Date | null)[] {
+  const first = new Date(year, month, 1);
+  const last = new Date(year, month + 1, 0);
+  const cells: (Date | null)[] = [];
+  for (let i = 0; i < first.getDay(); i++) cells.push(null);
+  for (let d = 1; d <= last.getDate(); d++) cells.push(new Date(year, month, d));
+  return cells;
+}
 
 function getNextDaysForWeek(): { date: Date; dayOfWeek: number; label: string }[] {
   const days: { date: Date; dayOfWeek: number; label: string }[] = [];
@@ -91,6 +102,31 @@ const SpecialistProfile: React.FC = () => {
   const [bookingLoading, setBookingLoading] = useState(false);
   const [createdApptId, setCreatedApptId] = useState<string | null>(null);
   const [paymentRef, setPaymentRef] = useState('');
+
+  // Schedule view state
+  const [scheduleView, setScheduleView] = useState<'list' | 'month'>('list');
+  const [calMonth, setCalMonth] = useState(new Date());
+  const monthDays = getMonthDays(calMonth.getFullYear(), calMonth.getMonth());
+  const todayDate = new Date();
+
+  const getAvailDaysInMonth = () => {
+    const availDays = new Set(availability.map((a) => a.day_of_week));
+    return monthDays.filter((d) => d && availDays.has(d.getDay()) && d >= todayDate);
+  };
+
+  const handleMonthDayClick = (d: Date) => {
+    const dayAvail = availability.some((a) => a.day_of_week === d.getDay());
+    if (!dayAvail || d < todayDate) return;
+    const matchingNext = nextDays.find((nd) => nd.date.toDateString() === d.toDateString());
+    if (matchingNext) {
+      setSelectedDay(matchingNext);
+      setScheduleView('list');
+    } else {
+      // For dates beyond 14 days, just show they're available
+      setSelectedDay({ date: d, dayOfWeek: d.getDay(), label: `${DAY_NAMES[d.getDay()]} ${d.getDate()}/${d.getMonth() + 1}` });
+      setScheduleView('list');
+    }
+  };
 
   const nextDays = getNextDaysForWeek();
 
@@ -359,8 +395,28 @@ const SpecialistProfile: React.FC = () => {
           {/* Right: Schedule */}
           <div className="sp-schedule">
             <div className="sp-schedule-card">
-              <h3 className="sp-schedule-title">Agenda disponible</h3>
-              <p className="sp-schedule-sub">Selecciona un dia y horario para agendar</p>
+              <div className="sp-schedule-header">
+                <div>
+                  <h3 className="sp-schedule-title">Agenda disponible</h3>
+                  <p className="sp-schedule-sub">Selecciona un dia y horario para agendar</p>
+                </div>
+                <div className="sp-view-toggle">
+                  <button
+                    className={`sp-view-btn ${scheduleView === 'list' ? 'sp-view-btn--active' : ''}`}
+                    onClick={() => setScheduleView('list')}
+                    type="button"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" /></svg>
+                  </button>
+                  <button
+                    className={`sp-view-btn ${scheduleView === 'month' ? 'sp-view-btn--active' : ''}`}
+                    onClick={() => setScheduleView('month')}
+                    type="button"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
+                  </button>
+                </div>
+              </div>
 
               <div className="sp-price-banner">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -370,63 +426,117 @@ const SpecialistProfile: React.FC = () => {
                 <span>Valor de la sesion: <strong>${psy.session_price?.toLocaleString()} COP</strong></span>
               </div>
 
-              {/* Day selector */}
-              <div className="sp-days-scroll">
-                {nextDays.map((day) => {
-                  const hasSlots = availability.some((a) => a.day_of_week === day.dayOfWeek);
-                  return (
+              {/* MONTH VIEW */}
+              {scheduleView === 'month' && (
+                <div className="sp-month-view">
+                  <div className="sp-month-nav">
                     <button
-                      key={day.date.toISOString()}
-                      className={`sp-day-btn ${selectedDay?.date.toDateString() === day.date.toDateString() ? 'sp-day-btn--active' : ''} ${!hasSlots ? 'sp-day-btn--disabled' : ''}`}
-                      onClick={() => hasSlots && setSelectedDay(day)}
-                      disabled={!hasSlots}
+                      className="sp-month-nav-btn"
+                      onClick={() => { const d = new Date(calMonth); d.setMonth(d.getMonth() - 1); setCalMonth(d); }}
                       type="button"
+                      aria-label="Mes anterior"
                     >
-                      <span className="sp-day-name">{DAY_NAMES[day.dayOfWeek].substring(0, 3)}</span>
-                      <span className="sp-day-num">{day.date.getDate()}</span>
-                      {day.label === 'Hoy' && <span className="sp-day-today">Hoy</span>}
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
                     </button>
-                  );
-                })}
-              </div>
-
-              {/* Time slots */}
-              {selectedDay && (
-                <div className="sp-slots-section">
-                  <h4 className="sp-slots-date">
-                    {selectedDay.label === 'Hoy' || selectedDay.label === 'Manana'
-                      ? selectedDay.label
-                      : DAY_NAMES[selectedDay.dayOfWeek]}{' '}
-                    {selectedDay.date.getDate()}/{selectedDay.date.getMonth() + 1}/{selectedDay.date.getFullYear()}
-                  </h4>
-
-                  {availableSlots.length === 0 ? (
-                    <div className="sp-slots-empty">
-                      <p>No hay horarios disponibles este dia.</p>
-                    </div>
-                  ) : (
-                    <div className="sp-slots-grid">
-                      {availableSlots.map((slot) => (
+                    <span className="sp-month-title">{MONTH_NAMES[calMonth.getMonth()]} {calMonth.getFullYear()}</span>
+                    <button
+                      className="sp-month-nav-btn"
+                      onClick={() => { const d = new Date(calMonth); d.setMonth(d.getMonth() + 1); setCalMonth(d); }}
+                      type="button"
+                      aria-label="Mes siguiente"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
+                    </button>
+                  </div>
+                  <div className="sp-month-header">
+                    {DAY_NAMES_SHORT.map((d) => <div key={d} className="sp-month-day-label">{d}</div>)}
+                  </div>
+                  <div className="sp-month-grid">
+                    {monthDays.map((d, i) => {
+                      if (!d) return <div key={`empty-${i}`} className="sp-month-cell sp-month-cell--empty" />;
+                      const isAvailable = availability.some((a) => a.day_of_week === d.getDay()) && d >= todayDate;
+                      const isToday = d.toDateString() === todayDate.toDateString();
+                      const isSelected = selectedDay?.date.toDateString() === d.toDateString();
+                      return (
                         <button
-                          key={slot.id}
-                          className={`sp-slot-btn ${selectedSlot?.id === slot.id ? 'sp-slot-btn--active' : ''}`}
+                          key={d.toISOString()}
+                          className={`sp-month-cell ${isAvailable ? 'sp-month-cell--available' : 'sp-month-cell--unavailable'} ${isToday ? 'sp-month-cell--today' : ''} ${isSelected ? 'sp-month-cell--selected' : ''}`}
+                          onClick={() => isAvailable && handleMonthDayClick(d)}
+                          disabled={!isAvailable}
                           type="button"
-                          onClick={() => handleSlotClick(slot)}
                         >
-                          <span className="sp-slot-time">{formatTime(slot.start_time)}</span>
-                          <span className="sp-slot-separator">-</span>
-                          <span className="sp-slot-time">{formatTime(slot.end_time)}</span>
+                          <span className="sp-month-date">{d.getDate()}</span>
+                          {isAvailable && <span className="sp-month-avail-dot" />}
                         </button>
-                      ))}
-                    </div>
-                  )}
+                      );
+                    })}
+                  </div>
+                  <p className="sp-month-legend">Los dias con punto verde tienen horarios disponibles. Haz click para ver.</p>
                 </div>
               )}
 
-              {!selectedDay && availability.length > 0 && (
-                <div className="sp-slots-empty">
-                  <p>Selecciona un dia para ver los horarios disponibles.</p>
-                </div>
+              {/* LIST VIEW */}
+              {scheduleView === 'list' && (
+                <>
+                  {/* Day selector */}
+                  <div className="sp-days-scroll">
+                    {nextDays.map((day) => {
+                      const hasSlots = availability.some((a) => a.day_of_week === day.dayOfWeek);
+                      return (
+                        <button
+                          key={day.date.toISOString()}
+                          className={`sp-day-btn ${selectedDay?.date.toDateString() === day.date.toDateString() ? 'sp-day-btn--active' : ''} ${!hasSlots ? 'sp-day-btn--disabled' : ''}`}
+                          onClick={() => hasSlots && setSelectedDay(day)}
+                          disabled={!hasSlots}
+                          type="button"
+                        >
+                          <span className="sp-day-name">{DAY_NAMES[day.dayOfWeek].substring(0, 3)}</span>
+                          <span className="sp-day-num">{day.date.getDate()}</span>
+                          {day.label === 'Hoy' && <span className="sp-day-today">Hoy</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Time slots */}
+                  {selectedDay && (
+                    <div className="sp-slots-section">
+                      <h4 className="sp-slots-date">
+                        {selectedDay.label === 'Hoy' || selectedDay.label === 'Manana'
+                          ? selectedDay.label
+                          : DAY_NAMES[selectedDay.dayOfWeek]}{' '}
+                        {selectedDay.date.getDate()}/{selectedDay.date.getMonth() + 1}/{selectedDay.date.getFullYear()}
+                      </h4>
+
+                      {availableSlots.length === 0 ? (
+                        <div className="sp-slots-empty">
+                          <p>No hay horarios disponibles este dia.</p>
+                        </div>
+                      ) : (
+                        <div className="sp-slots-grid">
+                          {availableSlots.map((slot) => (
+                            <button
+                              key={slot.id}
+                              className={`sp-slot-btn ${selectedSlot?.id === slot.id ? 'sp-slot-btn--active' : ''}`}
+                              type="button"
+                              onClick={() => handleSlotClick(slot)}
+                            >
+                              <span className="sp-slot-time">{formatTime(slot.start_time)}</span>
+                              <span className="sp-slot-separator">-</span>
+                              <span className="sp-slot-time">{formatTime(slot.end_time)}</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {!selectedDay && availability.length > 0 && (
+                    <div className="sp-slots-empty">
+                      <p>Selecciona un dia para ver los horarios disponibles.</p>
+                    </div>
+                  )}
+                </>
               )}
 
               {availability.length === 0 && (
