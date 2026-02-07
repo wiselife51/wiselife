@@ -628,6 +628,799 @@
   gap: 0.75rem;
 }
 
+/* ===== Upcoming Mini (sidebar) ===== */
+.psy-dash-upcoming-mini {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--psy-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.psy-dash-upcoming-mini h4 {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.25rem;
+}
+
+.psy-dash-upcoming-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.625rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--psy-border);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+  text-align: left;
+}
+
+.psy-dash-upcoming-item:hover {
+  background: rgba(126, 87, 194, 0.1);
+  border-color: rgba(126, 87, 194, 0.25);
+}
+
+.psy-dash-upcoming-avatar-sm {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(126, 87, 194, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.psy-dash-upcoming-avatar-sm img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.psy-dash-upcoming-avatar-sm span {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #b388ff;
+}
+
+.psy-dash-upcoming-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.psy-dash-upcoming-text strong {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.psy-dash-upcoming-text span {
+  font-size: 0.625rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.psy-dash-mini-status {
+  font-size: 0.5625rem;
+  font-weight: 700;
+  padding: 0.15rem 0.4rem;
+  border-radius: 100px;
+  text-transform: uppercase;
+}
+
+.psy-dash-mini-status--confirmada {
+  background: rgba(76, 175, 80, 0.15);
+  color: #66bb6a;
+}
+
+.psy-dash-mini-status--pendiente_pago {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+}
+
+/* ===== Calendar Controls ===== */
+.psy-cal-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.psy-cal-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.psy-cal-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid var(--psy-border);
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.psy-cal-nav-btn:hover {
+  background: rgba(126, 87, 194, 0.12);
+  border-color: rgba(126, 87, 194, 0.3);
+  color: #b388ff;
+}
+
+.psy-cal-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin: 0;
+  min-width: 200px;
+  text-align: center;
+}
+
+.psy-cal-today-btn {
+  padding: 0.375rem 0.875rem;
+  border-radius: 8px;
+  border: 1px solid rgba(126, 87, 194, 0.3);
+  background: rgba(126, 87, 194, 0.08);
+  color: #b388ff;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.psy-cal-today-btn:hover {
+  background: rgba(126, 87, 194, 0.2);
+}
+
+.psy-cal-views {
+  display: flex;
+  gap: 0.25rem;
+  background: var(--psy-surface);
+  border: 1px solid var(--psy-border);
+  border-radius: 10px;
+  padding: 0.25rem;
+}
+
+.psy-cal-view-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  background: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.psy-cal-view-btn:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.psy-cal-view-btn--active {
+  background: rgba(126, 87, 194, 0.2);
+  color: #b388ff;
+}
+
+/* ===== Month View ===== */
+.psy-month {
+  background: var(--psy-surface);
+  border: 1px solid var(--psy-border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.psy-month-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid var(--psy-border);
+}
+
+.psy-month-day-name {
+  padding: 0.75rem;
+  text-align: center;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.psy-month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.psy-month-cell {
+  min-height: 80px;
+  padding: 0.5rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
+.psy-month-cell:hover {
+  background: rgba(126, 87, 194, 0.06);
+}
+
+.psy-month-cell--empty {
+  cursor: default;
+}
+
+.psy-month-cell--empty:hover {
+  background: transparent;
+}
+
+.psy-month-cell--today .psy-month-date {
+  background: var(--psy-accent);
+  color: #ffffff;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.psy-month-date {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.psy-month-indicators {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.psy-month-dot--appt {
+  font-size: 0.5625rem;
+  font-weight: 700;
+  background: rgba(126, 87, 194, 0.3);
+  color: #b388ff;
+  padding: 0.1rem 0.35rem;
+  border-radius: 100px;
+}
+
+.psy-month-dot--block {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ef5350;
+}
+
+/* ===== Week View ===== */
+.psy-week {
+  background: var(--psy-surface);
+  border: 1px solid var(--psy-border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.psy-week-header {
+  display: grid;
+  grid-template-columns: 70px repeat(7, 1fr);
+  border-bottom: 1px solid var(--psy-border);
+}
+
+.psy-week-time-col {
+  padding: 0.75rem;
+}
+
+.psy-week-day-col {
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+.psy-week-day-col:hover {
+  background: rgba(126, 87, 194, 0.06);
+}
+
+.psy-week-day-col--today {
+  background: rgba(126, 87, 194, 0.1);
+}
+
+.psy-week-day-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+}
+
+.psy-week-day-col--today .psy-week-day-label {
+  color: #b388ff;
+}
+
+.psy-week-day-num {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.psy-week-day-col--today .psy-week-day-num {
+  color: #b388ff;
+}
+
+.psy-week-body {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.psy-week-row {
+  display: grid;
+  grid-template-columns: 70px repeat(7, 1fr);
+  min-height: 52px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.psy-week-time {
+  padding: 0.375rem 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.35);
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
+.psy-week-cell {
+  border-right: 1px solid rgba(255, 255, 255, 0.03);
+  padding: 0.25rem;
+  min-height: 52px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.psy-week-cell--blocked {
+  background: rgba(239, 83, 80, 0.06);
+}
+
+.psy-week-appt {
+  display: flex;
+  flex-direction: column;
+  gap: 0.0625rem;
+  padding: 0.25rem 0.375rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  text-align: left;
+  transition: all 0.2s;
+}
+
+.psy-week-appt--confirmada {
+  background: rgba(76, 175, 80, 0.15);
+  color: #66bb6a;
+}
+
+.psy-week-appt--pendiente_pago {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+}
+
+.psy-week-appt--completada {
+  background: rgba(126, 87, 194, 0.15);
+  color: #b388ff;
+}
+
+.psy-week-appt:hover {
+  opacity: 0.85;
+  transform: scale(1.02);
+}
+
+.psy-week-appt-name {
+  font-size: 0.625rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.psy-week-appt-time {
+  font-size: 0.5625rem;
+  opacity: 0.7;
+}
+
+/* ===== Day View ===== */
+.psy-day-view {
+  display: flex;
+  flex-direction: column;
+  background: var(--psy-surface);
+  border: 1px solid var(--psy-border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.psy-day-row {
+  display: flex;
+  min-height: 64px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.psy-day-row--blocked {
+  background: rgba(239, 83, 80, 0.04);
+}
+
+.psy-day-time {
+  width: 80px;
+  flex-shrink: 0;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.35);
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  border-right: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.psy-day-content {
+  flex: 1;
+  padding: 0.375rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.psy-day-block-label {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  color: #ef5350;
+  opacity: 0.7;
+}
+
+.psy-day-appt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.625rem 0.875rem;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  text-align: left;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.psy-day-appt--confirmada {
+  background: rgba(76, 175, 80, 0.12);
+  border: 1px solid rgba(76, 175, 80, 0.2);
+}
+
+.psy-day-appt--pendiente_pago {
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.2);
+}
+
+.psy-day-appt--completada {
+  background: rgba(126, 87, 194, 0.1);
+  border: 1px solid rgba(126, 87, 194, 0.2);
+}
+
+.psy-day-appt:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.psy-day-appt-left {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.psy-day-appt-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(126, 87, 194, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.psy-day-appt-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.psy-day-appt-avatar span {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #b388ff;
+}
+
+.psy-day-appt-left strong {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.psy-day-appt-left p {
+  font-size: 0.6875rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0;
+}
+
+.psy-day-appt-badge {
+  font-size: 0.625rem;
+  font-weight: 700;
+  padding: 0.25rem 0.625rem;
+  border-radius: 100px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.psy-day-appt-badge--confirmada {
+  background: rgba(76, 175, 80, 0.15);
+  color: #66bb6a;
+}
+
+.psy-day-appt-badge--pendiente_pago {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+}
+
+.psy-day-appt-badge--completada {
+  background: rgba(126, 87, 194, 0.15);
+  color: #b388ff;
+}
+
+.psy-day-avail-label {
+  font-size: 0.6875rem;
+  color: rgba(76, 175, 80, 0.5);
+  font-weight: 500;
+}
+
+/* ===== Appointment Detail Modal ===== */
+.psy-dash-modal--wide {
+  max-width: 500px;
+}
+
+.psy-appt-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.psy-appt-modal-header h3 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.psy-appt-modal-close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.psy-appt-modal-close:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.psy-appt-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.psy-appt-patient {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--psy-border);
+  border-radius: 12px;
+}
+
+.psy-appt-patient-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(126, 87, 194, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.psy-appt-patient-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.psy-appt-patient-avatar span {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #b388ff;
+}
+
+.psy-appt-patient h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.psy-appt-phone {
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0.125rem 0 0;
+}
+
+.psy-appt-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.psy-appt-detail-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.psy-appt-detail-row svg {
+  color: rgba(255, 255, 255, 0.35);
+  flex-shrink: 0;
+}
+
+.psy-appt-pay-badge {
+  font-size: 0.625rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 100px;
+  margin-left: 0.375rem;
+}
+
+.psy-appt-pay-badge--pagado {
+  background: rgba(76, 175, 80, 0.15);
+  color: #66bb6a;
+}
+
+.psy-appt-pay-badge--procesando {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+}
+
+.psy-appt-pay-badge--pendiente {
+  background: rgba(239, 83, 80, 0.1);
+  color: #ef5350;
+}
+
+.psy-appt-status-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.625rem;
+  border-radius: 100px;
+}
+
+.psy-appt-status-badge--confirmada {
+  background: rgba(76, 175, 80, 0.15);
+  color: #66bb6a;
+}
+
+.psy-appt-status-badge--pendiente_pago {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+}
+
+.psy-appt-status-badge--completada {
+  background: rgba(126, 87, 194, 0.15);
+  color: #b388ff;
+}
+
+.psy-appt-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.psy-wa-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 12px;
+  background: rgba(37, 211, 102, 0.12);
+  border: 1px solid rgba(37, 211, 102, 0.3);
+  color: #25d366;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.psy-wa-btn:hover {
+  background: rgba(37, 211, 102, 0.2);
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.15);
+}
+
+.psy-confirm-pay-btn {
+  padding: 0.75rem;
+  border-radius: 12px;
+  background: rgba(255, 193, 7, 0.12);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  color: #ffc107;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.psy-confirm-pay-btn:hover {
+  background: rgba(255, 193, 7, 0.2);
+}
+
+.psy-complete-btn {
+  padding: 0.75rem;
+  border-radius: 12px;
+  background: rgba(126, 87, 194, 0.12);
+  border: 1px solid rgba(126, 87, 194, 0.3);
+  color: #b388ff;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.psy-complete-btn:hover {
+  background: rgba(126, 87, 194, 0.2);
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
   .psy-dash {
