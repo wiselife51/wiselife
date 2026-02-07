@@ -130,7 +130,7 @@ const Dashboard: React.FC = () => {
             <h3>Buscar especialistas en</h3>
             <div className="dash-home-tags">
               {SPECIALTIES.map((s) => (
-                <button key={s} className="dash-home-tag" type="button">
+                <button key={s} className="dash-home-tag" type="button" onClick={() => navigate(`/especialistas?especialidad=${encodeURIComponent(s)}`)}>
                   {s}
                 </button>
               ))}
@@ -146,7 +146,7 @@ const Dashboard: React.FC = () => {
               Agenda tu primera sesion con un especialista y da el primer paso
               hacia una vida mas plena.
             </p>
-            <button className="dash-home-banner-btn" type="button">
+            <button className="dash-home-banner-btn" type="button" onClick={() => navigate('/especialistas')}>
               {'Agendar sesion ->'}
             </button>
           </div>
@@ -156,7 +156,7 @@ const Dashboard: React.FC = () => {
         {/* Accesos rapidos */}
         <h3 className="dash-home-section-title">Accesos rapidos</h3>
         <div className="dash-home-shortcuts">
-          <button className="dash-home-shortcut" type="button" onClick={() => navigate('/dashboard')}>
+          <button className="dash-home-shortcut" type="button" onClick={() => navigate('/especialistas')}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
               <line x1="16" y1="2" x2="16" y2="6" />
