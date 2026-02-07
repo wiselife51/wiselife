@@ -10,6 +10,9 @@ import ReferralSurvey from './pages/ReferralSurvey/ReferralSurvey';
 import MotivationSurvey from './pages/MotivationSurvey/MotivationSurvey';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Profile from './pages/Profile/Profile';
+import PsychologistLogin from './pages/PsychologistLogin/PsychologistLogin';
+import PsychologistOnboarding from './pages/PsychologistOnboarding/PsychologistOnboarding';
+import PsychologistDashboard from './pages/PsychologistDashboard/PsychologistDashboard';
 
 const App: React.FC = () => {
   return (
@@ -25,6 +28,9 @@ const App: React.FC = () => {
             <Route path="/motivation-survey" element={<MotivationSurvey />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/mi-perfil" element={<Profile />} />
+            <Route path="/psicologo/login" element={<PsychologistLogin />} />
+            <Route path="/psicologo/onboarding" element={<PsychologistOnboarding />} />
+            <Route path="/psicologo/dashboard" element={<PsychologistDashboard />} />
           </Routes>
         </div>
       </AuthProvider>
