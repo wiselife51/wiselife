@@ -9,6 +9,7 @@ interface Psychologist {
   id: string;
   full_name: string;
   avatar_url: string | null;
+  phone: string | null;
   specialties: string[];
   bio: string | null;
   education: string | null;
@@ -36,6 +37,11 @@ interface ScheduleBlock {
   end_time: string;
 }
 
+interface ExistingAppointment {
+  appointment_date: string;
+  start_time: string;
+}
+
 const DAY_NAMES = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
 
 function getNextDaysForWeek(): { date: Date; dayOfWeek: number; label: string }[] {
@@ -61,6 +67,12 @@ function formatTime(time: string): string {
   return `${h12}:${m} ${ampm}`;
 }
 
+function formatDateLong(date: Date): string {
+  return `${DAY_NAMES[date.getDay()]} ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+}
+
+type BookingStep = 'select' | 'confirm' | 'payment' | 'success';
+
 const SpecialistProfile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { user, loading: authLoading } = useAuth();
@@ -69,8 +81,16 @@ const SpecialistProfile: React.FC = () => {
   const [psy, setPsy] = useState<Psychologist | null>(null);
   const [availability, setAvailability] = useState<AvailabilitySlot[]>([]);
   const [blocks, setBlocks] = useState<ScheduleBlock[]>([]);
+  const [existingAppts, setExistingAppts] = useState<ExistingAppointment[]>([]);
   const [loadingData, setLoadingData] = useState(true);
   const [selectedDay, setSelectedDay] = useState<{ date: Date; dayOfWeek: number; label: string } | null>(null);
+
+  // Booking flow
+  const [bookingStep, setBookingStep] = useState<BookingStep>('select');
+  const [selectedSlot, setSelectedSlot] = useState<AvailabilitySlot | null>(null);
+  const [bookingLoading, setBookingLoading] = useState(false);
+  const [createdApptId, setCreatedApptId] = useState<string | null>(null);
+  const [paymentRef, setPaymentRef] = useState('');
 
   const nextDays = getNextDaysForWeek();
 
@@ -84,7 +104,6 @@ const SpecialistProfile: React.FC = () => {
     const fetchData = async () => {
       if (!id) return;
 
-      // Fetch psychologist profile
       const { data: psyData, error: psyError } = await supabase
         .from('psychologists')
         .select('*')
@@ -98,7 +117,6 @@ const SpecialistProfile: React.FC = () => {
       }
       setPsy(psyData);
 
-      // Fetch availability
       const { data: availData } = await supabase
         .from('psychologist_availability')
         .select('*')
@@ -109,7 +127,6 @@ const SpecialistProfile: React.FC = () => {
 
       setAvailability(availData || []);
 
-      // Fetch blocks for the next 14 days
       const today = new Date();
       const twoWeeks = new Date(today);
       twoWeeks.setDate(today.getDate() + 14);
@@ -122,12 +139,23 @@ const SpecialistProfile: React.FC = () => {
         .lte('block_date', twoWeeks.toISOString().split('T')[0]);
 
       setBlocks(blockData || []);
+
+      // Fetch existing appointments to filter out taken slots
+      const { data: apptData } = await supabase
+        .from('appointments')
+        .select('appointment_date, start_time')
+        .eq('psychologist_id', id)
+        .in('status', ['pendiente_pago', 'confirmada'])
+        .gte('appointment_date', today.toISOString().split('T')[0])
+        .lte('appointment_date', twoWeeks.toISOString().split('T')[0]);
+
+      setExistingAppts(apptData || []);
       setLoadingData(false);
 
-      // Set first available day
       if (availData && availData.length > 0) {
-        const availableDayNumbers = [...new Set(availData.map((a) => a.day_of_week))];
-        const firstAvail = nextDays.find((d) => availableDayNumbers.includes(d.dayOfWeek));
+        const availableDayNumbers = [...new Set(availData.map((a: AvailabilitySlot) => a.day_of_week))];
+        const allDays = getNextDaysForWeek();
+        const firstAvail = allDays.find((d) => availableDayNumbers.includes(d.dayOfWeek));
         if (firstAvail) setSelectedDay(firstAvail);
       }
     };
@@ -142,16 +170,85 @@ const SpecialistProfile: React.FC = () => {
     const daySlots = availability.filter((a) => a.day_of_week === day.dayOfWeek);
     const dateStr = day.date.toISOString().split('T')[0];
 
-    // Filter out blocked slots
     return daySlots.filter((slot) => {
       const isBlocked = blocks.some(
-        (b) =>
-          b.block_date === dateStr &&
-          b.start_time <= slot.start_time &&
-          b.end_time >= slot.end_time
+        (b) => b.block_date === dateStr && b.start_time <= slot.start_time && b.end_time >= slot.end_time
       );
-      return !isBlocked;
+      const isTaken = existingAppts.some(
+        (a) => a.appointment_date === dateStr && a.start_time === slot.start_time
+      );
+      return !isBlocked && !isTaken;
     });
+  };
+
+  const handleSlotClick = (slot: AvailabilitySlot) => {
+    setSelectedSlot(slot);
+    setBookingStep('confirm');
+  };
+
+  const handleConfirmBooking = async () => {
+    if (!user || !psy || !selectedSlot || !selectedDay) return;
+    setBookingLoading(true);
+
+    const { data, error } = await supabase
+      .from('appointments')
+      .insert({
+        psychologist_id: psy.id,
+        patient_id: user.id,
+        appointment_date: selectedDay.date.toISOString().split('T')[0],
+        start_time: selectedSlot.start_time,
+        end_time: selectedSlot.end_time,
+        status: 'pendiente_pago',
+        payment_amount: psy.session_price,
+        payment_status: 'pendiente',
+      })
+      .select('id')
+      .single();
+
+    setBookingLoading(false);
+
+    if (error) {
+      alert('Error al crear la cita. Intenta de nuevo.');
+      return;
+    }
+
+    setCreatedApptId(data.id);
+    setBookingStep('payment');
+  };
+
+  const handleNequiPayment = () => {
+    // Open Nequi deep link for payment
+    const amount = psy?.session_price || 0;
+    const nequiPhone = psy?.phone || '';
+    // Nequi push payment URL - redirects to Nequi app
+    const nequiUrl = `https://recarga.nequi.com.co/bdigitalpay?phone=${nequiPhone}&value=${amount}&reference=${createdApptId}`;
+    window.open(nequiUrl, '_blank');
+  };
+
+  const handleConfirmPayment = async () => {
+    if (!createdApptId || !paymentRef.trim()) return;
+    setBookingLoading(true);
+
+    await supabase
+      .from('appointments')
+      .update({
+        payment_method: 'nequi',
+        payment_reference: paymentRef.trim(),
+        payment_status: 'procesando',
+        status: 'confirmada',
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', createdApptId);
+
+    setBookingLoading(false);
+    setBookingStep('success');
+  };
+
+  const handleCloseBooking = () => {
+    setBookingStep('select');
+    setSelectedSlot(null);
+    setCreatedApptId(null);
+    setPaymentRef('');
   };
 
   const availableSlots = getSlotsForDay(selectedDay);
@@ -170,7 +267,6 @@ const SpecialistProfile: React.FC = () => {
   return (
     <DashboardLayout pageTitle="Perfil del Especialista">
       <div className="sp-page">
-        {/* Back button */}
         <button className="sp-back-btn" onClick={() => navigate('/especialistas')} type="button">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="15 18 9 12 15 6" />
@@ -238,7 +334,7 @@ const SpecialistProfile: React.FC = () => {
                       <line x1="12" y1="1" x2="12" y2="23" />
                       <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                     </svg>
-                    <span>${psy.session_price?.toLocaleString()} por sesion</span>
+                    <span>${psy.session_price?.toLocaleString()} COP por sesion</span>
                   </div>
                   <div className="sp-detail">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -264,7 +360,15 @@ const SpecialistProfile: React.FC = () => {
           <div className="sp-schedule">
             <div className="sp-schedule-card">
               <h3 className="sp-schedule-title">Agenda disponible</h3>
-              <p className="sp-schedule-sub">Selecciona un dia para ver los horarios</p>
+              <p className="sp-schedule-sub">Selecciona un dia y horario para agendar</p>
+
+              <div className="sp-price-banner">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="1" x2="12" y2="23" />
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                </svg>
+                <span>Valor de la sesion: <strong>${psy.session_price?.toLocaleString()} COP</strong></span>
+              </div>
 
               {/* Day selector */}
               <div className="sp-days-scroll">
@@ -305,12 +409,9 @@ const SpecialistProfile: React.FC = () => {
                       {availableSlots.map((slot) => (
                         <button
                           key={slot.id}
-                          className="sp-slot-btn"
+                          className={`sp-slot-btn ${selectedSlot?.id === slot.id ? 'sp-slot-btn--active' : ''}`}
                           type="button"
-                          onClick={() => {
-                            // Futuro: aqui se conectara con el sistema de reservas
-                            alert(`Proximamente: Agendar cita ${formatTime(slot.start_time)} - ${formatTime(slot.end_time)} con ${psy.full_name}`);
-                          }}
+                          onClick={() => handleSlotClick(slot)}
                         >
                           <span className="sp-slot-time">{formatTime(slot.start_time)}</span>
                           <span className="sp-slot-separator">-</span>
@@ -343,6 +444,171 @@ const SpecialistProfile: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Booking Modal */}
+      {bookingStep !== 'select' && selectedSlot && selectedDay && (
+        <div className="sp-modal-overlay" onClick={bookingStep === 'success' ? handleCloseBooking : undefined}>
+          <div className="sp-modal" onClick={(e) => e.stopPropagation()}>
+            {/* Step: Confirm */}
+            {bookingStep === 'confirm' && (
+              <>
+                <div className="sp-modal-header">
+                  <h3>Confirmar cita</h3>
+                  <button className="sp-modal-close" onClick={handleCloseBooking} type="button" aria-label="Cerrar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </button>
+                </div>
+                <div className="sp-modal-body">
+                  <div className="sp-booking-summary">
+                    <div className="sp-booking-psy">
+                      <div className="sp-booking-avatar">
+                        {psy.avatar_url ? (
+                          <img src={psy.avatar_url} alt={psy.full_name} crossOrigin="anonymous" />
+                        ) : (
+                          <span>{psy.full_name.charAt(0)}</span>
+                        )}
+                      </div>
+                      <div>
+                        <strong>{psy.full_name}</strong>
+                        <p>Lic. {psy.license_number}</p>
+                      </div>
+                    </div>
+                    <div className="sp-booking-details">
+                      <div className="sp-booking-detail">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
+                        <span>{formatDateLong(selectedDay.date)}</span>
+                      </div>
+                      <div className="sp-booking-detail">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+                        <span>{formatTime(selectedSlot.start_time)} - {formatTime(selectedSlot.end_time)}</span>
+                      </div>
+                      <div className="sp-booking-detail">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+                        <span>Duracion: {psy.session_duration} minutos</span>
+                      </div>
+                    </div>
+                    <div className="sp-booking-price">
+                      <span>Total a pagar</span>
+                      <strong>${psy.session_price?.toLocaleString()} COP</strong>
+                    </div>
+                  </div>
+                </div>
+                <div className="sp-modal-footer">
+                  <button className="sp-btn-secondary" onClick={handleCloseBooking} type="button">Cancelar</button>
+                  <button className="sp-btn-primary" onClick={handleConfirmBooking} disabled={bookingLoading} type="button">
+                    {bookingLoading ? 'Creando cita...' : 'Continuar al pago'}
+                  </button>
+                </div>
+              </>
+            )}
+
+            {/* Step: Payment */}
+            {bookingStep === 'payment' && (
+              <>
+                <div className="sp-modal-header">
+                  <h3>Pago con Nequi</h3>
+                  <button className="sp-modal-close" onClick={handleCloseBooking} type="button" aria-label="Cerrar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </button>
+                </div>
+                <div className="sp-modal-body">
+                  <div className="sp-payment-section">
+                    <div className="sp-nequi-logo">
+                      <div className="sp-nequi-badge">Nequi</div>
+                    </div>
+                    <p className="sp-payment-amount">${psy.session_price?.toLocaleString()} COP</p>
+
+                    <div className="sp-payment-steps">
+                      <div className="sp-payment-step">
+                        <span className="sp-step-num">1</span>
+                        <div>
+                          <strong>Abre Nequi en tu celular</strong>
+                          <p>O haz click en el boton para ir a Nequi</p>
+                        </div>
+                      </div>
+                      <div className="sp-payment-step">
+                        <span className="sp-step-num">2</span>
+                        <div>
+                          <strong>Realiza el pago</strong>
+                          <p>Envia ${psy.session_price?.toLocaleString()} COP</p>
+                        </div>
+                      </div>
+                      <div className="sp-payment-step">
+                        <span className="sp-step-num">3</span>
+                        <div>
+                          <strong>Ingresa la referencia</strong>
+                          <p>Copia el numero de transaccion de Nequi</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <button className="sp-nequi-btn" onClick={handleNequiPayment} type="button">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                        <polyline points="15 3 21 3 21 9" />
+                        <line x1="10" y1="14" x2="21" y2="3" />
+                      </svg>
+                      Ir a Nequi para pagar
+                    </button>
+
+                    <div className="sp-payment-ref">
+                      <label htmlFor="payment-ref">Referencia de pago Nequi</label>
+                      <input
+                        id="payment-ref"
+                        type="text"
+                        placeholder="Ej: 123456789"
+                        value={paymentRef}
+                        onChange={(e) => setPaymentRef(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="sp-modal-footer">
+                  <button className="sp-btn-secondary" onClick={handleCloseBooking} type="button">Cancelar</button>
+                  <button className="sp-btn-primary" onClick={handleConfirmPayment} disabled={bookingLoading || !paymentRef.trim()} type="button">
+                    {bookingLoading ? 'Confirmando...' : 'Confirmar pago'}
+                  </button>
+                </div>
+              </>
+            )}
+
+            {/* Step: Success */}
+            {bookingStep === 'success' && (
+              <>
+                <div className="sp-modal-body sp-success-body">
+                  <div className="sp-success-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                      <polyline points="22 4 12 14.01 9 11.01" />
+                    </svg>
+                  </div>
+                  <h3>Cita agendada con exito</h3>
+                  <p>Tu cita con <strong>{psy.full_name}</strong> ha sido confirmada.</p>
+                  <div className="sp-success-details">
+                    <span>{formatDateLong(selectedDay.date)}</span>
+                    <span>{formatTime(selectedSlot.start_time)} - {formatTime(selectedSlot.end_time)}</span>
+                  </div>
+                  <p className="sp-success-note">El psicologo verificara tu pago y recibiras una confirmacion. Podras comunicarte por WhatsApp desde la seccion "Mis citas".</p>
+                </div>
+                <div className="sp-modal-footer">
+                  <button className="sp-btn-primary sp-btn-full" onClick={() => navigate('/mis-citas')} type="button">
+                    Ver mis citas
+                  </button>
+                  <button className="sp-btn-secondary sp-btn-full" onClick={handleCloseBooking} type="button">
+                    Seguir explorando
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 };

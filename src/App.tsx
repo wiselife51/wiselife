@@ -15,6 +15,7 @@ import PsychologistOnboarding from './pages/PsychologistOnboarding/PsychologistO
 import PsychologistDashboard from './pages/PsychologistDashboard/PsychologistDashboard';
 import Specialists from './pages/Specialists/Specialists';
 import SpecialistProfile from './pages/SpecialistProfile/SpecialistProfile';
+import MisCitas from './pages/MisCitas/MisCitas';
 
 const App: React.FC = () => {
   return (
@@ -32,6 +33,7 @@ const App: React.FC = () => {
             <Route path="/mi-perfil" element={<Profile />} />
             <Route path="/especialistas" element={<Specialists />} />
             <Route path="/especialista/:id" element={<SpecialistProfile />} />
+            <Route path="/mis-citas" element={<MisCitas />} />
             <Route path="/psicologo/login" element={<PsychologistLogin />} />
             <Route path="/psicologo/onboarding" element={<PsychologistOnboarding />} />
             <Route path="/psicologo/dashboard" element={<PsychologistDashboard />} />

@@ -1,0 +1,958 @@
+.mc-page {
+  padding: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Stats */
+.mc-stats {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.mc-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background: rgba(15, 20, 35, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+}
+
+.mc-stat-num {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.mc-stat-label {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin-top: 0.125rem;
+}
+
+/* Calendar Controls */
+.mc-cal-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.mc-cal-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mc-cal-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mc-cal-nav-btn:hover {
+  background: rgba(92, 107, 192, 0.12);
+  border-color: rgba(92, 107, 192, 0.3);
+  color: #7986cb;
+}
+
+.mc-cal-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #ffffff;
+  min-width: 200px;
+  text-align: center;
+  margin: 0;
+}
+
+.mc-cal-today-btn {
+  padding: 0.375rem 0.875rem;
+  border-radius: 8px;
+  border: 1px solid rgba(92, 107, 192, 0.3);
+  background: rgba(92, 107, 192, 0.08);
+  color: #7986cb;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mc-cal-today-btn:hover {
+  background: rgba(92, 107, 192, 0.2);
+}
+
+.mc-cal-views {
+  display: flex;
+  gap: 0.25rem;
+  background: rgba(15, 20, 35, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 0.25rem;
+}
+
+.mc-cal-view-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  background: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mc-cal-view-btn:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.mc-cal-view-btn--active {
+  background: rgba(92, 107, 192, 0.2);
+  color: #7986cb;
+}
+
+/* Month dots */
+.mc-month-dots {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  flex-wrap: wrap;
+}
+
+.mc-month-dot--confirmada {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #66bb6a;
+}
+
+.mc-month-dot--pendiente_pago {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffc107;
+}
+
+.mc-month-dot--completada {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #7986cb;
+}
+
+.mc-month-more {
+  font-size: 0.5625rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* Day view class fix */
+.mc-day-view {
+  display: flex;
+  flex-direction: column;
+  background: rgba(15, 20, 35, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* Modal specialist tags */
+.mc-modal-specs {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
+}
+
+.mc-modal-spec-tag {
+  font-size: 0.625rem;
+  padding: 0.15rem 0.5rem;
+  background: rgba(92, 107, 192, 0.15);
+  border-radius: 100px;
+  color: #7986cb;
+}
+
+.mc-modal-pay-badge {
+  font-size: 0.625rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 100px;
+  margin-left: 0.375rem;
+}
+
+.mc-modal-pay-badge--pagado {
+  background: rgba(76, 175, 80, 0.15);
+  color: #66bb6a;
+}
+
+.mc-modal-pay-badge--procesando {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+}
+
+.mc-modal-pay-badge--pendiente {
+  background: rgba(239, 83, 80, 0.1);
+  color: #ef5350;
+}
+
+.mc-modal-note {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 193, 7, 0.06);
+  border: 1px solid rgba(255, 193, 7, 0.1);
+  border-radius: 10px;
+}
+
+/* Controls */
+.mc-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.mc-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mc-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mc-nav-btn:hover {
+  background: rgba(92, 107, 192, 0.12);
+  border-color: rgba(92, 107, 192, 0.3);
+  color: #7986cb;
+}
+
+.mc-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #ffffff;
+  min-width: 200px;
+  text-align: center;
+  margin: 0;
+}
+
+.mc-today-btn {
+  padding: 0.375rem 0.875rem;
+  border-radius: 8px;
+  border: 1px solid rgba(92, 107, 192, 0.3);
+  background: rgba(92, 107, 192, 0.08);
+  color: #7986cb;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mc-today-btn:hover {
+  background: rgba(92, 107, 192, 0.2);
+}
+
+.mc-views {
+  display: flex;
+  gap: 0.25rem;
+  background: rgba(15, 20, 35, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 0.25rem;
+}
+
+.mc-view-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  background: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mc-view-btn:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.mc-view-btn--active {
+  background: rgba(92, 107, 192, 0.2);
+  color: #7986cb;
+}
+
+/* Month Grid */
+.mc-month {
+  background: rgba(15, 20, 35, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.mc-month-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.mc-month-day-name {
+  padding: 0.75rem;
+  text-align: center;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.mc-month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.mc-month-cell {
+  min-height: 80px;
+  padding: 0.5rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.mc-month-cell:hover {
+  background: rgba(92, 107, 192, 0.06);
+}
+
+.mc-month-cell--empty {
+  cursor: default;
+}
+
+.mc-month-cell--empty:hover {
+  background: transparent;
+}
+
+.mc-month-cell--today .mc-month-date {
+  background: #5c6bc0;
+  color: #ffffff;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mc-month-date {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.mc-month-dot {
+  font-size: 0.5625rem;
+  font-weight: 700;
+  background: rgba(92, 107, 192, 0.25);
+  color: #7986cb;
+  padding: 0.1rem 0.35rem;
+  border-radius: 100px;
+}
+
+/* Week View */
+.mc-week {
+  background: rgba(15, 20, 35, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.mc-week-header {
+  display: grid;
+  grid-template-columns: 70px repeat(7, 1fr);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.mc-week-time-col {
+  padding: 0.75rem;
+}
+
+.mc-week-day-col {
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+.mc-week-day-col--today {
+  background: rgba(92, 107, 192, 0.1);
+}
+
+.mc-week-day-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+}
+
+.mc-week-day-col--today .mc-week-day-label {
+  color: #7986cb;
+}
+
+.mc-week-day-num {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.mc-week-day-col--today .mc-week-day-num {
+  color: #7986cb;
+}
+
+.mc-week-body {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.mc-week-row {
+  display: grid;
+  grid-template-columns: 70px repeat(7, 1fr);
+  min-height: 52px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.mc-week-time {
+  padding: 0.375rem 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.35);
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
+.mc-week-cell {
+  border-right: 1px solid rgba(255, 255, 255, 0.03);
+  padding: 0.25rem;
+  min-height: 52px;
+}
+
+.mc-week-appt {
+  display: flex;
+  flex-direction: column;
+  gap: 0.0625rem;
+  padding: 0.25rem 0.375rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  text-align: left;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.mc-week-appt--confirmada {
+  background: rgba(76, 175, 80, 0.15);
+  color: #66bb6a;
+}
+
+.mc-week-appt--pendiente_pago {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+}
+
+.mc-week-appt--completada {
+  background: rgba(92, 107, 192, 0.15);
+  color: #7986cb;
+}
+
+.mc-week-appt:hover {
+  opacity: 0.85;
+}
+
+.mc-week-appt-name {
+  font-size: 0.625rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mc-week-appt-time {
+  font-size: 0.5625rem;
+  opacity: 0.7;
+}
+
+/* Day View */
+.mc-day {
+  display: flex;
+  flex-direction: column;
+  background: rgba(15, 20, 35, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.mc-day-row {
+  display: flex;
+  min-height: 64px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.mc-day-time {
+  width: 80px;
+  flex-shrink: 0;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.35);
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  border-right: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.mc-day-content {
+  flex: 1;
+  padding: 0.375rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.mc-day-appt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.625rem 0.875rem;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  text-align: left;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.mc-day-appt--confirmada {
+  background: rgba(76, 175, 80, 0.12);
+  border: 1px solid rgba(76, 175, 80, 0.2);
+}
+
+.mc-day-appt--pendiente_pago {
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.2);
+}
+
+.mc-day-appt--completada {
+  background: rgba(92, 107, 192, 0.1);
+  border: 1px solid rgba(92, 107, 192, 0.2);
+}
+
+.mc-day-appt:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.mc-day-appt-left {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.mc-day-appt-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(92, 107, 192, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mc-day-appt-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mc-day-appt-avatar span {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #7986cb;
+}
+
+.mc-day-appt-left strong {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.mc-day-appt-left p {
+  font-size: 0.6875rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0;
+}
+
+.mc-day-appt-badge {
+  font-size: 0.625rem;
+  font-weight: 700;
+  padding: 0.25rem 0.625rem;
+  border-radius: 100px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.mc-day-appt-badge--confirmada {
+  background: rgba(76, 175, 80, 0.15);
+  color: #66bb6a;
+}
+
+.mc-day-appt-badge--pendiente_pago {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+}
+
+.mc-day-appt-badge--completada {
+  background: rgba(92, 107, 192, 0.15);
+  color: #7986cb;
+}
+
+/* Detail Modal */
+.mc-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.mc-modal {
+  background: rgba(20, 25, 40, 0.95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  animation: mcModalIn 0.3s ease;
+}
+
+@keyframes mcModalIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.mc-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mc-modal-header h3 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+}
+
+.mc-modal-close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.mc-modal-close:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.mc-modal-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.mc-modal-psy {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+}
+
+.mc-modal-psy-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(92, 107, 192, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mc-modal-psy-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mc-modal-psy-avatar span {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #7986cb;
+}
+
+.mc-modal-psy h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.mc-modal-psy p {
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0.125rem 0 0;
+}
+
+.mc-modal-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.mc-modal-detail {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.mc-modal-detail svg {
+  color: rgba(255, 255, 255, 0.35);
+  flex-shrink: 0;
+}
+
+.mc-modal-status {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.625rem;
+  border-radius: 100px;
+  margin-left: 0.25rem;
+}
+
+.mc-modal-status--confirmada {
+  background: rgba(76, 175, 80, 0.15);
+  color: #66bb6a;
+}
+
+.mc-modal-status--pendiente_pago {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+}
+
+.mc-modal-status--completada {
+  background: rgba(92, 107, 192, 0.15);
+  color: #7986cb;
+}
+
+.mc-modal-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem 1.5rem;
+}
+
+.mc-wa-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 12px;
+  background: rgba(37, 211, 102, 0.12);
+  border: 1px solid rgba(37, 211, 102, 0.3);
+  color: #25d366;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mc-wa-btn:hover {
+  background: rgba(37, 211, 102, 0.2);
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.15);
+}
+
+.mc-cancel-btn {
+  padding: 0.75rem;
+  border-radius: 12px;
+  background: rgba(239, 83, 80, 0.08);
+  border: 1px solid rgba(239, 83, 80, 0.2);
+  color: #ef5350;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mc-cancel-btn:hover {
+  background: rgba(239, 83, 80, 0.15);
+}
+
+.mc-close-btn {
+  padding: 0.75rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.75);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mc-close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Empty state */
+.mc-empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: rgba(15, 20, 35, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+}
+
+.mc-empty svg {
+  color: rgba(255, 255, 255, 0.15);
+  margin-bottom: 1rem;
+}
+
+.mc-empty h3 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0 0 0.5rem;
+}
+
+.mc-empty p {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.35);
+  margin: 0 0 1.5rem;
+}
+
+.mc-empty-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #5c6bc0, #7e57c2);
+  border: none;
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mc-empty-btn:hover {
+  box-shadow: 0 4px 20px rgba(92, 107, 192, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .mc-page {
+    padding: 1rem;
+  }
+
+  .mc-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .mc-nav {
+    justify-content: center;
+  }
+
+  .mc-views {
+    align-self: center;
+  }
+
+  .mc-month-cell {
+    min-height: 56px;
+  }
+
+  .mc-week-header,
+  .mc-week-row {
+    grid-template-columns: 50px repeat(7, 1fr);
+  }
+
+  .mc-day-time {
+    width: 60px;
+  }
+}
