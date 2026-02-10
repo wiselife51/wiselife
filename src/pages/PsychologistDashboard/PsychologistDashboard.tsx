@@ -61,16 +61,16 @@ const DAYS_CONFIG = [
   { value: 0, label: 'Dom' },
 ];
 
-const DAY_NAMES_SHORT = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
+const DAY_NAMES_SHORT = ['dom', 'lun', 'mar', 'mie', 'jue', 'vie', 'sab'];
 const DAY_NAMES_FULL = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
 const MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
-const HOUR_OPTIONS = Array.from({ length: 14 }, (_, i) => {
+const HOUR_OPTIONS = Array.from({ length: 15 }, (_, i) => {
   const h = i + 7;
   return `${h.toString().padStart(2, '0')}:00`;
 });
 
-const HOURS_RANGE = Array.from({ length: 14 }, (_, i) => i + 7);
+const HOURS_RANGE = Array.from({ length: 15 }, (_, i) => i + 7); // 7 AM hasta 9 PM (21:00)
 
 type ActiveTab = 'calendario' | 'agenda' | 'bloqueos';
 type CalView = 'month' | 'week' | 'day';
@@ -128,6 +128,10 @@ const PsychologistDashboard: React.FC = () => {
   const [blockReason, setBlockReason] = useState('');
   const [savingBlock, setSavingBlock] = useState(false);
 
+  // Quick block from calendar
+  const [showQuickBlock, setShowQuickBlock] = useState(false);
+  const [quickBlockDate, setQuickBlockDate] = useState<Date | null>(null);
+
   // Add availability
   const [showAddSlot, setShowAddSlot] = useState(false);
   const [newSlotDay, setNewSlotDay] = useState(1);
@@ -135,12 +139,42 @@ const PsychologistDashboard: React.FC = () => {
   const [newSlotEnd, setNewSlotEnd] = useState('09:00');
   const [savingSlot, setSavingSlot] = useState(false);
 
+  // Mobile menu
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+
   // Quick add from calendar
   const handleQuickAdd = (dayOfWeek: number, hour: number) => {
     setNewSlotDay(dayOfWeek);
     setNewSlotStart(`${hour.toString().padStart(2, '0')}:00`);
     setNewSlotEnd(`${(hour + 1).toString().padStart(2, '0')}:00`);
     setShowAddSlot(true);
+  };
+
+  // Quick block from calendar
+  const handleQuickBlockClick = (date: Date, hour: number) => {
+    setQuickBlockDate(date);
+    const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    setBlockDate(dateStr);
+    setBlockStart(`${hour.toString().padStart(2, '0')}:00`);
+    setBlockEnd(`${(hour + 1).toString().padStart(2, '0')}:00`);
+    setShowQuickBlock(true);
+  };
+
+  const handleQuickBlock = async () => {
+    if (!profile || !blockDate) return;
+    setSavingBlock(true);
+    await supabase.from('schedule_blocks').insert({
+      psychologist_id: profile.id,
+      block_date: blockDate,
+      start_time: blockStart,
+      end_time: blockEnd,
+      reason: blockReason || null,
+    });
+    setShowQuickBlock(false);
+    setBlockDate('');
+    setBlockReason('');
+    setSavingBlock(false);
+    fetchData();
   };
 
   const today = useMemo(() => new Date(), []);
@@ -161,6 +195,158 @@ const PsychologistDashboard: React.FC = () => {
     }
 
     setProfile(psyData as PsychologistProfile);
+
+    // Verificar si tiene disponibilidad configurada
+    let { data: existingAvail } = await supabase
+      .from('psychologist_availability')
+      .select('*')
+      .eq('psychologist_id', psyData.id);
+
+    // Si no tiene disponibilidad, crear la por defecto automáticamente HORA POR HORA
+    if (!existingAvail || existingAvail.length === 0) {
+      console.log('🔄 Creando disponibilidad por defecto automáticamente (hora por hora)...');
+      const defaultSlots = [];
+      
+      // Lunes a Viernes (1-5) - NO sábado
+      for (let day = 1; day <= 5; day++) {
+        // 7AM - 12PM (hora por hora)
+        for (let hour = 7; hour < 12; hour++) {
+          defaultSlots.push({
+            psychologist_id: psyData.id,
+            day_of_week: day,
+            start_time: `${hour.toString().padStart(2, '0')}:00`,
+            end_time: `${(hour + 1).toString().padStart(2, '0')}:00`,
+            is_available: true,
+          });
+        }
+        
+        // 1PM - 8PM (hora por hora) - Saltar 12-1 PM
+        for (let hour = 13; hour <= 20; hour++) {
+          defaultSlots.push({
+            psychologist_id: psyData.id,
+            day_of_week: day,
+            start_time: `${hour.toString().padStart(2, '0')}:00`,
+            end_time: `${(hour + 1).toString().padStart(2, '0')}:00`,
+            is_available: true,
+          });
+        }
+      }
+      
+      const { data: insertedData, error } = await supabase
+        .from('psychologist_availability')
+        .insert(defaultSlots)
+        .select();
+      
+      if (error) {
+        console.error('❌ Error creando disponibilidad por defecto:', error);
+      } else {
+        console.log('✅ Disponibilidad por defecto creada exitosamente:', insertedData?.length, 'slots por semana');
+        existingAvail = insertedData;
+      }
+    }
+
+    // Bloquear todos los domingos y sábados del año
+    const today = new Date();
+    const nextYear = new Date(today.getFullYear() + 1, 11, 31);
+    
+    // Verificar si ya hay bloqueos
+    const { data: existingBlocks } = await supabase
+      .from('schedule_blocks')
+      .select('block_date')
+      .eq('psychologist_id', psyData.id)
+      .gte('block_date', today.toISOString().split('T')[0]);
+    
+    const existingBlockDates = new Set(existingBlocks?.map(b => b.block_date) || []);
+    
+    // Crear bloqueos para domingos y sábados
+    const weekendBlocks = [];
+    let currentDate = new Date(today);
+    
+    while (currentDate <= nextYear) {
+      const dayOfWeek = currentDate.getDay();
+      if (dayOfWeek === 0 || dayOfWeek === 6) { // Domingo o Sábado
+        const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+        
+        if (!existingBlockDates.has(dateStr)) {
+          weekendBlocks.push({
+            psychologist_id: psyData.id,
+            block_date: dateStr,
+            start_time: '00:00',
+            end_time: '23:59',
+            reason: dayOfWeek === 0 ? 'Domingo - Dia no laboral' : 'Sabado - Dia no laboral',
+          });
+        }
+      }
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    
+    // Bloquear todos los meses excepto el actual y el siguiente
+    const currentMonth = today.getMonth();
+    const currentYear = today.getFullYear();
+    const blocksForOtherMonths = [];
+    
+    // Bloquear desde hoy hasta fin del año actual (excepto mes actual y siguiente)
+    for (let month = 0; month < 12; month++) {
+      // Saltar mes actual y siguiente
+      if (month === currentMonth || month === (currentMonth + 1) % 12) continue;
+      
+      const monthStart = new Date(currentYear, month, 1);
+      const monthEnd = new Date(currentYear, month + 1, 0);
+      
+      // Solo bloquear si es futuro
+      if (monthEnd < today) continue;
+      
+      let blockDate = new Date(monthStart);
+      while (blockDate <= monthEnd) {
+        const dateStr = `${blockDate.getFullYear()}-${String(blockDate.getMonth() + 1).padStart(2, '0')}-${String(blockDate.getDate()).padStart(2, '0')}`;
+        
+        if (!existingBlockDates.has(dateStr) && blockDate >= today) {
+          blocksForOtherMonths.push({
+            psychologist_id: psyData.id,
+            block_date: dateStr,
+            start_time: '00:00',
+            end_time: '23:59',
+            reason: 'Mes bloqueado - Configura tu agenda',
+          });
+        }
+        blockDate.setDate(blockDate.getDate() + 1);
+      }
+    }
+    
+    // Bloquear meses del siguiente año (excepto el primer mes si el mes actual es diciembre)
+    const nextYearStart = currentMonth === 11 ? 1 : 0; // Si estamos en diciembre, el siguiente mes (enero) está disponible
+    for (let month = nextYearStart; month < 12; month++) {
+      const monthStart = new Date(currentYear + 1, month, 1);
+      const monthEnd = new Date(currentYear + 1, month + 1, 0);
+      
+      let blockDate = new Date(monthStart);
+      while (blockDate <= monthEnd) {
+        const dateStr = `${blockDate.getFullYear()}-${String(blockDate.getMonth() + 1).padStart(2, '0')}-${String(blockDate.getDate()).padStart(2, '0')}`;
+        
+        if (!existingBlockDates.has(dateStr)) {
+          blocksForOtherMonths.push({
+            psychologist_id: psyData.id,
+            block_date: dateStr,
+            start_time: '00:00',
+            end_time: '23:59',
+            reason: 'Mes bloqueado - Configura tu agenda',
+          });
+        }
+        blockDate.setDate(blockDate.getDate() + 1);
+      }
+    }
+    
+    const allBlocks = [...weekendBlocks, ...blocksForOtherMonths];
+    
+    if (allBlocks.length > 0) {
+      const { error: blockError } = await supabase
+        .from('schedule_blocks')
+        .insert(allBlocks);
+      
+      if (!blockError) {
+        console.log('✅ Bloques creados automáticamente:', allBlocks.length);
+      }
+    }
 
     // Fetch appointments
     const { data: apptData } = await supabase
@@ -193,13 +379,9 @@ const PsychologistDashboard: React.FC = () => {
     }
     setAppointments(enriched);
 
-    const { data: availData } = await supabase
-      .from('psychologist_availability')
-      .select('*')
-      .eq('psychologist_id', psyData.id)
-      .order('day_of_week')
-      .order('start_time');
-    setAvailability((availData || []) as AvailabilitySlot[]);
+    // Establecer la disponibilidad (ya sea la existente o la recién creada)
+    setAvailability((existingAvail || []) as AvailabilitySlot[]);
+    console.log('📅 Disponibilidad cargada:', existingAvail?.length || 0, 'slots');
 
     const { data: blocksData } = await supabase
       .from('schedule_blocks')
@@ -363,7 +545,7 @@ const PsychologistDashboard: React.FC = () => {
   return (
     <div className="psy-dash">
       {/* Sidebar */}
-      <aside className="psy-dash-sidebar">
+      <aside className={`psy-dash-sidebar ${showMobileMenu ? 'psy-dash-sidebar--open' : ''}`}>
         <div className="psy-dash-sidebar-header">
           <div className="psy-dash-logo">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" strokeWidth="2">
@@ -394,15 +576,15 @@ const PsychologistDashboard: React.FC = () => {
         </div>
 
         <nav className="psy-dash-nav">
-          <button type="button" className={`psy-dash-nav-item ${activeTab === 'calendario' ? 'psy-dash-nav-item--active' : ''}`} onClick={() => setActiveTab('calendario')}>
+          <button type="button" className={`psy-dash-nav-item ${activeTab === 'calendario' ? 'psy-dash-nav-item--active' : ''}`} onClick={() => { setActiveTab('calendario'); setShowMobileMenu(false); }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
             <span>Calendario</span>
           </button>
-          <button type="button" className={`psy-dash-nav-item ${activeTab === 'agenda' ? 'psy-dash-nav-item--active' : ''}`} onClick={() => setActiveTab('agenda')}>
+          <button type="button" className={`psy-dash-nav-item ${activeTab === 'agenda' ? 'psy-dash-nav-item--active' : ''}`} onClick={() => { setActiveTab('agenda'); setShowMobileMenu(false); }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
             <span>Mi Agenda</span>
           </button>
-          <button type="button" className={`psy-dash-nav-item ${activeTab === 'bloqueos' ? 'psy-dash-nav-item--active' : ''}`} onClick={() => setActiveTab('bloqueos')}>
+          <button type="button" className={`psy-dash-nav-item ${activeTab === 'bloqueos' ? 'psy-dash-nav-item--active' : ''}`} onClick={() => { setActiveTab('bloqueos'); setShowMobileMenu(false); }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" /></svg>
             <span>Bloqueos</span>
           </button>
@@ -413,7 +595,7 @@ const PsychologistDashboard: React.FC = () => {
           <div className="psy-dash-upcoming-mini">
             <h4>Proximas citas</h4>
             {upcomingAppts.slice(0, 4).map((a) => (
-              <button key={a.id} className="psy-dash-upcoming-item" onClick={() => { setActiveTab('calendario'); setSelectedAppt(a); }} type="button">
+              <button key={a.id} className="psy-dash-upcoming-item" onClick={() => { setActiveTab('calendario'); setSelectedAppt(a); setShowMobileMenu(false); }} type="button">
                 <div className="psy-dash-upcoming-avatar-sm">
                   {a.patient?.avatar_url ? (
                     <img src={a.patient.avatar_url} alt="" crossOrigin="anonymous" />
@@ -438,6 +620,17 @@ const PsychologistDashboard: React.FC = () => {
           <span>Cerrar sesion</span>
         </button>
       </aside>
+
+      {/* Mobile menu toggle */}
+      <button className="psy-mobile-menu-toggle" onClick={() => setShowMobileMenu(!showMobileMenu)} type="button">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          {showMobileMenu ? (
+            <><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></>
+          ) : (
+            <><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="18" x2="21" y2="18" /></>
+          )}
+        </svg>
+      </button>
 
       {/* Main content */}
       <main className="psy-dash-main">
@@ -477,6 +670,22 @@ const PsychologistDashboard: React.FC = () => {
                     const appts = getApptsForDate(d);
                     const dayBlocks = getBlocksForDate(d);
                     const isToday = sameDay(d, today);
+                    
+                    // Contar tipos de citas
+                    const confirmadas = appts.filter(a => a.status === 'confirmada').length;
+                    const pendientes = appts.filter(a => a.status === 'pendiente_pago').length;
+                    const completadas = appts.filter(a => a.status === 'completada').length;
+                    const canceladas = appts.filter(a => a.status === 'cancelada').length;
+                    
+                    // Contar horas disponibles para ese día
+                    const dayOfWeek = d.getDay();
+                    const availableHours = availability.filter(av => 
+                      av.day_of_week === dayOfWeek && av.is_available
+                    ).length;
+                    
+                    // Contar horas bloqueadas
+                    const blockedHours = dayBlocks.length;
+                    
                     return (
                       <div
                         key={d.toISOString()}
@@ -487,9 +696,60 @@ const PsychologistDashboard: React.FC = () => {
                         onKeyDown={(e) => e.key === 'Enter' && setCalView('day')}
                       >
                         <span className="psy-month-date">{d.getDate()}</span>
-                        <div className="psy-month-indicators">
-                          {appts.length > 0 && <span className="psy-month-dot psy-month-dot--appt">{appts.length}</span>}
-                          {dayBlocks.length > 0 && <span className="psy-month-dot psy-month-dot--block" />}
+                        <div className="psy-month-stats">
+                          {availableHours > 0 && (
+                            <div className="psy-month-stat psy-month-stat--available" title={`${availableHours} horas disponibles`}>
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                                <circle cx="12" cy="12" r="10" />
+                              </svg>
+                              <span>{availableHours}</span>
+                            </div>
+                          )}
+                          {blockedHours > 0 && (
+                            <div className="psy-month-stat psy-month-stat--blocked" title={`${blockedHours} horas bloqueadas`}>
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                                <circle cx="12" cy="12" r="9" />
+                                <line x1="15" y1="9" x2="9" y2="15" />
+                              </svg>
+                              <span>{blockedHours}</span>
+                            </div>
+                          )}
+                          {confirmadas > 0 && (
+                            <div className="psy-month-stat psy-month-stat--confirmed" title={`${confirmadas} confirmadas`}>
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                                <polyline points="20 6 9 17 4 12" />
+                              </svg>
+                              <span>{confirmadas}</span>
+                            </div>
+                          )}
+                          {pendientes > 0 && (
+                            <div className="psy-month-stat psy-month-stat--pending" title={`${pendientes} pendientes de pago`}>
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                                <circle cx="12" cy="12" r="9" />
+                                <line x1="12" y1="8" x2="12" y2="12" />
+                                <line x1="12" y1="16" x2="12.01" y2="16" />
+                              </svg>
+                              <span>{pendientes}</span>
+                            </div>
+                          )}
+                          {completadas > 0 && (
+                            <div className="psy-month-stat psy-month-stat--completed" title={`${completadas} completadas`}>
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M9 11.5l2 2 4-4" stroke="white" strokeWidth="2" fill="none"/>
+                                <circle cx="12" cy="12" r="10" />
+                              </svg>
+                              <span>{completadas}</span>
+                            </div>
+                          )}
+                          {canceladas > 0 && (
+                            <div className="psy-month-stat psy-month-stat--cancelled" title={`${canceladas} canceladas`}>
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                                <line x1="18" y1="6" x2="6" y2="18" />
+                                <line x1="6" y1="6" x2="18" y2="18" />
+                              </svg>
+                              <span>{canceladas}</span>
+                            </div>
+                          )}
                         </div>
                       </div>
                     );
@@ -526,18 +786,27 @@ const PsychologistDashboard: React.FC = () => {
                         const hourAppts = appointments.filter((a) => a.appointment_date === ds && parseInt(a.start_time.split(':')[0], 10) === h);
                         const hourBlocks = blocks.filter((b) => b.block_date === ds && parseInt(b.start_time.split(':')[0], 10) <= h && parseInt(b.end_time.split(':')[0], 10) > h);
                         const hasAvail = availability.some((av) => av.day_of_week === d.getDay() && parseInt(av.start_time.split(':')[0], 10) === h && av.is_available);
+                        
                         return (
                           <div
                             key={`${ds}-${h}`}
-                            className={`psy-week-cell ${hourBlocks.length > 0 ? 'psy-week-cell--blocked' : ''} ${hourAppts.length === 0 && hourBlocks.length === 0 && !hasAvail ? 'psy-week-cell--addable' : ''}`}
+                            className={`psy-week-cell ${hourBlocks.length > 0 ? 'psy-week-cell--blocked' : ''} ${hourAppts.length === 0 && hourBlocks.length === 0 && hasAvail ? 'psy-week-cell--available' : ''}`}
+                            onContextMenu={(e) => {
+                              e.preventDefault();
+                              if (hourAppts.length === 0 && d >= today) {
+                                handleQuickBlockClick(d, h);
+                              }
+                            }}
                             onClick={() => {
-                              if (hourAppts.length === 0 && hourBlocks.length === 0 && !hasAvail) {
+                              if (hourAppts.length > 0) {
+                                setSelectedAppt(hourAppts[0]);
+                              } else if (hourAppts.length === 0 && hourBlocks.length === 0 && !hasAvail && d >= today) {
                                 handleQuickAdd(d.getDay(), h);
                               }
                             }}
-                            role={hourAppts.length === 0 && hourBlocks.length === 0 && !hasAvail ? 'button' : undefined}
-                            tabIndex={hourAppts.length === 0 && hourBlocks.length === 0 && !hasAvail ? 0 : undefined}
-                            title={hourAppts.length === 0 && hourBlocks.length === 0 && !hasAvail ? 'Click para agregar disponibilidad' : undefined}
+                            role={hourAppts.length > 0 || (hourAppts.length === 0 && hourBlocks.length === 0 && !hasAvail) ? 'button' : undefined}
+                            tabIndex={hourAppts.length > 0 || (hourAppts.length === 0 && hourBlocks.length === 0 && !hasAvail) ? 0 : undefined}
+                            title={hourAppts.length === 0 && hourBlocks.length === 0 && !hasAvail && d >= today ? 'Click para agregar disponibilidad | Clic derecho para bloquear' : hourBlocks.length > 0 ? 'Bloqueado' : ''}
                           >
                             {hourAppts.map((a) => (
                               <button key={a.id} className={`psy-week-appt psy-week-appt--${a.status}`} onClick={(e) => { e.stopPropagation(); setSelectedAppt(a); }} type="button">
@@ -545,8 +814,13 @@ const PsychologistDashboard: React.FC = () => {
                                 <span className="psy-week-appt-time">{formatTime(a.start_time)}</span>
                               </button>
                             ))}
-                            {hasAvail && hourAppts.length === 0 && hourBlocks.length === 0 && (
-                              <span className="psy-week-avail-dot" title="Disponible" />
+                            {hourBlocks.length > 0 && (
+                              <div className="psy-week-block-badge">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                  <circle cx="12" cy="12" r="9" />
+                                  <line x1="15" y1="9" x2="9" y2="15" />
+                                </svg>
+                              </div>
                             )}
                           </div>
                         );
@@ -560,59 +834,84 @@ const PsychologistDashboard: React.FC = () => {
             {/* DAY VIEW */}
             {calView === 'day' && (
               <div className="psy-day-view">
-                {HOURS_RANGE.map((h) => {
-                  const ds = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
-                  const hourAppts = appointments.filter((a) => a.appointment_date === ds && parseInt(a.start_time.split(':')[0], 10) === h);
-                  const hourBlocks = blocks.filter((b) => b.block_date === ds && parseInt(b.start_time.split(':')[0], 10) <= h && parseInt(b.end_time.split(':')[0], 10) > h);
-                  const dayAvail = availability.filter((av) => av.day_of_week === currentDate.getDay() && parseInt(av.start_time.split(':')[0], 10) === h && av.is_available);
+                <div className="psy-day-view-scroll">
+                  {HOURS_RANGE.map((h) => {
+                    const ds = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+                    const hourAppts = appointments.filter((a) => a.appointment_date === ds && parseInt(a.start_time.split(':')[0], 10) === h);
+                    const hourBlocks = blocks.filter((b) => b.block_date === ds && parseInt(b.start_time.split(':')[0], 10) <= h && parseInt(b.end_time.split(':')[0], 10) > h);
+                    const dayAvail = availability.filter((av) => av.day_of_week === currentDate.getDay() && parseInt(av.start_time.split(':')[0], 10) === h && av.is_available);
 
-                  return (
-                    <div key={h} className={`psy-day-row ${hourBlocks.length > 0 ? 'psy-day-row--blocked' : ''}`}>
-                      <div className="psy-day-time">{h > 12 ? h - 12 : h}:00 {h >= 12 ? 'PM' : 'AM'}</div>
-                      <div className="psy-day-content">
-                        {hourBlocks.length > 0 && (
-                          <div className="psy-day-block-label">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" /></svg>
-                            Bloqueado {hourBlocks[0]?.reason ? `- ${hourBlocks[0].reason}` : ''}
-                          </div>
-                        )}
-                        {hourAppts.map((a) => (
-                          <button key={a.id} className={`psy-day-appt psy-day-appt--${a.status}`} onClick={() => setSelectedAppt(a)} type="button">
-                            <div className="psy-day-appt-left">
-                              <div className="psy-day-appt-avatar">
-                                {a.patient?.avatar_url ? (
-                                  <img src={a.patient.avatar_url} alt="" crossOrigin="anonymous" />
-                                ) : (
-                                  <span>{(a.patient?.full_name || 'P').charAt(0)}</span>
-                                )}
-                              </div>
-                              <div>
-                                <strong>{a.patient?.full_name || 'Paciente'}</strong>
-                                <p>{formatTime(a.start_time)} - {formatTime(a.end_time)}</p>
-                              </div>
+                    return (
+                      <div 
+                        key={h} 
+                        className={`psy-day-row ${hourBlocks.length > 0 ? 'psy-day-row--blocked' : ''}`}
+                        onContextMenu={(e) => {
+                          e.preventDefault();
+                          if (hourAppts.length === 0 && currentDate >= today) {
+                            handleQuickBlockClick(currentDate, h);
+                          }
+                        }}
+                      >
+                        <div className="psy-day-time">{h > 12 ? h - 12 : h}:00 {h >= 12 ? 'PM' : 'AM'}</div>
+                        <div className="psy-day-content">
+                          {hourBlocks.length > 0 && (
+                            <div className="psy-day-block-label">
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" /></svg>
+                              Bloqueado {hourBlocks[0]?.reason ? `- ${hourBlocks[0].reason}` : ''}
+                              <button className="psy-day-unblock-btn" onClick={() => handleDeleteBlock(hourBlocks[0].id)} type="button">Desbloquear</button>
                             </div>
-                            <span className={`psy-day-appt-badge psy-day-appt-badge--${a.status}`}>
-                              {a.status === 'confirmada' ? 'Confirmada' : a.status === 'pendiente_pago' ? 'Pago pendiente' : a.status === 'completada' ? 'Completada' : a.status}
-                            </span>
-                          </button>
-                        ))}
-                        {hourAppts.length === 0 && hourBlocks.length === 0 && dayAvail.length > 0 && (
-                          <div className="psy-day-avail-label">Disponible</div>
-                        )}
-                        {hourAppts.length === 0 && hourBlocks.length === 0 && dayAvail.length === 0 && (
-                          <button
-                            className="psy-day-add-btn"
-                            onClick={() => handleQuickAdd(currentDate.getDay(), h)}
-                            type="button"
-                          >
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                            Agregar disponibilidad
-                          </button>
-                        )}
+                          )}
+                          {hourAppts.map((a) => (
+                            <button key={a.id} className={`psy-day-appt psy-day-appt--${a.status}`} onClick={() => setSelectedAppt(a)} type="button">
+                              <div className="psy-day-appt-left">
+                                <div className="psy-day-appt-avatar">
+                                  {a.patient?.avatar_url ? (
+                                    <img src={a.patient.avatar_url} alt="" crossOrigin="anonymous" />
+                                  ) : (
+                                    <span>{(a.patient?.full_name || 'P').charAt(0)}</span>
+                                  )}
+                                </div>
+                                <div>
+                                  <strong>{a.patient?.full_name || 'Paciente'}</strong>
+                                  <p>{formatTime(a.start_time)} - {formatTime(a.end_time)}</p>
+                                </div>
+                              </div>
+                              <span className={`psy-day-appt-badge psy-day-appt-badge--${a.status}`}>
+                                {a.status === 'confirmada' ? 'Confirmada' : a.status === 'pendiente_pago' ? 'Pago pendiente' : a.status === 'completada' ? 'Completada' : a.status}
+                              </span>
+                            </button>
+                          ))}
+                          {hourAppts.length === 0 && hourBlocks.length === 0 && dayAvail.length > 0 && (
+                            <div className="psy-day-avail-label">
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3" /></svg>
+                              Disponible
+                            </div>
+                          )}
+                          {hourAppts.length === 0 && hourBlocks.length === 0 && dayAvail.length === 0 && (
+                            <button
+                              className="psy-day-add-btn"
+                              onClick={() => handleQuickAdd(currentDate.getDay(), h)}
+                              type="button"
+                            >
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                              Agregar disponibilidad
+                            </button>
+                          )}
+                          {hourAppts.length === 0 && hourBlocks.length === 0 && currentDate >= today && (
+                            <button
+                              className="psy-day-block-btn"
+                              onClick={() => handleQuickBlockClick(currentDate, h)}
+                              type="button"
+                            >
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" /></svg>
+                              Bloquear horario
+                            </button>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             )}
           </>
@@ -629,60 +928,67 @@ const PsychologistDashboard: React.FC = () => {
               </button>
             </div>
 
-            <div className="psy-dash-days">
-              {DAYS_CONFIG.map((d) => {
-                const count = availability.filter((s) => s.day_of_week === d.value).length;
-                return (
-                  <button key={d.value} type="button" className={`psy-dash-day ${selectedDay === d.value ? 'psy-dash-day--active' : ''}`} onClick={() => setSelectedDay(d.value)}>
-                    <span className="psy-dash-day-label">{d.label}</span>
-                    {count > 0 && <span className="psy-dash-day-count">{count}</span>}
-                  </button>
-                );
-              })}
+            <div className="psy-dash-info-box">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>
+              <p>Tu agenda esta configurada por defecto de Lunes a Viernes, hora por hora desde las 7:00 AM hasta las 12:00 PM (bloqueado 12-1 PM para almuerzo) y desde la 1:00 PM hasta las 8:00 PM. Los sabados y domingos estan bloqueados. Solo el mes actual y el siguiente estan habilitados, el resto de meses estan bloqueados por defecto.</p>
             </div>
 
-            <div className="psy-dash-slots">
-              <h3>{DAY_NAMES_FULL[selectedDay]}</h3>
-              {daySlots.length === 0 ? (
-                <div className="psy-dash-empty">
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
-                  <p>No hay horarios configurados para este dia.</p>
-                  <button type="button" className="psy-dash-btn-outline" onClick={() => { setNewSlotDay(selectedDay); setShowAddSlot(true); }}>
-                    Agregar horario
-                  </button>
-                </div>
-              ) : (
-                <div className="psy-dash-slot-list">
-                  {daySlots.map((slot) => (
-                    <div key={slot.id} className={`psy-dash-slot ${!slot.is_available ? 'psy-dash-slot--disabled' : ''}`}>
-                      <div className="psy-dash-slot-time">
-                        <span className="psy-dash-slot-badge">{slot.start_time.slice(0, 5)}</span>
-                        <span className="psy-dash-slot-sep">-</span>
-                        <span className="psy-dash-slot-badge">{slot.end_time.slice(0, 5)}</span>
-                      </div>
-                      <div className="psy-dash-slot-status">
-                        {slot.is_available ? (
-                          <span className="psy-dash-status psy-dash-status--available">Disponible</span>
-                        ) : (
-                          <span className="psy-dash-status psy-dash-status--unavailable">No disponible</span>
-                        )}
-                      </div>
-                      <div className="psy-dash-slot-actions">
-                        <button type="button" className="psy-dash-slot-toggle" onClick={() => handleToggleSlot(slot.id, slot.is_available)} title={slot.is_available ? 'Desactivar' : 'Activar'}>
+            <div className="psy-dash-availability-section">
+              <div className="psy-dash-days">
+                {DAYS_CONFIG.map((d) => {
+                  const count = availability.filter((s) => s.day_of_week === d.value).length;
+                  return (
+                    <button key={d.value} type="button" className={`psy-dash-day ${selectedDay === d.value ? 'psy-dash-day--active' : ''}`} onClick={() => setSelectedDay(d.value)}>
+                      <span className="psy-dash-day-label">{d.label}</span>
+                      {count > 0 && <span className="psy-dash-day-count">{count}</span>}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="psy-dash-slots">
+                <h3>{DAY_NAMES_FULL[selectedDay]}</h3>
+                {daySlots.length === 0 ? (
+                  <div className="psy-dash-empty">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
+                    <p>No hay horarios configurados para este dia.</p>
+                    <button type="button" className="psy-dash-btn-outline" onClick={() => { setNewSlotDay(selectedDay); setShowAddSlot(true); }}>
+                      Agregar horario
+                    </button>
+                  </div>
+                ) : (
+                  <div className="psy-dash-slot-list">
+                    {daySlots.map((slot) => (
+                      <div key={slot.id} className={`psy-dash-slot ${!slot.is_available ? 'psy-dash-slot--disabled' : ''}`}>
+                        <div className="psy-dash-slot-time">
+                          <span className="psy-dash-slot-badge">{slot.start_time.slice(0, 5)}</span>
+                          <span className="psy-dash-slot-sep">-</span>
+                          <span className="psy-dash-slot-badge">{slot.end_time.slice(0, 5)}</span>
+                        </div>
+                        <div className="psy-dash-slot-status">
                           {slot.is_available ? (
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0" /><line x1="12" y1="2" x2="12" y2="12" /></svg>
+                            <span className="psy-dash-status psy-dash-status--available">Disponible</span>
                           ) : (
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polygon points="10 8 16 12 10 16 10 8" /></svg>
+                            <span className="psy-dash-status psy-dash-status--unavailable">No disponible</span>
                           )}
-                        </button>
-                        <button type="button" className="psy-dash-slot-delete" onClick={() => handleDeleteSlot(slot.id)} title="Eliminar">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
-                        </button>
+                        </div>
+                        <div className="psy-dash-slot-actions">
+                          <button type="button" className="psy-dash-slot-toggle" onClick={() => handleToggleSlot(slot.id, slot.is_available)} title={slot.is_available ? 'Desactivar' : 'Activar'}>
+                            {slot.is_available ? (
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0" /><line x1="12" y1="2" x2="12" y2="12" /></svg>
+                            ) : (
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polygon points="10 8 16 12 10 16 10 8" /></svg>
+                            )}
+                          </button>
+                          <button type="button" className="psy-dash-slot-delete" onClick={() => handleDeleteSlot(slot.id)} title="Eliminar">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             {showAddSlot && (
@@ -734,7 +1040,7 @@ const PsychologistDashboard: React.FC = () => {
               </button>
             </div>
 
-            <p className="psy-dash-block-desc">Bloquea fechas y horas especificas cuando no puedas atender.</p>
+            <p className="psy-dash-block-desc">Bloquea fechas y horas especificas cuando no puedas atender. Los sabados y domingos estan bloqueados automáticamente, asi como todos los meses excepto el actual y el siguiente. Tambien puedes bloquear desde el calendario haciendo clic derecho en cualquier celda.</p>
 
             {blocks.filter((b) => b.block_date >= today.toISOString().split('T')[0]).length === 0 ? (
               <div className="psy-dash-empty">
@@ -798,6 +1104,44 @@ const PsychologistDashboard: React.FC = () => {
           </>
         )}
       </main>
+
+      {/* Quick Block Modal */}
+      {showQuickBlock && (
+        <div className="psy-dash-modal-backdrop" onClick={() => setShowQuickBlock(false)}>
+          <div className="psy-dash-modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Bloquear horario</h3>
+            <p className="psy-modal-subtitle">
+              {quickBlockDate && `${DAY_NAMES_FULL[quickBlockDate.getDay()]} ${quickBlockDate.getDate()} de ${MONTH_NAMES[quickBlockDate.getMonth()]}`}
+            </p>
+            <div className="psy-dash-modal-fields">
+              <div className="psy-dash-modal-row">
+                <div className="psy-dash-modal-field">
+                  <label>Desde</label>
+                  <select value={blockStart} onChange={(e) => setBlockStart(e.target.value)}>
+                    {HOUR_OPTIONS.map((h) => <option key={h} value={h}>{h}</option>)}
+                  </select>
+                </div>
+                <div className="psy-dash-modal-field">
+                  <label>Hasta</label>
+                  <select value={blockEnd} onChange={(e) => setBlockEnd(e.target.value)}>
+                    {HOUR_OPTIONS.map((h) => <option key={h} value={h}>{h}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div className="psy-dash-modal-field">
+                <label>Razon (opcional)</label>
+                <input type="text" value={blockReason} onChange={(e) => setBlockReason(e.target.value)} placeholder="Vacaciones, cita personal..." />
+              </div>
+            </div>
+            <div className="psy-dash-modal-actions">
+              <button type="button" className="psy-dash-btn-ghost" onClick={() => setShowQuickBlock(false)}>Cancelar</button>
+              <button type="button" className="psy-dash-btn-primary" onClick={handleQuickBlock} disabled={savingBlock}>
+                {savingBlock ? 'Guardando...' : 'Bloquear'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Appointment Detail Modal */}
       {selectedAppt && (
