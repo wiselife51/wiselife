@@ -1,0 +1,546 @@
+/* ============================================
+   CLINICAL RECORD MODAL - HISTORIA CLÍNICA
+   Dark mode, accent #7e57c2
+   ============================================ */
+
+/* Backdrop */
+.cr-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+  animation: crFadeIn 0.2s ease-out;
+}
+
+@keyframes crFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Modal Container */
+.cr-modal {
+  background: linear-gradient(145deg, #1a1a2e 0%, #16162a 100%);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  animation: crSlideUp 0.3s ease-out;
+}
+
+@keyframes crSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Header */
+.cr-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 2rem 2rem 1.5rem 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cr-modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #4dd0e1 0%, #42a5f5 50%, #7e57c2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.cr-modal-subtitle {
+  margin: 0.5rem 0 0 0;
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.4;
+}
+
+.cr-modal-close {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cr-modal-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+/* Progress Bar */
+.cr-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.5rem 2rem 0.5rem 2rem;
+}
+
+.cr-progress-step {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.cr-progress-step::before {
+  content: '';
+  position: absolute;
+  right: -12px;
+  width: 8px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  transition: background 0.3s;
+}
+
+.cr-progress-step:last-child::before {
+  display: none;
+}
+
+.cr-progress-step--active {
+  background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%);
+  border-color: #7e57c2;
+  color: white;
+  box-shadow: 0 4px 16px rgba(126, 87, 194, 0.4);
+  transform: scale(1.1);
+}
+
+.cr-progress-step--completed {
+  background: rgba(126, 87, 194, 0.2);
+  border-color: #7e57c2;
+  color: #7e57c2;
+}
+
+.cr-progress-step--completed::before {
+  background: #7e57c2;
+}
+
+/* Step Labels */
+.cr-step-labels {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0.5rem 2rem 1rem 2rem;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.cr-step-label--active {
+  color: #7e57c2;
+}
+
+/* Body */
+.cr-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem 2rem;
+}
+
+.cr-modal-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.cr-modal-body::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 4px;
+}
+
+.cr-modal-body::-webkit-scrollbar-thumb {
+  background: rgba(126, 87, 194, 0.3);
+  border-radius: 4px;
+}
+
+.cr-modal-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(126, 87, 194, 0.5);
+}
+
+/* Step Content */
+.cr-modal-step {
+  animation: crStepFadeIn 0.3s ease-out;
+}
+
+@keyframes crStepFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.cr-modal-step-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+}
+
+.cr-modal-step-desc {
+  margin: 0 0 1.5rem 0;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.5;
+}
+
+.cr-subsection-title {
+  margin: 1.5rem 0 1rem 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #7e57c2;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(126, 87, 194, 0.2);
+}
+
+/* Fields */
+.cr-modal-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cr-modal-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.cr-modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cr-modal-field label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.cr-required {
+  color: #ff6b6b;
+  font-weight: 700;
+}
+
+.cr-modal-field input,
+.cr-modal-field select,
+.cr-modal-field textarea {
+  padding: 0.875rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: white;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9375rem;
+  transition: all 0.2s;
+  outline: none;
+}
+
+.cr-modal-field input:focus,
+.cr-modal-field select:focus,
+.cr-modal-field textarea:focus {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: #7e57c2;
+  box-shadow: 0 0 0 3px rgba(126, 87, 194, 0.15);
+}
+
+.cr-modal-field input::placeholder,
+.cr-modal-field textarea::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.cr-modal-field textarea {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.5;
+}
+
+.cr-modal-field select {
+  cursor: pointer;
+}
+
+.cr-hint {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  font-style: italic;
+}
+
+.cr-error {
+  font-size: 0.8125rem;
+  color: #ff6b6b;
+  font-weight: 600;
+}
+
+.cr-error-box {
+  padding: 0.875rem 1rem;
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 12px;
+  color: #ff6b6b;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-top: 1rem;
+}
+
+/* Consent Boxes */
+.cr-consent-box {
+  background: rgba(126, 87, 194, 0.05);
+  border: 1px solid rgba(126, 87, 194, 0.2);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.cr-consent-box h4 {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #7e57c2;
+}
+
+.cr-consent-content {
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+}
+
+.cr-consent-content p {
+  margin: 0 0 0.75rem 0;
+}
+
+.cr-consent-content ul {
+  margin: 0.75rem 0;
+  padding-left: 1.5rem;
+}
+
+.cr-consent-content li {
+  margin-bottom: 0.5rem;
+}
+
+.cr-consent-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  cursor: pointer;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  transition: background 0.2s;
+}
+
+.cr-consent-checkbox:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.cr-consent-checkbox input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  margin-top: 2px;
+  accent-color: #7e57c2;
+}
+
+.cr-consent-checkbox span {
+  flex: 1;
+  font-size: 0.9375rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* Footer */
+.cr-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.5rem 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cr-btn-primary,
+.cr-btn-secondary {
+  padding: 0.875rem 1.75rem;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cr-btn-primary {
+  background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(126, 87, 194, 0.3);
+}
+
+.cr-btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(126, 87, 194, 0.4);
+}
+
+.cr-btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.cr-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cr-btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cr-btn-secondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+}
+
+.cr-btn-secondary:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .cr-modal {
+    max-width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .cr-modal-header,
+  .cr-modal-body,
+  .cr-modal-footer {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .cr-progress {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .cr-progress-step {
+    width: 32px;
+    height: 32px;
+    font-size: 0.75rem;
+  }
+
+  .cr-progress-step::before {
+    right: -8px;
+    width: 4px;
+  }
+
+  .cr-step-labels {
+    font-size: 0.625rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .cr-modal-row {
+    grid-template-columns: 1fr;
+  }
+
+  .cr-modal-footer {
+    flex-direction: column-reverse;
+  }
+
+  .cr-btn-primary,
+  .cr-btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .cr-modal-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .cr-consent-box {
+    padding: 1rem;
+  }
+}
+
+/* High contrast for accessibility */
+@media (prefers-contrast: high) {
+  .cr-modal-field input,
+  .cr-modal-field select,
+  .cr-modal-field textarea {
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .cr-modal-field input:focus,
+  .cr-modal-field select:focus,
+  .cr-modal-field textarea:focus {
+    border-color: #7e57c2;
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .cr-modal-backdrop,
+  .cr-modal,
+  .cr-modal-step,
+  .cr-progress-step {
+    animation: none;
+    transition: none;
+  }
+}

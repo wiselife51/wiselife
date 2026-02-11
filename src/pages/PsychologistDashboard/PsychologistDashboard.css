@@ -935,14 +935,17 @@
   grid-template-columns: repeat(7, 1fr);
   border-bottom: 1px solid var(--psy-border);
   background: rgba(0, 0, 0, 0.2);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .psy-month-day-name {
-  padding: 0.75rem;
+  padding: 0.875rem 0.5rem;
   text-align: center;
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.5);
   text-transform: lowercase;
   letter-spacing: 0.05em;
 }
@@ -950,80 +953,97 @@
 .psy-month-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
+  gap: 0;
 }
 
 .psy-month-cell {
-  min-height: 90px;
-  padding: 0.625rem;
+  min-height: 110px;
+  padding: 0.75rem 0.625rem;
   border-right: 1px solid rgba(255, 255, 255, 0.02);
   border-bottom: 1px solid rgba(255, 255, 255, 0.02);
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.375rem;
+  gap: 0.5rem;
+  position: relative;
+  overflow: hidden;
 }
 
 .psy-month-cell:hover {
-  background: rgba(126, 87, 194, 0.04);
-  border-color: rgba(126, 87, 194, 0.1);
+  background: rgba(126, 87, 194, 0.06);
+  border-color: rgba(126, 87, 194, 0.15);
+  transform: scale(1.02);
+  z-index: 5;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .psy-month-cell--empty {
   cursor: default;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.3);
+  pointer-events: none;
 }
 
 .psy-month-cell--empty:hover {
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.3);
+  transform: none;
+  box-shadow: none;
 }
 
 .psy-month-cell--today {
-  background: rgba(126, 87, 194, 0.08);
+  background: rgba(126, 87, 194, 0.1);
+  border: 1px solid rgba(126, 87, 194, 0.3);
 }
 
 .psy-month-cell--today .psy-month-date {
   background: var(--psy-accent);
   color: #ffffff;
   border-radius: 50%;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: 700;
 }
 
 .psy-month-date {
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.8);
+  min-width: 28px;
+  text-align: center;
 }
 
 .psy-month-stats {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem;
+  gap: 0.3rem;
   align-items: center;
-  margin-top: 0.25rem;
+  width: 100%;
 }
 
 .psy-month-stat {
   display: flex;
   align-items: center;
-  gap: 0.125rem;
-  padding: 0.125rem 0.375rem;
+  gap: 0.2rem;
+  padding: 0.2rem 0.5rem;
   border-radius: 100px;
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .psy-month-stat svg {
   flex-shrink: 0;
+  width: 12px;
+  height: 12px;
 }
 
 .psy-month-stat span {
   line-height: 1;
+  font-size: 0.6875rem;
 }
 
 .psy-month-stat--available {
@@ -1062,225 +1082,6 @@
   border: 1px solid rgba(158, 158, 158, 0.3);
 }
 
-/* ===== Week View ===== */
-.psy-week {
-  background: var(--psy-surface);
-  border: 1px solid var(--psy-border);
-  border-radius: 16px;
-  overflow: hidden;
-  backdrop-filter: blur(12px);
-}
-
-.psy-week-header {
-  display: grid;
-  grid-template-columns: 80px repeat(7, 1fr);
-  border-bottom: 1px solid var(--psy-border);
-  background: rgba(0, 0, 0, 0.2);
-}
-
-.psy-week-time-col {
-  padding: 0.75rem;
-}
-
-.psy-week-day-col {
-  padding: 0.875rem 0.5rem;
-  text-align: center;
-  cursor: pointer;
-  transition: background 0.2s;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.25rem;
-  border-right: 1px solid rgba(255, 255, 255, 0.04);
-}
-
-.psy-week-day-col:last-child {
-  border-right: none;
-}
-
-.psy-week-day-col:hover {
-  background: rgba(126, 87, 194, 0.06);
-}
-
-.psy-week-day-col--today {
-  background: rgba(126, 87, 194, 0.1);
-}
-
-.psy-week-day-label {
-  font-size: 0.625rem;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.4);
-  text-transform: lowercase;
-  letter-spacing: 0.05em;
-}
-
-.psy-week-day-col--today .psy-week-day-label {
-  color: #b388ff;
-}
-
-.psy-week-day-num {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.psy-week-day-col--today .psy-week-day-num {
-  color: #b388ff;
-  background: rgba(126, 87, 194, 0.2);
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.psy-week-body {
-  max-height: 65vh;
-  overflow-y: auto;
-}
-
-.psy-week-body::-webkit-scrollbar {
-  width: 8px;
-}
-
-.psy-week-body::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.psy-week-body::-webkit-scrollbar-thumb {
-  background: rgba(126, 87, 194, 0.3);
-  border-radius: 4px;
-}
-
-.psy-week-row {
-  display: grid;
-  grid-template-columns: 80px repeat(7, 1fr);
-  min-height: 60px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.015);
-}
-
-.psy-week-row:hover {
-  background: rgba(255, 255, 255, 0.005);
-}
-
-.psy-week-time {
-  padding: 0.5rem 0.75rem;
-  font-size: 0.6875rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.35);
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-end;
-  border-right: 1px solid rgba(255, 255, 255, 0.02);
-}
-
-.psy-week-cell {
-  border-right: 1px solid rgba(255, 255, 255, 0.015);
-  padding: 0.375rem;
-  min-height: 60px;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  position: relative;
-}
-
-.psy-week-cell:last-child {
-  border-right: none;
-}
-
-.psy-week-cell--blocked {
-  background: rgba(239, 83, 80, 0.08);
-  border-left: 3px solid rgba(239, 83, 80, 0.5);
-}
-
-.psy-week-cell--available {
-  background: rgba(76, 175, 80, 0.15);
-  border: 1px solid rgba(76, 175, 80, 0.4);
-  cursor: pointer;
-  position: relative;
-}
-
-.psy-week-cell--available::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(76, 175, 80, 0.05) 100%);
-  pointer-events: none;
-}
-
-.psy-week-cell--available:hover {
-  background: rgba(76, 175, 80, 0.25);
-  border-color: rgba(76, 175, 80, 0.6);
-  box-shadow: inset 0 0 0 1px rgba(76, 175, 80, 0.3);
-}
-
-.psy-week-block-badge {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  background: rgba(239, 83, 80, 0.15);
-  border-radius: 50%;
-  color: #ef5350;
-  opacity: 0.8;
-}
-
-.psy-week-appt {
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-  padding: 0.375rem 0.5rem;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  text-align: left;
-  transition: all 0.2s;
-}
-
-.psy-week-appt--confirmada {
-  background: rgba(76, 175, 80, 0.15);
-  color: #66bb6a;
-  border: 1px solid rgba(76, 175, 80, 0.3);
-}
-
-.psy-week-appt--pendiente_pago {
-  background: rgba(255, 193, 7, 0.15);
-  color: #ffc107;
-  border: 1px solid rgba(255, 193, 7, 0.3);
-}
-
-.psy-week-appt--completada {
-  background: rgba(126, 87, 194, 0.15);
-  color: #b388ff;
-  border: 1px solid rgba(126, 87, 194, 0.3);
-}
-
-.psy-week-appt:hover {
-  opacity: 0.85;
-  transform: scale(1.02);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.psy-week-appt-name {
-  font-size: 0.6875rem;
-  font-weight: 700;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.psy-week-appt-time {
-  font-size: 0.5625rem;
-  opacity: 0.7;
-}
-
 /* ===== Day View ===== */
 .psy-day-view {
   display: flex;
@@ -1290,61 +1091,69 @@
   border-radius: 16px;
   overflow: hidden;
   backdrop-filter: blur(12px);
-  max-height: 70vh;
+  max-height: 75vh;
 }
 
 .psy-day-view-scroll {
   overflow-y: auto;
   overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 .psy-day-view-scroll::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 .psy-day-view-scroll::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 5px;
 }
 
 .psy-day-view-scroll::-webkit-scrollbar-thumb {
-  background: rgba(126, 87, 194, 0.3);
-  border-radius: 4px;
+  background: rgba(126, 87, 194, 0.4);
+  border-radius: 5px;
+}
+
+.psy-day-view-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(126, 87, 194, 0.6);
 }
 
 .psy-day-row {
   display: flex;
-  min-height: 70px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.015);
-  transition: background 0.2s;
+  min-height: 80px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  transition: all 0.2s;
 }
 
 .psy-day-row:hover {
-  background: rgba(255, 255, 255, 0.005);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .psy-day-row--blocked {
-  background: rgba(239, 83, 80, 0.02);
+  background: rgba(239, 83, 80, 0.04);
+  border-left: 3px solid rgba(239, 83, 80, 0.5);
 }
 
 .psy-day-time {
-  width: 90px;
+  width: 100px;
   flex-shrink: 0;
-  padding: 0.625rem 0.875rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.35);
+  padding: 0.75rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.4);
   display: flex;
   align-items: flex-start;
   justify-content: flex-end;
-  border-right: 1px solid rgba(255, 255, 255, 0.02);
+  border-right: 2px solid rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.1);
 }
 
 .psy-day-content {
   flex: 1;
-  padding: 0.625rem 1rem;
+  padding: 0.75rem 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.625rem;
 }
 
 .psy-day-block-label {
@@ -1500,43 +1309,44 @@
   display: flex;
   align-items: center;
   gap: 0.375rem;
-  padding: 0.375rem 0.75rem;
+  padding: 0.5rem 0.875rem;
   border-radius: 8px;
   font-family: 'Inter', sans-serif;
-  font-size: 0.6875rem;
-  font-weight: 500;
+  font-size: 0.75rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
   width: fit-content;
-  opacity: 0;
+  opacity: 1;
 }
 
 .psy-day-row:hover .psy-day-add-btn,
 .psy-day-row:hover .psy-day-block-btn {
-  opacity: 1;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .psy-day-add-btn {
-  border: 1px dashed rgba(126, 87, 194, 0.25);
-  background: none;
-  color: rgba(126, 87, 194, 0.5);
+  border: 1px solid rgba(126, 87, 194, 0.3);
+  background: rgba(126, 87, 194, 0.08);
+  color: rgba(126, 87, 194, 0.9);
 }
 
 .psy-day-add-btn:hover {
-  background: rgba(126, 87, 194, 0.1);
-  border-color: rgba(126, 87, 194, 0.4);
+  background: rgba(126, 87, 194, 0.15);
+  border-color: rgba(126, 87, 194, 0.5);
   color: #b388ff;
 }
 
 .psy-day-block-btn {
-  border: 1px dashed rgba(239, 83, 80, 0.25);
-  background: none;
-  color: rgba(239, 83, 80, 0.5);
+  border: 1px solid rgba(239, 83, 80, 0.3);
+  background: rgba(239, 83, 80, 0.08);
+  color: rgba(239, 83, 80, 0.9);
 }
 
 .psy-day-block-btn:hover {
-  background: rgba(239, 83, 80, 0.1);
-  border-color: rgba(239, 83, 80, 0.4);
+  background: rgba(239, 83, 80, 0.15);
+  border-color: rgba(239, 83, 80, 0.5);
   color: #ef5350;
 }
 
@@ -1758,14 +1568,13 @@
     font-size: 1rem;
     min-width: 160px;
   }
-  
-  .psy-week-header,
-  .psy-week-row {
-    grid-template-columns: 60px repeat(7, 1fr);
-  }
-  
+
   .psy-day-time {
-    width: 70px;
+    width: 80px;
+  }
+
+  .psy-month-cell {
+    min-height: 95px;
   }
 }
 
@@ -1831,110 +1640,96 @@
   }
 
   .psy-month-cell {
-    min-height: 70px;
-    padding: 0.375rem;
-  }
-
-  .psy-month-date {
-    font-size: 0.75rem;
-  }
-
-  .psy-month-stats {
-    gap: 0.125rem;
-  }
-
-  .psy-month-stat {
-    padding: 0.0625rem 0.25rem;
-    font-size: 0.5625rem;
-  }
-
-  .psy-month-stat svg {
-    width: 8px;
-    height: 8px;
-  }
-
-  .psy-week-header,
-  .psy-week-row {
-    grid-template-columns: 50px repeat(7, minmax(0, 1fr));
-  }
-
-  .psy-week-time {
-    font-size: 0.625rem;
-    padding: 0.375rem 0.25rem;
-  }
-
-  .psy-week-day-col {
-    padding: 0.625rem 0.25rem;
-  }
-
-  .psy-week-day-num {
-    font-size: 1rem;
-  }
-
-  .psy-week-cell {
-    padding: 0.25rem;
-  }
-
-  .psy-week-cell--available {
-    border-width: 2px;
-    background: rgba(76, 175, 80, 0.2);
-  }
-
-  .psy-week-appt {
-    padding: 0.25rem 0.375rem;
-  }
-
-  .psy-week-block-badge {
-    width: 20px;
-    height: 20px;
-  }
-
-  .psy-week-cell--available::after {
-    content: '+';
-    position: absolute;
-    bottom: 2px;
-    right: 4px;
-    font-size: 0.625rem;
-    color: rgba(76, 175, 80, 0.9);
-    font-weight: 700;
-  }
-
-  .psy-week-appt-name {
-    font-size: 0.625rem;
-  }
-
-  .psy-week-appt-time {
-    font-size: 0.5rem;
-  }
-
-  .psy-day-time {
-    width: 60px;
-    font-size: 0.6875rem;
+    min-height: 85px;
     padding: 0.5rem 0.375rem;
   }
 
+  .psy-month-date {
+    font-size: 0.8125rem;
+  }
+
+  .psy-month-cell--today .psy-month-date {
+    width: 28px;
+    height: 28px;
+    font-size: 0.8125rem;
+  }
+
+  .psy-month-stats {
+    gap: 0.2rem;
+    margin-top: 0.25rem;
+  }
+
+  .psy-month-stat {
+    padding: 0.15rem 0.35rem;
+    font-size: 0.625rem;
+  }
+
+  .psy-month-stat svg {
+    width: 9px;
+    height: 9px;
+  }
+
+  .psy-month-stat span {
+    font-size: 0.625rem;
+  }
+
+  .psy-day-view {
+    max-height: 65vh;
+  }
+
+  .psy-day-row {
+    min-height: 85px;
+  }
+
+  .psy-day-time {
+    width: 70px;
+    font-size: 0.75rem;
+    padding: 0.625rem 0.5rem;
+    font-weight: 600;
+  }
+
   .psy-day-content {
-    padding: 0.5rem 0.75rem;
+    padding: 0.625rem 0.875rem;
   }
 
   .psy-day-appt {
-    padding: 0.625rem 0.75rem;
+    padding: 0.75rem 0.875rem;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.5rem;
+    gap: 0.625rem;
   }
 
   .psy-day-appt-avatar {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
+  }
+
+  .psy-day-appt-left {
+    gap: 0.625rem;
   }
 
   .psy-day-appt-left strong {
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
+  }
+
+  .psy-day-appt-left p {
+    font-size: 0.75rem;
   }
 
   .psy-day-appt-badge {
     align-self: flex-start;
+    font-size: 0.6875rem;
+    padding: 0.35rem 0.875rem;
+  }
+
+  .psy-day-block-label {
+    font-size: 0.8125rem;
+    padding: 0.625rem 0.875rem;
+  }
+
+  .psy-day-avail-label {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
   }
 
   .psy-dash-days {
@@ -1990,36 +1785,92 @@
 
   .psy-day-add-btn,
   .psy-day-block-btn {
-    opacity: 1;
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
   }
 }
 
 @media (max-width: 480px) {
+  .psy-dash-main {
+    padding: 1rem 0.75rem;
+  }
+
   .psy-month-cell {
-    min-height: 60px;
-    padding: 0.25rem;
+    min-height: 75px;
+    padding: 0.375rem 0.25rem;
   }
 
   .psy-month-day-name {
-    padding: 0.5rem 0.25rem;
+    padding: 0.625rem 0.25rem;
     font-size: 0.625rem;
   }
 
-  .psy-week-header,
-  .psy-week-row {
-    grid-template-columns: 40px repeat(7, minmax(0, 1fr));
+  .psy-month-date {
+    font-size: 0.75rem;
   }
 
-  .psy-week-time {
+  .psy-month-cell--today .psy-month-date {
+    width: 24px;
+    height: 24px;
+    font-size: 0.75rem;
+  }
+
+  .psy-month-stats {
+    gap: 0.15rem;
+  }
+
+  .psy-month-stat {
+    padding: 0.1rem 0.3rem;
     font-size: 0.5625rem;
   }
 
-  .psy-week-day-label {
+  .psy-month-stat svg {
+    width: 8px;
+    height: 8px;
+  }
+
+  .psy-month-stat span {
     font-size: 0.5625rem;
   }
 
-  .psy-week-day-num {
-    font-size: 0.875rem;
+  .psy-day-view {
+    max-height: 60vh;
+  }
+
+  .psy-day-row {
+    min-height: 75px;
+  }
+
+  .psy-day-time {
+    width: 60px;
+    font-size: 0.6875rem;
+    padding: 0.5rem 0.375rem;
+  }
+
+  .psy-day-content {
+    padding: 0.5rem 0.625rem;
+  }
+
+  .psy-day-appt {
+    padding: 0.625rem 0.75rem;
+  }
+
+  .psy-day-appt-avatar {
+    width: 34px;
+    height: 34px;
+  }
+
+  .psy-day-appt-left strong {
+    font-size: 0.8125rem;
+  }
+
+  .psy-day-appt-left p {
+    font-size: 0.6875rem;
+  }
+
+  .psy-day-appt-badge {
+    font-size: 0.625rem;
+    padding: 0.3rem 0.75rem;
   }
 
   .psy-cal-nav-btn {
@@ -2029,5 +1880,139 @@
 
   .psy-cal-today-btn {
     padding: 0.375rem 0.625rem;
+    font-size: 0.6875rem;
+  }
+
+  .psy-cal-title {
+    font-size: 0.875rem;
+  }
+
+  .psy-cal-view-btn {
+    padding: 0.4rem 0.625rem;
+    font-size: 0.6875rem;
+  }
+}
+
+/* ===== Clinical History Warnings ===== */
+.psy-dash-warnings {
+  background: rgba(255, 193, 7, 0.08);
+  border: 1px solid rgba(255, 193, 7, 0.2);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  animation: warningFadeIn 0.4s ease-out;
+}
+
+@keyframes warningFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.psy-dash-warnings h4 {
+  margin: 0 0 1rem 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #ffc107;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.warning-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+  transition: all 0.2s;
+}
+
+.warning-card:last-child {
+  margin-bottom: 0;
+}
+
+.warning-card:hover {
+  background: rgba(0, 0, 0, 0.3);
+  transform: translateX(4px);
+}
+
+.warning-card svg {
+  flex-shrink: 0;
+  color: #ffc107;
+}
+
+.warning-card p {
+  flex: 1;
+  margin: 0;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.5;
+}
+
+.warning-card button {
+  flex-shrink: 0;
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .psy-dash-warnings {
+    padding: 1rem;
+  }
+
+  .warning-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 0.875rem;
+  }
+
+  .warning-card button {
+    width: 100%;
+  }
+}
+
+/* ===== Ver Historia Clínica Button ===== */
+.psy-history-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: rgba(126, 87, 194, 0.15);
+  border: 1px solid rgba(126, 87, 194, 0.3);
+  border-radius: 12px;
+  color: #b388ff;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.psy-history-btn:hover {
+  background: rgba(126, 87, 194, 0.25);
+  border-color: rgba(126, 87, 194, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(126, 87, 194, 0.3);
+}
+
+.psy-history-btn svg {
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .psy-history-btn {
+    width: 100%;
+    justify-content: center;
   }
 }

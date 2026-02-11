@@ -2,6 +2,9 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
+import ClinicalRecordModal from '../../components/ClinicalRecordModal/ClinicalRecordModal';
+import SessionNoteModal from '../../components/SessionNoteModal/SessionNoteModal';
+import ClinicalHistoryView from '../../components/ClinicalHistoryView/ClinicalHistoryView';
 import './PsychologistDashboard.css';
 
 interface PsychologistProfile {
@@ -73,7 +76,7 @@ const HOUR_OPTIONS = Array.from({ length: 15 }, (_, i) => {
 const HOURS_RANGE = Array.from({ length: 15 }, (_, i) => i + 7); // 7 AM hasta 9 PM (21:00)
 
 type ActiveTab = 'calendario' | 'agenda' | 'bloqueos';
-type CalView = 'month' | 'week' | 'day';
+type CalView = 'month' | 'day';
 
 function formatTime(t: string): string {
   const [h, m] = t.split(':');
@@ -85,12 +88,6 @@ function formatTime(t: string): string {
 
 function sameDay(a: Date, b: Date) {
   return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
-}
-
-function getWeekStart(d: Date): Date {
-  const r = new Date(d);
-  r.setDate(r.getDate() - r.getDay());
-  return r;
 }
 
 function getMonthDays(year: number, month: number): (Date | null)[] {
@@ -113,7 +110,7 @@ const PsychologistDashboard: React.FC = () => {
 
   // Tabs and calendar
   const [activeTab, setActiveTab] = useState<ActiveTab>('calendario');
-  const [calView, setCalView] = useState<CalView>('week');
+  const [calView, setCalView] = useState<CalView>('month');
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState<number>(new Date().getDay());
 
@@ -142,12 +139,46 @@ const PsychologistDashboard: React.FC = () => {
   // Mobile menu
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
-  // Quick add from calendar
-  const handleQuickAdd = (dayOfWeek: number, hour: number) => {
-    setNewSlotDay(dayOfWeek);
-    setNewSlotStart(`${hour.toString().padStart(2, '0')}:00`);
-    setNewSlotEnd(`${(hour + 1).toString().padStart(2, '0')}:00`);
-    setShowAddSlot(true);
+  // Clinical History modals
+  const [showClinicalRecordModal, setShowClinicalRecordModal] = useState(false);
+  const [showSessionNoteModal, setShowSessionNoteModal] = useState(false);
+  const [pendingAppointmentToComplete, setPendingAppointmentToComplete] = useState<Appointment | null>(null);
+  const [sessionNoteData, setSessionNoteData] = useState<{
+    appointmentId: string;
+    clinicalRecordId: string;
+    sessionNumber: number;
+  } | null>(null);
+
+  // Warnings for appointments without clinical record
+  const [warnings, setWarnings] = useState<Array<{
+    type: string;
+    appointmentId: string;
+    patientName: string;
+    message: string;
+  }>>([]);
+
+  // Clinical History View
+  const [showClinicalHistoryView, setShowClinicalHistoryView] = useState(false);
+  const [selectedPatientForHistory, setSelectedPatientForHistory] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+
+  // Quick add from calendar - adds directly without modal
+  const handleQuickAdd = async (dayOfWeek: number, hour: number) => {
+    if (!profile) return;
+    const startTime = `${hour.toString().padStart(2, '0')}:00`;
+    const endTime = `${(hour + 1).toString().padStart(2, '0')}:00`;
+
+    await supabase.from('psychologist_availability').insert({
+      psychologist_id: profile.id,
+      day_of_week: dayOfWeek,
+      start_time: startTime,
+      end_time: endTime,
+      is_available: true,
+    });
+
+    fetchData();
   };
 
   // Quick block from calendar
@@ -245,94 +276,101 @@ const PsychologistDashboard: React.FC = () => {
       }
     }
 
-    // Bloquear todos los domingos y sábados del año
+    // Bloquear todos los domingos y sábados del año (solo la primera vez)
     const today = new Date();
     const nextYear = new Date(today.getFullYear() + 1, 11, 31);
-    
-    // Verificar si ya hay bloqueos
-    const { data: existingBlocks } = await supabase
+
+    // Verificar si ya hay bloqueos configurados
+    const { data: existingBlocks, count: blocksCount } = await supabase
       .from('schedule_blocks')
-      .select('block_date')
+      .select('block_date', { count: 'exact' })
       .eq('psychologist_id', psyData.id)
       .gte('block_date', today.toISOString().split('T')[0]);
-    
+
     const existingBlockDates = new Set(existingBlocks?.map(b => b.block_date) || []);
-    
+
+    // Solo crear bloqueos automáticos si NO hay ningún bloqueo configurado (primera vez)
+    const shouldCreateAutoBlocks = (blocksCount ?? 0) === 0;
+
     // Crear bloqueos para domingos y sábados
     const weekendBlocks = [];
     let currentDate = new Date(today);
     
-    while (currentDate <= nextYear) {
-      const dayOfWeek = currentDate.getDay();
-      if (dayOfWeek === 0 || dayOfWeek === 6) { // Domingo o Sábado
-        const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
-        
-        if (!existingBlockDates.has(dateStr)) {
-          weekendBlocks.push({
-            psychologist_id: psyData.id,
-            block_date: dateStr,
-            start_time: '00:00',
-            end_time: '23:59',
-            reason: dayOfWeek === 0 ? 'Domingo - Dia no laboral' : 'Sabado - Dia no laboral',
-          });
+    if (shouldCreateAutoBlocks) {
+      while (currentDate <= nextYear) {
+        const dayOfWeek = currentDate.getDay();
+        if (dayOfWeek === 0 || dayOfWeek === 6) { // Domingo o Sábado
+          const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+
+          if (!existingBlockDates.has(dateStr)) {
+            weekendBlocks.push({
+              psychologist_id: psyData.id,
+              block_date: dateStr,
+              start_time: '00:00',
+              end_time: '23:59',
+              reason: dayOfWeek === 0 ? 'Domingo - Dia no laboral' : 'Sabado - Dia no laboral',
+            });
+          }
         }
+        currentDate.setDate(currentDate.getDate() + 1);
       }
-      currentDate.setDate(currentDate.getDate() + 1);
     }
     
-    // Bloquear todos los meses excepto el actual y el siguiente
+    // Bloquear todos los meses excepto el actual y el siguiente (solo la primera vez)
     const currentMonth = today.getMonth();
     const currentYear = today.getFullYear();
     const blocksForOtherMonths = [];
-    
-    // Bloquear desde hoy hasta fin del año actual (excepto mes actual y siguiente)
-    for (let month = 0; month < 12; month++) {
-      // Saltar mes actual y siguiente
-      if (month === currentMonth || month === (currentMonth + 1) % 12) continue;
-      
-      const monthStart = new Date(currentYear, month, 1);
-      const monthEnd = new Date(currentYear, month + 1, 0);
-      
-      // Solo bloquear si es futuro
-      if (monthEnd < today) continue;
-      
-      let blockDate = new Date(monthStart);
-      while (blockDate <= monthEnd) {
-        const dateStr = `${blockDate.getFullYear()}-${String(blockDate.getMonth() + 1).padStart(2, '0')}-${String(blockDate.getDate()).padStart(2, '0')}`;
-        
-        if (!existingBlockDates.has(dateStr) && blockDate >= today) {
-          blocksForOtherMonths.push({
-            psychologist_id: psyData.id,
-            block_date: dateStr,
-            start_time: '00:00',
-            end_time: '23:59',
-            reason: 'Mes bloqueado - Configura tu agenda',
-          });
+
+    if (shouldCreateAutoBlocks) {
+      // Bloquear desde hoy hasta fin del año actual (excepto mes actual y siguiente)
+      for (let month = 0; month < 12; month++) {
+        // Saltar mes actual y siguiente
+        if (month === currentMonth || month === (currentMonth + 1) % 12) continue;
+
+        const monthStart = new Date(currentYear, month, 1);
+        const monthEnd = new Date(currentYear, month + 1, 0);
+
+        // Solo bloquear si es futuro
+        if (monthEnd < today) continue;
+
+        let blockDate = new Date(monthStart);
+        while (blockDate <= monthEnd) {
+          const dateStr = `${blockDate.getFullYear()}-${String(blockDate.getMonth() + 1).padStart(2, '0')}-${String(blockDate.getDate()).padStart(2, '0')}`;
+
+          if (!existingBlockDates.has(dateStr) && blockDate >= today) {
+            blocksForOtherMonths.push({
+              psychologist_id: psyData.id,
+              block_date: dateStr,
+              start_time: '00:00',
+              end_time: '23:59',
+              reason: 'Mes bloqueado - Configura tu agenda',
+            });
+          }
+          blockDate.setDate(blockDate.getDate() + 1);
         }
-        blockDate.setDate(blockDate.getDate() + 1);
       }
-    }
-    
-    // Bloquear meses del siguiente año (excepto el primer mes si el mes actual es diciembre)
-    const nextYearStart = currentMonth === 11 ? 1 : 0; // Si estamos en diciembre, el siguiente mes (enero) está disponible
-    for (let month = nextYearStart; month < 12; month++) {
-      const monthStart = new Date(currentYear + 1, month, 1);
-      const monthEnd = new Date(currentYear + 1, month + 1, 0);
-      
-      let blockDate = new Date(monthStart);
-      while (blockDate <= monthEnd) {
-        const dateStr = `${blockDate.getFullYear()}-${String(blockDate.getMonth() + 1).padStart(2, '0')}-${String(blockDate.getDate()).padStart(2, '0')}`;
-        
-        if (!existingBlockDates.has(dateStr)) {
-          blocksForOtherMonths.push({
-            psychologist_id: psyData.id,
-            block_date: dateStr,
-            start_time: '00:00',
-            end_time: '23:59',
-            reason: 'Mes bloqueado - Configura tu agenda',
-          });
+
+      // Bloquear meses del siguiente año (excepto el primer mes si el mes actual es diciembre)
+      const nextYearStart = currentMonth === 11 ? 1 : 0; // Si estamos en diciembre, el siguiente mes (enero) está disponible
+      for (let month = nextYearStart; month < 12; month++) {
+        const monthStart = new Date(currentYear + 1, month, 1);
+        const monthEnd = new Date(currentYear + 1, month + 1, 0);
+
+        let blockDate = new Date(monthStart);
+        while (blockDate <= monthEnd) {
+          const dateStr = `${blockDate.getFullYear()}-${String(blockDate.getMonth() + 1).padStart(2, '0')}-${String(blockDate.getDate()).padStart(2, '0')}`;
+
+          if (!existingBlockDates.has(dateStr)) {
+            blocksForOtherMonths.push({
+              psychologist_id: psyData.id,
+              block_date: dateStr,
+              start_time: '00:00',
+              end_time: '23:59',
+              reason: 'Mes bloqueado - Configura tu agenda',
+            });
+          }
+          blockDate.setDate(blockDate.getDate() + 1);
         }
-        blockDate.setDate(blockDate.getDate() + 1);
       }
     }
     
@@ -402,6 +440,46 @@ const PsychologistDashboard: React.FC = () => {
     if (user) fetchData();
   }, [user, authLoading, navigate, fetchData]);
 
+  // Check for appointments without clinical records
+  useEffect(() => {
+    if (appointments.length > 0 && profile) {
+      checkPendingClinicalRecords();
+    }
+  }, [appointments, profile]);
+
+  const checkPendingClinicalRecords = async () => {
+    if (!profile) return;
+
+    const upcomingAppts = appointments.filter(a =>
+      a.status === 'confirmada' &&
+      a.appointment_date >= today.toISOString().split('T')[0]
+    );
+
+    const newWarnings = [];
+
+    for (const appt of upcomingAppts) {
+      if (!appt.patient?.id) continue;
+
+      const { data: record } = await supabase
+        .from('clinical_records')
+        .select('id')
+        .eq('patient_id', appt.patient.id)
+        .eq('psychologist_id', profile.id)
+        .maybeSingle();
+
+      if (!record) {
+        newWarnings.push({
+          type: 'missing_clinical_record',
+          appointmentId: appt.id,
+          patientName: appt.patient?.full_name || 'Paciente',
+          message: `Cita con ${appt.patient?.full_name || 'paciente'} el ${appt.appointment_date.split('-').reverse().join('/')} - Falta abrir historia clínica`,
+        });
+      }
+    }
+
+    setWarnings(newWarnings);
+  };
+
   // Availability actions
   const handleAddSlot = async () => {
     if (!profile) return;
@@ -463,12 +541,70 @@ const PsychologistDashboard: React.FC = () => {
   };
 
   const handleCompleteAppt = async (apptId: string) => {
-    await supabase.from('appointments').update({
-      status: 'completada',
-      updated_at: new Date().toISOString(),
-    }).eq('id', apptId);
-    setSelectedAppt(null);
-    fetchData();
+    const appt = appointments.find(a => a.id === apptId);
+    if (!appt || !profile) return;
+
+    try {
+      // 1. Verificar si existe clinical_record
+      const { data: clinicalRecord, error: crError } = await supabase
+        .from('clinical_records')
+        .select('id')
+        .eq('patient_id', appt.patient?.id)
+        .eq('psychologist_id', profile.id)
+        .maybeSingle();
+
+      if (crError) {
+        console.error('Error checking clinical record:', crError);
+        return;
+      }
+
+      // 2. Si NO existe HC, abrir modal de apertura
+      if (!clinicalRecord) {
+        setPendingAppointmentToComplete(appt);
+        setShowClinicalRecordModal(true);
+        return;
+      }
+
+      // 3. Verificar si ya hay nota de esta sesión
+      const { data: existingNote, error: noteError } = await supabase
+        .from('session_notes')
+        .select('id, is_draft')
+        .eq('appointment_id', apptId)
+        .maybeSingle();
+
+      if (noteError && noteError.code !== 'PGRST116') { // PGRST116 = no rows returned
+        console.error('Error checking session note:', noteError);
+        return;
+      }
+
+      // 4. Si ya existe nota y NO es borrador, marcar directamente como completada
+      if (existingNote && !existingNote.is_draft) {
+        await supabase
+          .from('appointments')
+          .update({ status: 'completada', updated_at: new Date().toISOString() })
+          .eq('id', apptId);
+        setSelectedAppt(null);
+        fetchData();
+        return;
+      }
+
+      // 5. Si no existe nota o es borrador, abrir modal de registro de sesión
+      // Contar sesiones completadas (no borradores) para determinar el número de sesión
+      const { count } = await supabase
+        .from('session_notes')
+        .select('id', { count: 'exact', head: true })
+        .eq('clinical_record_id', clinicalRecord.id)
+        .eq('is_draft', false);
+
+      setSessionNoteData({
+        appointmentId: apptId,
+        clinicalRecordId: clinicalRecord.id,
+        sessionNumber: (count || 0) + 1,
+      });
+      setShowSessionNoteModal(true);
+    } catch (err) {
+      console.error('Error in handleCompleteAppt:', err);
+    }
   };
 
   const handleOpenWhatsApp = (phone: string | null | undefined, patientName: string) => {
@@ -491,25 +627,17 @@ const PsychologistDashboard: React.FC = () => {
   const goPrev = () => {
     const d = new Date(currentDate);
     if (calView === 'month') d.setMonth(d.getMonth() - 1);
-    else if (calView === 'week') d.setDate(d.getDate() - 7);
     else d.setDate(d.getDate() - 1);
     setCurrentDate(d);
   };
   const goNext = () => {
     const d = new Date(currentDate);
     if (calView === 'month') d.setMonth(d.getMonth() + 1);
-    else if (calView === 'week') d.setDate(d.getDate() + 7);
     else d.setDate(d.getDate() + 1);
     setCurrentDate(d);
   };
 
   const monthDays = useMemo(() => getMonthDays(currentDate.getFullYear(), currentDate.getMonth()), [currentDate]);
-  const weekStart = useMemo(() => getWeekStart(currentDate), [currentDate]);
-  const weekDays = useMemo(() => Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(weekStart);
-    d.setDate(weekStart.getDate() + i);
-    return d;
-  }), [weekStart]);
 
   const getApptsForDate = (d: Date) => {
     const ds = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -523,9 +651,7 @@ const PsychologistDashboard: React.FC = () => {
 
   const calTitle = calView === 'month'
     ? `${MONTH_NAMES[currentDate.getMonth()]} ${currentDate.getFullYear()}`
-    : calView === 'week'
-      ? `${weekDays[0].getDate()} ${MONTH_NAMES[weekDays[0].getMonth()].substring(0, 3)} - ${weekDays[6].getDate()} ${MONTH_NAMES[weekDays[6].getMonth()].substring(0, 3)} ${weekDays[6].getFullYear()}`
-      : `${DAY_NAMES_FULL[currentDate.getDay()]} ${currentDate.getDate()} de ${MONTH_NAMES[currentDate.getMonth()]}`;
+    : `${DAY_NAMES_FULL[currentDate.getDay()]} ${currentDate.getDate()} de ${MONTH_NAMES[currentDate.getMonth()]}`;
 
   const daySlots = availability.filter((s) => s.day_of_week === selectedDay);
 
@@ -634,6 +760,36 @@ const PsychologistDashboard: React.FC = () => {
 
       {/* Main content */}
       <main className="psy-dash-main">
+        {/* Warnings for appointments without clinical record */}
+        {warnings.length > 0 && (
+          <div className="psy-dash-warnings">
+            <h4>⚠️ Pendientes importantes</h4>
+            {warnings.map((warning, i) => (
+              <div key={i} className="warning-card">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                  <line x1="12" y1="9" x2="12" y2="13"/>
+                  <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                <p>{warning.message}</p>
+                <button
+                  onClick={() => {
+                    const appt = appointments.find(a => a.id === warning.appointmentId);
+                    if (appt) {
+                      setPendingAppointmentToComplete(appt);
+                      setShowClinicalRecordModal(true);
+                    }
+                  }}
+                  className="psy-dash-btn-primary"
+                  type="button"
+                >
+                  Abrir HC ahora
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* CALENDARIO TAB */}
         {activeTab === 'calendario' && (
           <>
@@ -650,9 +806,9 @@ const PsychologistDashboard: React.FC = () => {
                 <button className="psy-cal-today-btn" onClick={goToday} type="button">Hoy</button>
               </div>
               <div className="psy-cal-views">
-                {(['month', 'week', 'day'] as CalView[]).map((v) => (
+                {(['month', 'day'] as CalView[]).map((v) => (
                   <button key={v} className={`psy-cal-view-btn ${calView === v ? 'psy-cal-view-btn--active' : ''}`} onClick={() => setCalView(v)} type="button">
-                    {v === 'month' ? 'Mes' : v === 'week' ? 'Semana' : 'Dia'}
+                    {v === 'month' ? 'Mes' : 'Dia'}
                   </button>
                 ))}
               </div>
@@ -754,79 +910,6 @@ const PsychologistDashboard: React.FC = () => {
                       </div>
                     );
                   })}
-                </div>
-              </div>
-            )}
-
-            {/* WEEK VIEW */}
-            {calView === 'week' && (
-              <div className="psy-week">
-                <div className="psy-week-header">
-                  <div className="psy-week-time-col" />
-                  {weekDays.map((d) => (
-                    <div
-                      key={d.toISOString()}
-                      className={`psy-week-day-col ${sameDay(d, today) ? 'psy-week-day-col--today' : ''}`}
-                      onClick={() => { setCurrentDate(d); setCalView('day'); }}
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={(e) => e.key === 'Enter' && setCalView('day')}
-                    >
-                      <span className="psy-week-day-label">{DAY_NAMES_SHORT[d.getDay()]}</span>
-                      <span className="psy-week-day-num">{d.getDate()}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="psy-week-body">
-                  {HOURS_RANGE.map((h) => (
-                    <div key={h} className="psy-week-row">
-                      <div className="psy-week-time">{h > 12 ? h - 12 : h}:00 {h >= 12 ? 'PM' : 'AM'}</div>
-                      {weekDays.map((d) => {
-                        const ds = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-                        const hourAppts = appointments.filter((a) => a.appointment_date === ds && parseInt(a.start_time.split(':')[0], 10) === h);
-                        const hourBlocks = blocks.filter((b) => b.block_date === ds && parseInt(b.start_time.split(':')[0], 10) <= h && parseInt(b.end_time.split(':')[0], 10) > h);
-                        const hasAvail = availability.some((av) => av.day_of_week === d.getDay() && parseInt(av.start_time.split(':')[0], 10) === h && av.is_available);
-                        
-                        return (
-                          <div
-                            key={`${ds}-${h}`}
-                            className={`psy-week-cell ${hourBlocks.length > 0 ? 'psy-week-cell--blocked' : ''} ${hourAppts.length === 0 && hourBlocks.length === 0 && hasAvail ? 'psy-week-cell--available' : ''}`}
-                            onContextMenu={(e) => {
-                              e.preventDefault();
-                              if (hourAppts.length === 0 && d >= today) {
-                                handleQuickBlockClick(d, h);
-                              }
-                            }}
-                            onClick={() => {
-                              if (hourAppts.length > 0) {
-                                setSelectedAppt(hourAppts[0]);
-                              } else if (hourAppts.length === 0 && hourBlocks.length === 0 && !hasAvail && d >= today) {
-                                handleQuickAdd(d.getDay(), h);
-                              }
-                            }}
-                            role={hourAppts.length > 0 || (hourAppts.length === 0 && hourBlocks.length === 0 && !hasAvail) ? 'button' : undefined}
-                            tabIndex={hourAppts.length > 0 || (hourAppts.length === 0 && hourBlocks.length === 0 && !hasAvail) ? 0 : undefined}
-                            title={hourAppts.length === 0 && hourBlocks.length === 0 && !hasAvail && d >= today ? 'Click para agregar disponibilidad | Clic derecho para bloquear' : hourBlocks.length > 0 ? 'Bloqueado' : ''}
-                          >
-                            {hourAppts.map((a) => (
-                              <button key={a.id} className={`psy-week-appt psy-week-appt--${a.status}`} onClick={(e) => { e.stopPropagation(); setSelectedAppt(a); }} type="button">
-                                <span className="psy-week-appt-name">{a.patient?.full_name?.split(' ')[0] || 'Pac.'}</span>
-                                <span className="psy-week-appt-time">{formatTime(a.start_time)}</span>
-                              </button>
-                            ))}
-                            {hourBlocks.length > 0 && (
-                              <div className="psy-week-block-badge">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                  <circle cx="12" cy="12" r="9" />
-                                  <line x1="15" y1="9" x2="9" y2="15" />
-                                </svg>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ))}
                 </div>
               </div>
             )}
@@ -1220,10 +1303,89 @@ const PsychologistDashboard: React.FC = () => {
                     Marcar como completada
                   </button>
                 )}
+                {selectedAppt.patient && (
+                  <button
+                    className="psy-history-btn"
+                    onClick={() => {
+                      setSelectedPatientForHistory({
+                        id: selectedAppt.patient!.id,
+                        name: selectedAppt.patient!.full_name || 'Paciente',
+                      });
+                      setShowClinicalHistoryView(true);
+                    }}
+                    type="button"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <polyline points="14 2 14 8 20 8" />
+                      <line x1="16" y1="13" x2="8" y2="13" />
+                      <line x1="16" y1="17" x2="8" y2="17" />
+                      <polyline points="10 9 9 9 8 9" />
+                    </svg>
+                    Ver Historia Clínica
+                  </button>
+                )}
               </div>
             </div>
           </div>
         </div>
+      )}
+
+      {/* Clinical Record Modal - Apertura de Historia Clínica */}
+      {showClinicalRecordModal && pendingAppointmentToComplete && pendingAppointmentToComplete.patient && (
+        <ClinicalRecordModal
+          isOpen={showClinicalRecordModal}
+          onClose={() => {
+            setShowClinicalRecordModal(false);
+            setPendingAppointmentToComplete(null);
+          }}
+          patientId={pendingAppointmentToComplete.patient.id}
+          psychologistId={profile!.id}
+          onSuccess={(_clinicalRecordId) => {
+            setShowClinicalRecordModal(false);
+            // Después de crear HC, abrir automáticamente el modal de nota de sesión
+            if (pendingAppointmentToComplete) {
+              handleCompleteAppt(pendingAppointmentToComplete.id);
+            }
+            setPendingAppointmentToComplete(null);
+          }}
+        />
+      )}
+
+      {/* Session Note Modal - Nota de Sesión */}
+      {showSessionNoteModal && sessionNoteData && profile && (
+        <SessionNoteModal
+          isOpen={showSessionNoteModal}
+          onClose={() => {
+            setShowSessionNoteModal(false);
+            setSessionNoteData(null);
+          }}
+          appointmentId={sessionNoteData.appointmentId}
+          clinicalRecordId={sessionNoteData.clinicalRecordId}
+          sessionNumber={sessionNoteData.sessionNumber}
+          patientId={appointments.find(a => a.id === sessionNoteData.appointmentId)?.patient?.id || ''}
+          psychologistId={profile.id}
+          onSuccess={() => {
+            setShowSessionNoteModal(false);
+            setSessionNoteData(null);
+            setSelectedAppt(null);
+            fetchData();
+          }}
+        />
+      )}
+
+      {/* Clinical History View - Vista de Historia Clínica */}
+      {showClinicalHistoryView && selectedPatientForHistory && profile && (
+        <ClinicalHistoryView
+          isOpen={showClinicalHistoryView}
+          onClose={() => {
+            setShowClinicalHistoryView(false);
+            setSelectedPatientForHistory(null);
+          }}
+          patientId={selectedPatientForHistory.id}
+          psychologistId={profile.id}
+          patientName={selectedPatientForHistory.name}
+        />
       )}
     </div>
   );
