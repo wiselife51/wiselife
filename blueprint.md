@@ -40,6 +40,19 @@ This document outlines the development plan and feature set for the "Psicología
     *   **Testimonial Card Height:** Adjusted the height of the testimonial cards to match the height of the specialist cards for better visual consistency.
     *   **Footer Social Icon Colors:** Added brand colors to the social media icons in the footer for improved visual appeal.
 
+## Design System oficial WiseLife (v1.0)
+
+La fuente de verdad UX/UI está documentada en:
+
+*   [`docs/design-system.md`](docs/design-system.md): principios, tokens semánticos, tipografía, layout, componentes, iconografía, patrones por superficie, accesibilidad y migración legacy.
+*   [`docs/design-tokens.css`](docs/design-tokens.css): referencia ejecutable de custom properties para modo claro y oscuro.
+*   [`docs/component-inventory.md`](docs/component-inventory.md): inventario de componentes existentes, API objetivo y orden de adopción.
+
+La dirección oficial reemplaza gradualmente los gradientes violetas y los colores hex locales por una base cálida de superficies, texto azul tinta y teal accesible. Esta entrega es documental: no modifica lógica de negocio, backend ni base de datos.
+
 ## Current Plan & Next Steps
 
-*This section will be updated with the plan for the next set of requested changes.*
+*   Adoptar los tokens globales y migrar Button, Typography e Icon.
+*   Normalizar navegación y formularios con los contratos accesibles del sistema.
+*   Migrar superficies clínicas después de validar privacidad, responsive y contraste.
+*   Mantener este blueprint sincronizado con las decisiones documentadas en `docs/`.
