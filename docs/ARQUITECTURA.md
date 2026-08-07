@@ -2,7 +2,7 @@
 
 **Propósito:** describir la arquitectura implementada y separar explícitamente las decisiones objetivo.
 **Responsable:** Arquitectura de Software.
-**Estado:** actualizado contra el commit `e1bfbbe` y el repositorio local.
+**Estado:** actualizado contra el commit `cb00865` y el repositorio local.
 
 ## Estado implementado
 WiseLife es una SPA basada en React 19, TypeScript y Vite 7, con React Router, i18next y `@supabase/supabase-js`. `src/App.tsx` concentra el enrutamiento y `AuthProvider` mantiene la sesión. Las páginas y componentes consultan Supabase directamente en varios módulos; todavía no existe una capa uniforme de casos de uso, repositories o mappers.
@@ -40,4 +40,4 @@ Estos patrones son **objetivo**, no capacidades ya implementadas. Toda extracci�
 Acoplamiento UI-persistencia, IDOR clínico, conflictos de agenda, datos sensibles en logs, exposición accidental de claves y drift entre SQL versionado y esquema vivo.
 
 ## Documentación relacionada
-`API.md`, `BASE_DATOS.md` y `DEVOPS.md` son documentos existentes. `SEGURIDAD.md`, `IA.md`, `COMPONENTES.md` y `PLAN_PRUEBAS.md` se mencionan como documentación complementaria, pero no se consideran disponibles hasta que existan en el repositorio.
+`API.md`, `BASE_DATOS.md` y `DEVOPS.md` son documentos existentes. `SEGURIDAD.md`, `IA.md`, `COMPONENTES.md` y `PLAN_PRUEBAS.md` están disponibles como documentación complementaria en el repositorio actual.

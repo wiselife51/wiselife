@@ -9,7 +9,7 @@
 - `src/pages/<Page>` coordina datos, navegación y composición de pantalla.
 - `src/components/<Component>` contiene componentes reutilizables con su hoja de estilos local.
 - `src/components/section` agrupa secciones visuales de páginas públicas.
-- `src/styles` contiene estilos transversales de aplicación.
+- Los estilos transversales están distribuidos entre hojas globales y estilos locales; `docs/design-tokens.css` es una referencia documental y no una fuente runtime confirmada.
 - Las páginas actuales no se reorganizan automáticamente en `src/features`; esa estructura queda como objetivo de migración, no como ruta válida actual.
 - La UI no sustituye autorización: los permisos se validan en la capa de datos y servicios.
 
@@ -63,11 +63,11 @@ Cada componente reutilizable nuevo o modificado debe documentar, en su PR o arch
 
 ## Reglas de implementación
 
-1. Consumir tokens de [`design-tokens.css`](design-tokens.css); no añadir hexadecimales locales sin decisión de UX/UI.
+1. Consultar la referencia documental [`design-tokens.css`](design-tokens.css); no añadir hexadecimales locales sin decisión de UX/UI. Si se requiere uso runtime, primero debe definirse y versionarse una fuente canónica en el frontend.
 2. Preferir Flexbox para layout; usar Grid solo en relaciones bidimensionales reales.
 3. Reutilizar `Button`, `Typography` e `Icon` antes de crear variantes por página.
 4. Mantener estilos junto al componente y evitar selectores globales que filtren a otras pantallas.
-5. Los iconos deben provenir de Lucide a través de `Icon`, con tamaño y trazo consistentes; no usar emoji como iconografía.
+5. La iconografía debe pasar por `src/components/Icon` cuando sea reutilizable. El proyecto usa `react-icons`; no se debe afirmar uso de Lucide sin una dependencia y una implementación verificables. No usar emoji como iconografía.
 6. Los modales deben gestionar foco, cierre por teclado y retorno de foco; evitar usarlos para procesos clínicos extensos.
 7. Los componentes que muestran datos clínicos deben minimizar contenido visible y no registrar PII/PHI.
 

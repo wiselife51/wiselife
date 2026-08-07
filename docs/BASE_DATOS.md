@@ -7,7 +7,7 @@
 ## Plataforma y tablas verificadas
 WiseLife usa PostgreSQL administrado por Supabase. En el esquema `public` se verificaron estas tablas: `appointments`, `cie10_codes`, `clinical_records`, `emotional_diary`, `favorite_specialties`, `payment_transactions`, `profiles`, `psychologist_availability`, `referrals`, `schedule_blocks`, `session_notes` y `psychologists`.
 
-Las tablas públicas consultadas tienen RLS habilitado. La consulta de estado mostró `rls_forced = false`; esto no desactiva RLS, pero significa que no está forzado para roles con privilegios de bypass. La existencia de RLS no sustituye la revisión de cada policy.
+Las tablas públicas consultadas tienen RLS habilitado. La consulta de estado mostró `rls_forced = false`; esto no desactiva RLS, pero significa que no está forzado para roles con privilegios de bypass. La existencia de RLS no sustituye la revisión de cada policy. El estado de policies concretas, grants de la Data API, ownership por operación y protección de relaciones padre-hijo sigue pendiente de auditoría detallada.
 
 ## SQL y migraciones
 El repositorio contiene `database/sprint1_clinical_history_schema.sql` como SQL versionado. No se identificó una estructura formal `supabase/migrations/` o `supabase/schemas/` en el checkout auditado. Por ello, el SQL local debe tratarse como referencia/versionado parcial y no como prueba de que fue aplicado al proyecto vivo.

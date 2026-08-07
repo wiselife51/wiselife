@@ -26,8 +26,8 @@ Identificar el deployment estable, promover rollback, ejecutar smoke test, regis
 ## Docker
 Docker no es necesario para esta SPA estática en Vercel. Sólo debe incorporarse ante un requisito operativo explícito.
 
-## Pendientes
-Workflow oficial, versión de Node y package manager canónicos, lockfile, protección de ramas, CODEOWNERS, Dependabot, secret scanning, dominios, observabilidad y matriz de variables.
+## Reproducibilidad y pendientes
+El `package.json` no declara un campo `packageManager` y el checkout auditado no debe asumir un lockfile o gestor canónico sin confirmación. Por tanto, la versión de Node, package manager, lockfile, workflow oficial, protección de ramas, CODEOWNERS, Dependabot, secret scanning, dominios, observabilidad y matriz de variables permanecen pendientes de formalización.
 
 **Responsable:** DevOps.
 

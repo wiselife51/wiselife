@@ -16,6 +16,21 @@ No se identificaron en el repositorio endpoints propios, route handlers, funcion
 ## Capacidades funcionales
 El frontend integra operaciones relacionadas con autenticación, perfiles/onboarding, especialistas, disponibilidad, citas, diarios/evaluaciones, historia clínica, notas y pagos reportados. El detalle exacto de cada consulta está distribuido en las páginas y componentes; debe extraerse a un catálogo versionado antes de tratarlo como API pública.
 
+## Inventario observado de operaciones Supabase
+Este inventario describe dominios usados por la SPA, no endpoints HTTP propios ni un contrato público estable:
+
+| Dominio | Operaciones observadas | Fuente de autoridad |
+| --- | --- | --- |
+| Auth | registro, inicio/cierre de sesión, recuperación/callback | Supabase Auth y sesión del cliente |
+| Perfiles | lectura y actualización del perfil del usuario | Data API + RLS |
+| Especialistas | listado, detalle, favoritos y disponibilidad | Data API + RLS |
+| Agenda | disponibilidad, bloques y citas | Data API + RLS; concurrencia pendiente |
+| Clínico | historia clínica y notas de sesión | Data API + RLS; PHI sensible |
+| Bienestar | diarios y encuestas | Data API + RLS |
+| Pagos | consulta/registro relacionado con transacciones | Data API + RLS; idempotencia pendiente |
+
+Los nombres exactos de tablas, columnas, filtros y payloads deben mantenerse sincronizados con `BASE_DATOS.md` y el código fuente. No asumir que esta tabla autoriza acceso: la autorización efectiva depende de sesión, policies y restricciones del esquema.
+
 ## Contrato objetivo
 Cuando se incorpore una API server-side:
 - derivar identidad de la sesión y no aceptar `user_id`, rol o autorización del cliente como autoridad;
