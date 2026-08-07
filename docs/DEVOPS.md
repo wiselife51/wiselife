@@ -27,7 +27,7 @@ Identificar el deployment estable, promover rollback, ejecutar smoke test, regis
 Docker no es necesario para esta SPA estática en Vercel. Sólo debe incorporarse ante un requisito operativo explícito.
 
 ## Reproducibilidad y pendientes
-El `package.json` no declara un campo `packageManager` y el checkout auditado no debe asumir un lockfile o gestor canónico sin confirmación. Por tanto, la versión de Node, package manager, lockfile, workflow oficial, protección de ramas, CODEOWNERS, Dependabot, secret scanning, dominios, observabilidad y matriz de variables permanecen pendientes de formalización.
+El `package.json` no declara un campo `packageManager`. El repositorio contiene simultáneamente `package-lock.json` y `pnpm-lock.yaml`, por lo que el gestor y lockfile canónicos deben formalizarse antes de automatizar CI; mientras tanto, no se debe mezclar `npm install` con `pnpm install --frozen-lockfile`. La versión de Node, gestor/lockfile canónicos, workflow oficial, protección de ramas, CODEOWNERS, Dependabot, secret scanning, dominios, observabilidad y matriz de variables permanecen pendientes de formalización.
 
 **Responsable:** DevOps.
 
