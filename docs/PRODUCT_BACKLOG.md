@@ -182,6 +182,17 @@ Videollamadas propias, chat en tiempo real, app nativa, diagnóstico/recomendaci
 - Integraciones con aseguradoras.
 - Analítica clínica avanzada.
 
+## Compromiso aprobado — Sprint 1
+
+- **Alcance:** WL-AUTH-01, WL-AUTH-02, WL-AUTH-03, WL-PROF-01, WL-PSY-01, WL-SEC-01 y WL-SEC-02.
+- **Prioridad:** P0 / Must Have.
+- **Capacidad comprometida:** baja, máximo 8 puntos de historia.
+- **Duración:** 2 semanas.
+- **Fechas:** por definir antes de iniciar el Sprint.
+- **Métrica de salida:** 100% de historias comprometidas aceptadas, cero vulnerabilidades críticas o altas abiertas, pruebas de autenticación y RLS aprobadas y documentación actualizada.
+- **Regla de alcance:** no se incorporan historias adicionales si comprometen la capacidad de 8 puntos o los controles de seguridad.
+- **Documento operativo:** [`SPRINT_01.md`](./SPRINT_01.md).
+
 ## Roadmap sugerido
 
 ### MVP-1 — Acceso, descubrimiento y controles base

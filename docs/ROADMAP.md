@@ -28,6 +28,18 @@ La seguridad, privacidad, autorización, RLS, concurrencia de reservas y trazabi
 
 **Puerta de salida:** decisiones documentadas, dependencias identificadas y criterios de aceptación refinados para MVP-1.
 
+### Sprint 1 — Fundaciones de acceso y seguridad
+
+**Estado:** aprobado para planificación; no representa evidencia de ejecución.
+
+- **Duración:** 2 semanas.
+- **Fechas:** `[POR DEFINIR]` antes de iniciar el Sprint.
+- **Capacidad:** baja, máximo 8 puntos.
+- **Historias comprometidas:** WL-AUTH-01, WL-AUTH-02, WL-AUTH-03, WL-PROF-01, WL-PSY-01, WL-SEC-01 y WL-SEC-02.
+- **Orden:** autenticación; perfiles; onboarding profesional; autorización/RLS; consentimientos y privacidad.
+- **Salida:** 100% de historias aceptadas, cero vulnerabilidades críticas o altas abiertas, pruebas de autenticación/RLS aprobadas y documentación actualizada.
+- **Control de alcance:** no añadir historias fuera del compromiso sin reestimar capacidad y aprobación del Product Owner y Scrum Master.
+
 ### MVP-1 — Acceso, descubrimiento y controles base
 
 **Objetivo:** permitir que el paciente ingrese al producto y seleccione un psicólogo confiable.
