@@ -14,6 +14,8 @@
 - **Won't Have:** explícitamente fuera del MVP.
 - Cada historia debe refinarse con el equipo antes de entrar a un Sprint.
 - Las historias clínicas, pagos y permisos requieren validación de Seguridad, QA, Legal y DevOps antes de aprobarse.
+- Seguridad, privacidad, autorización, RLS y trazabilidad son dependencias transversales desde MVP-1; no se posponen a una fase posterior.
+- MVP inicial incluye el núcleo operativo y los controles mínimos obligatorios; MVP ampliado contiene capacidades importantes que no bloquean la primera liberación.
 
 ## Épicas y backlog priorizado
 
@@ -160,23 +162,29 @@
 
 ## Roadmap sugerido
 
-### MVP-1 — Acceso y descubrimiento
+### MVP-1 — Acceso, descubrimiento y controles base
 
 WL-AUTH-01 a WL-AUTH-03, WL-PROF-01, WL-PSY-01, WL-PSY-02, WL-DISC-01 y WL-DISC-03.
 
-**Resultado esperado:** un paciente puede crear su cuenta y encontrar un psicólogo con perfil y disponibilidad válidos.
+**Controles obligatorios transversales:** WL-SEC-01 y WL-SEC-02 deben estar implementados antes de exponer datos de usuario, perfiles, disponibilidad o reservas. WL-SEC-03 se incorpora cuando existan acciones clínicas o administrativas auditables.
 
-### MVP-2 — Reserva y operación
+**Resultado esperado:** un paciente puede crear su cuenta y encontrar un psicólogo con perfil y disponibilidad válidos, con acceso protegido y consentimiento gestionado.
 
-WL-BOOK-01 a WL-BOOK-05, WL-OPS-01 a WL-OPS-03 y WL-NOTIF-01.
+### MVP-2 — Reserva y operación clínica mínima
 
-**Resultado esperado:** el paciente puede reservar, reportar pago y gestionar su cita; el psicólogo puede operar su agenda.
+WL-BOOK-01 a WL-BOOK-05, WL-OPS-01 a WL-OPS-03, WL-CLIN-01 a WL-CLIN-03 y WL-NOTIF-01.
 
-### MVP-3 — Operación clínica segura
+**Resultado esperado:** el paciente puede reservar, reportar pago y gestionar su cita; el psicólogo puede operar su agenda y documentar la atención autorizada.
 
-WL-CLIN-01 a WL-CLIN-04, WL-SEC-01 a WL-SEC-03 y WL-ADMIN-01.
+### MVP ampliado — Capacidades de soporte y control
 
-**Resultado esperado:** WiseLife puede operar atención clínica con controles de acceso, trazabilidad y administración mínima.
+WL-DISC-02, WL-BOOK-06, WL-CARE-01, WL-CLIN-04, WL-SEC-03 y WL-ADMIN-01.
+
+**Resultado esperado:** WiseLife mejora descubrimiento, continuidad, auditoría y operación administrativa sin bloquear la primera liberación del núcleo.
+
+### Fuera del MVP inicial
+
+WL-DISC-04 y WL-CARE-02, además de todas las funcionalidades indicadas en “Won't Have”. Se incorporarán únicamente después de validar el núcleo operativo, la seguridad y el cumplimiento.
 
 ## Definición de Ready para un Sprint
 
