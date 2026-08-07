@@ -179,13 +179,6 @@ const Header: React.FC = () => {
           </svg>
           <span>Soy Psicologo</span>
         </button>
-        <button className="btn btn--outline-accent" type="button" onClick={() => navigate('/login')}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="12" cy="8" r="3" />
-            <path d="M5 21a7 7 0 0 1 14 0" />
-          </svg>
-          <span>Soy Paciente</span>
-        </button>
         <button className="btn btn--ghost" type="button" onClick={() => navigate('/login')}>
           <span>Iniciar Sesion</span>
         </button>
@@ -243,13 +236,6 @@ const Header: React.FC = () => {
               <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
             </svg>
             <span>Soy Psicologo</span>
-          </button>
-          <button className="btn btn--outline-accent btn--full" onClick={() => { handleLinkClick(); navigate('/login'); }} type="button">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="8" r="3" />
-              <path d="M5 21a7 7 0 0 1 14 0" />
-            </svg>
-            <span>Soy Paciente</span>
           </button>
           <button className="btn btn--ghost btn--full" onClick={() => { handleLinkClick(); navigate('/login'); }} type="button">
             Iniciar Sesion
