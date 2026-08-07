@@ -5,15 +5,15 @@
 **Estado:** Propuesta; requiere validación de los responsables de dominio
 **Responsable:** Documentador Técnico
 
-> Este documento consolida la documentación oficial existente. No sustituye decisiones pendientes ni convierte propuestas en decisiones aprobadas.
+> Este documento consolida decisiones aprobadas y principios oficiales existentes. No sustituye decisiones pendientes ni convierte propuestas en decisiones aprobadas.
 
-## 1. Propósito del documento
+## 1. Propósito y autoridad del documento
 
-`PROJECT_CONSTITUTION.md` es la referencia normativa de mayor autoridad documental de WiseLife. Define principios, estándares y límites para producto, arquitectura, desarrollo, UX/UI, datos, seguridad, IA, QA, DevOps y documentación. Cuando una regla no esté confirmada, se conserva como `[DECISIÓN PENDIENTE]` y se escala al responsable indicado.
+`PROJECT_CONSTITUTION.md` es la referencia normativa de mayor autoridad documental de WiseLife. Define principios, estándares y límites para producto, arquitectura, desarrollo, UX/UI, datos, seguridad, IA, QA, DevOps y documentación. Esta autoridad documental no reemplaza la autoridad de los responsables de cada dominio ni permite modificar unilateralmente una decisión aprobada por Product Owner, Scrum Master, Arquitecto de Software, Arquitecto de Base de Datos, Arquitecto UX/UI, Seguridad, Backend, Frontend, QA, DevOps, Ingeniero de IA o Legal, cuando corresponda. Si existe contradicción entre esta Constitución y una decisión aprobada de dominio, debe identificarse, conservarse como `[DECISIÓN PENDIENTE]` y escalarse al responsable correspondiente. Cuando una regla no esté confirmada, también se conserva como `[DECISIÓN PENDIENTE]` y se escala al responsable indicado.
 
 ## 2. Visión de WiseLife
 
-WiseLife es una plataforma colombiana de atención psicológica que conecta pacientes con psicólogos, facilitando descubrimiento, disponibilidad, reserva, reporte de pago y operación clínica autorizada, con privacidad y seguridad como condiciones del producto.
+WiseLife es una plataforma tecnológica colombiana que facilita la conexión y operación entre pacientes y profesionales de psicología. Facilita el descubrimiento, la disponibilidad, la reserva, el reporte de pago y la operación clínica autorizada, pero no sustituye al profesional ni realiza por sí misma atención psicológica; las decisiones y actuaciones clínicas corresponden a profesionales autorizados.
 
 ## 3. Misión
 
@@ -36,7 +36,10 @@ Autenticación y acceso, onboarding de pacientes y profesionales, perfiles, cat�
 Videollamadas propias, chat clínico en tiempo real, aplicación nativa, diagnóstico o recomendaciones clínicas mediante IA, suscripciones, cuentas familiares e integraciones empresariales.
 
 ### Futuras versiones
+
 Filtros avanzados, reprogramación, diario emocional, CIE-10, notificaciones, auditoría ampliada, administración, cache, observabilidad, evaluación IA y automatizaciones seguras, siempre sujetas a validación.
+
+La historia clínica, las notas, los diagnósticos, los consentimientos y cualquier otra información clínica requieren controles reforzados de autorización, mínimo privilegio, RLS, auditoría, consentimiento, trazabilidad, retención, protección de datos y acceso según la relación profesional-paciente. Las decisiones específicas de clasificación, retención, cumplimiento y tratamiento que no estén aprobadas permanecen como **[DECISIÓN PENDIENTE]** y corresponden a Legal, Seguridad y Base de Datos según el dominio.
 
 ## 6. Principios del producto
 
@@ -67,7 +70,7 @@ La arquitectura debe favorecer modularidad, escalabilidad, mantenibilidad, reuti
 | Vercel | Preview y Production | DevOps |
 | GitHub | Código, PR e historial | DevOps |
 
-No se consideran aprobadas tecnologías adicionales no documentadas.
+No se consideran aprobadas tecnologías adicionales no documentadas. Una tecnología nueva no se considera automáticamente aprobada: puede proponerse mediante un proceso formal que incluya justificación y evaluación de impacto técnico, seguridad, costo, mantenibilidad y compatibilidad con la arquitectura. Debe ser aprobada por el responsable técnico correspondiente y, después de su aprobación, incorporarse a la documentación oficial.
 
 ## 9. Principios de desarrollo
 
@@ -105,7 +108,18 @@ No se introduce un Git Flow alternativo mientras esté pendiente la confirmació
 
 ## 15. Ambientes
 
-Los ambientes documentados son local/preview para smoke, Supabase para integración, staging aislado para seguridad/carga y Vercel Production desde `main`. Las variables se separan en Development, Preview y Production; no se versionan secretos y `VITE_*` sólo contiene valores públicos.
+### Ambientes actualmente implementados
+
+- Local/Development para desarrollo y smoke tests.
+- Preview de Vercel para validación de cambios.
+- Supabase para integración según la configuración documentada.
+- Vercel Production desde `main`.
+
+### Ambiente objetivo
+
+Staging está definido como ambiente objetivo y deberá implementarse antes de realizar pruebas de seguridad y carga que requieran dicho ambiente. No se documenta como implementado sin evidencia confirmada por DevOps.
+
+Las variables se separan en Development, Preview y Production; no se versionan secretos y `VITE_*` sólo contiene valores públicos. La configuración concreta y la separación efectiva de ambientes permanecen sujetas a validación de DevOps cuando no exista evidencia suficiente.
 
 ## 16. Calidad
 
@@ -158,14 +172,16 @@ Una excepción debe documentar regla afectada, motivo, riesgo, alcance, duració
 
 ### Decisiones pendientes consolidadas
 
-- Rama y commit canónicos, workflow, protección de ramas, CODEOWNERS y versión Node — **DevOps + Arquitecto de Software**.
-- Esquema/RLS vivo, migración legacy, retención clínica, Storage e índices productivos — **Base de Datos + Seguridad + Legal**.
-- Roles administrativos, clasificación formal, DPIA, rate limits y calendario de auditoría — **Seguridad + Legal**.
-- Política de pagos, cancelación, notificaciones, fechas y métricas de éxito — **Product Owner + Finanzas/Legal**.
-- Proveedor, modelos, presupuesto, evaluación, retención y escalamiento de IA — **Ingeniero de IA + Seguridad + Legal**.
-- Herramientas, cobertura, staging, datos sintéticos y pruebas de carga — **QA + DevOps**.
-- Tokens, copy legal, indexación de perfiles y pruebas con usuarios — **UX/UI + Product Owner + Legal**.
-- Contrato HTTP, rutas, OpenAPI, versionado, límites, webhooks y autenticación server-side — **Backend + Seguridad**.
+Las siguientes decisiones permanecen expresamente como **[DECISIÓN PENDIENTE]** y no deben interpretarse como aprobadas:
+
+- **[DECISIÓN PENDIENTE]** Rama y commit canónicos, workflow, protección de ramas, CODEOWNERS y versión Node — **DevOps + Arquitecto de Software**.
+- **[DECISIÓN PENDIENTE]** Esquema/RLS vivo, migración legacy, retención clínica, Storage e índices productivos — **Base de Datos + Seguridad + Legal**.
+- **[DECISIÓN PENDIENTE]** Roles administrativos, clasificación formal, DPIA, rate limits y calendario de auditoría — **Seguridad + Legal**.
+- **[DECISIÓN PENDIENTE]** Política de pagos, cancelación, notificaciones, fechas y métricas de éxito — **Product Owner + Finanzas/Legal**.
+- **[DECISIÓN PENDIENTE]** Proveedor, modelos, presupuesto, evaluación, retención y escalamiento de IA — **Ingeniero de IA + Seguridad + Legal**.
+- **[DECISIÓN PENDIENTE]** Herramientas, cobertura, staging, datos sintéticos y pruebas de carga — **QA + DevOps**.
+- **[DECISIÓN PENDIENTE]** Tokens, copy legal, indexación de perfiles y pruebas con usuarios — **UX/UI + Product Owner + Legal**.
+- **[DECISIÓN PENDIENTE]** Contrato HTTP, rutas, OpenAPI, versionado, límites, webhooks y autenticación server-side — **Backend + Seguridad**.
 
 ## Fuentes utilizadas
 
