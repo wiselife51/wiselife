@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /auth/
+Disallow: /onboarding
+Disallow: /referral-survey
+Disallow: /motivation-survey
+Disallow: /dashboard
+Disallow: /mi-perfil
+Disallow: /mis-citas
+Disallow: /psicologo/
+Disallow: /especialistas
+Disallow: /especialista/
+
+Sitemap: %VITE_SITE_URL%/sitemap.xml

@@ -42,7 +42,7 @@ const Hero = () => {
         {/* Badge */}
         <div className="hero__badge">
           <span className="hero__badge-dot" />
-          <span>Psicologia clinica profesional</span>
+          <span>Psicología clínica profesional</span>
         </div>
 
         {/* Title */}
@@ -92,13 +92,13 @@ const Hero = () => {
         <div className="hero__trust">
           <div className="hero__trust-avatars">
             <div className="hero__trust-avatar" style={{ '--i': 0 } as React.CSSProperties}>
-              <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="" />
+              <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="" loading="lazy" decoding="async" />
             </div>
             <div className="hero__trust-avatar" style={{ '--i': 1 } as React.CSSProperties}>
-              <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="" />
+              <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="" loading="lazy" decoding="async" />
             </div>
             <div className="hero__trust-avatar" style={{ '--i': 2 } as React.CSSProperties}>
-              <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="" />
+              <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="" loading="lazy" decoding="async" />
             </div>
             <div className="hero__trust-avatar hero__trust-avatar--count" style={{ '--i': 3 } as React.CSSProperties}>
               <span>+50</span>
