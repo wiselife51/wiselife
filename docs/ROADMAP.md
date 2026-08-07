@@ -185,3 +185,5 @@ No planificar en estos releases:
 - DevOps valida despliegue, observabilidad, rollback y continuidad operativa.
 
 Cualquier cambio de alcance debe actualizar simultáneamente este documento y `PRODUCT_BACKLOG.md`.
+## Referencias
+`PRODUCT_BACKLOG.md`, `SPRINT_01.md`, `ARQUITECTURA.md`, `BASE_DATOS.md`, `API.md`, `SEGURIDAD.md`, `PLAN_PRUEBAS.md`, `DEVOPS.md`.

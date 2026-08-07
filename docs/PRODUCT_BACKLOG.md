@@ -1,12 +1,23 @@
-# Product Backlog MVP — WiseLife
+# PRODUCT_BACKLOG.md — WiseLife
 
-**Propósito:** documento operativo para el Scrum Master y el equipo de producto.
+**Propósito:** producto, épicas, historias, prioridades y criterios de aceptación.
+**Responsable:** Product Owner. **Estado:** Requiere validación de Producto, Seguridad, QA y Legal.
 
-**Producto:** plataforma para encontrar, reservar y gestionar atención psicológica en Colombia.
+## Alcance MVP
+Plataforma colombiana para que pacientes creen su cuenta, completen su perfil, encuentren un psicólogo, reserven y reporten el pago de una sesión; el psicólogo gestiona disponibilidad, agenda y documentación clínica autorizada.
 
-**Alcance del MVP:** permitir que un paciente cree su cuenta, complete su perfil, encuentre un psicólogo, reserve y pague una sesión, y que el psicólogo gestione su agenda y la documentación clínica autorizada.
+## Épicas priorizadas
 
-## Convenciones
+| Módulo | Historias principales | Prioridad |
+|---|---|---|
+| Identidad y acceso | Registro, login, logout, recuperación y callback | P0 Must |
+| Perfiles | Onboarding y edición de paciente; onboarding profesional | P0 Must |
+| Descubrimiento | Catálogo, filtros, perfil y disponibilidad | P0/P1 |
+| Agenda y pagos | Reserva atómica, estados, reporte de pago, cancelación | P0 Must |
+| Operación profesional | Agenda, bloqueos, aprobación de pagos y cierre de sesión | P0 Must |
+| Experiencia clínica | Historia, notas de evolución y CIE-10 | P0/P1 |
+| Seguridad y cumplimiento | RLS, consentimientos y auditoría | P0/P1 |
+| Notificaciones y administración | Recordatorios y consola administrativa | P1 Should |
 
 - **Must Have:** imprescindible para liberar el MVP.
 - **Should Have:** importante, pero puede liberarse después del núcleo.
@@ -17,17 +28,28 @@
 - Seguridad, privacidad, autorización, RLS y trazabilidad son dependencias transversales desde MVP-1; no se posponen a una fase posterior.
 - MVP inicial incluye el núcleo operativo y los controles mínimos obligatorios; MVP ampliado contiene capacidades importantes que no bloquean la primera liberación.
 
-## Épicas y backlog priorizado
+## Criterios de aceptación transversales
+- Validación de entradas, estados de carga/error/vacío y persistencia comprobable.
+- Aislamiento por usuario, rol y relación profesional-paciente mediante RLS.
+- Doble reserva, pagos duplicados, reintentos e idempotencia controlados en servidor.
+- Datos clínicos fuera de logs, analytics y respuestas no autorizadas.
+- Pruebas funcionales, negativas, accesibilidad y responsive antes de Done.
 
-### Módulo 1 — Identidad y acceso
+## MVP Must Have
+Autenticación, perfiles, disponibilidad, catálogo, reserva, pago reportado, citas, agenda profesional, historia clínica, notas, permisos, RLS y consentimiento.
 
-#### Épica 1.1 — Registro e inicio de sesión
+## MVP ampliado
+Filtros avanzados, reprogramación, diario emocional, CIE-10, notificaciones, auditoría y administración.
 
-| ID | Historia de usuario | MoSCoW | Prioridad | Criterios de aceptación resumidos |
-|---|---|---|---|---|
-| WL-AUTH-01 | Como paciente, quiero crear una cuenta para acceder a servicios personalizados. | Must | P0 | Registro con correo y contraseña; validación; confirmación de correo; mensajes que no enumeren cuentas; acceso privado protegido. |
-| WL-AUTH-02 | Como usuario registrado, quiero iniciar sesión para acceder a mi espacio privado. | Must | P0 | Credenciales válidas; error genérico ante credenciales inválidas; redirección según rol y onboarding; rutas privadas protegidas. |
-| WL-AUTH-03 | Como usuario, quiero cerrar sesión y recuperar mi contraseña para controlar mi acceso. | Must | P0 | Cierre de sesión efectivo; recuperación por correo; enlaces expirados gestionados claramente. |
+## Fuera de alcance
+Videollamadas propias, chat en tiempo real, app nativa, diagnóstico/recomendaciones clínicas mediante IA, suscripciones, cuentas familiares e integraciones empresariales.
+
+## Decisiones pendientes `[POR DEFINIR]`
+- Comprobación, expiración, fraude y reembolso de pagos Nequi — **Responsable:** Product Owner + Finanzas/Legal.
+- Política de cancelación, anticipación y duración — **Responsable:** Product Owner.
+- Retención, exportación y corrección de historias clínicas — **Responsable:** Legal + Seguridad.
+- Roles definitivos y permisos administrativos — **Responsable:** Arquitecto de Seguridad.
+- Proveedor y plantillas de notificaciones — **Responsable:** Product Owner + DevOps.
 
 ### Módulo 2 — Onboarding y perfiles
 
@@ -228,3 +250,6 @@ Una historia se considera terminada cuando:
 ## Fuera de alcance confirmado
 
 No se debe planificar para el MVP videollamadas propias, chat en tiempo real, aplicación móvil nativa, IA clínica, suscripciones, cuentas familiares ni integraciones empresariales.
+
+## Referencias
+`ROADMAP.md`, `SPRINT_01.md`, `ARQUITECTURA.md`, `BASE_DATOS.md`, `API.md`, `SEGURIDAD.md`, `PLAN_PRUEBAS.md`.
