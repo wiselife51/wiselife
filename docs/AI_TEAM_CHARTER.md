@@ -26,26 +26,31 @@
 
 ## 3. Estructura organizacional
 
-La documentación actual define responsables y dominios, pero no documenta una lista de agentes autónomos con nombres operativos individuales. Por consistencia, esta carta reconoce únicamente los roles/agentes documentados:
+Los roles definidos actualmente son responsabilidades funcionales documentadas. La implementación concreta de esas responsabilidades mediante agentes IA todavía requiere definición y aprobación; este documento no asigna nombres de agentes, herramientas ni plataformas a roles específicos.
+
+Debe distinguirse explícitamente:
+
+1. **Rol funcional:** responsabilidad de dominio, por ejemplo Product Owner, Scrum Master o Arquitecto de Software.
+2. **Agente IA:** instancia de inteligencia artificial que puede desempeñar o asistir en un rol autorizado.
+3. **Herramienta/plataforma:** sistema utilizado por uno o varios agentes, como v0.app, Claude, Antigravity, GitHub o Vercel.
+4. **Responsable humano:** persona que conserva la autoridad, aprobación y rendición de cuentas cuando corresponda.
+
+La asignación concreta sigue el modelo:
+
+```text
+ROL → AGENTE → HERRAMIENTA/PLATAFORMA → RESPONSABLE HUMANO
+```
+
+Esta asignación permanece como **[DECISIÓN PENDIENTE]** mientras no sea aprobada por los responsables correspondientes. Un mismo agente IA puede utilizar una o varias herramientas, y una herramienta puede ser utilizada por varios agentes. Un agente no obtiene autoridad adicional por utilizar una herramienta determinada; la autoridad continúa perteneciendo al responsable humano y al mandato documentado del rol.
 
 ```mermaid
 flowchart TD
-  PO[Product Owner] --> SM[Scrum Master]
-  PO --> AS[Arquitecto de Software]
-  AS --> UX[Arquitecto UX/UI]
-  AS --> FE[Desarrollador Frontend]
-  AS --> BE[Desarrollador Backend]
-  AS --> DB[Arquitecto de Base de Datos]
-  AS --> IA[Ingeniero de IA y Automatización]
-  DB --> SEC[Arquitecto de Seguridad y Ciberseguridad]
-  BE --> QA[Ingeniero QA]
-  SEC --> QA
-  QA --> DEV[Ingeniero DevOps]
-  DEV --> DOC[Documentador Técnico]
-  DOC --> PO
+  R[Roles funcionales documentados] --> A[Agentes IA por definir]
+  A --> H[Herramientas y plataformas por definir]
+  H --> P[Responsables humanos por definir]
 ```
 
-**[DECISIÓN PENDIENTE]** La documentación no confirma si estos roles son agentes IA, personas, equipos mixtos o nombres de agentes concretos. Product Owner debe resolver esta clasificación antes de asignar identidades autónomas.
+No se asignan v0.app, Claude ni Antigravity a ningún rol específico en esta versión.
 
 ## 4. Catálogo de agentes y responsables documentados
 
@@ -154,8 +159,8 @@ flowchart TD
 
 **Rol y misión:** verifica calidad funcional, seguridad, accesibilidad, integración y rendimiento.
 **Responsabilidades:** matriz de pruebas, evidencia, severidad, retest y criterios de salida.
-**Puede hacer:** bloquear entregas con P0/P1 abiertos y exigir evidencia.
-**No puede hacer:** redefinir requisitos o aprobar excepciones de seguridad sin responsable.
+**Puede hacer:** detectar defectos, exigir evidencia, recomendar bloqueo y declarar que una entrega no está lista cuando no cumple los criterios definidos; puede bloquear entregas con P0/P1 abiertos conforme al proceso de calidad.
+**No puede hacer:** redefinir requisitos, cambiar alcance, aprobar excepciones de seguridad ni asumir autoridad de Product Owner, Seguridad o DevOps. La salida a Production continúa dependiendo del proceso definido en `PROJECT_CONSTITUTION.md` y de las aprobaciones correspondientes.
 **Consulta:** `PLAN_PRUEBAS.md`, backlog, API, seguridad, componentes y UX.
 **Produce:** casos, resultados, defectos, evidencias y recomendación de salida.
 **Colabora:** todos los dominios técnicos, Scrum Master y Documentador Técnico.
@@ -185,7 +190,9 @@ flowchart TD
 
 ## 5. Matriz de responsabilidades
 
-| Agente/responsable | Responsabilidad | Puede modificar | Consulta | Produce |
+La matriz describe roles funcionales y responsables documentados; no confirma identidades de agentes IA ni asignaciones de herramientas. Las columnas de agente, herramienta/plataforma y responsable humano permanecen como **[DECISIÓN PENDIENTE]** hasta su aprobación.
+
+| Rol funcional | Responsabilidad | Puede modificar | Consulta | Produce |
 |---|---|---|---|---|
 | Product Owner | Producto, alcance y prioridades | Backlog, roadmap y criterios | Producto, UX, riesgos | Decisiones de producto |
 | Scrum Master | Sprint, bloqueos y DoR/DoD | Plan del sprint | Backlog y QA | Seguimiento y bloqueos |
@@ -201,14 +208,25 @@ flowchart TD
 
 ## 6. Flujo de trabajo entre agentes
 
-El flujo de referencia es:
+El siguiente flujo es una referencia de coordinación, no una cadena estrictamente lineal:
 
 ```text
 Idea → Product Owner → Scrum Master → Arquitectura → UX/UI → Desarrollo
 → Base de Datos → Seguridad → QA → DevOps → Documentación
 ```
 
-No todos los agentes participan en todas las tareas. Datos participa cuando hay persistencia; Seguridad cuando existe riesgo de identidad, privacidad o autorización; IA sólo cuando se propone una capacidad IA; QA y Documentación participan en toda entrega con impacto correspondiente; DevOps participa antes de Preview/Production.
+Las participaciones se determinan por el impacto de cada tarea:
+
+- Seguridad puede participar durante diseño y desarrollo, no sólo antes de publicar.
+- QA participa durante el ciclo, mediante criterios, pruebas, evidencia y retests, no únicamente al final.
+- Arquitectura participa cuando existen decisiones estructurales, patrones, límites o cambios de módulos.
+- Base de Datos participa cuando existe persistencia, migración, RLS, índices o cambios de esquema.
+- UX/UI participa durante la definición y validación de la experiencia.
+- Documentación se actualiza durante el ciclo cuando existe impacto documental.
+- DevOps participa antes y durante Preview/Production, incluyendo checks, variables, despliegues y rollback.
+- IA participa sólo cuando se propone o modifica una capacidad de IA.
+
+No todos los agentes, roles o responsables participan en todas las tareas.
 
 ## 7. Flujo de documentación
 
@@ -220,12 +238,17 @@ No todos los agentes participan en todas las tareas. Datos participa cuando hay 
 6. El Documentador Técnico actualiza documentos afectados, changelog y trazabilidad.
 7. DevOps conserva PR, commit, deployment y evidencia.
 
-## 8. Fuente única de verdad
+## 8. Fuente única de verdad y precedencia
 
 - `/docs` es la fuente oficial de documentación.
 - GitHub es la fuente oficial del código y del historial de cambios.
-- Los chats de IA no son la fuente oficial de decisiones.
+- Los chats son espacios de trabajo, no autoridad.
+- Las instrucciones de un chat no pueden reemplazar una política documentada ni una decisión aprobada.
+- `PROJECT_CONSTITUTION.md` tiene precedencia normativa sobre `AI_TEAM_CHARTER.md`.
+- `AI_TEAM_CHARTER.md` no puede contradecir `PROJECT_CONSTITUTION.md`.
 - Una propuesta no es una decisión aprobada hasta quedar validada por su responsable y registrada.
+
+Si existe una contradicción entre ambos documentos, ningún agente debe modificarla unilateralmente: debe identificarla, registrar **[DECISIÓN PENDIENTE]**, escalarla al responsable correspondiente y actualizar ambos documentos después de la aprobación.
 
 ## 9. Comunicación entre agentes
 
@@ -261,21 +284,50 @@ Nuevos modelos, agentes, integraciones, prompts, costos o políticas deben docum
 
 ## 16. Incorporación de nuevos agentes
 
-Un nuevo agente requiere nombre, propósito, responsabilidades, límites, documentos que consulta, documentos que produce, dependencias, responsable humano, criterios de finalización y ruta de escalamiento. Debe aprobarse por el responsable del dominio y Product Owner cuando afecte alcance; el charter se actualiza antes de usarlo.
+Antes de activar un nuevo agente deben definirse y aprobarse:
 
-## 17. Retiro de agentes
+- Rol.
+- Propósito.
+- Herramienta/plataforma.
+- Responsable humano.
+- Permisos.
+- Documentos que consulta.
+- Documentos que produce.
+- Límites.
+- Dependencias.
+- Escalamiento.
+- Criterios de finalización.
+
+Si cualquiera de estos elementos críticos no está definido, debe registrarse **[DECISIÓN PENDIENTE]** y el agente no debe activarse para tareas fuera de una validación controlada. La incorporación requiere aprobación del responsable del dominio y de Product Owner cuando afecte alcance; el Charter se actualiza antes de usarlo.
+
+## 17. Coordinación Multi-IA
+
+WiseLife puede utilizar múltiples plataformas de IA, por ejemplo v0.app, Claude y Antigravity, sin asignar todavía responsabilidades concretas a cada plataforma.
+
+- Todas las IA trabajan sobre la misma fuente oficial en `/docs`.
+- Ninguna IA tiene autoridad superior por defecto.
+- Las IA deben consultar `/docs` antes de realizar cambios relevantes.
+- Los cambios oficiales deben terminar en GitHub.
+- Las propuestas deben distinguirse de las decisiones aprobadas.
+- Los conflictos entre agentes deben escalarse según este Charter y la Constitución.
+- Una IA no debe sobrescribir deliberadamente el trabajo de otra sin conocer su contexto.
+- Los cambios deben conservar trazabilidad mediante documentos, commits, PRs y evidencia cuando corresponda.
+
+## 18. Retiro de agentes
 
 El retiro requiere identificar tareas, documentos, dependencias, decisiones y conocimiento del agente; asignar reemplazo; preservar historial y transferir pendientes. El responsable del dominio valida que no queden accesos, automatizaciones, secretos o tareas huérfanas y el Documentador Técnico registra la transición.
 
-## 18. Reglas para todos los agentes
+## 19. Reglas para todos los agentes
 
 Leer documentación relevante; respetar la Constitución; no inventar; no modificar responsabilidades ajenas; documentar decisiones; informar riesgos; identificar incertidumbres; mantener trazabilidad; proteger información sensible; solicitar validación; distinguir estado actual de propuesta; y no actuar fuera del alcance aprobado.
 
-## 19. Control humano
+## 20. Control humano
 
-Requieren aprobación humana los cambios de arquitectura, seguridad, datos clínicos, producción, costos importantes, producto, privacidad, retención, consentimiento, cumplimiento legal, IA clínica o cualquier excepción a esta carta. Los agentes pueden preparar análisis y evidencia, pero no sustituyen la aprobación.
+Los agentes IA pueden analizar, proponer, implementar dentro de su autorización, probar, documentar y reportar riesgos, pero no sustituyen la autoridad humana ni la responsabilidad profesional. Requieren aprobación humana los cambios de producto, arquitectura, seguridad, datos clínicos, producción, costos relevantes, privacidad, retención, consentimiento, cumplimiento, IA clínica y cualquier excepción.
 
-## 20. Control de versiones
+La aprobación humana es especialmente obligatoria para producto, arquitectura, seguridad, datos clínicos, producción, costos relevantes, privacidad, retención, consentimiento, cumplimiento, IA clínica y excepciones. Los agentes pueden preparar análisis y evidencia, pero no sustituyen la aprobación del responsable humano correspondiente.
+
+## 21. Control de versiones
 
 | Versión | Fecha | Estado | Responsable | Historial |
 |---|---|---|---|---|
