@@ -2,7 +2,7 @@
 
 **Propósito:** fuente de verdad para decisiones UX/UI, accesibilidad, privacidad y consistencia visual de WiseLife.
 **Responsable:** Arquitectura UX/UI, en coordinación con Frontend, Producto, Seguridad y Legal.
-**Estado:** Vigente para la rama `arq_ux_ui`; requiere validación visual en cada superficie nueva.
+**Estado:** vigente como guía documental en `wiselife-project-management`, incorporada desde el trabajo de `arq_ux_ui`; requiere validación visual en cada superficie nueva.
 
 ## Principios no negociables
 
@@ -35,13 +35,13 @@ Los nombres anteriores corresponden a las rutas existentes en `src/pages`. Cualq
 
 ## Sistema visual oficial
 
-La implementación debe consumir los tokens definidos en [`design-tokens.css`](design-tokens.css). La dirección oficial es:
+La implementación debería consultar los tokens definidos en [`design-tokens.css`](design-tokens.css). Este archivo es una referencia documental; no se ha confirmado como fuente runtime canónica de estilos. La dirección oficial es:
 
 - **Color:** superficies claras y neutras, texto azul tinta, teal como color de acción y estados semánticos con contraste AA.
 - **Tipografía:** `Inter` para interfaz y `Source Serif 4` únicamente para énfasis editorial; no introducir una tercera familia.
 - **Forma:** radios moderados, bordes sutiles y jerarquía basada en espacio, no en sombras o gradientes.
 - **Espaciado:** escala de 4 px; usar los tokens en lugar de valores aislados.
-- **Iconografía:** Lucide, trazo consistente de 2 px, iconos acompañados por texto cuando la acción no sea universal.
+- **Iconografía:** `react-icons` mediante `src/components/Icon` cuando sea reutilizable; mantener tamaño y trazo consistentes, con texto cuando la acción no sea universal.
 - **Componentes:** priorizar los existentes en `src/components` y evitar estilos duplicados por página.
 
 No usar nuevos hexadecimales, gradientes decorativos o iconos emoji sin una decisión documentada de UX/UI.
