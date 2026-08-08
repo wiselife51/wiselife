@@ -25,7 +25,7 @@
 .cal__heading {
   margin: 0;
   min-width: 12ch;
-  font-size: 0.875rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.95);
 }
@@ -154,6 +154,13 @@
   text-underline-offset: 2px;
 }
 
+.cal__hint {
+  margin: 0;
+  text-align: center;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.35);
+}
+
 /* ===== Chips de cita ===== */
 .cal-chip {
   display: flex;
@@ -229,7 +236,7 @@
 .cal__month {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  grid-auto-rows: minmax(64px, 1fr);
+  grid-auto-rows: minmax(92px, 1fr);
   width: 100%;
   min-width: 0;
   gap: 3px;
@@ -361,11 +368,10 @@
   display: grid;
   grid-template-columns: 56px repeat(7, minmax(0, 1fr));
   grid-template-rows: repeat(15, minmax(0, 1fr));
-  height: min(560px, calc(100dvh - 230px));
+  height: min(100%, calc(100dvh - 230px));
   min-height: 0;
-  max-height: 560px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  max-height: none;
+  overflow: hidden;
 }
 
 .cal__gutter {
@@ -653,14 +659,14 @@
   }
 
   .cal__month {
-    grid-auto-rows: minmax(52px, auto);
+    grid-auto-rows: minmax(58px, auto);
     overflow-y: auto;
     max-height: calc(100dvh - 260px);
   }
 
   .cal__cell {
-    min-height: 52px;
-    padding: 0.25rem;
+    min-height: 58px;
+    padding: 0.35rem;
   }
 
   .cal-chip__name {
@@ -668,18 +674,17 @@
   }
 
   .cal__week-body {
-    height: min(520px, calc(100dvh - 260px));
+    height: calc(100dvh - 250px);
     min-height: 0;
-    max-height: 520px;
-    overflow-y: auto;
-    overflow-x: auto;
+    max-height: none;
+    overflow: hidden;
   }
 
   .cal__day {
-    height: auto;
+    height: calc(100dvh - 250px);
     min-height: 0;
     max-height: none;
-    overflow: visible;
+    overflow: hidden;
   }
 }
 

@@ -105,6 +105,7 @@ const PsychologistDashboard: React.FC = () => {
 
   // Appointment detail modal
   const [selectedAppt, setSelectedAppt] = useState<Appointment | null>(null);
+  const [upcomingIndex, setUpcomingIndex] = useState(0);
 
   // Block form
   const [showBlockForm, setShowBlockForm] = useState(false);
@@ -594,6 +595,18 @@ const PsychologistDashboard: React.FC = () => {
   (a) => a.appointment_date >= toDateStr(today) && (a.status === 'confirmada' || a.status === 'pendiente_pago')
   );
 
+  useEffect(() => {
+    if (upcomingAppts.length <= 1) {
+      setUpcomingIndex(0);
+      return;
+    }
+    setUpcomingIndex((current) => Math.min(current, upcomingAppts.length - 1));
+    const timer = window.setInterval(() => {
+      setUpcomingIndex((current) => (current + 1) % upcomingAppts.length);
+    }, 5000);
+    return () => window.clearInterval(timer);
+  }, [upcomingAppts.length]);
+
 
   // Adaptacion al contrato del calendario compartido. En el panel del
   // psicologo la contraparte visible es el paciente.
@@ -752,7 +765,7 @@ const PsychologistDashboard: React.FC = () => {
           <div className="psy-dash-upcoming-mini">
             <h4>Proximas citas</h4>
             <div className="psy-dash-upcoming-carousel" aria-live="polite">
-              {upcomingAppts.map((a) => (
+              {(upcomingAppts.length > 0 ? [upcomingAppts[upcomingIndex]] : []).map((a) => (
                 <button key={a.id} className="psy-dash-upcoming-item" onClick={() => { setActiveTab('calendario'); setSelectedAppt(a); setShowMobileMenu(false); }} type="button">
                   <div className="psy-dash-upcoming-avatar-sm">
                     {a.patient?.avatar_url ? (
@@ -811,7 +824,6 @@ const PsychologistDashboard: React.FC = () => {
         <button
           type="button"
           className="psy-mobile-menu-backdrop"
-          style={{ zIndex: 900 }}
           aria-label="Cerrar menú"
           onClick={() => setShowMobileMenu(false)}
         />
