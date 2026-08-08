@@ -45,8 +45,6 @@ const SessionNoteModal: React.FC<SessionNoteModalProps> = ({
   const [showCie10Dropdown, setShowCie10Dropdown] = useState(false);
   const [loadingCie10, setLoadingCie10] = useState(false);
 
-  if (!isOpen) return null;
-
   // ============================================
   // BÚSQUEDA CIE-10 CON AUTOCOMPLETADO
   // ============================================
@@ -96,6 +94,10 @@ const SessionNoteModal: React.FC<SessionNoteModalProps> = ({
 
     return () => clearTimeout(timer);
   }, [cie10Query, searchCIE10]);
+
+  // Debe ir despues de todos los hooks: un early return antes de ellos
+  // cambia el orden de hooks entre renders y corrompe el estado de React.
+  if (!isOpen) return null;
 
   const handleSelectPrimaryDiagnosis = (code: CIE10Code) => {
     setFormData((prev) => ({
