@@ -189,7 +189,6 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
               </button>
             )}
           </div>
-          {onReschedule && <p className="cal__hint">Arrastra una cita a otro dia para reprogramarla.</p>}
         </div>
 
         <div className="cal__views">

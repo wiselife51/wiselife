@@ -154,16 +154,6 @@
   text-underline-offset: 2px;
 }
 
-.cal__hint {
-  flex: 0 1 auto;
-  max-width: 16rem;
-  margin: 0;
-  text-align: left;
-  font-size: 0.75rem;
-  line-height: 1.25;
-  color: rgba(255, 255, 255, 0.35);
-}
-
 /* ===== Chips de cita ===== */
 .cal-chip {
   display: flex;
