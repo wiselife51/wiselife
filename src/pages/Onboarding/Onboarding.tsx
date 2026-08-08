@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
+import DataConsent from '../../components/DataConsent/DataConsent';
+import { recordConsent } from '../../lib/consent';
 import './Onboarding.css';
 
 const Onboarding: React.FC = () => {
@@ -16,6 +18,7 @@ const Onboarding: React.FC = () => {
     dateOfBirth: '',
     gender: '',
   });
+  const [consentAccepted, setConsentAccepted] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -38,6 +41,11 @@ const Onboarding: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+
+    if (!consentAccepted) {
+      setError('Debes autorizar el tratamiento de datos personales para continuar.');
+      return;
+    }
 
     setError(null);
     setSaving(true);
@@ -82,6 +90,20 @@ const Onboarding: React.FC = () => {
 
       if (updateError) {
         setError(updateError.message);
+        setSaving(false);
+        return;
+      }
+
+      // Se registra despues de crear el perfil: consent_events.patient_id
+      // referencia profiles(id), asi que antes fallaria la foreign key.
+      const consentError = await recordConsent({
+        userId: user.id,
+        accepted: true,
+        metadata: { context: 'patient_onboarding' },
+      });
+
+      if (consentError) {
+        setError(`No se pudo registrar la autorizacion de datos: ${consentError}`);
         setSaving(false);
         return;
       }
@@ -207,6 +229,13 @@ const Onboarding: React.FC = () => {
                   <option value="prefiero_no_decir">Prefiero no decir</option>
                 </select>
               </div>
+
+              <DataConsent
+                audience="patient"
+                checked={consentAccepted}
+                onChange={setConsentAccepted}
+                disabled={saving}
+              />
 
               {error && <p className="onboarding-error">{error}</p>}
 

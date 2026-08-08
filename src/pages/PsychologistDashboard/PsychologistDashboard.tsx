@@ -6,6 +6,9 @@ import ClinicalRecordModal from '../../components/ClinicalRecordModal/ClinicalRe
 import SessionNoteModal from '../../components/SessionNoteModal/SessionNoteModal';
 import ClinicalHistoryView from '../../components/ClinicalHistoryView/ClinicalHistoryView';
 import './PsychologistDashboard.css';
+import { toDateStr } from '../../lib/date';
+import AppointmentCalendar from '../../components/AppointmentCalendar/AppointmentCalendar';
+import type { CalendarAppointment } from '../../components/AppointmentCalendar/status';
 
 interface PsychologistProfile {
   id: string;
@@ -17,6 +20,10 @@ interface PsychologistProfile {
   session_duration: number;
   session_price: number;
   onboarding_completed: boolean;
+  // Opcional a proposito: si el codigo llega a produccion antes que la
+  // migracion 20260807210000, la columna no existe y el campo viene undefined.
+  verification_status?: 'pending' | 'submitted' | 'approved' | 'rejected';
+  rejection_reason?: string | null;
 }
 
 interface Appointment {
@@ -64,7 +71,6 @@ const DAYS_CONFIG = [
   { value: 0, label: 'Dom' },
 ];
 
-const DAY_NAMES_SHORT = ['dom', 'lun', 'mar', 'mie', 'jue', 'vie', 'sab'];
 const DAY_NAMES_FULL = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
 const MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
@@ -73,10 +79,8 @@ const HOUR_OPTIONS = Array.from({ length: 15 }, (_, i) => {
   return `${h.toString().padStart(2, '0')}:00`;
 });
 
-const HOURS_RANGE = Array.from({ length: 15 }, (_, i) => i + 7); // 7 AM hasta 9 PM (21:00)
 
 type ActiveTab = 'calendario' | 'agenda' | 'bloqueos';
-type CalView = 'month' | 'day';
 
 function formatTime(t: string): string {
   const [h, m] = t.split(':');
@@ -84,19 +88,6 @@ function formatTime(t: string): string {
   const ap = hour >= 12 ? 'PM' : 'AM';
   const h12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
   return `${h12}:${m} ${ap}`;
-}
-
-function sameDay(a: Date, b: Date) {
-  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
-}
-
-function getMonthDays(year: number, month: number): (Date | null)[] {
-  const first = new Date(year, month, 1);
-  const last = new Date(year, month + 1, 0);
-  const cells: (Date | null)[] = [];
-  for (let i = 0; i < first.getDay(); i++) cells.push(null);
-  for (let d = 1; d <= last.getDate(); d++) cells.push(new Date(year, month, d));
-  return cells;
 }
 
 const PsychologistDashboard: React.FC = () => {
@@ -110,8 +101,6 @@ const PsychologistDashboard: React.FC = () => {
 
   // Tabs and calendar
   const [activeTab, setActiveTab] = useState<ActiveTab>('calendario');
-  const [calView, setCalView] = useState<CalView>('month');
-  const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState<number>(new Date().getDay());
 
   // Appointment detail modal
@@ -165,32 +154,7 @@ const PsychologistDashboard: React.FC = () => {
   } | null>(null);
 
   // Quick add from calendar - adds directly without modal
-  const handleQuickAdd = async (dayOfWeek: number, hour: number) => {
-    if (!profile) return;
-    const startTime = `${hour.toString().padStart(2, '0')}:00`;
-    const endTime = `${(hour + 1).toString().padStart(2, '0')}:00`;
-
-    await supabase.from('psychologist_availability').insert({
-      psychologist_id: profile.id,
-      day_of_week: dayOfWeek,
-      start_time: startTime,
-      end_time: endTime,
-      is_available: true,
-    });
-
-    fetchData();
-  };
-
   // Quick block from calendar
-  const handleQuickBlockClick = (date: Date, hour: number) => {
-    setQuickBlockDate(date);
-    const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-    setBlockDate(dateStr);
-    setBlockStart(`${hour.toString().padStart(2, '0')}:00`);
-    setBlockEnd(`${(hour + 1).toString().padStart(2, '0')}:00`);
-    setShowQuickBlock(true);
-  };
-
   const handleQuickBlock = async () => {
     if (!profile || !blockDate) return;
     setSavingBlock(true);
@@ -285,7 +249,7 @@ const PsychologistDashboard: React.FC = () => {
       .from('schedule_blocks')
       .select('block_date', { count: 'exact' })
       .eq('psychologist_id', psyData.id)
-      .gte('block_date', today.toISOString().split('T')[0]);
+      .gte('block_date', toDateStr(today));
 
     const existingBlockDates = new Set(existingBlocks?.map(b => b.block_date) || []);
 
@@ -452,7 +416,7 @@ const PsychologistDashboard: React.FC = () => {
 
     const upcomingAppts = appointments.filter(a =>
       a.status === 'confirmada' &&
-      a.appointment_date >= today.toISOString().split('T')[0]
+      a.appointment_date >= toDateStr(today)
     );
 
     const newWarnings = [];
@@ -622,48 +586,108 @@ const PsychologistDashboard: React.FC = () => {
     navigate('/');
   };
 
-  // Calendar navigation
-  const goToday = () => setCurrentDate(new Date());
-  const goPrev = () => {
-    const d = new Date(currentDate);
-    if (calView === 'month') d.setMonth(d.getMonth() - 1);
-    else d.setDate(d.getDate() - 1);
-    setCurrentDate(d);
-  };
-  const goNext = () => {
-    const d = new Date(currentDate);
-    if (calView === 'month') d.setMonth(d.getMonth() + 1);
-    else d.setDate(d.getDate() + 1);
-    setCurrentDate(d);
-  };
-
-  const monthDays = useMemo(() => getMonthDays(currentDate.getFullYear(), currentDate.getMonth()), [currentDate]);
-
-  const getApptsForDate = (d: Date) => {
-    const ds = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-    return appointments.filter((a) => a.appointment_date === ds);
-  };
-
-  const getBlocksForDate = (d: Date) => {
-    const ds = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-    return blocks.filter((b) => b.block_date === ds);
-  };
-
-  const calTitle = calView === 'month'
-    ? `${MONTH_NAMES[currentDate.getMonth()]} ${currentDate.getFullYear()}`
-    : `${DAY_NAMES_FULL[currentDate.getDay()]} ${currentDate.getDate()} de ${MONTH_NAMES[currentDate.getMonth()]}`;
-
+  // La navegacion, las vistas y el agrupado por fecha los resuelve ahora
+  // AppointmentCalendar; aqui solo queda lo propio del panel.
   const daySlots = availability.filter((s) => s.day_of_week === selectedDay);
 
   const upcomingAppts = appointments.filter(
-    (a) => a.appointment_date >= today.toISOString().split('T')[0] && (a.status === 'confirmada' || a.status === 'pendiente_pago')
+    (a) => a.appointment_date >= toDateStr(today) && (a.status === 'confirmada' || a.status === 'pendiente_pago')
   ).slice(0, 8);
+
+  // Adaptacion al contrato del calendario compartido. En el panel del
+  // psicologo la contraparte visible es el paciente.
+  const calendarAppointments: CalendarAppointment[] = appointments.map((a) => ({
+    id: a.id,
+    appointment_date: a.appointment_date,
+    start_time: a.start_time,
+    end_time: a.end_time,
+    status: a.status,
+    title: a.patient?.full_name || 'Paciente',
+    subtitle: a.payment_status === 'pagado' ? 'Pagada' : null,
+    avatarUrl: a.patient?.avatar_url ?? null,
+  }));
+
+  const blockedDates = blocks.map((b) => b.block_date);
+
+  const handleCalendarReschedule = async (appt: CalendarAppointment, newDate: string) => {
+    const { error } = await supabase
+      .from('appointments')
+      .update({ appointment_date: newDate, updated_at: new Date().toISOString() })
+      .eq('id', appt.id);
+
+    if (!error) {
+      setAppointments((prev) =>
+        prev.map((a) => (a.id === appt.id ? { ...a, appointment_date: newDate } : a))
+      );
+    }
+  };
 
   if (authLoading || loadingData) {
     return (
       <div className="psy-dash-loading">
         <div className="psy-dash-spinner" />
         <p>Cargando tu panel...</p>
+      </div>
+    );
+  }
+
+  // Mientras la verificacion profesional no este aprobada no se muestra el
+  // panel. La defensa real es la RLS; esto evita una pantalla que no funciona.
+  //
+  // Se comprueba que el campo exista antes de bloquear: si la migracion aun no
+  // esta aplicada llega undefined, y encerrar a todos los psicologos seria peor
+  // que no mostrar el aviso (sin la migracion tampoco hay nada que proteger).
+  if (profile?.verification_status && profile.verification_status !== 'approved') {
+    const rejected = profile.verification_status === 'rejected';
+    return (
+      <div className="profile-verify-gate">
+        <div className="profile-verify-card">
+          <div className={`profile-verify-icon ${rejected ? 'profile-verify-icon--rejected' : ''}`}>
+            {rejected ? (
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <circle cx="12" cy="12" r="10" /><line x1="15" y1="9" x2="9" y2="15" /><line x1="9" y1="9" x2="15" y2="15" />
+              </svg>
+            ) : (
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+              </svg>
+            )}
+          </div>
+
+          <h1>{rejected ? 'Verificacion rechazada' : 'Verificacion en curso'}</h1>
+
+          {rejected ? (
+            <>
+              <p>Revisamos tus documentos y no pudimos habilitar tu perfil.</p>
+              {profile.rejection_reason && (
+                <p className="profile-verify-reason">
+                  <strong>Motivo:</strong> {profile.rejection_reason}
+                </p>
+              )}
+              <p>Corrige lo indicado y vuelve a enviar tus documentos.</p>
+              <button type="button" className="profile-verify-btn" onClick={() => navigate('/psicologo/onboarding')}>
+                Actualizar documentos
+              </button>
+            </>
+          ) : profile.verification_status === 'pending' ? (
+            <>
+              <p>Te falta cargar los documentos que acreditan tu tarjeta profesional.</p>
+              <button type="button" className="profile-verify-btn" onClick={() => navigate('/psicologo/onboarding')}>
+                Cargar documentos
+              </button>
+            </>
+          ) : (
+            <p>
+              Estamos revisando tu tarjeta profesional y tus documentos. Te avisaremos por correo
+              en cuanto tu perfil quede habilitado. Hasta entonces no apareceras en el buscador ni
+              podras abrir historias clinicas.
+            </p>
+          )}
+
+          <button type="button" className="psy-verify-link" onClick={signOut}>
+            Cerrar sesion
+          </button>
+        </div>
       </div>
     );
   }
@@ -792,212 +816,67 @@ const PsychologistDashboard: React.FC = () => {
 
         {/* CALENDARIO TAB */}
         {activeTab === 'calendario' && (
-          <>
-            {/* Calendar controls */}
-            <div className="psy-cal-controls">
-              <div className="psy-cal-nav">
-                <button className="psy-cal-nav-btn" onClick={goPrev} type="button" aria-label="Anterior">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
-                </button>
-                <h2 className="psy-cal-title">{calTitle}</h2>
-                <button className="psy-cal-nav-btn" onClick={goNext} type="button" aria-label="Siguiente">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
-                </button>
-                <button className="psy-cal-today-btn" onClick={goToday} type="button">Hoy</button>
-              </div>
-              <div className="psy-cal-views">
-                {(['month', 'day'] as CalView[]).map((v) => (
-                  <button key={v} className={`psy-cal-view-btn ${calView === v ? 'psy-cal-view-btn--active' : ''}`} onClick={() => setCalView(v)} type="button">
-                    {v === 'month' ? 'Mes' : 'Dia'}
+          <AppointmentCalendar
+            appointments={calendarAppointments}
+            blockedDates={blockedDates}
+            onReschedule={handleCalendarReschedule}
+            onSelect={(a) => {
+              const original = appointments.find((x) => x.id === a.id);
+              if (original) setSelectedAppt(original);
+            }}
+            renderDayActions={(dateKey) => (
+              <button
+                type="button"
+                className="cal-action"
+                onClick={() => {
+                  const [y, m, d] = dateKey.split('-').map(Number);
+                  setQuickBlockDate(new Date(y, m - 1, d));
+                  setBlockDate(dateKey);
+                  setShowQuickBlock(true);
+                }}
+              >
+                Bloquear horario
+              </button>
+            )}
+            renderActions={(a) => {
+              const original = appointments.find((x) => x.id === a.id);
+              if (!original) return null;
+              return (
+                <>
+                  <button type="button" className="cal-action" onClick={() => setSelectedAppt(original)}>
+                    Ver detalle
                   </button>
-                ))}
-              </div>
-            </div>
-
-            {/* MONTH VIEW */}
-            {calView === 'month' && (
-              <div className="psy-month">
-                <div className="psy-month-header">
-                  {DAY_NAMES_SHORT.map((d) => <div key={d} className="psy-month-day-name">{d}</div>)}
-                </div>
-                <div className="psy-month-grid">
-                  {monthDays.map((d, i) => {
-                    if (!d) return <div key={`empty-${i}`} className="psy-month-cell psy-month-cell--empty" />;
-                    const appts = getApptsForDate(d);
-                    const dayBlocks = getBlocksForDate(d);
-                    const isToday = sameDay(d, today);
-                    
-                    // Contar tipos de citas
-                    const confirmadas = appts.filter(a => a.status === 'confirmada').length;
-                    const pendientes = appts.filter(a => a.status === 'pendiente_pago').length;
-                    const completadas = appts.filter(a => a.status === 'completada').length;
-                    const canceladas = appts.filter(a => a.status === 'cancelada').length;
-                    
-                    // Contar horas disponibles para ese día
-                    const dayOfWeek = d.getDay();
-                    const availableHours = availability.filter(av => 
-                      av.day_of_week === dayOfWeek && av.is_available
-                    ).length;
-                    
-                    // Contar horas bloqueadas
-                    const blockedHours = dayBlocks.length;
-                    
-                    return (
-                      <div
-                        key={d.toISOString()}
-                        className={`psy-month-cell ${isToday ? 'psy-month-cell--today' : ''}`}
-                        onClick={() => { setCurrentDate(d); setCalView('day'); }}
-                        role="button"
-                        tabIndex={0}
-                        onKeyDown={(e) => e.key === 'Enter' && setCalView('day')}
-                      >
-                        <span className="psy-month-date">{d.getDate()}</span>
-                        <div className="psy-month-stats">
-                          {availableHours > 0 && (
-                            <div className="psy-month-stat psy-month-stat--available" title={`${availableHours} horas disponibles`}>
-                              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
-                                <circle cx="12" cy="12" r="10" />
-                              </svg>
-                              <span>{availableHours}</span>
-                            </div>
-                          )}
-                          {blockedHours > 0 && (
-                            <div className="psy-month-stat psy-month-stat--blocked" title={`${blockedHours} horas bloqueadas`}>
-                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                                <circle cx="12" cy="12" r="9" />
-                                <line x1="15" y1="9" x2="9" y2="15" />
-                              </svg>
-                              <span>{blockedHours}</span>
-                            </div>
-                          )}
-                          {confirmadas > 0 && (
-                            <div className="psy-month-stat psy-month-stat--confirmed" title={`${confirmadas} confirmadas`}>
-                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                                <polyline points="20 6 9 17 4 12" />
-                              </svg>
-                              <span>{confirmadas}</span>
-                            </div>
-                          )}
-                          {pendientes > 0 && (
-                            <div className="psy-month-stat psy-month-stat--pending" title={`${pendientes} pendientes de pago`}>
-                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                                <circle cx="12" cy="12" r="9" />
-                                <line x1="12" y1="8" x2="12" y2="12" />
-                                <line x1="12" y1="16" x2="12.01" y2="16" />
-                              </svg>
-                              <span>{pendientes}</span>
-                            </div>
-                          )}
-                          {completadas > 0 && (
-                            <div className="psy-month-stat psy-month-stat--completed" title={`${completadas} completadas`}>
-                              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M9 11.5l2 2 4-4" stroke="white" strokeWidth="2" fill="none"/>
-                                <circle cx="12" cy="12" r="10" />
-                              </svg>
-                              <span>{completadas}</span>
-                            </div>
-                          )}
-                          {canceladas > 0 && (
-                            <div className="psy-month-stat psy-month-stat--cancelled" title={`${canceladas} canceladas`}>
-                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                                <line x1="18" y1="6" x2="6" y2="18" />
-                                <line x1="6" y1="6" x2="18" y2="18" />
-                              </svg>
-                              <span>{canceladas}</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* DAY VIEW */}
-            {calView === 'day' && (
-              <div className="psy-day-view">
-                <div className="psy-day-view-scroll">
-                  {HOURS_RANGE.map((h) => {
-                    const ds = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
-                    const hourAppts = appointments.filter((a) => a.appointment_date === ds && parseInt(a.start_time.split(':')[0], 10) === h);
-                    const hourBlocks = blocks.filter((b) => b.block_date === ds && parseInt(b.start_time.split(':')[0], 10) <= h && parseInt(b.end_time.split(':')[0], 10) > h);
-                    const dayAvail = availability.filter((av) => av.day_of_week === currentDate.getDay() && parseInt(av.start_time.split(':')[0], 10) === h && av.is_available);
-
-                    return (
-                      <div 
-                        key={h} 
-                        className={`psy-day-row ${hourBlocks.length > 0 ? 'psy-day-row--blocked' : ''}`}
-                        onContextMenu={(e) => {
-                          e.preventDefault();
-                          if (hourAppts.length === 0 && currentDate >= today) {
-                            handleQuickBlockClick(currentDate, h);
-                          }
-                        }}
-                      >
-                        <div className="psy-day-time">{h > 12 ? h - 12 : h}:00 {h >= 12 ? 'PM' : 'AM'}</div>
-                        <div className="psy-day-content">
-                          {hourBlocks.length > 0 && (
-                            <div className="psy-day-block-label">
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" /></svg>
-                              Bloqueado {hourBlocks[0]?.reason ? `- ${hourBlocks[0].reason}` : ''}
-                              <button className="psy-day-unblock-btn" onClick={() => handleDeleteBlock(hourBlocks[0].id)} type="button">Desbloquear</button>
-                            </div>
-                          )}
-                          {hourAppts.map((a) => (
-                            <button key={a.id} className={`psy-day-appt psy-day-appt--${a.status}`} onClick={() => setSelectedAppt(a)} type="button">
-                              <div className="psy-day-appt-left">
-                                <div className="psy-day-appt-avatar">
-                                  {a.patient?.avatar_url ? (
-                                    <img src={a.patient.avatar_url} alt="" crossOrigin="anonymous" />
-                                  ) : (
-                                    <span>{(a.patient?.full_name || 'P').charAt(0)}</span>
-                                  )}
-                                </div>
-                                <div>
-                                  <strong>{a.patient?.full_name || 'Paciente'}</strong>
-                                  <p>{formatTime(a.start_time)} - {formatTime(a.end_time)}</p>
-                                </div>
-                              </div>
-                              <span className={`psy-day-appt-badge psy-day-appt-badge--${a.status}`}>
-                                {a.status === 'confirmada' ? 'Confirmada' : a.status === 'pendiente_pago' ? 'Pago pendiente' : a.status === 'completada' ? 'Completada' : a.status}
-                              </span>
-                            </button>
-                          ))}
-                          {hourAppts.length === 0 && hourBlocks.length === 0 && dayAvail.length > 0 && (
-                            <div className="psy-day-avail-label">
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3" /></svg>
-                              Disponible
-                            </div>
-                          )}
-                          {hourAppts.length === 0 && hourBlocks.length === 0 && dayAvail.length === 0 && (
-                            <button
-                              className="psy-day-add-btn"
-                              onClick={() => handleQuickAdd(currentDate.getDay(), h)}
-                              type="button"
-                            >
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                              Agregar disponibilidad
-                            </button>
-                          )}
-                          {hourAppts.length === 0 && hourBlocks.length === 0 && currentDate >= today && (
-                            <button
-                              className="psy-day-block-btn"
-                              onClick={() => handleQuickBlockClick(currentDate, h)}
-                              type="button"
-                            >
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" /></svg>
-                              Bloquear horario
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </>
+                  {original.patient?.phone && (
+                    <button
+                      type="button"
+                      className="cal-action"
+                      onClick={() => handleOpenWhatsApp(original.patient?.phone, original.patient?.full_name || 'Paciente')}
+                    >
+                      WhatsApp
+                    </button>
+                  )}
+                  {original.status === 'confirmada' && (
+                    <button
+                      type="button"
+                      className="cal-action cal-action--primary"
+                      onClick={() => handleCompleteAppt(original.id)}
+                    >
+                      Marcar completada
+                    </button>
+                  )}
+                  {original.status === 'pendiente_pago' && (
+                    <button
+                      type="button"
+                      className="cal-action cal-action--primary"
+                      onClick={() => handleConfirmPayment(original.id)}
+                    >
+                      Confirmar pago
+                    </button>
+                  )}
+                </>
+              );
+            }}
+          />
         )}
 
         {/* AGENDA TAB - availability config */}
@@ -1125,14 +1004,14 @@ const PsychologistDashboard: React.FC = () => {
 
             <p className="psy-dash-block-desc">Bloquea fechas y horas especificas cuando no puedas atender. Los sabados y domingos estan bloqueados automáticamente, asi como todos los meses excepto el actual y el siguiente. Tambien puedes bloquear desde el calendario haciendo clic derecho en cualquier celda.</p>
 
-            {blocks.filter((b) => b.block_date >= today.toISOString().split('T')[0]).length === 0 ? (
+            {blocks.filter((b) => b.block_date >= toDateStr(today)).length === 0 ? (
               <div className="psy-dash-empty">
                 <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5"><circle cx="12" cy="12" r="10" /><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" /></svg>
                 <p>No tienes bloqueos configurados.</p>
               </div>
             ) : (
               <div className="psy-dash-block-list">
-                {blocks.filter((b) => b.block_date >= today.toISOString().split('T')[0]).map((block) => (
+                {blocks.filter((b) => b.block_date >= toDateStr(today)).map((block) => (
                   <div key={block.id} className="psy-dash-block-item">
                     <div className="psy-dash-block-info">
                       <span className="psy-dash-block-date">{new Date(block.block_date + 'T12:00:00').toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' })}</span>
@@ -1154,7 +1033,7 @@ const PsychologistDashboard: React.FC = () => {
                   <div className="psy-dash-modal-fields">
                     <div className="psy-dash-modal-field">
                       <label>Fecha</label>
-                      <input type="date" value={blockDate} onChange={(e) => setBlockDate(e.target.value)} min={today.toISOString().split('T')[0]} />
+                      <input type="date" value={blockDate} onChange={(e) => setBlockDate(e.target.value)} min={toDateStr(today)} />
                     </div>
                     <div className="psy-dash-modal-row">
                       <div className="psy-dash-modal-field">

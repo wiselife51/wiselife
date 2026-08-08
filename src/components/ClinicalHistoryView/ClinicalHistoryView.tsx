@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import type { ClinicalRecord, SessionNote } from '../../types/clinicalHistory';
 import './ClinicalHistoryView.css';
+import { todayStr } from '../../lib/date';
 
 interface ClinicalHistoryViewProps {
   isOpen: boolean;
@@ -115,7 +116,7 @@ const ClinicalHistoryView: React.FC<ClinicalHistoryViewProps> = ({
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `HC_${patientData?.full_name}_${new Date().toISOString().split('T')[0]}.html`;
+      link.download = `HC_${patientData?.full_name}_${todayStr()}.html`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
