@@ -232,7 +232,7 @@ body:has(.psy-dash) {
 .psy-dash-nav {
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.08rem;
   flex: 1;
 }
 
@@ -339,14 +339,15 @@ body:has(.psy-dash) {
 .psy-dash-signout {
   display: flex;
   align-items: center;
-  margin-top: 0.7rem;
-  padding-top: 0.9rem;
-  border-top: 1px solid var(--psy-border);
+  margin-top: 0.35rem;
+  padding: 0.65rem 0.875rem 0.2rem;
+  border-top: 1px solid rgba(239, 83, 80, 0.72);
   gap: 0.625rem;
-  padding: 0.75rem 0.875rem;
   border-radius: 12px;
   background: none;
-  border: 1px solid rgba(239, 83, 80, 0.15);
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
   color: rgba(239, 83, 80, 0.9);
   font-family: 'Inter', sans-serif;
   font-size: 0.8125rem;
@@ -867,8 +868,8 @@ body:has(.psy-dash) {
 
 /* ===== Upcoming Mini (sidebar) ===== */
 .psy-dash-upcoming-mini {
-  margin-top: 0.65rem;
-  padding-top: 0.65rem;
+  margin-top: 0.35rem;
+  padding-top: 0.4rem;
   border-top: 1px solid var(--psy-border);
   display: flex;
   flex-direction: column;
@@ -887,8 +888,8 @@ body:has(.psy-dash) {
 }
 
 .psy-dash-sidebar-pending {
-  margin-top: 0.55rem;
-  padding-top: 0.6rem;
+  margin-top: 0.3rem;
+  padding-top: 0.4rem;
   border-top: 1px solid var(--psy-border);
 }
 
