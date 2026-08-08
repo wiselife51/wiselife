@@ -676,3 +676,93 @@
   background: rgba(66, 165, 245, 0.24);
   color: #80deea;
 }
+
+/* Contención del calendario: nunca invade el scrollbar ni recorta la grilla. */
+.cal {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.cal__bar,
+.cal__filters,
+.cal__hint {
+  position: sticky;
+  left: 0;
+  z-index: 4;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  background: #101825;
+}
+
+.cal__bar {
+  top: 0;
+  padding-block: 0.25rem;
+}
+
+.cal__filters {
+  top: 3.5rem;
+  padding-block: 0.25rem;
+}
+
+.cal__nav,
+.cal__views,
+.cal__filters {
+  min-width: 0;
+}
+
+.cal__nav,
+.cal__views {
+  flex-wrap: wrap;
+}
+
+.cal__heading {
+  min-width: 0;
+  max-width: min(24rem, 60vw);
+  overflow-wrap: anywhere;
+}
+
+.cal__month,
+.cal__week,
+.cal__day {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.cal__month {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  overflow: hidden;
+}
+
+.cal__cell,
+.cal__weekday,
+.cal-chip {
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.cal__cell--blocked {
+  background: repeating-linear-gradient(45deg, rgba(255,255,255,.015) 0 6px, rgba(255,255,255,.05) 6px 12px);
+  background-clip: padding-box;
+}
+
+@media (max-width: 720px) {
+  .cal__bar { align-items: flex-start; }
+  .cal__nav { flex: 1 1 100%; }
+  .cal__views { align-self: flex-start; }
+  .cal__filters { top: 6.5rem; }
+  .cal__heading { flex: 1 1 auto; max-width: none; text-align: center; }
+  .cal__cell { min-height: 68px; padding: 0.3rem; }
+}
+
+@media (max-width: 420px) {
+  .cal__heading { font-size: 0.95rem; }
+  .cal__today { padding-inline: 0.55rem; }
+  .cal__filter { padding-inline: 0.55rem; }
+  .cal__weekday { font-size: 0.58rem; }
+}

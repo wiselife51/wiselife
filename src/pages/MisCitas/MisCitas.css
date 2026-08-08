@@ -323,10 +323,36 @@
 
 /* Month Grid */
 .mc-month {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   background: rgba(15, 20, 35, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
   overflow: hidden;
+}
+
+/* Misma contención y jerarquía visual que la agenda profesional. */
+.mc-page { min-width: 0; overflow-x: hidden; padding-bottom: 3rem; }
+.mc-controls, .mc-cal-controls, .mc-nav, .mc-cal-nav, .mc-views, .mc-cal-views { min-width: 0; flex-wrap: wrap; }
+.mc-controls, .mc-cal-controls { position: sticky; top: 0; z-index: 4; padding-block: 0.25rem; background: #101825; }
+.mc-title, .mc-cal-title { min-width: 0; max-width: min(24rem, 60vw); overflow-wrap: anywhere; }
+.mc-month-header, .mc-month-grid { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.mc-month-cell { min-width: 0; box-sizing: border-box; }
+
+@media (max-width: 720px) {
+  .mc-page { padding-inline: 1rem; }
+  .mc-controls, .mc-cal-controls { align-items: flex-start; }
+  .mc-nav, .mc-cal-nav { flex: 1 1 100%; }
+  .mc-title, .mc-cal-title { flex: 1 1 auto; max-width: none; }
+  .mc-month-cell { min-height: 68px; padding: 0.3rem; }
+}
+
+@media (max-width: 420px) {
+  .mc-page { padding-inline: 0.75rem; }
+  .mc-title, .mc-cal-title { font-size: 0.95rem; }
+  .mc-month-day-name { padding-inline: 0.25rem; font-size: 0.58rem; }
 }
 
 .mc-month-header {
