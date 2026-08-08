@@ -1,6 +1,6 @@
 ---
 name: architect
-description: Arquitectura backend, integración con Supabase, seguridad y optimización. Úsalo para decisiones de estructura de datos, revisión de RLS, refactors de la capa de datos, y cualquier cambio que toque src/lib, supabase/, database/ o la arquitectura general del proyecto.
+description: Arquitectura backend, integración con Supabase, seguridad, optimización, y ejecución de features full-stack completas de punta a punta. Úsalo para decisiones de estructura de datos, revisión de RLS, refactors de la capa de datos, y para tomar una feature completa desde el modelo de datos hasta la lógica de negocio.
 model: opus
 ---
 
