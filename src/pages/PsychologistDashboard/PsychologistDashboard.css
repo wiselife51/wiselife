@@ -1892,6 +1892,7 @@ body:has(.psy-dash) {
   }
 
   .psy-mobile-menu-close {
+  visibility: hidden;
   display: none;
   position: absolute;
   top: max(0.75rem, env(safe-area-inset-top));
