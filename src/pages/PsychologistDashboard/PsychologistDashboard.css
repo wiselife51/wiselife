@@ -1789,6 +1789,39 @@ body:has(.psy-dash) {
   background: rgba(126, 87, 194, 0.2);
 }
 
+/* ===== Appointment detail: login-inspired surface ===== */
+.psy-dash-modal--wide {
+  width: min(92vw, 430px);
+  max-width: 430px;
+  padding: 1.5rem;
+  gap: 1.1rem;
+  background: rgba(11, 18, 31, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 22px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.58), 0 0 0 1px rgba(126, 87, 194, 0.08);
+}
+.psy-dash-modal-backdrop { background: rgba(3, 7, 14, 0.78); backdrop-filter: blur(8px); }
+.psy-appt-modal-header h3 { font-size: 1.05rem; color: #f7f8ff; }
+.psy-appt-modal-close { width: 32px; height: 32px; display: grid; place-items: center; color: rgba(255,255,255,0.46); }
+.psy-appt-patient { padding: 1rem; background: rgba(255,255,255,0.055); border-color: rgba(255,255,255,0.12); border-radius: 14px; }
+.psy-appt-patient-avatar { width: 46px; height: 46px; background: rgba(126,87,194,0.24); border: 1px solid rgba(126,87,194,0.28); }
+.psy-appt-patient h4 { font-size: 1rem; }
+.psy-appt-detail-row { gap: 0.6rem; color: rgba(255,255,255,0.68); }
+.psy-appt-detail-row svg { color: rgba(255,255,255,0.42); }
+.psy-appt-actions { gap: 0.55rem; }
+.psy-complete-btn, .psy-history-btn, .psy-confirm-pay-btn, .psy-wa-btn { border-radius: 12px; min-height: 50px; }
+.psy-complete-btn, .psy-history-btn { background: rgba(126,87,194,0.13); border-color: rgba(138,92,246,0.48); color: #c49bff; }
+.psy-complete-btn:hover, .psy-history-btn:hover { background: rgba(126,87,194,0.24); }
+
+/* Keep sidebar lower sections grouped on desktop. */
+@media (min-width: 769px) {
+  .psy-dash-upcoming-mini { margin-top: 0.45rem; padding-top: 0.55rem; gap: 0.3rem; }
+  .psy-dash-upcoming-mini h4, .psy-dash-sidebar-pending h4 { font-size: 0.68rem; }
+  .psy-dash-upcoming-carousel { gap: 0.3rem; }
+  .psy-dash-sidebar-pending { margin-top: 0.45rem; padding-top: 0.55rem; }
+  .psy-dash-sidebar-pending h4 { margin-bottom: 0.4rem; }
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 1024px) {
   .psy-cal-title {
@@ -1806,6 +1839,8 @@ body:has(.psy-dash) {
 }
 
 @media (max-width: 768px) {
+  .psy-mobile-menu-close { display: grid; }
+
   .psy-mobile-menu-toggle {
   display: flex;
   }
@@ -1880,8 +1915,6 @@ body:has(.psy-dash) {
   color: #fff;
   outline: none;
   }
-
-  .psy-mobile-menu-close { display: grid; }
 
   .psy-mobile-menu-backdrop {
   position: fixed;
