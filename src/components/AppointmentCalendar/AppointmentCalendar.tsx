@@ -15,6 +15,7 @@ function monthGrid(year: number, month: number): (Date | null)[] {
   const cells: (Date | null)[] = [];
   for (let i = 0; i < first.getDay(); i++) cells.push(null);
   for (let d = 1; d <= last.getDate(); d++) cells.push(new Date(year, month, d));
+  while (cells.length < 42) cells.push(null);
   return cells;
 }
 

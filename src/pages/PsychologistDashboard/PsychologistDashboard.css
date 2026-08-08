@@ -124,15 +124,15 @@ body:has(.psy-dash) {
 
 .psy-dash-sidebar-header {
   display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 1.5rem;
 }
 
 .psy-dash-brand {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.35rem;
 }
 
@@ -229,7 +229,7 @@ body:has(.psy-dash) {
   border: none;
   color: rgba(255, 255, 255, 0.6);
   font-family: 'Inter', sans-serif;
-  font-size: 0.875rem;
+  font-size: 0.78rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s var(--psy-smooth);
@@ -775,7 +775,7 @@ body:has(.psy-dash) {
 
 /* ===== Upcoming Mini (sidebar) ===== */
 .psy-dash-upcoming-mini {
-  margin-top: auto;
+  margin-top: 1rem;
   padding-top: 1rem;
   border-top: 1px solid var(--psy-border);
   display: flex;
