@@ -700,7 +700,10 @@ const PsychologistDashboard: React.FC = () => {
       </video>
       <div className="psy-dash-video-overlay" aria-hidden="true" />
       {/* Sidebar */}
-      <aside className={`psy-dash-sidebar ${showMobileMenu ? 'psy-dash-sidebar--open' : ''}`}>
+      <aside
+        className={`psy-dash-sidebar ${showMobileMenu ? 'psy-dash-sidebar--open' : ''}`}
+        style={showMobileMenu ? { position: 'fixed', inset: '0 auto 0 0', zIndex: 1000, transform: 'translate3d(0, 0, 0)' } : undefined}
+      >
         <div className="psy-dash-sidebar-header">
           <div className="psy-dash-brand">
             <div className="psy-dash-logo">
@@ -808,13 +811,17 @@ const PsychologistDashboard: React.FC = () => {
         <button
           type="button"
           className="psy-mobile-menu-backdrop"
+          style={{ zIndex: 900 }}
           aria-label="Cerrar menú"
           onClick={() => setShowMobileMenu(false)}
         />
       )}
 
       {/* Mobile menu toggle */}
-      <button className="psy-mobile-menu-toggle" onClick={() => setShowMobileMenu(!showMobileMenu)} type="button">
+      <button           className="psy-mobile-menu-toggle"
+          style={{ zIndex: 1100, right: '0.75rem', left: 'auto' }}
+          onClick={() => setShowMobileMenu(!showMobileMenu)}
+          type="button">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           {showMobileMenu ? (
             <><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></>

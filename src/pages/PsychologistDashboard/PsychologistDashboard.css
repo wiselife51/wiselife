@@ -1728,17 +1728,23 @@ body:has(.psy-dash) {
     flex-direction: column;
   }
 
-  .psy-dash-sidebar {
+  .psy-dash > .psy-dash-sidebar {
   position: fixed;
-  inset: 0 auto 0 0;
+  top: 0;
+  right: auto;
+  bottom: 0;
+  left: 0;
+  display: flex !important;
   width: min(86vw, 320px);
   max-width: 320px;
   height: 100dvh;
-  z-index: 30;
-  background: rgba(17, 24, 39, 0.98);
+  z-index: 100 !important;
+  background: #111827;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   transform: translate3d(-105%, 0, 0);
+  visibility: visible !important;
+  opacity: 1 !important;
   transition: transform 0.28s var(--psy-smooth);
   box-shadow: 20px 0 48px rgba(0, 0, 0, 0.42);
   overflow-x: hidden;
@@ -1752,22 +1758,22 @@ body:has(.psy-dash) {
   transform: translate3d(0, 0, 0);
   }
 
-  .psy-mobile-menu-backdrop {
+  .psy-dash > .psy-mobile-menu-backdrop {
     position: fixed;
     inset: 0;
-    z-index: 20;
+    z-index: 90 !important;
     border: 0;
     background: rgba(0, 0, 0, 0.42);
     backdrop-filter: blur(2px);
   }
 
-  .psy-mobile-menu-toggle {
-  top: max(0.75rem, env(safe-area-inset-top));
+  .psy-dash > .psy-mobile-menu-toggle {
+    top: max(0.75rem, env(safe-area-inset-top));
     right: max(0.75rem, env(safe-area-inset-right));
     left: auto;
     min-width: 44px;
     min-height: 44px;
-    z-index: 40;
+    z-index: 120 !important;
   }
 
   .psy-dash-main {
