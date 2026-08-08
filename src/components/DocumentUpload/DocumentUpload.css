@@ -1,0 +1,132 @@
+.doc-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.doc-upload__lead {
+  margin: 0 0 0.25rem;
+  padding: 0.75rem 0.875rem;
+  border-radius: 10px;
+  background: rgba(126, 87, 194, 0.1);
+  border: 1px solid rgba(126, 87, 194, 0.25);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.doc-slot {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.875rem 1rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+
+.doc-slot--done {
+  background: rgba(66, 165, 245, 0.07);
+  border-color: rgba(66, 165, 245, 0.3);
+}
+
+.doc-slot__info {
+  min-width: 0;
+}
+
+.doc-slot__label {
+  margin: 0 0 0.1875rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.doc-slot__req {
+  color: #ef5350;
+}
+
+.doc-slot__hint {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.doc-slot__file {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin: 0.5rem 0 0;
+  font-size: 0.75rem;
+  color: #4dd0e1;
+  overflow-wrap: anywhere;
+}
+
+.doc-slot__error {
+  margin: 0.5rem 0 0;
+  font-size: 0.75rem;
+  color: #ef9a9a;
+}
+
+.doc-slot__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex-shrink: 0;
+}
+
+.doc-slot__btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0.875rem;
+  border-radius: 9px;
+  background: rgba(66, 165, 245, 0.12);
+  border: 1px solid rgba(66, 165, 245, 0.35);
+  color: #4dd0e1;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.25s ease;
+}
+
+.doc-slot__btn:hover {
+  background: rgba(66, 165, 245, 0.2);
+  color: #80deea;
+}
+
+.doc-slot__btn input {
+  display: none;
+}
+
+.doc-slot__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.doc-slot__remove:hover {
+  border-color: rgba(239, 83, 80, 0.5);
+  color: #ef5350;
+}
+
+@media (max-width: 560px) {
+  .doc-slot {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .doc-slot__actions {
+    justify-content: flex-end;
+  }
+}

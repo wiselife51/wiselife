@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
+import DataConsent from '../../components/DataConsent/DataConsent';
+import DocumentUpload, { REQUIRED_DOC_TYPES } from '../../components/DocumentUpload/DocumentUpload';
+import type { UploadedDoc } from '../../components/DocumentUpload/DocumentUpload';
+import { recordConsent } from '../../lib/consent';
 import './PsychologistOnboarding.css';
 
 const SPECIALTIES_OPTIONS = [
@@ -71,6 +75,8 @@ const PsychologistOnboarding: React.FC = () => {
     city: '',
   });
   const [availability, setAvailability] = useState<AvailabilitySlot[]>([]);
+  const [docs, setDocs] = useState<UploadedDoc[]>([]);
+  const [consentAccepted, setConsentAccepted] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -136,6 +142,13 @@ const PsychologistOnboarding: React.FC = () => {
     return '';
   };
 
+  const validateStep4 = () => {
+    const missing = REQUIRED_DOC_TYPES.filter((t) => !docs.some((d) => d.docType === t));
+    if (missing.length > 0) return 'Faltan documentos obligatorios por cargar';
+    if (!consentAccepted) return 'Debes autorizar el tratamiento de datos para continuar';
+    return '';
+  };
+
   const handleNext = () => {
     let err = '';
     if (step === 1) err = validateStep1();
@@ -155,6 +168,13 @@ const PsychologistOnboarding: React.FC = () => {
 
   const handleSubmit = async () => {
     if (!user) return;
+
+    const stepErr = validateStep4();
+    if (stepErr) {
+      setError(stepErr);
+      return;
+    }
+
     setSaving(true);
     setError('');
 
@@ -190,7 +210,9 @@ const PsychologistOnboarding: React.FC = () => {
         .eq('user_id', user.id)
         .single();
 
-      if (psyData && availability.length > 0) {
+      if (!psyData) throw new Error('No se pudo recuperar el perfil recien creado');
+
+      if (availability.length > 0) {
         // Insert availability slots
         const slots = availability.map((s) => ({
           psychologist_id: psyData.id,
@@ -205,9 +227,46 @@ const PsychologistOnboarding: React.FC = () => {
           .insert(slots);
       }
 
+      // Los archivos ya estan en Storage; aqui se registran sus referencias.
+      const { error: docsError } = await supabase.from('psychologist_documents').insert(
+        docs.map((d) => ({
+          psychologist_id: psyData.id,
+          doc_type: d.docType,
+          storage_path: d.storagePath,
+          original_name: d.originalName,
+          mime_type: d.mimeType,
+          size_bytes: d.sizeBytes,
+        }))
+      );
+
+      if (docsError) throw docsError;
+
+      // Pasa a revision. El trigger solo admite pending/rejected -> submitted
+      // desde el propio usuario; aprobar es exclusivo de un administrador.
+      const { error: statusError } = await supabase
+        .from('psychologists')
+        .update({
+          verification_status: 'submitted',
+          verification_submitted_at: new Date().toISOString(),
+        })
+        .eq('id', psyData.id);
+
+      if (statusError) throw statusError;
+
+      // El consentimiento se guarda al final: si algo fallo antes, no queda
+      // registrada una autorizacion para un registro que no existe.
+      const consentError = await recordConsent({
+        userId: user.id,
+        accepted: true,
+        metadata: { context: 'psychologist_onboarding', psychologist_id: psyData.id },
+      });
+
+      if (consentError) throw new Error(consentError);
+
       navigate('/psicologo/dashboard');
-    } catch {
-      setError('Ocurrio un error al guardar. Intenta de nuevo.');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Ocurrio un error al guardar.';
+      setError(`${message} Intenta de nuevo.`);
       setSaving(false);
     }
   };
@@ -224,11 +283,11 @@ const PsychologistOnboarding: React.FC = () => {
       <div className="psy-onb-content">
         {/* Progress */}
         <div className="psy-onb-progress">
-          {[1, 2, 3].map((s) => (
+          {[1, 2, 3, 4].map((s) => (
             <div key={s} className={`psy-onb-step ${step >= s ? 'psy-onb-step--active' : ''}`}>
               <div className="psy-onb-step-dot">{s}</div>
               <span className="psy-onb-step-label">
-                {s === 1 ? 'Datos personales' : s === 2 ? 'Profesional' : 'Disponibilidad'}
+                {s === 1 ? 'Datos personales' : s === 2 ? 'Profesional' : s === 3 ? 'Disponibilidad' : 'Verificacion'}
               </span>
             </div>
           ))}
@@ -373,6 +432,30 @@ const PsychologistOnboarding: React.FC = () => {
             </>
           )}
 
+          {/* Step 4: Verificacion profesional */}
+          {step === 4 && (
+            <>
+              <h2 className="psy-onb-title">Verificacion profesional</h2>
+              <p className="psy-onb-desc">
+                Necesitamos comprobar que eres un profesional habilitado antes de que puedas
+                atender pacientes.
+              </p>
+
+              <div className="psy-onb-fields">
+                {user && (
+                  <DocumentUpload userId={user.id} docs={docs} onChange={setDocs} />
+                )}
+
+                <DataConsent
+                  audience="psychologist"
+                  checked={consentAccepted}
+                  onChange={setConsentAccepted}
+                  disabled={saving}
+                />
+              </div>
+            </>
+          )}
+
           {/* Error */}
           {error && <p className="psy-onb-error">{error}</p>}
 
@@ -383,13 +466,13 @@ const PsychologistOnboarding: React.FC = () => {
                 Atras
               </button>
             )}
-            {step < 3 ? (
+            {step < 4 ? (
               <button type="button" className="psy-onb-btn psy-onb-btn--next" onClick={handleNext}>
                 Continuar
               </button>
             ) : (
               <button type="button" className="psy-onb-btn psy-onb-btn--next" onClick={handleSubmit} disabled={saving}>
-                {saving ? 'Guardando...' : 'Finalizar registro'}
+                {saving ? 'Enviando...' : 'Enviar a verificacion'}
               </button>
             )}
           </div>

@@ -16,6 +16,7 @@ import PsychologistDashboard from './pages/PsychologistDashboard/PsychologistDas
 import Specialists from './pages/Specialists/Specialists';
 import SpecialistProfile from './pages/SpecialistProfile/SpecialistProfile';
 import MisCitas from './pages/MisCitas/MisCitas';
+import Admin from './pages/Admin/Admin';
 
 const App: React.FC = () => {
   return (
@@ -37,6 +38,7 @@ const App: React.FC = () => {
             <Route path="/psicologo/login" element={<PsychologistLogin />} />
             <Route path="/psicologo/onboarding" element={<PsychologistOnboarding />} />
             <Route path="/psicologo/dashboard" element={<PsychologistDashboard />} />
+            <Route path="/admin" element={<Admin />} />
           </Routes>
         </div>
       </AuthProvider>

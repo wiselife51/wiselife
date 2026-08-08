@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import DashboardLayout from '../../components/DashboardLayout/DashboardLayout';
 import './SpecialistProfile.css';
+import { toDateStr } from '../../lib/date';
 
 interface Psychologist {
   id: string;
@@ -166,8 +167,8 @@ const SpecialistProfile: React.FC = () => {
         .from('schedule_blocks')
         .select('block_date, start_time, end_time')
         .eq('psychologist_id', id)
-        .gte('block_date', today.toISOString().split('T')[0])
-        .lte('block_date', twoWeeks.toISOString().split('T')[0]);
+        .gte('block_date', toDateStr(today))
+        .lte('block_date', toDateStr(twoWeeks));
 
       setBlocks(blockData || []);
 
@@ -177,8 +178,8 @@ const SpecialistProfile: React.FC = () => {
         .select('appointment_date, start_time')
         .eq('psychologist_id', id)
         .in('status', ['pendiente_pago', 'confirmada'])
-        .gte('appointment_date', today.toISOString().split('T')[0])
-        .lte('appointment_date', twoWeeks.toISOString().split('T')[0]);
+        .gte('appointment_date', toDateStr(today))
+        .lte('appointment_date', toDateStr(twoWeeks));
 
       setExistingAppts(apptData || []);
       setLoadingData(false);
@@ -199,7 +200,7 @@ const SpecialistProfile: React.FC = () => {
   const getSlotsForDay = (day: { date: Date; dayOfWeek: number } | null) => {
     if (!day) return [];
     const daySlots = availability.filter((a) => a.day_of_week === day.dayOfWeek);
-    const dateStr = day.date.toISOString().split('T')[0];
+    const dateStr = toDateStr(day.date);
 
     return daySlots.filter((slot) => {
       const isBlocked = blocks.some(
@@ -226,7 +227,7 @@ const SpecialistProfile: React.FC = () => {
       .insert({
         psychologist_id: psy.id,
         patient_id: user.id,
-        appointment_date: selectedDay.date.toISOString().split('T')[0],
+        appointment_date: toDateStr(selectedDay.date),
         start_time: selectedSlot.start_time,
         end_time: selectedSlot.end_time,
         status: 'pendiente_pago',

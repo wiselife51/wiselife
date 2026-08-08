@@ -4,6 +4,9 @@ import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import DashboardLayout from '../../components/DashboardLayout/DashboardLayout';
 import './MisCitas.css';
+import { toDateStr, todayStr } from '../../lib/date';
+import AppointmentCalendar from '../../components/AppointmentCalendar/AppointmentCalendar';
+import type { CalendarAppointment } from '../../components/AppointmentCalendar/status';
 
 interface AppointmentWithPsy {
   id: string;
@@ -44,11 +47,8 @@ interface TakenSlot {
 
 const DAY_NAMES_SHORT = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
 const DAY_NAMES_FULL = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
-const MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
-const HOURS_RANGE = Array.from({ length: 14 }, (_, i) => i + 7);
 
-type CalView = 'month' | 'week' | 'day';
 
 function formatTime(t: string): string {
   const [h, m] = t.split(':');
@@ -56,25 +56,6 @@ function formatTime(t: string): string {
   const ap = hour >= 12 ? 'PM' : 'AM';
   const h12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
   return `${h12}:${m} ${ap}`;
-}
-
-function sameDay(a: Date, b: Date) {
-  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
-}
-
-function getWeekStart(d: Date): Date {
-  const r = new Date(d);
-  r.setDate(r.getDate() - r.getDay());
-  return r;
-}
-
-function getMonthDays(year: number, month: number): (Date | null)[] {
-  const first = new Date(year, month, 1);
-  const last = new Date(year, month + 1, 0);
-  const cells: (Date | null)[] = [];
-  for (let i = 0; i < first.getDay(); i++) cells.push(null);
-  for (let d = 1; d <= last.getDate(); d++) cells.push(new Date(year, month, d));
-  return cells;
 }
 
 function statusLabel(status: string): string {
@@ -93,8 +74,6 @@ const MisCitas: React.FC = () => {
 
   const [appointments, setAppointments] = useState<AppointmentWithPsy[]>([]);
   const [loading, setLoading] = useState(true);
-  const [calView, setCalView] = useState<CalView>('month');
-  const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedAppt, setSelectedAppt] = useState<AppointmentWithPsy | null>(null);
 
   // Reschedule state
@@ -151,36 +130,8 @@ const MisCitas: React.FC = () => {
     if (user) fetchAppts();
   }, [user]);
 
-  const goToday = () => setCurrentDate(new Date());
-  const goPrev = () => {
-    const d = new Date(currentDate);
-    if (calView === 'month') d.setMonth(d.getMonth() - 1);
-    else if (calView === 'week') d.setDate(d.getDate() - 7);
-    else d.setDate(d.getDate() - 1);
-    setCurrentDate(d);
-  };
-  const goNext = () => {
-    const d = new Date(currentDate);
-    if (calView === 'month') d.setMonth(d.getMonth() + 1);
-    else if (calView === 'week') d.setDate(d.getDate() + 7);
-    else d.setDate(d.getDate() + 1);
-    setCurrentDate(d);
-  };
 
-  const monthDays = useMemo(() => getMonthDays(currentDate.getFullYear(), currentDate.getMonth()), [currentDate]);
-  const weekStart = useMemo(() => getWeekStart(currentDate), [currentDate]);
-  const weekDays = useMemo(() => Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(weekStart);
-    d.setDate(weekStart.getDate() + i);
-    return d;
-  }), [weekStart]);
-
-  const getApptsForDate = (d: Date) => {
-    const ds = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-    return appointments.filter((a) => a.appointment_date === ds);
-  };
-
-  const handleOpenWhatsApp = (phone: string | null | undefined, psyName: string) => {
+  const handleOpenWhatsApp =(phone: string | null | undefined, psyName: string) => {
     if (!phone) {
       alert('Este psicologo no tiene numero registrado.');
       return;
@@ -209,16 +160,16 @@ const MisCitas: React.FC = () => {
 
     setRescheduleAvail(availData || []);
 
-    const todayStr = new Date().toISOString().split('T')[0];
+    const todayDateStr = todayStr();
     const twoWeeks = new Date();
     twoWeeks.setDate(twoWeeks.getDate() + 14);
-    const twoWeeksStr = twoWeeks.toISOString().split('T')[0];
+    const twoWeeksStr = toDateStr(twoWeeks);
 
     const { data: blockData } = await supabase
       .from('schedule_blocks')
       .select('block_date, start_time, end_time')
       .eq('psychologist_id', psyId)
-      .gte('block_date', todayStr)
+      .gte('block_date', todayDateStr)
       .lte('block_date', twoWeeksStr);
 
     setRescheduleBlocks(blockData || []);
@@ -229,7 +180,7 @@ const MisCitas: React.FC = () => {
       .eq('psychologist_id', psyId)
       .in('status', ['pendiente_pago', 'confirmada'])
       .neq('id', selectedAppt.id)
-      .gte('appointment_date', todayStr)
+      .gte('appointment_date', todayDateStr)
       .lte('appointment_date', twoWeeksStr);
 
     setRescheduleTaken(takenData || []);
@@ -257,7 +208,7 @@ const MisCitas: React.FC = () => {
   const getRescheduleSlotsForDay = (day: { date: Date; dayOfWeek: number } | null) => {
     if (!day) return [];
     const daySlots = rescheduleAvail.filter((a) => a.day_of_week === day.dayOfWeek);
-    const dateStr = day.date.toISOString().split('T')[0];
+    const dateStr = toDateStr(day.date);
 
     return daySlots.filter((slot) => {
       const isBlocked = rescheduleBlocks.some(
@@ -274,7 +225,7 @@ const MisCitas: React.FC = () => {
     if (!selectedAppt || !rescheduleDay) return;
     setRescheduleSaving(true);
 
-    const newDate = rescheduleDay.date.toISOString().split('T')[0];
+    const newDate = toDateStr(rescheduleDay.date);
     const { error } = await supabase
       .from('appointments')
       .update({
@@ -338,14 +289,19 @@ const MisCitas: React.FC = () => {
     setRescheduleDay(null);
   };
 
-  const calTitle = calView === 'month'
-    ? `${MONTH_NAMES[currentDate.getMonth()]} ${currentDate.getFullYear()}`
-    : calView === 'week'
-      ? `${weekDays[0].getDate()} ${MONTH_NAMES[weekDays[0].getMonth()].substring(0, 3)} - ${weekDays[6].getDate()} ${MONTH_NAMES[weekDays[6].getMonth()].substring(0, 3)} ${weekDays[6].getFullYear()}`
-      : `${DAY_NAMES_FULL[currentDate.getDay()]} ${currentDate.getDate()} de ${MONTH_NAMES[currentDate.getMonth()]}`;
+  const calendarAppointments: CalendarAppointment[] = appointments.map((a) => ({
+    id: a.id,
+    appointment_date: a.appointment_date,
+    start_time: a.start_time,
+    end_time: a.end_time,
+    status: a.status,
+    title: a.psychologist?.full_name || 'Psicologo',
+    subtitle: a.psychologist?.specialties?.[0] ?? null,
+    avatarUrl: a.psychologist?.avatar_url ?? null,
+  }));
 
   const upcomingAppts = appointments.filter(
-    (a) => a.appointment_date >= today.toISOString().split('T')[0] && (a.status === 'confirmada' || a.status === 'pendiente_pago')
+    (a) => a.appointment_date >= toDateStr(today) && (a.status === 'confirmada' || a.status === 'pendiente_pago')
   );
 
   if (authLoading || loading) {
@@ -376,142 +332,36 @@ const MisCitas: React.FC = () => {
           </div>
         </div>
 
-        {/* Calendar controls */}
-        <div className="mc-cal-controls">
-          <div className="mc-cal-nav">
-            <button className="mc-cal-nav-btn" onClick={goPrev} type="button" aria-label="Anterior">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
-            </button>
-            <h2 className="mc-cal-title">{calTitle}</h2>
-            <button className="mc-cal-nav-btn" onClick={goNext} type="button" aria-label="Siguiente">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
-            </button>
-            <button className="mc-cal-today-btn" onClick={goToday} type="button">Hoy</button>
-          </div>
-          <div className="mc-cal-views">
-            {(['month', 'week', 'day'] as CalView[]).map((v) => (
-              <button key={v} className={`mc-cal-view-btn ${calView === v ? 'mc-cal-view-btn--active' : ''}`} onClick={() => setCalView(v)} type="button">
-                {v === 'month' ? 'Mes' : v === 'week' ? 'Semana' : 'Dia'}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* MONTH VIEW */}
-        {calView === 'month' && (
-          <div className="mc-month">
-            <div className="mc-month-header">
-              {DAY_NAMES_SHORT.map((d) => <div key={d} className="mc-month-day-name">{d}</div>)}
-            </div>
-            <div className="mc-month-grid">
-              {monthDays.map((d, i) => {
-                if (!d) return <div key={`e-${i}`} className="mc-month-cell mc-month-cell--empty" />;
-                const appts = getApptsForDate(d);
-                const isToday = sameDay(d, today);
-                return (
-                  <div
-                    key={d.toISOString()}
-                    className={`mc-month-cell ${isToday ? 'mc-month-cell--today' : ''}`}
-                    onClick={() => { setCurrentDate(d); setCalView('day'); }}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => e.key === 'Enter' && setCalView('day')}
+        <AppointmentCalendar
+          appointments={calendarAppointments}
+          onSelect={(a) => {
+            const original = appointments.find((x) => x.id === a.id);
+            if (original) setSelectedAppt(original);
+          }}
+          emptyLabel="No tienes citas este dia."
+          renderActions={(a) => {
+            const original = appointments.find((x) => x.id === a.id);
+            if (!original) return null;
+            return (
+              <>
+                <button type="button" className="cal-action" onClick={() => setSelectedAppt(original)}>
+                  Ver detalle
+                </button>
+                {original.psychologist?.phone && (
+                  <button
+                    type="button"
+                    className="cal-action"
+                    onClick={() =>
+                      handleOpenWhatsApp(original.psychologist?.phone, original.psychologist?.full_name || 'Psicologo')
+                    }
                   >
-                    <span className="mc-month-date">{d.getDate()}</span>
-                    {appts.length > 0 && (
-                      <div className="mc-month-dots">
-                        {appts.slice(0, 2).map((a) => (
-                          <span key={a.id} className={`mc-month-dot mc-month-dot--${a.status}`} />
-                        ))}
-                        {appts.length > 2 && <span className="mc-month-more">+{appts.length - 2}</span>}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* WEEK VIEW */}
-        {calView === 'week' && (
-          <div className="mc-week">
-            <div className="mc-week-header">
-              <div className="mc-week-time-col" />
-              {weekDays.map((d) => (
-                <div
-                  key={d.toISOString()}
-                  className={`mc-week-day-col ${sameDay(d, today) ? 'mc-week-day-col--today' : ''}`}
-                  onClick={() => { setCurrentDate(d); setCalView('day'); }}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => e.key === 'Enter' && setCalView('day')}
-                >
-                  <span className="mc-week-day-label">{DAY_NAMES_SHORT[d.getDay()]}</span>
-                  <span className="mc-week-day-num">{d.getDate()}</span>
-                </div>
-              ))}
-            </div>
-            <div className="mc-week-body">
-              {HOURS_RANGE.map((h) => (
-                <div key={h} className="mc-week-row">
-                  <div className="mc-week-time">{h > 12 ? h - 12 : h}:00 {h >= 12 ? 'PM' : 'AM'}</div>
-                  {weekDays.map((d) => {
-                    const ds = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-                    const hourAppts = appointments.filter((a) => a.appointment_date === ds && parseInt(a.start_time.split(':')[0], 10) === h);
-                    return (
-                      <div key={`${ds}-${h}`} className="mc-week-cell">
-                        {hourAppts.map((a) => (
-                          <button key={a.id} className={`mc-week-appt mc-week-appt--${a.status}`} onClick={() => setSelectedAppt(a)} type="button">
-                            <span>{a.psychologist?.full_name?.split(' ')[0] || 'Psy'}</span>
-                          </button>
-                        ))}
-                      </div>
-                    );
-                  })}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* DAY VIEW */}
-        {calView === 'day' && (
-          <div className="mc-day-view">
-            {HOURS_RANGE.map((h) => {
-              const ds = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
-              const hourAppts = appointments.filter((a) => a.appointment_date === ds && parseInt(a.start_time.split(':')[0], 10) === h);
-
-              return (
-                <div key={h} className="mc-day-row">
-                  <div className="mc-day-time">{h > 12 ? h - 12 : h}:00 {h >= 12 ? 'PM' : 'AM'}</div>
-                  <div className="mc-day-content">
-                    {hourAppts.map((a) => (
-                      <button key={a.id} className={`mc-day-appt mc-day-appt--${a.status}`} onClick={() => setSelectedAppt(a)} type="button">
-                        <div className="mc-day-appt-left">
-                          <div className="mc-day-appt-avatar">
-                            {a.psychologist?.avatar_url ? (
-                              <img src={a.psychologist.avatar_url} alt="" crossOrigin="anonymous" />
-                            ) : (
-                              <span>{(a.psychologist?.full_name || 'P').charAt(0)}</span>
-                            )}
-                          </div>
-                          <div>
-                            <strong>{a.psychologist?.full_name || 'Psicologo'}</strong>
-                            <p>{formatTime(a.start_time)} - {formatTime(a.end_time)}</p>
-                          </div>
-                        </div>
-                        <span className={`mc-day-appt-badge mc-day-appt-badge--${a.status}`}>
-                          {statusLabel(a.status)}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+                    WhatsApp
+                  </button>
+                )}
+              </>
+            );
+          }}
+        />
 
         {/* Empty state */}
         {appointments.length === 0 && (
