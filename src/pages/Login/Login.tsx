@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { supabase } from '../../lib/supabase';
 import './Login.css';
 
 type AuthMode = 'login' | 'register';
@@ -29,6 +30,21 @@ const Login: React.FC = () => {
           setLoading(false);
           return;
         }
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: adminRole } = await supabase
+            .from('user_roles')
+            .select('role_code')
+            .eq('user_id', user.id)
+            .eq('role_code', 'admin')
+            .maybeSingle();
+
+          if (adminRole) {
+            navigate('/admin');
+            return;
+          }
+        }
+
         navigate('/onboarding');
       } else {
         const { error: signupError } = await signUpWithEmail(email, password, name);
