@@ -785,14 +785,40 @@ body:has(.psy-dash) {
 }
 
 .psy-dash-upcoming-carousel {
-  display: flex;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) 28px;
   align-items: center;
   gap: 0.35rem;
+  width: 100%;
 }
 
 .psy-dash-upcoming-carousel > .psy-dash-upcoming-item {
-  flex: 1;
   min-width: 0;
+  width: 100%;
+}
+
+.psy-dash-upcoming-carousel > .psy-dash-upcoming-item:focus-visible,
+.psy-dash-upcoming-arrow:focus-visible,
+.psy-dash-upcoming-dot:focus-visible {
+  outline: 2px solid #4dd0e1;
+  outline-offset: 2px;
+}
+
+.psy-dash-upcoming-dots {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 480px) {
+  .psy-dash-upcoming-carousel {
+    grid-template-columns: 24px minmax(0, 1fr) 24px;
+    gap: 0.25rem;
+  }
+
+  .psy-dash-upcoming-arrow {
+    width: 24px;
+    height: 28px;
+    flex-basis: 24px;
+  }
 }
 
 .psy-dash-upcoming-arrow {
@@ -804,6 +830,15 @@ body:has(.psy-dash) {
   background: rgba(255, 255, 255, 0.05);
   color: rgba(255, 255, 255, 0.75);
   cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.psy-dash-upcoming-arrow:hover {
+  background: rgba(77, 208, 225, 0.12);
+  border-color: rgba(77, 208, 225, 0.4);
+  color: #4dd0e1;
 }
 
 .psy-dash-upcoming-dots {
