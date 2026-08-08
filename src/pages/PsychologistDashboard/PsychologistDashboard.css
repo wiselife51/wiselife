@@ -1588,19 +1588,32 @@
   }
 
   .psy-dash-sidebar {
-    position: fixed;
-    top: 0;
-    left: -100%;
-    width: 280px;
-    height: 100vh;
-    z-index: 150;
-    transition: left 0.3s var(--psy-smooth);
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: min(86vw, 320px);
+  max-width: 320px;
+  height: 100dvh;
+  z-index: 150;
+  background: #19142a;
+  transform: translate3d(-105%, 0, 0);
+  transition: transform 0.28s var(--psy-smooth);
+  box-shadow: 20px 0 48px rgba(0, 0, 0, 0.42);
+  overflow-x: hidden;
+  overscroll-behavior: contain;
   }
 
   .psy-dash-sidebar--open {
-    left: 0;
+  transform: translate3d(0, 0, 0);
   }
+
+  .psy-mobile-menu-toggle {
+  top: max(0.75rem, env(safe-area-inset-top));
+  left: max(0.75rem, env(safe-area-inset-left));
+  min-width: 44px;
+  min-height: 44px;
+  }
+
 
   .psy-dash-main {
     padding: 1.5rem 1rem;

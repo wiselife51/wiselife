@@ -179,27 +179,45 @@
 /* Mobile responsive */
 @media (max-width: 768px) {
   .sidebar {
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
+    width: min(86vw, 320px);
+    max-width: 320px;
+    padding-top: max(1rem, env(safe-area-inset-top));
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    background: #19142a;
+    box-shadow: 20px 0 48px rgba(0, 0, 0, 0.42);
+    transform: translate3d(-105%, 0, 0);
+    transition: transform 0.28s ease;
+    will-change: transform;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
   }
 
-  .sidebar--open {
-    transform: translateX(0);
-  }
-
+  .sidebar--open { transform: translate3d(0, 0, 0); }
   .sidebar-mobile-toggle {
     display: flex;
+    top: max(0.75rem, env(safe-area-inset-top));
+    left: max(0.75rem, env(safe-area-inset-left));
+    min-width: 44px;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
   }
-
   .sidebar-backdrop {
     display: block;
+    z-index: 19;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
   }
-
   .sidebar--open + .sidebar-backdrop {
-    display: block;
+    opacity: 1;
+    pointer-events: auto;
   }
+  .dashboard-layout-content { margin-left: 0; }
+}
 
-  .dashboard-layout-content {
-    margin-left: 0;
-  }
+@media (max-width: 420px) {
+  .sidebar-logo { padding-inline: 1.25rem; margin-bottom: 1.25rem; }
+  .sidebar-link, .sidebar-signout { padding-inline: 1.25rem; }
+  .sidebar-promos { padding-inline: 0.75rem; }
 }
