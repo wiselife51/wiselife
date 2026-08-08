@@ -115,8 +115,8 @@ body:has(.psy-dash) {
   display: flex;
   flex-direction: column;
   padding: 1.5rem;
-  background: var(--psy-surface);
-  border-right: 1px solid var(--psy-border);
+  background: rgba(17, 24, 39, 0.68);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
   position: sticky;
   top: 0;
   backdrop-filter: blur(12px);
@@ -1740,7 +1740,7 @@ body:has(.psy-dash) {
   max-width: 320px;
   height: 100dvh;
   z-index: 100 !important;
-  background: #111827;
+  background: rgba(17, 24, 39, 0.68);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   transform: translate3d(-105%, 0, 0);

@@ -841,7 +841,10 @@ const PsychologistDashboard: React.FC = () => {
             onReschedule={handleCalendarReschedule}
             onSelect={(a) => {
               const original = appointments.find((x) => x.id === a.id);
-              if (original) setSelectedAppt(original);
+              if (original) {
+                setSelectedAppt(original);
+                setShowMobileMenu(false);
+              }
             }}
             renderDayActions={(dateKey) => (
               <button
@@ -862,7 +865,15 @@ const PsychologistDashboard: React.FC = () => {
               if (!original) return null;
               return (
                 <>
-                  <button type="button" className="cal-action" onClick={() => setSelectedAppt(original)}>
+                  <button
+                    type="button"
+                    className="cal-action"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setSelectedAppt(original);
+                      setShowMobileMenu(false);
+                    }}
+                  >
                     Ver detalle
                   </button>
                   {original.patient?.phone && (

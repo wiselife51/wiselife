@@ -446,7 +446,9 @@
   gap: 0.875rem;
   padding: 1.25rem;
   overflow-y: auto;
-  background: #101825;
+  background: rgba(16, 24, 37, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-left: 1px solid rgba(255, 255, 255, 0.09);
   box-shadow: -16px 0 48px rgba(0, 0, 0, 0.45);
   animation: cal-slide 0.25s ease;
@@ -641,12 +643,13 @@
 @media (max-width: 720px) {
   .cal__week,
   .cal__day {
-    overflow-x: auto;
+    overflow: hidden;
   }
 
   .cal__week-head,
   .cal__week-body {
-    min-width: 680px;
+    min-width: 0;
+    width: 100%;
   }
 
   .cal__month {
@@ -802,40 +805,77 @@
 
 @media (max-width: 720px) {
   .cal__week {
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
+    overflow: hidden;
   }
 
   .cal__week-head,
   .cal__week-body {
-    min-width: 620px;
+    min-width: 0;
+    width: 100%;
   }
 
   .cal__week-body {
-    height: min(560px, calc(100dvh - 260px));
-    max-height: 560px;
-    overflow-y: auto;
-    overflow-x: hidden;
+    height: calc(100dvh - 250px);
+    max-height: none;
+    overflow: hidden;
   }
 
   .cal__week-day {
-    min-width: 80px;
+    min-width: 0;
+    padding-inline: 0.125rem;
+    font-size: 0.6rem;
   }
 
+  .cal__week-day strong { font-size: 0.75rem; }
+
+  .cal__week-head,
+  .cal__week-body {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .cal__week-body {
+    height: calc(100dvh - 250px);
+    max-height: none;
+    overflow: hidden;
+  }
+
+  .cal__week-day {
+    min-width: 0;
+    padding-inline: 0.125rem;
+    font-size: 0.6rem;
+  }
+
+  .cal__week-day strong { font-size: 0.75rem; }
+
   .cal__day {
-    height: min(620px, calc(100dvh - 250px));
-    min-height: 460px;
+    height: calc(100dvh - 250px);
+    min-height: 0;
+    max-height: none;
+  }
+
+  .cal__week-body {
+    grid-template-rows: repeat(15, minmax(0, 1fr));
+  }
+
+  .cal__hour {
+    padding-inline: 0.2rem;
+    font-size: 0.56rem;
+  }
+
+  .cal__slot {
+    min-height: 0;
+    padding: 1px;
   }
 
   .cal__day-row {
-    grid-template-columns: 52px minmax(0, 1fr);
-    min-height: 48px;
+    grid-template-columns: 42px minmax(0, 1fr);
+    min-height: 0;
   }
 
   .cal__day-slot {
-    min-height: 48px;
-    padding: 0.3rem;
+    min-height: 0;
+    padding: 0.15rem;
   }
 
   .cal-panel {
