@@ -795,11 +795,9 @@ body:has(.psy-dash) {
 }
 
 .psy-dash-sidebar-pending {
-  margin-top: 0.65rem;
-  padding: 0.6rem;
-  border: 1px solid rgba(255, 193, 7, 0.32);
-  border-radius: 12px;
-  background: rgba(48, 37, 8, 0.42);
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 193, 7, 0.38);
 }
 
 .psy-dash-sidebar-pending h4 {
@@ -808,9 +806,9 @@ body:has(.psy-dash) {
   gap: 0.35rem;
   margin: 0 0 0.5rem;
   color: #ffc107;
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
@@ -819,7 +817,8 @@ body:has(.psy-dash) {
   grid-template-columns: 18px minmax(0, 1fr);
   gap: 0.45rem;
   align-items: start;
-  padding: 0.55rem;
+  padding: 0.65rem;
+  border: 1px solid rgba(255, 193, 7, 0.16);
   border-radius: 9px;
   background: rgba(0, 0, 0, 0.22);
   color: rgba(255, 255, 255, 0.78);

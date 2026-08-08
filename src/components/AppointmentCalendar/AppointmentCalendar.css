@@ -99,7 +99,7 @@
   min-width: 0;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 0.25rem;
   width: auto;
   max-width: 100%;
@@ -735,12 +735,7 @@
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  background: #101825;
-}
-
-.cal__bar {
-  top: 0;
-  padding-block: 0.25rem;
+  background: transparent;
 }
 
 .cal__nav,
