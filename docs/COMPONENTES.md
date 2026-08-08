@@ -86,6 +86,7 @@ Las APIs pueden ampliarse, pero no deben romper nombres accesibles, estados ni c
 
 ## Migración y deuda conocida
 
+- `.btn--ghost` (`src/components/Header/Header.css`) quedó sin ningún consumidor tras reemplazar el botón "Iniciar Sesion" por "Soy Paciente" (2026-08-07, ver `CHANGELOG.md`); pendiente eliminarla en un follow-up de limpieza.
 - Migrar gradualmente estilos legacy de las páginas a tokens compartidos.
 - Consolidar primitives futuros (`Modal`, `Field`, `StatusMessage`, `Card`) después de revisar duplicación real.
 - Añadir cobertura de pruebas visuales/Storybook cuando el proyecto adopte esa herramienta.

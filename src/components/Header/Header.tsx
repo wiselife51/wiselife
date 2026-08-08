@@ -179,8 +179,12 @@ const Header: React.FC = () => {
           </svg>
           <span>Soy Psicologo</span>
         </button>
-        <button className="btn btn--ghost" type="button" onClick={() => navigate('/login')}>
-          <span>Iniciar Sesion</span>
+        <button className="btn btn--outline-cyan" type="button" onClick={() => navigate('/login')}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          <span>Soy Paciente</span>
         </button>
         <button className="btn btn--primary" type="button" onClick={() => navigate('/login')}>
           <span>Agendar Cita</span>
@@ -237,8 +241,12 @@ const Header: React.FC = () => {
             </svg>
             <span>Soy Psicologo</span>
           </button>
-          <button className="btn btn--ghost btn--full" onClick={() => { handleLinkClick(); navigate('/login'); }} type="button">
-            Iniciar Sesion
+          <button className="btn btn--outline-cyan btn--full" onClick={() => { handleLinkClick(); navigate('/login'); }} type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            <span>Soy Paciente</span>
           </button>
           <button className="btn btn--primary btn--full" onClick={() => { handleLinkClick(); navigate('/login'); }} type="button">
             <span>Agendar Cita</span>

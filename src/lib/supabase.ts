@@ -1,6 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://iwrftvmlookoakmbvffk.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3cmZ0dm1sb29rb2FrbWJ2ZmZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyNTM4NjAsImV4cCI6MjA4NTgyOTg2MH0.um75O0iV1SWG9GmAPkTaTA7aNOWXZrVe8XhHRPCwm2s';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+// Sin fallback a propósito: un valor por defecto haría que un entorno mal
+// configurado apuntara silenciosamente a la base de datos de producción.
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error(
+    'Faltan las variables de entorno de Supabase. Define VITE_SUPABASE_URL y ' +
+      'VITE_SUPABASE_ANON_KEY en tu .env.local (desarrollo) o en la configuracion ' +
+      'del entorno en Vercel (preview y produccion).'
+  );
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);

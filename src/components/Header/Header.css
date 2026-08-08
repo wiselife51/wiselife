@@ -204,6 +204,19 @@
   box-shadow: 0 4px 16px rgba(126, 87, 194, 0.2);
 }
 
+.btn--outline-cyan {
+  background: rgba(66, 165, 245, 0.08);
+  color: #4dd0e1;
+  border: 1.5px solid rgba(66, 165, 245, 0.35);
+}
+
+.btn--outline-cyan:hover {
+  background: rgba(66, 165, 245, 0.18);
+  border-color: rgba(77, 208, 225, 0.6);
+  color: #80deea;
+  box-shadow: 0 4px 16px rgba(66, 165, 245, 0.2);
+}
+
 .btn--ghost {
   background: transparent;
   color: rgba(255, 255, 255, 0.85);
