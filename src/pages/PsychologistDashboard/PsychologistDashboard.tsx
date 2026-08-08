@@ -786,7 +786,6 @@ const PsychologistDashboard: React.FC = () => {
         style={showMobileMenu ? { position: 'fixed', inset: '0 auto 0 0', zIndex: 1000, transform: 'translate3d(0, 0, 0)' } : undefined}
       >
         <div className="psy-dash-sidebar-header">
-          <button type="button" className="psy-mobile-menu-close" onClick={() => setShowMobileMenu(false)} aria-label="Cerrar menú" />
           <div className="psy-dash-brand">
             <div className="psy-dash-logo">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" strokeWidth="2">
