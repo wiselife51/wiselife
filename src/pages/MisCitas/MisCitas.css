@@ -336,7 +336,7 @@
 /* Misma contención y jerarquía visual que la agenda profesional. */
 .mc-page { min-width: 0; overflow-x: hidden; padding-bottom: 3rem; }
 .mc-controls, .mc-cal-controls, .mc-nav, .mc-cal-nav, .mc-views, .mc-cal-views { min-width: 0; flex-wrap: wrap; }
-.mc-controls, .mc-cal-controls { position: sticky; top: 0; z-index: 4; padding-block: 0.25rem; background: #101825; }
+.mc-controls, .mc-cal-controls { position: sticky; top: 0; z-index: 4; padding-block: 0.25rem; background: #101825; justify-content: center; }
 .mc-title, .mc-cal-title { min-width: 0; max-width: min(24rem, 60vw); overflow-wrap: anywhere; }
 .mc-month-header, .mc-month-grid { grid-template-columns: repeat(7, minmax(0, 1fr)); }
 .mc-month-cell { min-width: 0; box-sizing: border-box; }

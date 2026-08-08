@@ -196,8 +196,19 @@ html, body, #root { min-height: 100%; background: #0a0f19; }
 .dash-layout-content { min-width: 0; min-height: 0; overflow-x: hidden; padding-bottom: 3rem; }
 
 @media (max-width: 480px) {
-  .dash-layout-topbar { align-items: flex-start; }
-  .dash-layout-page-title { flex: 1 1 150px; }
-  .dash-layout-topbar-right { flex: 0 1 auto; }
+  .dash-layout-topbar {
+    align-items: center;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 0.5rem;
+    padding-inline: 0.75rem;
+  }
+  .dash-layout-menu-btn {
+    position: static;
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .dash-layout-page-title { min-width: 0; font-size: 1rem; line-height: 1.25; }
+  .dash-layout-topbar-right { min-width: 0; margin-left: 0; justify-content: flex-end; }
   .dash-layout-content { padding-inline: 0.75rem; padding-bottom: 2rem; }
 }
