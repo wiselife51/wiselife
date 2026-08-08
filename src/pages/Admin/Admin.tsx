@@ -88,7 +88,7 @@ const Admin: React.FC = () => {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [rows, setRows] = useState<PsychologistRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<VerificationStatus | 'all'>('submitted');
+  const [filter, setFilter] = useState<VerificationStatus | 'all'>('all');
   const [reloadKey, setReloadKey] = useState(0);
 
   const [selected, setSelected] = useState<PsychologistRow | null>(null);
@@ -305,7 +305,7 @@ const Admin: React.FC = () => {
               {docsLoading ? (
                 <p className="admin__empty">Cargando documentos...</p>
               ) : docs.length === 0 ? (
-                <p className="admin__empty">Este profesional no ha cargado documentos.</p>
+                <p className="admin__empty">Este profesional no ha cargado documentos. Puedes aprobarlo solo si es una cuenta de prueba o si verificaste sus datos por otro medio.</p>
               ) : (
                 docs.map((d) => (
                   <button key={d.id} type="button" className="admin-doc" onClick={() => openDocument(d)}>
