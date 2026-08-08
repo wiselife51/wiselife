@@ -801,13 +801,13 @@
 }
 
 @media (max-width: 720px) {
-  .cal__bar { align-items: center; }
-  .cal__nav { flex: 1 1 auto; min-width: 0; }
-  .cal__views { align-self: center; }
-  .cal__filters { flex-basis: 100%; }
+  .cal__bar { align-items: center; gap: 0.35rem; }
+  .cal__nav { flex: 1 1 100%; min-width: 0; justify-content: center; gap: 0.3rem; }
+  .cal__views { align-self: center; margin-inline: auto; }
+  .cal__filters { flex-basis: 100%; justify-content: center; }
   .cal__hint { max-width: 100%; }
   .cal__heading { flex: 1 1 auto; max-width: none; text-align: center; }
-  .cal__cell { min-height: 68px; padding: 0.3rem; }
+  .cal__cell { min-height: 52px; padding: 0.25rem; }
 }
 
 @media (max-width: 420px) {

@@ -1730,21 +1730,22 @@ body:has(.psy-dash) {
 
   .psy-dash-sidebar {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0 auto 0 0;
   width: min(86vw, 320px);
   max-width: 320px;
   height: 100dvh;
-  z-index: 210;
-  background: rgba(17, 24, 39, 0.68);
+  z-index: 1000;
+  background: rgba(17, 24, 39, 0.98);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   transform: translate3d(-105%, 0, 0);
   transition: transform 0.28s var(--psy-smooth);
   box-shadow: 20px 0 48px rgba(0, 0, 0, 0.42);
   overflow-x: hidden;
+  overflow-y: auto;
   visibility: visible;
   overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   }
 
   .psy-dash-sidebar--open {
@@ -1754,7 +1755,7 @@ body:has(.psy-dash) {
   .psy-mobile-menu-backdrop {
     position: fixed;
     inset: 0;
-    z-index: 205;
+    z-index: 990;
     border: 0;
     background: rgba(0, 0, 0, 0.42);
     backdrop-filter: blur(2px);
@@ -1766,13 +1767,12 @@ body:has(.psy-dash) {
     left: auto;
     min-width: 44px;
     min-height: 44px;
-    z-index: 220;
+    z-index: 1010;
   }
 
-
   .psy-dash-main {
-    padding: 1.5rem 1rem;
-    margin-top: 60px;
+    padding: 0.75rem 0.75rem 1.25rem;
+    margin-top: 0;
   }
 
   .psy-dash-header {
