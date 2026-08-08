@@ -737,7 +737,14 @@
 }
 
 .cal__month {
+  display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
+  width: 100%;
+  min-width: 0;
+  overflow: visible;
+}
+
+.cal__cell {
   overflow: hidden;
 }
 
@@ -754,12 +761,14 @@
 }
 
 @media (max-width: 720px) {
-  .cal__bar { align-items: flex-start; }
-  .cal__nav { flex: 1 1 100%; }
-  .cal__views { align-self: flex-start; }
+  .cal__bar { align-items: center; }
+  .cal__nav { flex: 1 1 auto; }
+  .cal__views { align-self: center; }
   .cal__filters { top: 6.5rem; }
   .cal__heading { flex: 1 1 auto; max-width: none; text-align: center; }
   .cal__cell { min-height: 68px; padding: 0.3rem; }
+  .cal__weekday { font-size: 0.6rem; }
+  .cal-chip { padding-inline: 0.3rem; }
 }
 
 @media (max-width: 420px) {

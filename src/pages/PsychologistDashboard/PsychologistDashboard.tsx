@@ -127,6 +127,7 @@ const PsychologistDashboard: React.FC = () => {
 
   // Mobile menu
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [upcomingIndex, setUpcomingIndex] = useState(0);
 
   // Clinical History modals
   const [showClinicalRecordModal, setShowClinicalRecordModal] = useState(false);
@@ -591,8 +592,21 @@ const PsychologistDashboard: React.FC = () => {
   const daySlots = availability.filter((s) => s.day_of_week === selectedDay);
 
   const upcomingAppts = appointments.filter(
-    (a) => a.appointment_date >= toDateStr(today) && (a.status === 'confirmada' || a.status === 'pendiente_pago')
+  (a) => a.appointment_date >= toDateStr(today) && (a.status === 'confirmada' || a.status === 'pendiente_pago')
   ).slice(0, 8);
+
+  useEffect(() => {
+    if (upcomingAppts.length <= 1) {
+      setUpcomingIndex(0);
+      return;
+    }
+    setUpcomingIndex((current) => Math.min(current, upcomingAppts.length - 1));
+    const timer = window.setInterval(() => {
+      setUpcomingIndex((current) => (current + 1) % upcomingAppts.length);
+    }, 5000);
+    return () => window.clearInterval(timer);
+  }, [upcomingAppts.length]);
+
 
   // Adaptacion al contrato del calendario compartido. En el panel del
   // psicologo la contraparte visible es el paciente.
@@ -748,8 +762,15 @@ const PsychologistDashboard: React.FC = () => {
         {upcomingAppts.length > 0 && (
           <div className="psy-dash-upcoming-mini">
             <h4>Proximas citas</h4>
-            {upcomingAppts.slice(0, 4).map((a) => (
-              <button key={a.id} className="psy-dash-upcoming-item" onClick={() => { setActiveTab('calendario'); setSelectedAppt(a); setShowMobileMenu(false); }} type="button">
+          <div className="psy-dash-upcoming-carousel" aria-live="polite">
+            {upcomingAppts.length > 1 && (
+              <button type="button" className="psy-dash-upcoming-arrow" aria-label="Cita anterior" onClick={() => setUpcomingIndex((current) => (current - 1 + upcomingAppts.length) % upcomingAppts.length)}>
+                ‹
+              </button>
+            )}
+            {[upcomingAppts[upcomingIndex]].map((a) => (
+            <button key={a.id} className="psy-dash-upcoming-item" onClick={() => { setActiveTab('calendario'); setSelectedAppt(a); setShowMobileMenu(false); }} type="button">
+
                 <div className="psy-dash-upcoming-avatar-sm">
                   {a.patient?.avatar_url ? (
                     <img src={a.patient.avatar_url} alt="" crossOrigin="anonymous" />
@@ -766,7 +787,20 @@ const PsychologistDashboard: React.FC = () => {
                 </span>
               </button>
             ))}
+            {upcomingAppts.length > 1 && (
+              <button type="button" className="psy-dash-upcoming-arrow" aria-label="Siguiente cita" onClick={() => setUpcomingIndex((current) => (current + 1) % upcomingAppts.length)}>
+                ›
+              </button>
+            )}
           </div>
+          {upcomingAppts.length > 1 && (
+            <div className="psy-dash-upcoming-dots" aria-label={`Cita ${upcomingIndex + 1} de ${upcomingAppts.length}`}>
+              {upcomingAppts.map((a, index) => (
+                <button key={a.id} type="button" className={`psy-dash-upcoming-dot ${index === upcomingIndex ? 'psy-dash-upcoming-dot--active' : ''}`} aria-label={`Mostrar cita ${index + 1}`} onClick={() => setUpcomingIndex(index)} />
+              ))}
+            </div>
+          )}
+        </div>
         )}
 
         <button type="button" className="psy-dash-signout" onClick={handleSignOut}>
