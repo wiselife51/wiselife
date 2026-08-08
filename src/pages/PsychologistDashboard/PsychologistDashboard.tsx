@@ -694,6 +694,10 @@ const PsychologistDashboard: React.FC = () => {
 
   return (
     <div className="psy-dash">
+      <video className="psy-dash-video" autoPlay loop muted playsInline aria-hidden="true">
+        <source src="/assets/VideoFondo.mp4" type="video/mp4" />
+      </video>
+      <div className="psy-dash-video-overlay" aria-hidden="true" />
       {/* Sidebar */}
       <aside className={`psy-dash-sidebar ${showMobileMenu ? 'psy-dash-sidebar--open' : ''}`}>
         <div className="psy-dash-sidebar-header">
