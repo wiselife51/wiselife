@@ -593,7 +593,7 @@ const PsychologistDashboard: React.FC = () => {
 
   const upcomingAppts = appointments.filter(
   (a) => a.appointment_date >= toDateStr(today) && (a.status === 'confirmada' || a.status === 'pendiente_pago')
-  ).slice(0, 8);
+  );
 
   useEffect(() => {
     if (upcomingAppts.length <= 1) {
