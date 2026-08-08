@@ -32,15 +32,36 @@ const Login: React.FC = () => {
         }
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
-          const { data: adminRole } = await supabase
+          const { data: roles } = await supabase
             .from('user_roles')
             .select('role_code')
             .eq('user_id', user.id)
-            .eq('role_code', 'admin')
-            .maybeSingle();
+            .in('role_code', ['admin', 'psychologist', 'patient']);
 
-          if (adminRole) {
+          const roleCodes = (roles ?? []).map((role) => role.role_code);
+
+          if (roleCodes.includes('admin')) {
             navigate('/admin');
+            return;
+          }
+
+          if (roleCodes.includes('psychologist')) {
+            const { data: psychologist } = await supabase
+              .from('psychologists')
+              .select('verification_status')
+              .eq('user_id', user.id)
+              .maybeSingle();
+
+            if (psychologist?.verification_status === 'approved') {
+              navigate('/psicologo/dashboard');
+            } else {
+              navigate('/psicologo/onboarding');
+            }
+            return;
+          }
+
+          if (roleCodes.includes('patient')) {
+            navigate('/dashboard');
             return;
           }
         }
