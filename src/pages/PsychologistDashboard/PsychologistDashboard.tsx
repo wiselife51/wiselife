@@ -17,6 +17,11 @@ interface PsychologistProfile {
   avatar_url: string | null;
   phone: string | null;
   specialties: string[];
+  bio?: string | null;
+  modality?: string[];
+  city?: string | null;
+  years_experience?: number | null;
+  languages?: string[];
   session_duration: number;
   session_price: number;
   onboarding_completed: boolean;
@@ -80,7 +85,7 @@ const HOUR_OPTIONS = Array.from({ length: 15 }, (_, i) => {
 });
 
 
-type ActiveTab = 'calendario' | 'agenda' | 'bloqueos';
+type ActiveTab = 'calendario' | 'agenda' | 'bloqueos' | 'perfil';
 
 function formatTime(t: string): string {
   const [h, m] = t.split(':');
@@ -98,6 +103,8 @@ const PsychologistDashboard: React.FC = () => {
   const [availability, setAvailability] = useState<AvailabilitySlot[]>([]);
   const [blocks, setBlocks] = useState<ScheduleBlock[]>([]);
   const [loadingData, setLoadingData] = useState(true);
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [profileMessage, setProfileMessage] = useState('');
 
   // Tabs and calendar
   const [activeTab, setActiveTab] = useState<ActiveTab>('calendario');
@@ -174,6 +181,67 @@ const PsychologistDashboard: React.FC = () => {
   };
 
   const today = useMemo(() => new Date(), []);
+
+  const handleProfileAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !profile) return;
+    if (!file.type.startsWith('image/')) {
+      setProfileMessage('Selecciona una imagen válida.');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setProfileMessage('La imagen debe pesar menos de 5 MB.');
+      return;
+    }
+    setProfileMessage('Subiendo foto...');
+    const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+    const path = `${profile.id}/profile/avatar-${Date.now()}.${extension}`;
+    const { error: uploadError } = await supabase.storage.from('psychologist-documents').upload(path, file, {
+      cacheControl: '3600',
+      contentType: file.type,
+      upsert: true,
+    });
+    if (uploadError) {
+      setProfileMessage('No fue posible subir la foto.');
+      return;
+    }
+    const { data: publicData } = supabase.storage.from('psychologist-documents').getPublicUrl(path);
+    const { data, error } = await supabase.from('psychologists').update({ avatar_url: publicData.publicUrl }).eq('id', profile.id).select('*').single();
+    if (error) {
+      setProfileMessage('La foto subió, pero no se pudo actualizar el perfil.');
+      return;
+    }
+    setProfile(data as PsychologistProfile);
+    setProfileMessage('Foto de perfil actualizada.');
+  };
+
+  const handleProfileSave = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!profile) return;
+    setSavingProfile(true);
+    setProfileMessage('');
+    const form = new FormData(event.currentTarget);
+    const payload = {
+      full_name: String(form.get('full_name') || '').trim(),
+      phone: String(form.get('phone') || '').trim() || null,
+      bio: String(form.get('bio') || '').trim() || null,
+      specialties: String(form.get('specialties') || '').split(',').map((item) => item.trim()).filter(Boolean),
+      modality: String(form.get('modality') || '').split(',').map((item) => item.trim()).filter(Boolean),
+      city: String(form.get('city') || '').trim() || null,
+      years_experience: Number(form.get('years_experience') || 0),
+      languages: String(form.get('languages') || '').split(',').map((item) => item.trim()).filter(Boolean),
+      session_duration: Number(form.get('session_duration') || 50),
+      session_price: Number(form.get('session_price') || 0),
+    };
+    const { data, error } = await supabase.from('psychologists').update(payload).eq('id', profile.id).select('*').single();
+    if (error) {
+      setProfileMessage('No fue posible guardar los cambios. Verifica los datos e inténtalo de nuevo.');
+    } else {
+      setProfile(data as PsychologistProfile);
+      setProfileMessage('Perfil actualizado correctamente.');
+    }
+    setSavingProfile(false);
+  };
 
   const fetchData = useCallback(async () => {
     if (!user) return;
@@ -706,6 +774,10 @@ const PsychologistDashboard: React.FC = () => {
     );
   }
 
+  const openAppointmentDetails = (appointment: Appointment) => {
+    setSelectedAppt(appointment);
+  };
+
   return (
     <div className="psy-dash">
       <video className="psy-dash-video" autoPlay loop muted playsInline aria-hidden="true">
@@ -732,17 +804,22 @@ const PsychologistDashboard: React.FC = () => {
               </svg>
               <span>Vida Sabia</span>
             </div>
-            <div className="psy-dash-badge">Profesional</div>
+            <div className="psy-dash-badge">Psicólogo profesional</div>
           </div>
         </div>
 
         <div className="psy-dash-profile">
-          <div className="psy-dash-avatar">
+          <div className="psy-dash-avatar psy-dash-avatar--editable">
             {profile?.avatar_url ? (
               <img src={profile.avatar_url} alt={profile.full_name} crossOrigin="anonymous" />
             ) : (
               <span>{profile?.full_name?.charAt(0) || 'P'}</span>
             )}
+            <label className="psy-dash-avatar-upload" title="Cambiar foto de perfil">
+              <input type="file" accept="image/*" onChange={handleProfileAvatarChange} />
+              <span aria-hidden="true">+</span>
+              <span className="sr-only">Cambiar foto de perfil</span>
+            </label>
           </div>
           <h3 className="psy-dash-name">{profile?.full_name}</h3>
           <p className="psy-dash-email">{profile?.email}</p>
@@ -761,12 +838,16 @@ const PsychologistDashboard: React.FC = () => {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" /></svg>
             <span>Bloqueos</span>
           </button>
+          <button type="button" className={`psy-dash-nav-item ${activeTab === 'perfil' ? 'psy-dash-nav-item--active' : ''}`} onClick={() => { setActiveTab('perfil'); setProfileMessage(''); setShowMobileMenu(false); }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="8" r="3" /><path d="M5 20c.8-3.2 3.1-5 7-5s6.2 1.8 7 5" /></svg>
+            <span>Perfil</span>
+          </button>
         {upcomingAppts.length > 0 && (
           <div className="psy-dash-upcoming-mini">
-            <h4>Proximas citas</h4>
+            <h4>Próximas citas</h4>
             <div className="psy-dash-upcoming-carousel" aria-live="polite">
               {(upcomingAppts.length > 0 ? [upcomingAppts[upcomingIndex]] : []).map((a) => (
-                <button key={a.id} className="psy-dash-upcoming-item" onClick={() => { setActiveTab('calendario'); setSelectedAppt(a); setShowMobileMenu(false); }} type="button">
+                <button key={a.id} className="psy-dash-upcoming-item" data-testid={`upcoming-appointment-${a.id}`} onPointerUp={(event) => { event.preventDefault(); event.stopPropagation(); openAppointmentDetails(a); }} onClick={(event) => { event.preventDefault(); event.stopPropagation(); }} type="button">
                   <div className="psy-dash-upcoming-avatar-sm">
                     {a.patient?.avatar_url ? (
                       <img src={a.patient.avatar_url} alt="" crossOrigin="anonymous" />
@@ -788,7 +869,7 @@ const PsychologistDashboard: React.FC = () => {
         )}
         {warnings.length > 0 && (
           <div className="psy-dash-sidebar-pending">
-            <h4><span aria-hidden="true">⚠</span> Pendientes importantes</h4>
+            <h4>Pendientes importantes</h4>
             {warnings.map((warning) => (
               <button
                 key={warning.appointmentId}
@@ -1107,6 +1188,42 @@ const PsychologistDashboard: React.FC = () => {
             )}
           </>
         )}
+
+        {activeTab === 'perfil' && profile && (
+          <section className="psy-profile-page">
+            <div className="psy-dash-header">
+              <div>
+                <span className="psy-profile-kicker">CUENTA PROFESIONAL</span>
+                <h1>Mi perfil</h1>
+                <p>Actualiza la información que verán tus pacientes.</p>
+              </div>
+            </div>
+            <form className="psy-profile-card" onSubmit={handleProfileSave}>
+              <div className="psy-profile-card-head">
+                <div className="psy-dash-avatar psy-profile-avatar">
+                  {profile.avatar_url ? <img src={profile.avatar_url} alt={profile.full_name} crossOrigin="anonymous" /> : <span>{profile.full_name.charAt(0)}</span>}
+                </div>
+                <div><h2>Información del profesional</h2><p>{profile.email}</p></div>
+              </div>
+              <div className="psy-profile-grid">
+                <label>Nombre completo<input name="full_name" defaultValue={profile.full_name} required /></label>
+                <label>Teléfono<input name="phone" defaultValue={profile.phone || ''} placeholder="Tu número de contacto" /></label>
+                <label>Ciudad<input name="city" defaultValue={profile.city || ''} placeholder="Bogotá" /></label>
+                <label>Años de experiencia<input name="years_experience" type="number" min="0" defaultValue={profile.years_experience || 0} /></label>
+                <label>Especialidades<input name="specialties" defaultValue={(profile.specialties || []).join(', ')} placeholder="Ansiedad, pareja, duelo" /></label>
+                <label>Modalidad<input name="modality" defaultValue={(profile.modality || []).join(', ')} placeholder="Virtual, presencial" /></label>
+                <label>Idiomas<input name="languages" defaultValue={(profile.languages || []).join(', ')} placeholder="Español, inglés" /></label>
+                <label>Duración de sesión (minutos)<input name="session_duration" type="number" min="15" step="5" defaultValue={profile.session_duration || 50} /></label>
+                <label>Tarifa por sesión<input name="session_price" type="number" min="0" defaultValue={profile.session_price || 0} /></label>
+                <label className="psy-profile-field-wide">Biografía<textarea name="bio" defaultValue={profile.bio || ''} rows={5} placeholder="Cuéntales a tus pacientes sobre tu enfoque profesional..." /></label>
+              </div>
+              <div className="psy-profile-actions">
+                {profileMessage && <span className="psy-profile-message" role="status">{profileMessage}</span>}
+                <button type="submit" className="psy-dash-btn-primary" disabled={savingProfile}>{savingProfile ? 'Guardando...' : 'Guardar cambios'}</button>
+              </div>
+            </form>
+          </section>
+        )}
       </main>
 
       {/* Quick Block Modal */}
@@ -1149,10 +1266,10 @@ const PsychologistDashboard: React.FC = () => {
 
       {/* Appointment Detail Modal */}
       {selectedAppt && (
-        <div className="psy-dash-modal-backdrop" onClick={() => setSelectedAppt(null)}>
-          <div className="psy-dash-modal psy-dash-modal--wide" onClick={(e) => e.stopPropagation()}>
+        <div className="psy-dash-modal-backdrop psy-appt-modal-layer" style={{ zIndex: 5000 }} onClick={() => setSelectedAppt(null)}>
+          <div className="psy-dash-modal psy-dash-modal--wide" role="dialog" aria-modal="true" aria-labelledby="appointment-detail-title" onClick={(e) => e.stopPropagation()}>
             <div className="psy-appt-modal-header">
-              <h3>Detalle de cita</h3>
+              <h3 id="appointment-detail-title">Detalle de cita</h3>
               <button className="psy-appt-modal-close" onClick={() => setSelectedAppt(null)} type="button" aria-label="Cerrar">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
               </button>
@@ -1184,7 +1301,7 @@ const PsychologistDashboard: React.FC = () => {
                   <span>{formatTime(selectedAppt.start_time)} - {formatTime(selectedAppt.end_time)}</span>
                 </div>
                 <div className="psy-appt-detail-row">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M12 7v10M15 9.5c-.7-.7-1.7-1-3-1-1.7 0-3 .8-3 2s1.3 2 3 2 3 .8 3 2-1.3 2-3 2c-1.3 0-2.3-.3-3-1" /></svg>
                   <span>${selectedAppt.payment_amount?.toLocaleString()} COP</span>
                   <span className={`psy-appt-pay-badge psy-appt-pay-badge--${selectedAppt.payment_status}`}>
                     {selectedAppt.payment_status === 'pagado' ? 'Pagado' : selectedAppt.payment_status === 'procesando' ? 'Procesando' : 'Pendiente'}
@@ -1192,12 +1309,12 @@ const PsychologistDashboard: React.FC = () => {
                 </div>
                 {selectedAppt.payment_reference && (
                   <div className="psy-appt-detail-row">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 3h8l3 3v12l-3 3H8l-3-3V6z" /><path d="M9 9h6M9 13h6M9 17h4" /></svg>
                     <span>Ref: {selectedAppt.payment_reference} ({selectedAppt.payment_method})</span>
                   </div>
                 )}
                 <div className="psy-appt-detail-row">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M8 12l2.5 2.5L16 9" /></svg>
                   <span>Estado: </span>
                   <span className={`psy-appt-status-badge psy-appt-status-badge--${selectedAppt.status}`}>
                     {selectedAppt.status === 'confirmada' ? 'Confirmada' : selectedAppt.status === 'pendiente_pago' ? 'Pendiente de pago' : selectedAppt.status === 'completada' ? 'Completada' : selectedAppt.status}
