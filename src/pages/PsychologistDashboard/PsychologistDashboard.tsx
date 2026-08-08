@@ -776,7 +776,6 @@ const PsychologistDashboard: React.FC = () => {
 
   const openAppointmentDetails = (appointment: Appointment) => {
     setSelectedAppt(appointment);
-    setShowMobileMenu(false);
   };
 
   return (
@@ -848,7 +847,7 @@ const PsychologistDashboard: React.FC = () => {
             <h4>Próximas citas</h4>
             <div className="psy-dash-upcoming-carousel" aria-live="polite">
               {(upcomingAppts.length > 0 ? [upcomingAppts[upcomingIndex]] : []).map((a) => (
-                <button key={a.id} className="psy-dash-upcoming-item" onClick={(event) => { event.preventDefault(); event.stopPropagation(); openAppointmentDetails(a); }} type="button">
+                <button key={a.id} className="psy-dash-upcoming-item" data-testid={`upcoming-appointment-${a.id}`} onPointerUp={(event) => { event.preventDefault(); event.stopPropagation(); openAppointmentDetails(a); }} onClick={(event) => { event.preventDefault(); event.stopPropagation(); }} type="button">
                   <div className="psy-dash-upcoming-avatar-sm">
                     {a.patient?.avatar_url ? (
                       <img src={a.patient.avatar_url} alt="" crossOrigin="anonymous" />
