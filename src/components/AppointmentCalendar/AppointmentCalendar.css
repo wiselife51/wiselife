@@ -804,13 +804,15 @@
   .cal__bar {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 0.5rem;
+    align-items: start;
+    gap: 0.35rem;
+    padding-top: 0;
   }
 
   .cal__nav {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    align-items: center;
     min-width: 0;
     justify-content: center;
     gap: 0.3rem;
@@ -824,9 +826,11 @@
   }
 
   .cal__filters {
-    flex-basis: 100%;
+    grid-column: 1 / -1;
+    flex-basis: auto;
     justify-content: center;
-    order: 5;
+    order: 0;
+    margin-top: 0.05rem;
   }
 
   .cal__views {

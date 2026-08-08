@@ -1735,6 +1735,7 @@ body:has(.psy-dash) {
   bottom: 0;
   left: 0;
   display: flex !important;
+  flex-direction: column;
   width: min(86vw, 320px);
   max-width: 320px;
   height: 100dvh;
@@ -1756,6 +1757,44 @@ body:has(.psy-dash) {
 
   .psy-dash-sidebar--open {
   transform: translate3d(0, 0, 0);
+  }
+
+  .psy-dash-sidebar .psy-dash-sidebar-header {
+    flex: 0 0 auto;
+    padding: 1.25rem 1rem 0.75rem;
+  }
+
+  .psy-dash-sidebar .psy-dash-profile {
+    flex: 0 0 auto;
+    padding: 0.75rem 0;
+    margin-bottom: 0.75rem;
+  }
+
+  .psy-dash-sidebar .psy-dash-nav {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 0.75rem;
+  }
+
+  .psy-dash-sidebar .psy-dash-signout {
+    flex: 0 0 auto;
+    margin-top: auto;
+  }
+
+  .psy-dash-sidebar .psy-dash-upcoming-mini,
+  .psy-dash-sidebar .psy-dash-sidebar-pending {
+    position: relative;
+    z-index: 2;
+    pointer-events: auto;
+  }
+
+  .psy-dash-sidebar .psy-dash-upcoming-item,
+  .psy-dash-sidebar .psy-dash-sidebar-pending-card {
+    position: relative;
+    z-index: 3;
+    pointer-events: auto;
   }
 
   .psy-dash > .psy-mobile-menu-backdrop {
