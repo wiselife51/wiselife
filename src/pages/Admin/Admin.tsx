@@ -88,7 +88,7 @@ const Admin: React.FC = () => {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [rows, setRows] = useState<PsychologistRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<VerificationStatus | 'all'>('submitted');
+  const [filter, setFilter] = useState<VerificationStatus | 'all'>('all');
   const [reloadKey, setReloadKey] = useState(0);
 
   const [selected, setSelected] = useState<PsychologistRow | null>(null);
@@ -176,15 +176,11 @@ const Admin: React.FC = () => {
     setActing(true);
     setActionError('');
 
-    const { error } = await supabase
-      .from('psychologists')
-      .update({
-        verification_status: status,
-        verified_at: new Date().toISOString(),
-        verified_by: user.id,
-        rejection_reason: status === 'rejected' ? rejectReason.trim() : null,
-      })
-      .eq('id', selected.id);
+    const { error } = await supabase.rpc('admin_set_psychologist_verification', {
+      p_psychologist_id: selected.id,
+      p_status: status,
+      p_notes: status === 'rejected' ? rejectReason.trim() : null,
+    });
 
     if (error) {
       setActing(false);
@@ -192,14 +188,20 @@ const Admin: React.FC = () => {
       return;
     }
 
-    // Al aprobar se concede tambien el rol de aplicacion.
+    // El RPC valida al administrador y el trigger aplica el estado de verificacion.
     if (status === 'approved') {
-      await supabase
+      const { error: roleError } = await supabase
         .from('user_roles')
         .upsert(
           { user_id: selected.user_id, role_code: 'psychologist', granted_by: user.id },
           { onConflict: 'user_id,role_code' }
         );
+
+      if (roleError) {
+        setActing(false);
+        setActionError(`Psicologo aprobado, pero no se pudo asignar el rol: ${roleError.message}`);
+        return;
+      }
     }
 
     setActing(false);
@@ -305,7 +307,7 @@ const Admin: React.FC = () => {
               {docsLoading ? (
                 <p className="admin__empty">Cargando documentos...</p>
               ) : docs.length === 0 ? (
-                <p className="admin__empty">Este profesional no ha cargado documentos.</p>
+                <p className="admin__empty">Este profesional no ha cargado documentos. Puedes aprobarlo solo si es una cuenta de prueba o si verificaste sus datos por otro medio.</p>
               ) : (
                 docs.map((d) => (
                   <button key={d.id} type="button" className="admin-doc" onClick={() => openDocument(d)}>

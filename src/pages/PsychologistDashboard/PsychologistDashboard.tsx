@@ -105,6 +105,7 @@ const PsychologistDashboard: React.FC = () => {
 
   // Appointment detail modal
   const [selectedAppt, setSelectedAppt] = useState<Appointment | null>(null);
+  const [upcomingIndex, setUpcomingIndex] = useState(0);
 
   // Block form
   const [showBlockForm, setShowBlockForm] = useState(false);
@@ -127,7 +128,6 @@ const PsychologistDashboard: React.FC = () => {
 
   // Mobile menu
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [upcomingIndex, setUpcomingIndex] = useState(0);
 
   // Clinical History modals
   const [showClinicalRecordModal, setShowClinicalRecordModal] = useState(false);
@@ -713,7 +713,10 @@ const PsychologistDashboard: React.FC = () => {
       </video>
       <div className="psy-dash-video-overlay" aria-hidden="true" />
       {/* Sidebar */}
-      <aside className={`psy-dash-sidebar ${showMobileMenu ? 'psy-dash-sidebar--open' : ''}`}>
+      <aside
+        className={`psy-dash-sidebar ${showMobileMenu ? 'psy-dash-sidebar--open' : ''}`}
+        style={showMobileMenu ? { position: 'fixed', inset: '0 auto 0 0', zIndex: 1000, transform: 'translate3d(0, 0, 0)' } : undefined}
+      >
         <div className="psy-dash-sidebar-header">
           <div className="psy-dash-brand">
             <div className="psy-dash-logo">
@@ -758,52 +761,58 @@ const PsychologistDashboard: React.FC = () => {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" /></svg>
             <span>Bloqueos</span>
           </button>
-        </nav>
-
-        {/* Upcoming mini list */}
         {upcomingAppts.length > 0 && (
           <div className="psy-dash-upcoming-mini">
             <h4>Proximas citas</h4>
-          <div className="psy-dash-upcoming-carousel" aria-live="polite">
-            {upcomingAppts.length > 1 && (
-              <button type="button" className="psy-dash-upcoming-arrow" aria-label="Cita anterior" onClick={() => setUpcomingIndex((current) => (current - 1 + upcomingAppts.length) % upcomingAppts.length)}>
-                ‹
-              </button>
-            )}
-            {[upcomingAppts[upcomingIndex]].map((a) => (
-            <button key={a.id} className="psy-dash-upcoming-item" onClick={() => { setActiveTab('calendario'); setSelectedAppt(a); setShowMobileMenu(false); }} type="button">
-
-                <div className="psy-dash-upcoming-avatar-sm">
-                  {a.patient?.avatar_url ? (
-                    <img src={a.patient.avatar_url} alt="" crossOrigin="anonymous" />
-                  ) : (
-                    <span>{(a.patient?.full_name || 'P').charAt(0)}</span>
-                  )}
-                </div>
-                <div className="psy-dash-upcoming-text">
-                  <strong>{a.patient?.full_name?.split(' ')[0] || 'Paciente'}</strong>
-                  <span>{a.appointment_date.split('-').reverse().join('/')} {formatTime(a.start_time)}</span>
-                </div>
-                <span className={`psy-dash-mini-status psy-dash-mini-status--${a.status}`}>
-                  {a.status === 'confirmada' ? 'OK' : '$'}
-                </span>
-              </button>
-            ))}
-            {upcomingAppts.length > 1 && (
-              <button type="button" className="psy-dash-upcoming-arrow" aria-label="Siguiente cita" onClick={() => setUpcomingIndex((current) => (current + 1) % upcomingAppts.length)}>
-                ›
-              </button>
-            )}
-          </div>
-          {upcomingAppts.length > 1 && (
-            <div className="psy-dash-upcoming-dots" aria-label={`Cita ${upcomingIndex + 1} de ${upcomingAppts.length}`}>
-              {upcomingAppts.map((a, index) => (
-                <button key={a.id} type="button" className={`psy-dash-upcoming-dot ${index === upcomingIndex ? 'psy-dash-upcoming-dot--active' : ''}`} aria-label={`Mostrar cita ${index + 1}`} onClick={() => setUpcomingIndex(index)} />
+            <div className="psy-dash-upcoming-carousel" aria-live="polite">
+              {(upcomingAppts.length > 0 ? [upcomingAppts[upcomingIndex]] : []).map((a) => (
+                <button key={a.id} className="psy-dash-upcoming-item" onClick={() => { setActiveTab('calendario'); setSelectedAppt(a); setShowMobileMenu(false); }} type="button">
+                  <div className="psy-dash-upcoming-avatar-sm">
+                    {a.patient?.avatar_url ? (
+                      <img src={a.patient.avatar_url} alt="" crossOrigin="anonymous" />
+                    ) : (
+                      <span>{(a.patient?.full_name || 'P').charAt(0)}</span>
+                    )}
+                  </div>
+                  <div className="psy-dash-upcoming-text">
+                    <strong>{a.patient?.full_name?.split(' ')[0] || 'Paciente'}</strong>
+                    <span>{a.appointment_date.split('-').reverse().join('/')} {formatTime(a.start_time)}</span>
+                  </div>
+                  <span className={`psy-dash-mini-status psy-dash-mini-status--${a.status}`}>
+                    {a.status === 'confirmada' ? 'OK' : '$'}
+                  </span>
+                </button>
               ))}
             </div>
-          )}
-        </div>
+          </div>
         )}
+        {warnings.length > 0 && (
+          <div className="psy-dash-sidebar-pending">
+            <h4><span aria-hidden="true">⚠</span> Pendientes importantes</h4>
+            {warnings.map((warning) => (
+              <button
+                key={warning.appointmentId}
+                className="psy-dash-sidebar-pending-card"
+                onClick={() => {
+                  const appt = appointments.find((a) => a.id === warning.appointmentId);
+                  if (appt) {
+                    setPendingAppointmentToComplete(appt);
+                    setShowClinicalRecordModal(true);
+                  }
+                }}
+                type="button"
+              >
+                <span className="psy-dash-pending-avatar" aria-hidden="true">!</span>
+                <span className="psy-dash-pending-text">
+                  <strong>{warning.message.split(' - ')[0]}</strong>
+                  <small>{warning.message.split(' - ').slice(1).join(' - ')}</small>
+                </span>
+                <span className="psy-dash-pending-status">HC</span>
+              </button>
+            ))}
+          </div>
+        )}
+        </nav>
 
         <button type="button" className="psy-dash-signout" onClick={handleSignOut}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
@@ -821,7 +830,10 @@ const PsychologistDashboard: React.FC = () => {
       )}
 
       {/* Mobile menu toggle */}
-      <button className="psy-mobile-menu-toggle" onClick={() => setShowMobileMenu(!showMobileMenu)} type="button">
+      <button           className="psy-mobile-menu-toggle"
+          style={{ zIndex: 1300, left: '0.75rem', right: 'auto' }}
+          onClick={() => setShowMobileMenu(!showMobileMenu)}
+          type="button">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           {showMobileMenu ? (
             <><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></>
@@ -833,36 +845,6 @@ const PsychologistDashboard: React.FC = () => {
 
       {/* Main content */}
       <main className="psy-dash-main">
-        {/* Warnings for appointments without clinical record */}
-        {warnings.length > 0 && (
-          <div className="psy-dash-warnings">
-            <h4>⚠️ Pendientes importantes</h4>
-            {warnings.map((warning, i) => (
-              <div key={i} className="warning-card">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-                  <line x1="12" y1="9" x2="12" y2="13"/>
-                  <line x1="12" y1="17" x2="12.01" y2="17"/>
-                </svg>
-                <p>{warning.message}</p>
-                <button
-                  onClick={() => {
-                    const appt = appointments.find(a => a.id === warning.appointmentId);
-                    if (appt) {
-                      setPendingAppointmentToComplete(appt);
-                      setShowClinicalRecordModal(true);
-                    }
-                  }}
-                  className="psy-dash-btn-primary"
-                  type="button"
-                >
-                  Abrir HC ahora
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-
         {/* CALENDARIO TAB */}
         {activeTab === 'calendario' && (
           <AppointmentCalendar
@@ -871,7 +853,10 @@ const PsychologistDashboard: React.FC = () => {
             onReschedule={handleCalendarReschedule}
             onSelect={(a) => {
               const original = appointments.find((x) => x.id === a.id);
-              if (original) setSelectedAppt(original);
+              if (original) {
+                setSelectedAppt(original);
+                setShowMobileMenu(false);
+              }
             }}
             renderDayActions={(dateKey) => (
               <button
@@ -892,7 +877,15 @@ const PsychologistDashboard: React.FC = () => {
               if (!original) return null;
               return (
                 <>
-                  <button type="button" className="cal-action" onClick={() => setSelectedAppt(original)}>
+                  <button
+                    type="button"
+                    className="cal-action"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setSelectedAppt(original);
+                      setShowMobileMenu(false);
+                    }}
+                  >
                     Ver detalle
                   </button>
                   {original.patient?.phone && (

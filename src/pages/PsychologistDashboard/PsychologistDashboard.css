@@ -115,8 +115,8 @@ body:has(.psy-dash) {
   display: flex;
   flex-direction: column;
   padding: 1.5rem;
-  background: var(--psy-surface);
-  border-right: 1px solid var(--psy-border);
+  background: rgba(17, 24, 39, 0.68);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
   position: sticky;
   top: 0;
   backdrop-filter: blur(12px);
@@ -663,7 +663,7 @@ body:has(.psy-dash) {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
+  z-index: 3000 !important;
   animation: fadeIn 0.2s ease;
   padding: 1rem;
 }
@@ -786,42 +786,99 @@ body:has(.psy-dash) {
 
 .psy-dash-upcoming-carousel {
   display: flex;
-  align-items: center;
-  gap: 0.35rem;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .psy-dash-upcoming-carousel > .psy-dash-upcoming-item {
-  flex: 1;
-  min-width: 0;
+  width: 100%;
 }
 
-.psy-dash-upcoming-arrow {
-  width: 28px;
-  height: 28px;
-  flex: 0 0 28px;
-  border: 1px solid var(--psy-border);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.75);
-  cursor: pointer;
+.psy-dash-sidebar-pending {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--psy-border);
 }
 
-.psy-dash-upcoming-dots {
+.psy-dash-sidebar-pending h4 {
   display: flex;
-  justify-content: center;
-  gap: 0.3rem;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0 0 0.25rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
-.psy-dash-upcoming-dot {
-  width: 5px;
-  height: 5px;
-  padding: 0;
-  border: 0;
+.psy-dash-sidebar-pending-card {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid var(--psy-border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.78);
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.psy-dash-sidebar-pending-card:hover {
+  border-color: rgba(126, 87, 194, 0.25);
+  background: rgba(126, 87, 194, 0.1);
+}
+
+.psy-dash-pending-avatar {
+  display: grid;
+  flex: 0 0 26px;
+  width: 26px;
+  height: 26px;
+  place-items: center;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 193, 7, 0.14);
+  color: #ffc107;
+  font-size: 0.78rem;
+  font-weight: 800;
 }
 
-.psy-dash-upcoming-dot--active { background: #4dd0e1; }
+.psy-dash-pending-text {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.12rem;
+}
+
+.psy-dash-pending-text strong,
+.psy-dash-pending-text small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.psy-dash-pending-text strong {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.72rem;
+}
+
+.psy-dash-pending-text small {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.62rem;
+}
+
+.psy-dash-pending-status {
+  flex: 0 0 auto;
+  padding: 0.2rem 0.4rem;
+  border-radius: 999px;
+  background: rgba(255, 193, 7, 0.14);
+  color: #ffc107;
+  font-size: 0.62rem;
+  font-weight: 800;
+}
 
 .psy-dash-upcoming-mini h4 {
   font-size: 0.75rem;
@@ -1671,51 +1728,116 @@ body:has(.psy-dash) {
     flex-direction: column;
   }
 
-  .psy-dash-sidebar {
+  .psy-dash > .psy-dash-sidebar {
   position: fixed;
   top: 0;
+  right: auto;
+  bottom: 0;
   left: 0;
+  display: flex !important;
+  flex-direction: column;
   width: min(86vw, 320px);
   max-width: 320px;
   height: 100dvh;
-  z-index: 210;
+  z-index: 210 !important;
   background: rgba(17, 24, 39, 0.68);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   transform: translate3d(-105%, 0, 0);
+  visibility: visible !important;
+  opacity: 1 !important;
   transition: transform 0.28s var(--psy-smooth);
   box-shadow: 20px 0 48px rgba(0, 0, 0, 0.42);
   overflow-x: hidden;
+  overflow-y: auto;
   visibility: visible;
   overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   }
 
   .psy-dash-sidebar--open {
   transform: translate3d(0, 0, 0);
   }
 
+  .psy-dash-sidebar .psy-dash-sidebar-header {
+    flex: 0 0 auto;
+    padding: 1.25rem 1rem 0.75rem;
+  }
+
   .psy-mobile-menu-backdrop {
     position: fixed;
     inset: 0;
-    z-index: 205;
+    z-index: 90 !important;
     border: 0;
     background: rgba(0, 0, 0, 0.42);
     backdrop-filter: blur(2px);
   }
 
   .psy-mobile-menu-toggle {
-  top: max(0.75rem, env(safe-area-inset-top));
-    right: max(0.75rem, env(safe-area-inset-right));
-    left: auto;
+    top: max(0.75rem, env(safe-area-inset-top));
+    left: max(0.75rem, env(safe-area-inset-left));
+    right: auto;
     min-width: 44px;
     min-height: 44px;
-    z-index: 220;
+    z-index: 1300;
   }
 
+  .psy-dash-sidebar .psy-dash-profile {
+    flex: 0 0 auto;
+    padding: 0.75rem 0;
+    margin-bottom: 0.75rem;
+  }
+
+  .psy-dash-sidebar .psy-dash-nav {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 0.75rem;
+  }
+
+  .psy-dash-sidebar .psy-dash-signout {
+    flex: 0 0 auto;
+    margin-top: auto;
+  }
+
+  .psy-dash-sidebar .psy-dash-upcoming-mini,
+  .psy-dash-sidebar .psy-dash-sidebar-pending {
+    position: relative;
+    z-index: 2;
+    pointer-events: auto;
+  }
+
+  .psy-dash-sidebar .psy-dash-upcoming-item,
+  .psy-dash-sidebar .psy-dash-sidebar-pending-card {
+    position: relative;
+    z-index: 3;
+    pointer-events: auto;
+  }
+
+  .psy-dash > .psy-mobile-menu-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 90 !important;
+    border: 0;
+    background: rgba(0, 0, 0, 0.42);
+    backdrop-filter: blur(2px);
+  }
+
+  .psy-dash > .psy-mobile-menu-toggle {
+    top: max(0.75rem, env(safe-area-inset-top));
+    left: max(0.75rem, env(safe-area-inset-left));
+    right: auto;
+    min-width: 44px;
+    min-height: 44px;
+    z-index: 120 !important;
+  }
 
   .psy-dash-main {
-    padding: 1.5rem 1rem;
-    margin-top: 60px;
+    position: relative;
+    z-index: 0;
+    padding: 0.75rem 0.75rem 1.25rem;
+    margin-top: 0;
   }
 
   .psy-dash-header {

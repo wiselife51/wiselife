@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { supabase } from '../../lib/supabase';
 import './Login.css';
 
 type AuthMode = 'login' | 'register';
@@ -29,6 +30,42 @@ const Login: React.FC = () => {
           setLoading(false);
           return;
         }
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: roles } = await supabase
+            .from('user_roles')
+            .select('role_code')
+            .eq('user_id', user.id)
+            .in('role_code', ['admin', 'psychologist', 'patient']);
+
+          const roleCodes = (roles ?? []).map((role) => role.role_code);
+
+          if (roleCodes.includes('admin')) {
+            navigate('/admin');
+            return;
+          }
+
+          if (roleCodes.includes('psychologist')) {
+            const { data: psychologist } = await supabase
+              .from('psychologists')
+              .select('verification_status')
+              .eq('user_id', user.id)
+              .maybeSingle();
+
+            if (psychologist?.verification_status === 'approved') {
+              navigate('/psicologo/dashboard');
+            } else {
+              navigate('/psicologo/onboarding');
+            }
+            return;
+          }
+
+          if (roleCodes.includes('patient')) {
+            navigate('/dashboard');
+            return;
+          }
+        }
+
         navigate('/onboarding');
       } else {
         const { error: signupError } = await signUpWithEmail(email, password, name);
