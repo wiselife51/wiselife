@@ -1811,7 +1811,11 @@ body:has(.psy-dash) {
 .psy-appt-detail-row svg { color: rgba(255,255,255,0.42); }
 .psy-appt-actions { gap: 0.55rem; }
 .psy-complete-btn, .psy-history-btn, .psy-confirm-pay-btn, .psy-wa-btn { border-radius: 12px; min-height: 50px; }
-.psy-complete-btn, .psy-history-btn { background: rgba(126,87,194,0.13); border-color: rgba(138,92,246,0.48); color: #c49bff; }
+  .psy-complete-btn, .psy-history-btn { background: rgba(126,87,194,0.13); border-color: rgba(138,92,246,0.48); color: #c49bff; }
+  .psy-dash-modal--wide .psy-appt-pay-badge,
+  .psy-dash-modal--wide .psy-appt-status-badge { display: inline-flex; align-items: center; min-height: 22px; padding: 0.18rem 0.6rem; border: 1px solid rgba(126,87,194,0.3); border-radius: 999px; font-size: 0.68rem; font-weight: 700; line-height: 1; }
+  .psy-dash-modal--wide .psy-appt-pay-badge--procesando { background: rgba(255,193,7,0.15); border-color: rgba(255,193,7,0.35); color: #ffd45c; }
+  .psy-dash-modal--wide .psy-appt-status-badge--confirmada { background: rgba(76,175,80,0.15); border-color: rgba(76,175,80,0.35); color: #8ee7a0; }
 .psy-complete-btn:hover, .psy-history-btn:hover { background: rgba(126,87,194,0.24); }
 
 /* Keep sidebar lower sections grouped on desktop. */
@@ -1849,6 +1853,10 @@ body:has(.psy-dash) {
 }
 .psy-dash-modal--wide .psy-complete-btn,
 .psy-dash-modal--wide .psy-history-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   min-height: 50px;
   border-radius: 12px;
   background: rgba(126, 87, 194, 0.14);
