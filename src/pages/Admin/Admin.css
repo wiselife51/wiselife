@@ -19,18 +19,6 @@
   color: rgba(255, 255, 255, 0.6);
 }
 
-.admin__test-notice {
-  margin: 0.75rem 0 0;
-  max-width: 62ch;
-  padding: 0.65rem 0.8rem;
-  border: 1px solid rgba(255, 183, 77, 0.3);
-  border-radius: 10px;
-  background: rgba(255, 183, 77, 0.08);
-  color: #ffcc80;
-  font-size: 0.75rem;
-  line-height: 1.45;
-}
-
 .admin__filters {
   display: flex;
   flex-wrap: wrap;

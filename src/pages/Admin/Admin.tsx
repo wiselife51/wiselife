@@ -97,7 +97,6 @@ const Admin: React.FC = () => {
   const [rejectReason, setRejectReason] = useState('');
   const [acting, setActing] = useState(false);
   const [actionError, setActionError] = useState('');
-  const [testMode, setTestMode] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) navigate('/login');
@@ -106,11 +105,6 @@ const Admin: React.FC = () => {
   // El acceso real lo impone la RLS; esto solo evita mostrar una pantalla vacia.
   useEffect(() => {
     if (!user) return;
-    if (user.email === 'admin.prueba@gmail.com') {
-      setIsAdmin(true);
-      setTestMode(true);
-      return;
-    }
     supabase
       .from('user_roles')
       .select('role_code')
@@ -182,13 +176,6 @@ const Admin: React.FC = () => {
     setActing(true);
     setActionError('');
 
-    if (testMode && status === 'approved') {
-      setActing(false);
-      setSelected(null);
-      reload();
-      return;
-    }
-
     const { error } = await supabase
       .from('psychologists')
       .update({
@@ -243,11 +230,6 @@ const Admin: React.FC = () => {
               Revisa los documentos antes de habilitar a un profesional. Un psicologo aprobado
               puede abrir historias clinicas.
             </p>
-            {testMode && (
-              <p className="admin__test-notice">
-                Modo de prueba activo: esta cuenta puede revisar la pantalla, pero la aprobación real sigue protegida por la base de datos.
-              </p>
-            )}
           </div>
         </header>
 
