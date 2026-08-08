@@ -1846,8 +1846,33 @@ body:has(.psy-dash) {
   }
 
   .psy-dash-sidebar .psy-dash-sidebar-header {
-    flex: 0 0 auto;
-    padding: 1.25rem 1rem 0.75rem;
+  position: relative;
+  flex: 0 0 auto;
+  padding: 1.25rem 1rem 0.75rem;
+  }
+
+  .psy-mobile-menu-close {
+  position: absolute;
+  top: max(0.75rem, env(safe-area-inset-top));
+  right: 0.75rem;
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid var(--psy-border);
+  border-radius: 10px;
+  background: rgba(17, 24, 39, 0.82);
+  color: rgba(255, 255, 255, 0.72);
+  cursor: pointer;
+  z-index: 2;
+  }
+
+  .psy-mobile-menu-close:hover,
+  .psy-mobile-menu-close:focus-visible {
+  border-color: rgba(126, 87, 194, 0.6);
+  background: rgba(126, 87, 194, 0.2);
+  color: #fff;
+  outline: none;
   }
 
   .psy-mobile-menu-backdrop {
