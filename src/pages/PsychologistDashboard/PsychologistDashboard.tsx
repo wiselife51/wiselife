@@ -745,9 +745,6 @@ const PsychologistDashboard: React.FC = () => {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" /></svg>
             <span>Bloqueos</span>
           </button>
-        </nav>
-
-        {/* Upcoming mini list */}
         {upcomingAppts.length > 0 && (
           <div className="psy-dash-upcoming-mini">
             <h4>Proximas citas</h4>
@@ -773,6 +770,7 @@ const PsychologistDashboard: React.FC = () => {
             </div>
           </div>
         )}
+        </nav>
 
         <button type="button" className="psy-dash-signout" onClick={handleSignOut}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>

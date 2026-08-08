@@ -23,7 +23,7 @@
 .cal__heading {
   margin: 0;
   min-width: 12ch;
-  font-size: 0.95rem;
+  font-size: 0.875rem;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.95);
 }
@@ -152,7 +152,7 @@
 .cal__hint {
   margin: 0;
   text-align: center;
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   color: rgba(255, 255, 255, 0.35);
 }
 
@@ -239,9 +239,9 @@
 }
 
 .cal__weekday {
-  padding: 0.4375rem 0;
+  padding: 0.4375rem 0 0.3125rem;
   text-align: center;
-  font-size: 0.6875rem;
+  font-size: 0.625rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -796,8 +796,8 @@
 }
 
 @media (max-width: 420px) {
-  .cal__heading { font-size: 0.95rem; }
+  .cal__heading { font-size: 0.875rem; }
   .cal__today { padding-inline: 0.55rem; }
   .cal__filter { padding-inline: 0.55rem; }
-  .cal__weekday { font-size: 0.58rem; }
+  .cal__weekday { font-size: 0.625rem; padding-bottom: 0.3125rem; }
 }
