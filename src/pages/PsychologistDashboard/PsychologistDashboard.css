@@ -233,8 +233,8 @@ body:has(.psy-dash) {
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s var(--psy-smooth);
-  text-align: left;
-}
+  text-align: center;
+  }
 
 .psy-dash-nav-item:hover {
   background: rgba(255, 255, 255, 0.05);
@@ -1447,7 +1447,7 @@ body:has(.psy-dash) {
 
 .psy-appt-modal-header h3 {
   margin: 0;
-  font-size: 1.125rem;
+  font-size: 0.95rem;
   font-weight: 700;
 }
 
@@ -1694,10 +1694,12 @@ body:has(.psy-dash) {
   }
 
   .psy-mobile-menu-toggle {
-  top: max(0.75rem, env(safe-area-inset-top));
-  left: max(0.75rem, env(safe-area-inset-left));
-  min-width: 44px;
-  min-height: 44px;
+    top: max(0.75rem, env(safe-area-inset-top));
+    right: max(0.75rem, env(safe-area-inset-right));
+    left: auto;
+    min-width: 44px;
+    min-height: 44px;
+    z-index: 220;
   }
 
 
