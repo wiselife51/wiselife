@@ -195,7 +195,7 @@ const PsychologistDashboard: React.FC = () => {
     }
     setProfileMessage('Subiendo foto...');
     const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-    const path = `profiles/${profile.id}/avatar-${Date.now()}.${extension}`;
+    const path = `${profile.id}/profile/avatar-${Date.now()}.${extension}`;
     const { error: uploadError } = await supabase.storage.from('psychologist-documents').upload(path, file, {
       cacheControl: '3600',
       contentType: file.type,
