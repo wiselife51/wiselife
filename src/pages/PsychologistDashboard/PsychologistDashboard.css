@@ -1734,7 +1734,7 @@ body:has(.psy-dash) {
   width: min(86vw, 320px);
   max-width: 320px;
   height: 100dvh;
-  z-index: 1000;
+  z-index: 30;
   background: rgba(17, 24, 39, 0.98);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -1755,7 +1755,7 @@ body:has(.psy-dash) {
   .psy-mobile-menu-backdrop {
     position: fixed;
     inset: 0;
-    z-index: 990;
+    z-index: 20;
     border: 0;
     background: rgba(0, 0, 0, 0.42);
     backdrop-filter: blur(2px);
@@ -1767,10 +1767,12 @@ body:has(.psy-dash) {
     left: auto;
     min-width: 44px;
     min-height: 44px;
-    z-index: 1010;
+    z-index: 40;
   }
 
   .psy-dash-main {
+    position: relative;
+    z-index: 0;
     padding: 0.75rem 0.75rem 1.25rem;
     margin-top: 0;
   }
