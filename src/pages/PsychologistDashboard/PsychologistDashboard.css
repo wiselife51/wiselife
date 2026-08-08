@@ -663,7 +663,7 @@ body:has(.psy-dash) {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
+  z-index: 1200;
   animation: fadeIn 0.2s ease;
   padding: 1rem;
 }
@@ -1808,8 +1808,8 @@ body:has(.psy-dash) {
 
   .psy-dash > .psy-mobile-menu-toggle {
     top: max(0.75rem, env(safe-area-inset-top));
-    right: max(0.75rem, env(safe-area-inset-right));
-    left: auto;
+    left: max(0.75rem, env(safe-area-inset-left));
+    right: auto;
     min-width: 44px;
     min-height: 44px;
     z-index: 120 !important;

@@ -807,6 +807,7 @@
     align-items: start;
     gap: 0.35rem;
     padding-top: 0;
+    margin-top: -0.5rem;
   }
 
   .cal__nav {
@@ -826,12 +827,21 @@
   }
 
   .cal__filters {
-    grid-column: 1 / -1;
-    flex-basis: auto;
-    justify-content: center;
-    order: 0;
-    margin-top: 0.05rem;
+    position: fixed;
+    top: max(0.85rem, env(safe-area-inset-top));
+    left: 4.25rem;
+    z-index: 1100;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    width: calc(100vw - 5rem);
+    max-width: none;
+    overflow-x: auto;
+    padding: 0.05rem 0;
+    scrollbar-width: none;
   }
+
+  .cal__filters::-webkit-scrollbar { display: none; }
 
   .cal__views {
     grid-column: 1 / -1;

@@ -819,7 +819,7 @@ const PsychologistDashboard: React.FC = () => {
 
       {/* Mobile menu toggle */}
       <button           className="psy-mobile-menu-toggle"
-          style={{ zIndex: 1100, right: '0.75rem', left: 'auto' }}
+          style={{ zIndex: 1300, left: '0.75rem', right: 'auto' }}
           onClick={() => setShowMobileMenu(!showMobileMenu)}
           type="button">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
