@@ -3,6 +3,10 @@
 **Propósito:** historial de cambios documentales y del proyecto.
 **Responsable:** Documentador Técnico. **Estado:** Activo; requiere mantenerlo en cada entrega.
 
+## 2026-08-08 — Mantenimiento documental
+- Se actualizó este historial para registrar la sincronización documental de la rama de trabajo.
+- No se modificó código, esquema, infraestructura ni funcionalidad.
+
 ## 2026-08-07 — Header: botón "Soy Paciente" reemplaza "Iniciar Sesion"
 - Se reemplazó el botón "Iniciar Sesion" (desktop y menú móvil) en `src/components/Header/Header.tsx` por un botón "Soy Paciente", reutilizando el patrón visual del botón "Soy Psicologo" ya existente (variante outline + ícono SVG inline + texto).
 - Se añadió un ícono SVG de persona/usuario, distinto al ícono de rayo del botón "Soy Psicologo", para diferenciar ambos botones visualmente.
