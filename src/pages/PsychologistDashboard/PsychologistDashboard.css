@@ -794,6 +794,65 @@ body:has(.psy-dash) {
   width: 100%;
 }
 
+.psy-dash-sidebar-pending {
+  margin-top: 0.65rem;
+  padding: 0.6rem;
+  border: 1px solid rgba(255, 193, 7, 0.32);
+  border-radius: 12px;
+  background: rgba(48, 37, 8, 0.42);
+}
+
+.psy-dash-sidebar-pending h4 {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0 0 0.5rem;
+  color: #ffc107;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.psy-dash-sidebar-pending-card {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 0.45rem;
+  align-items: start;
+  padding: 0.55rem;
+  border-radius: 9px;
+  background: rgba(0, 0, 0, 0.22);
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.psy-dash-sidebar-pending-card > svg {
+  color: #ffc107;
+  margin-top: 0.1rem;
+}
+
+.psy-dash-sidebar-pending-card p {
+  margin: 0;
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.psy-dash-sidebar-pending-action {
+  grid-column: 2;
+  justify-self: start;
+  padding: 0.35rem 0.6rem;
+  border: 0;
+  border-radius: 7px;
+  background: #8d45d6;
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.psy-dash-sidebar-pending-action:hover {
+  background: #a45be8;
+}
+
 .psy-dash-upcoming-mini h4 {
   font-size: 0.75rem;
   font-weight: 700;

@@ -770,6 +770,34 @@ const PsychologistDashboard: React.FC = () => {
             </div>
           </div>
         )}
+        {warnings.length > 0 && (
+          <div className="psy-dash-sidebar-pending">
+            <h4><span aria-hidden="true">⚠</span> Pendientes importantes</h4>
+            {warnings.map((warning) => (
+              <div key={warning.appointmentId} className="psy-dash-sidebar-pending-card">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                  <line x1="12" y1="9" x2="12" y2="13" />
+                  <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+                <p>{warning.message}</p>
+                <button
+                  className="psy-dash-sidebar-pending-action"
+                  onClick={() => {
+                    const appt = appointments.find((a) => a.id === warning.appointmentId);
+                    if (appt) {
+                      setPendingAppointmentToComplete(appt);
+                      setShowClinicalRecordModal(true);
+                    }
+                  }}
+                  type="button"
+                >
+                  Abrir HC ahora
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
         </nav>
 
         <button type="button" className="psy-dash-signout" onClick={handleSignOut}>
@@ -800,36 +828,6 @@ const PsychologistDashboard: React.FC = () => {
 
       {/* Main content */}
       <main className="psy-dash-main">
-        {/* Warnings for appointments without clinical record */}
-        {warnings.length > 0 && (
-          <div className="psy-dash-warnings">
-            <h4>⚠️ Pendientes importantes</h4>
-            {warnings.map((warning, i) => (
-              <div key={i} className="warning-card">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-                  <line x1="12" y1="9" x2="12" y2="13"/>
-                  <line x1="12" y1="17" x2="12.01" y2="17"/>
-                </svg>
-                <p>{warning.message}</p>
-                <button
-                  onClick={() => {
-                    const appt = appointments.find(a => a.id === warning.appointmentId);
-                    if (appt) {
-                      setPendingAppointmentToComplete(appt);
-                      setShowClinicalRecordModal(true);
-                    }
-                  }}
-                  className="psy-dash-btn-primary"
-                  type="button"
-                >
-                  Abrir HC ahora
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-
         {/* CALENDARIO TAB */}
         {activeTab === 'calendario' && (
           <AppointmentCalendar
