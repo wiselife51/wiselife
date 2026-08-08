@@ -182,6 +182,39 @@ const PsychologistDashboard: React.FC = () => {
 
   const today = useMemo(() => new Date(), []);
 
+  const handleProfileAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !profile) return;
+    if (!file.type.startsWith('image/')) {
+      setProfileMessage('Selecciona una imagen válida.');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setProfileMessage('La imagen debe pesar menos de 5 MB.');
+      return;
+    }
+    setProfileMessage('Subiendo foto...');
+    const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+    const path = `profiles/${profile.id}/avatar-${Date.now()}.${extension}`;
+    const { error: uploadError } = await supabase.storage.from('psychologist-documents').upload(path, file, {
+      cacheControl: '3600',
+      contentType: file.type,
+      upsert: true,
+    });
+    if (uploadError) {
+      setProfileMessage('No fue posible subir la foto.');
+      return;
+    }
+    const { data: publicData } = supabase.storage.from('psychologist-documents').getPublicUrl(path);
+    const { data, error } = await supabase.from('psychologists').update({ avatar_url: publicData.publicUrl }).eq('id', profile.id).select('*').single();
+    if (error) {
+      setProfileMessage('La foto subió, pero no se pudo actualizar el perfil.');
+      return;
+    }
+    setProfile(data as PsychologistProfile);
+    setProfileMessage('Foto de perfil actualizada.');
+  };
+
   const handleProfileSave = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!profile) return;
@@ -199,7 +232,6 @@ const PsychologistDashboard: React.FC = () => {
       languages: String(form.get('languages') || '').split(',').map((item) => item.trim()).filter(Boolean),
       session_duration: Number(form.get('session_duration') || 50),
       session_price: Number(form.get('session_price') || 0),
-      avatar_url: String(form.get('avatar_url') || '').trim() || null,
     };
     const { data, error } = await supabase.from('psychologists').update(payload).eq('id', profile.id).select('*').single();
     if (error) {
@@ -773,12 +805,17 @@ const PsychologistDashboard: React.FC = () => {
         </div>
 
         <div className="psy-dash-profile">
-          <div className="psy-dash-avatar">
+          <div className="psy-dash-avatar psy-dash-avatar--editable">
             {profile?.avatar_url ? (
               <img src={profile.avatar_url} alt={profile.full_name} crossOrigin="anonymous" />
             ) : (
               <span>{profile?.full_name?.charAt(0) || 'P'}</span>
             )}
+            <label className="psy-dash-avatar-upload" title="Cambiar foto de perfil">
+              <input type="file" accept="image/*" onChange={handleProfileAvatarChange} />
+              <span aria-hidden="true">+</span>
+              <span className="sr-only">Cambiar foto de perfil</span>
+            </label>
           </div>
           <h3 className="psy-dash-name">{profile?.full_name}</h3>
           <p className="psy-dash-email">{profile?.email}</p>
@@ -803,7 +840,7 @@ const PsychologistDashboard: React.FC = () => {
           </button>
         {upcomingAppts.length > 0 && (
           <div className="psy-dash-upcoming-mini">
-            <h4>Proximas citas</h4>
+            <h4>Próximas citas</h4>
             <div className="psy-dash-upcoming-carousel" aria-live="polite">
               {(upcomingAppts.length > 0 ? [upcomingAppts[upcomingIndex]] : []).map((a) => (
                 <button key={a.id} className="psy-dash-upcoming-item" onClick={() => { setActiveTab('calendario'); setSelectedAppt(a); setShowMobileMenu(false); }} type="button">
@@ -1166,7 +1203,6 @@ const PsychologistDashboard: React.FC = () => {
               </div>
               <div className="psy-profile-grid">
                 <label>Nombre completo<input name="full_name" defaultValue={profile.full_name} required /></label>
-                <label>Foto de perfil<input name="avatar_url" type="url" defaultValue={profile.avatar_url || ''} placeholder="https://..." /></label>
                 <label>Teléfono<input name="phone" defaultValue={profile.phone || ''} placeholder="Tu número de contacto" /></label>
                 <label>Ciudad<input name="city" defaultValue={profile.city || ''} placeholder="Bogotá" /></label>
                 <label>Años de experiencia<input name="years_experience" type="number" min="0" defaultValue={profile.years_experience || 0} /></label>
