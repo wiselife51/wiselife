@@ -797,7 +797,7 @@ body:has(.psy-dash) {
 .psy-dash-sidebar-pending {
   margin-top: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid rgba(255, 193, 7, 0.38);
+  border-top: 1px solid var(--psy-border);
 }
 
 .psy-dash-sidebar-pending h4 {
@@ -820,7 +820,7 @@ body:has(.psy-dash) {
   padding: 0.5rem 0.625rem;
   border: 1px solid var(--psy-border);
   border-radius: 10px;
-  background: rgba(255, 193, 7, 0.035);
+  background: rgba(255, 255, 255, 0.03);
   color: rgba(255, 255, 255, 0.78);
   text-align: left;
   cursor: pointer;
@@ -828,8 +828,8 @@ body:has(.psy-dash) {
 }
 
 .psy-dash-sidebar-pending-card:hover {
-  border-color: rgba(255, 193, 7, 0.45);
-  background: rgba(255, 193, 7, 0.08);
+  border-color: rgba(126, 87, 194, 0.25);
+  background: rgba(126, 87, 194, 0.1);
 }
 
 .psy-dash-pending-avatar {
