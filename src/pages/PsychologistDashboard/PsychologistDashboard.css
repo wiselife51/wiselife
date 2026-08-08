@@ -152,9 +152,9 @@ body:has(.psy-dash) {
 }
 
 .psy-dash-badge {
-  font-size: 0.625rem;
+  font-size: 0.6rem;
   font-weight: 600;
-  padding: 0.2rem 0.5rem;
+  padding: 0.22rem 0.6rem;
   background: rgba(126, 87, 194, 0.15);
   border: 1px solid rgba(126, 87, 194, 0.3);
   border-radius: 100px;
@@ -175,8 +175,8 @@ body:has(.psy-dash) {
 }
 
 .psy-dash-avatar {
-  width: 56px;
-  height: 56px;
+  width: 68px;
+  height: 68px;
   border-radius: 50%;
   overflow: hidden;
   background: rgba(126, 87, 194, 0.2);
@@ -199,7 +199,7 @@ body:has(.psy-dash) {
 }
 
 .psy-dash-name {
-  font-size: 0.9375rem;
+  font-size: 1.05rem;
   font-weight: 600;
   margin: 0;
   text-align: center;

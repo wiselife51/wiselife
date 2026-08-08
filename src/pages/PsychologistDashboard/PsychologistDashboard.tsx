@@ -199,6 +199,7 @@ const PsychologistDashboard: React.FC = () => {
       languages: String(form.get('languages') || '').split(',').map((item) => item.trim()).filter(Boolean),
       session_duration: Number(form.get('session_duration') || 50),
       session_price: Number(form.get('session_price') || 0),
+      avatar_url: String(form.get('avatar_url') || '').trim() || null,
     };
     const { data, error } = await supabase.from('psychologists').update(payload).eq('id', profile.id).select('*').single();
     if (error) {
@@ -767,7 +768,7 @@ const PsychologistDashboard: React.FC = () => {
               </svg>
               <span>Vida Sabia</span>
             </div>
-            <div className="psy-dash-badge">Profesional</div>
+            <div className="psy-dash-badge">Psicólogo profesional</div>
           </div>
         </div>
 
@@ -827,7 +828,7 @@ const PsychologistDashboard: React.FC = () => {
         )}
         {warnings.length > 0 && (
           <div className="psy-dash-sidebar-pending">
-            <h4><span aria-hidden="true">⚠</span> Pendientes importantes</h4>
+            <h4>Pendientes importantes</h4>
             {warnings.map((warning) => (
               <button
                 key={warning.appointmentId}
@@ -1165,6 +1166,7 @@ const PsychologistDashboard: React.FC = () => {
               </div>
               <div className="psy-profile-grid">
                 <label>Nombre completo<input name="full_name" defaultValue={profile.full_name} required /></label>
+                <label>Foto de perfil<input name="avatar_url" type="url" defaultValue={profile.avatar_url || ''} placeholder="https://..." /></label>
                 <label>Teléfono<input name="phone" defaultValue={profile.phone || ''} placeholder="Tu número de contacto" /></label>
                 <label>Ciudad<input name="city" defaultValue={profile.city || ''} placeholder="Bogotá" /></label>
                 <label>Años de experiencia<input name="years_experience" type="number" min="0" defaultValue={profile.years_experience || 0} /></label>
