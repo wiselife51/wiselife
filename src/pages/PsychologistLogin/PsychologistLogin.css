@@ -11,3 +11,6 @@
   letter-spacing: 0.03em;
   text-transform: uppercase;
 }
+
+/* Keep the psychologist auth badge aligned with the shared auth card. */
+.login-psy-badge { max-width: 100%; box-sizing: border-box; }

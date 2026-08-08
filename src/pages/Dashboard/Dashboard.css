@@ -333,3 +333,26 @@
     height: 26px;
   }
 }
+
+/* Fluid dashboard sections prevent dates, tags and banners from colliding. */
+.dash-home, .dash-home-top, .dash-home-greeting, .dash-home-specialties,
+.dash-home-banner, .dash-home-diary { min-width: 0; }
+.dash-home-top { align-items: stretch; gap: 1.25rem; }
+.dash-home-specialties { width: min(100%, 22rem); max-width: none; }
+.dash-home-banner { min-height: 0; }
+.dash-home-banner-text { max-width: min(60%, 34rem); }
+.dash-home-shortcuts { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+
+@media (max-width: 900px) {
+  .dash-home-top { flex-direction: column; }
+  .dash-home-specialties { width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .dash-home { gap: 1rem; }
+  .dash-home-hello { font-size: 1.25rem; }
+  .dash-home-banner { padding: 1.25rem; }
+  .dash-home-banner-text { max-width: 100%; }
+  .dash-home-shortcuts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dash-home-shortcut { min-width: 0; padding-inline: 0.5rem; }
+}
