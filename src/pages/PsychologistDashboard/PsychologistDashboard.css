@@ -232,7 +232,7 @@ body:has(.psy-dash) {
 .psy-dash-nav {
   display: flex;
   flex-direction: column;
-  gap: 0.08rem;
+  gap: 0;
   flex: 1;
 }
 
@@ -240,7 +240,7 @@ body:has(.psy-dash) {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.6rem 0.875rem;
+  padding: 0.5rem 0.875rem;
   border-radius: 12px;
   background: none;
   border: none;
@@ -339,15 +339,12 @@ body:has(.psy-dash) {
 .psy-dash-signout {
   display: flex;
   align-items: center;
-  margin-top: 0.35rem;
-  padding: 0.65rem 0.875rem 0.2rem;
-  border-top: 1px solid rgba(239, 83, 80, 0.72);
+  margin-top: auto;
   gap: 0.625rem;
+  padding: 0.75rem 0.875rem;
+  border: 1px solid rgba(239, 83, 80, 0.15);
   border-radius: 12px;
   background: none;
-  border-left: 0;
-  border-right: 0;
-  border-bottom: 0;
   color: rgba(239, 83, 80, 0.9);
   font-family: 'Inter', sans-serif;
   font-size: 0.8125rem;
@@ -1819,11 +1816,11 @@ body:has(.psy-dash) {
 
 /* Keep sidebar lower sections grouped on desktop. */
 @media (min-width: 769px) {
-  .psy-dash-upcoming-mini { margin-top: 0.45rem; padding-top: 0.55rem; gap: 0.3rem; }
-  .psy-dash-upcoming-mini h4, .psy-dash-sidebar-pending h4 { font-size: 0.68rem; }
-  .psy-dash-upcoming-carousel { gap: 0.3rem; }
-  .psy-dash-sidebar-pending { margin-top: 0.45rem; padding-top: 0.55rem; }
-  .psy-dash-sidebar-pending h4 { margin-bottom: 0.4rem; }
+  .psy-dash-upcoming-mini { margin-top: 0.2rem; padding-top: 0.3rem; gap: 0.15rem; }
+  .psy-dash-upcoming-mini h4, .psy-dash-sidebar-pending h4 { font-size: 0.64rem; }
+  .psy-dash-upcoming-carousel { gap: 0.15rem; }
+  .psy-dash-sidebar-pending { margin-top: 0.2rem; padding-top: 0.3rem; }
+  .psy-dash-sidebar-pending h4 { margin-bottom: 0.25rem; }
 }
 
 /* ===== Responsive ===== */
@@ -1955,7 +1952,7 @@ body:has(.psy-dash) {
 
 .psy-dash-sidebar .psy-dash-signout {
   flex: 0 0 auto;
-  margin-top: 0.7rem;
+  margin-top: auto;
 }
 
   .psy-dash-sidebar .psy-dash-upcoming-mini,
