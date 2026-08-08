@@ -774,6 +774,11 @@ const PsychologistDashboard: React.FC = () => {
     );
   }
 
+  const openAppointmentDetails = (appointment: Appointment) => {
+    setSelectedAppt(appointment);
+    setShowMobileMenu(false);
+  };
+
   return (
     <div className="psy-dash">
       <video className="psy-dash-video" autoPlay loop muted playsInline aria-hidden="true">
@@ -843,7 +848,7 @@ const PsychologistDashboard: React.FC = () => {
             <h4>Próximas citas</h4>
             <div className="psy-dash-upcoming-carousel" aria-live="polite">
               {(upcomingAppts.length > 0 ? [upcomingAppts[upcomingIndex]] : []).map((a) => (
-                <button key={a.id} className="psy-dash-upcoming-item" onClick={() => { setSelectedAppt(a); setShowMobileMenu(false); }} type="button">
+                <button key={a.id} className="psy-dash-upcoming-item" onClick={(event) => { event.preventDefault(); event.stopPropagation(); openAppointmentDetails(a); }} type="button">
                   <div className="psy-dash-upcoming-avatar-sm">
                     {a.patient?.avatar_url ? (
                       <img src={a.patient.avatar_url} alt="" crossOrigin="anonymous" />
