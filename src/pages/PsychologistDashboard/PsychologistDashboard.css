@@ -813,43 +813,71 @@ body:has(.psy-dash) {
 }
 
 .psy-dash-sidebar-pending-card {
-  display: grid;
-  grid-template-columns: 18px minmax(0, 1fr);
-  gap: 0.45rem;
-  align-items: start;
-  padding: 0.65rem;
-  border: 1px solid rgba(255, 193, 7, 0.16);
-  border-radius: 9px;
-  background: rgba(0, 0, 0, 0.22);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid var(--psy-border);
+  border-radius: 10px;
+  background: rgba(255, 193, 7, 0.035);
   color: rgba(255, 255, 255, 0.78);
-}
-
-.psy-dash-sidebar-pending-card > svg {
-  color: #ffc107;
-  margin-top: 0.1rem;
-}
-
-.psy-dash-sidebar-pending-card p {
-  margin: 0;
-  font-size: 0.72rem;
-  line-height: 1.35;
-}
-
-.psy-dash-sidebar-pending-action {
-  grid-column: 2;
-  justify-self: start;
-  padding: 0.35rem 0.6rem;
-  border: 0;
-  border-radius: 7px;
-  background: #8d45d6;
-  color: #fff;
-  font-size: 0.68rem;
-  font-weight: 700;
+  text-align: left;
   cursor: pointer;
+  font-family: inherit;
 }
 
-.psy-dash-sidebar-pending-action:hover {
-  background: #a45be8;
+.psy-dash-sidebar-pending-card:hover {
+  border-color: rgba(255, 193, 7, 0.45);
+  background: rgba(255, 193, 7, 0.08);
+}
+
+.psy-dash-pending-avatar {
+  display: grid;
+  flex: 0 0 26px;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 193, 7, 0.14);
+  color: #ffc107;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.psy-dash-pending-text {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.12rem;
+}
+
+.psy-dash-pending-text strong,
+.psy-dash-pending-text small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.psy-dash-pending-text strong {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.72rem;
+}
+
+.psy-dash-pending-text small {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.62rem;
+}
+
+.psy-dash-pending-status {
+  flex: 0 0 auto;
+  padding: 0.2rem 0.4rem;
+  border-radius: 999px;
+  background: rgba(255, 193, 7, 0.14);
+  color: #ffc107;
+  font-size: 0.62rem;
+  font-weight: 800;
 }
 
 .psy-dash-upcoming-mini h4 {

@@ -774,27 +774,25 @@ const PsychologistDashboard: React.FC = () => {
           <div className="psy-dash-sidebar-pending">
             <h4><span aria-hidden="true">⚠</span> Pendientes importantes</h4>
             {warnings.map((warning) => (
-              <div key={warning.appointmentId} className="psy-dash-sidebar-pending-card">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                  <line x1="12" y1="9" x2="12" y2="13" />
-                  <line x1="12" y1="17" x2="12.01" y2="17" />
-                </svg>
-                <p>{warning.message}</p>
-                <button
-                  className="psy-dash-sidebar-pending-action"
-                  onClick={() => {
-                    const appt = appointments.find((a) => a.id === warning.appointmentId);
-                    if (appt) {
-                      setPendingAppointmentToComplete(appt);
-                      setShowClinicalRecordModal(true);
-                    }
-                  }}
-                  type="button"
-                >
-                  Abrir HC ahora
-                </button>
-              </div>
+              <button
+                key={warning.appointmentId}
+                className="psy-dash-sidebar-pending-card"
+                onClick={() => {
+                  const appt = appointments.find((a) => a.id === warning.appointmentId);
+                  if (appt) {
+                    setPendingAppointmentToComplete(appt);
+                    setShowClinicalRecordModal(true);
+                  }
+                }}
+                type="button"
+              >
+                <span className="psy-dash-pending-avatar" aria-hidden="true">!</span>
+                <span className="psy-dash-pending-text">
+                  <strong>{warning.message.split(' - ')[0]}</strong>
+                  <small>{warning.message.split(' - ').slice(1).join(' - ')}</small>
+                </span>
+                <span className="psy-dash-pending-status">HC</span>
+              </button>
             ))}
           </div>
         )}
