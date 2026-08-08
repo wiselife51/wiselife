@@ -26,7 +26,6 @@ const NequiPaymentModal: React.FC<NequiPaymentModalProps> = ({
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [transactionId, setTransactionId] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
@@ -62,8 +61,7 @@ const NequiPaymentModal: React.FC<NequiPaymentModalProps> = ({
       if (funcError) throw funcError;
       if (!data.success) throw new Error(data.error || 'Error al crear el pago');
 
-      // Success
-      setTransactionId(data.transactionId);
+      // Success — la transacción ya quedó persistida por el Edge Function
       setSuccess(true);
 
       // Auto-close after 5 seconds and refresh
