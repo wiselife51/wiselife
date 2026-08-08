@@ -495,3 +495,36 @@
     padding: 0.75rem;
   }
 }
+
+/* Responsive polish: keep auth surfaces readable without viewport overflow. */
+.login-content,
+.login-card,
+.login-form,
+.login-input-wrapper {
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.login-card {
+  background: rgba(11, 18, 31, 0.72);
+  border-color: rgba(148, 163, 184, 0.2);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.46);
+}
+
+.login-tab:focus-visible,
+.login-social-btn:focus-visible,
+.login-input:focus-visible,
+.login-submit:focus-visible,
+.login-switch:focus-visible,
+.login-back:focus-visible {
+  outline: 3px solid rgba(77, 208, 225, 0.55);
+  outline-offset: 3px;
+}
+
+@media (max-width: 380px) {
+  .login-content { padding-inline: 0.75rem; }
+  .login-card { padding: 1.25rem 1rem; border-radius: 18px; }
+  .login-social { flex-direction: column; }
+  .login-social-btn { width: 100%; }
+  .login-label-row { align-items: flex-start; gap: 0.5rem; flex-wrap: wrap; }
+}

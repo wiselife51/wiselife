@@ -2119,3 +2119,29 @@
 .psy-verify-link:hover {
   color: rgba(255, 255, 255, 0.75);
 }
+
+/* Responsive order for dates, filters and calendar actions. */
+.psy-dash, .psy-dash-main, .psy-dash-header, .psy-cal-controls,
+.psy-cal-nav, .psy-cal-views { min-width: 0; }
+.psy-dash-main { min-height: 100dvh; box-sizing: border-box; padding-bottom: 3rem; }
+.psy-dash-header { align-items: flex-start; }
+.psy-dash-header h1 { min-width: 0; overflow-wrap: anywhere; }
+.psy-cal-controls { align-items: stretch; }
+.psy-cal-nav, .psy-cal-views { flex-wrap: wrap; }
+.psy-cal-title { min-width: 0; text-align: center; overflow-wrap: anywhere; }
+
+@media (max-width: 768px) {
+  .psy-dash-header, .psy-cal-controls { gap: 0.75rem; }
+  .psy-cal-nav, .psy-cal-views { width: 100%; justify-content: center; }
+  .psy-cal-title { flex: 1 1 auto; }
+  .psy-dash-header button, .psy-cal-views button { max-width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .psy-dash-header h1 { font-size: 1.1rem; line-height: 1.3; }
+  .psy-cal-controls { margin-bottom: 1rem; }
+  .psy-cal-nav { gap: 0.35rem; }
+  .psy-cal-title { font-size: 0.875rem; }
+  .psy-cal-views { gap: 0.35rem; }
+  .psy-cal-view-btn { flex: 1 1 auto; min-width: 0; }
+}
