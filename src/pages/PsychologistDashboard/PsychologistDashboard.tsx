@@ -17,6 +17,11 @@ interface PsychologistProfile {
   avatar_url: string | null;
   phone: string | null;
   specialties: string[];
+  bio?: string | null;
+  modality?: string[];
+  city?: string | null;
+  years_experience?: number | null;
+  languages?: string[];
   session_duration: number;
   session_price: number;
   onboarding_completed: boolean;
@@ -80,7 +85,7 @@ const HOUR_OPTIONS = Array.from({ length: 15 }, (_, i) => {
 });
 
 
-type ActiveTab = 'calendario' | 'agenda' | 'bloqueos';
+type ActiveTab = 'calendario' | 'agenda' | 'bloqueos' | 'perfil';
 
 function formatTime(t: string): string {
   const [h, m] = t.split(':');
@@ -98,6 +103,8 @@ const PsychologistDashboard: React.FC = () => {
   const [availability, setAvailability] = useState<AvailabilitySlot[]>([]);
   const [blocks, setBlocks] = useState<ScheduleBlock[]>([]);
   const [loadingData, setLoadingData] = useState(true);
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [profileMessage, setProfileMessage] = useState('');
 
   // Tabs and calendar
   const [activeTab, setActiveTab] = useState<ActiveTab>('calendario');
@@ -174,6 +181,34 @@ const PsychologistDashboard: React.FC = () => {
   };
 
   const today = useMemo(() => new Date(), []);
+
+  const handleProfileSave = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!profile) return;
+    setSavingProfile(true);
+    setProfileMessage('');
+    const form = new FormData(event.currentTarget);
+    const payload = {
+      full_name: String(form.get('full_name') || '').trim(),
+      phone: String(form.get('phone') || '').trim() || null,
+      bio: String(form.get('bio') || '').trim() || null,
+      specialties: String(form.get('specialties') || '').split(',').map((item) => item.trim()).filter(Boolean),
+      modality: String(form.get('modality') || '').split(',').map((item) => item.trim()).filter(Boolean),
+      city: String(form.get('city') || '').trim() || null,
+      years_experience: Number(form.get('years_experience') || 0),
+      languages: String(form.get('languages') || '').split(',').map((item) => item.trim()).filter(Boolean),
+      session_duration: Number(form.get('session_duration') || 50),
+      session_price: Number(form.get('session_price') || 0),
+    };
+    const { data, error } = await supabase.from('psychologists').update(payload).eq('id', profile.id).select('*').single();
+    if (error) {
+      setProfileMessage('No fue posible guardar los cambios. Verifica los datos e inténtalo de nuevo.');
+    } else {
+      setProfile(data as PsychologistProfile);
+      setProfileMessage('Perfil actualizado correctamente.');
+    }
+    setSavingProfile(false);
+  };
 
   const fetchData = useCallback(async () => {
     if (!user) return;
@@ -761,6 +796,10 @@ const PsychologistDashboard: React.FC = () => {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" /></svg>
             <span>Bloqueos</span>
           </button>
+          <button type="button" className={`psy-dash-nav-item ${activeTab === 'perfil' ? 'psy-dash-nav-item--active' : ''}`} onClick={() => { setActiveTab('perfil'); setProfileMessage(''); setShowMobileMenu(false); }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="8" r="3" /><path d="M5 20c.8-3.2 3.1-5 7-5s6.2 1.8 7 5" /></svg>
+            <span>Perfil</span>
+          </button>
         {upcomingAppts.length > 0 && (
           <div className="psy-dash-upcoming-mini">
             <h4>Proximas citas</h4>
@@ -1106,6 +1145,42 @@ const PsychologistDashboard: React.FC = () => {
               </div>
             )}
           </>
+        )}
+
+        {activeTab === 'perfil' && profile && (
+          <section className="psy-profile-page">
+            <div className="psy-dash-header">
+              <div>
+                <span className="psy-profile-kicker">CUENTA PROFESIONAL</span>
+                <h1>Mi perfil</h1>
+                <p>Actualiza la información que verán tus pacientes.</p>
+              </div>
+            </div>
+            <form className="psy-profile-card" onSubmit={handleProfileSave}>
+              <div className="psy-profile-card-head">
+                <div className="psy-dash-avatar psy-profile-avatar">
+                  {profile.avatar_url ? <img src={profile.avatar_url} alt={profile.full_name} crossOrigin="anonymous" /> : <span>{profile.full_name.charAt(0)}</span>}
+                </div>
+                <div><h2>Información del profesional</h2><p>{profile.email}</p></div>
+              </div>
+              <div className="psy-profile-grid">
+                <label>Nombre completo<input name="full_name" defaultValue={profile.full_name} required /></label>
+                <label>Teléfono<input name="phone" defaultValue={profile.phone || ''} placeholder="Tu número de contacto" /></label>
+                <label>Ciudad<input name="city" defaultValue={profile.city || ''} placeholder="Bogotá" /></label>
+                <label>Años de experiencia<input name="years_experience" type="number" min="0" defaultValue={profile.years_experience || 0} /></label>
+                <label>Especialidades<input name="specialties" defaultValue={(profile.specialties || []).join(', ')} placeholder="Ansiedad, pareja, duelo" /></label>
+                <label>Modalidad<input name="modality" defaultValue={(profile.modality || []).join(', ')} placeholder="Virtual, presencial" /></label>
+                <label>Idiomas<input name="languages" defaultValue={(profile.languages || []).join(', ')} placeholder="Español, inglés" /></label>
+                <label>Duración de sesión (minutos)<input name="session_duration" type="number" min="15" step="5" defaultValue={profile.session_duration || 50} /></label>
+                <label>Tarifa por sesión<input name="session_price" type="number" min="0" defaultValue={profile.session_price || 0} /></label>
+                <label className="psy-profile-field-wide">Biografía<textarea name="bio" defaultValue={profile.bio || ''} rows={5} placeholder="Cuéntales a tus pacientes sobre tu enfoque profesional..." /></label>
+              </div>
+              <div className="psy-profile-actions">
+                {profileMessage && <span className="psy-profile-message" role="status">{profileMessage}</span>}
+                <button type="submit" className="psy-dash-btn-primary" disabled={savingProfile}>{savingProfile ? 'Guardando...' : 'Guardar cambios'}</button>
+              </div>
+            </form>
+          </section>
         )}
       </main>
 

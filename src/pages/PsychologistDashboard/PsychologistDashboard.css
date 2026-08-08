@@ -241,6 +241,78 @@ body:has(.psy-dash) {
   color: rgba(255, 255, 255, 0.9);
 }
 
+.psy-profile-page {
+  width: min(100%, 980px);
+  margin: 0 auto;
+}
+
+.psy-profile-kicker {
+  color: #70d7ff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.psy-profile-page .psy-dash-header p {
+  margin: 0.35rem 0 0;
+  color: rgba(255,255,255,0.58);
+}
+
+.psy-profile-card {
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 22px;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  background: rgba(11, 18, 31, 0.72);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 18px 60px rgba(0,0,0,0.22);
+}
+
+.psy-profile-card-head {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.psy-profile-card-head h2 { margin: 0; font-size: 1.05rem; }
+.psy-profile-card-head p { margin: 0.3rem 0 0; color: rgba(255,255,255,0.52); font-size: 0.85rem; }
+.psy-profile-avatar { flex: 0 0 auto; width: 64px; height: 64px; }
+
+.psy-profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  padding-top: 1.5rem;
+}
+
+.psy-profile-grid label {
+  display: grid;
+  gap: 0.45rem;
+  color: rgba(255,255,255,0.72);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.psy-profile-grid input,
+.psy-profile-grid textarea {
+  width: 100%;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 11px;
+  padding: 0.78rem 0.9rem;
+  color: #f7f8ff;
+  background: rgba(255,255,255,0.06);
+  outline: none;
+  font: inherit;
+}
+
+.psy-profile-grid input:focus,
+.psy-profile-grid textarea:focus { border-color: #8a5cf6; box-shadow: 0 0 0 3px rgba(138,92,246,0.16); }
+.psy-profile-grid textarea { resize: vertical; min-height: 120px; }
+.psy-profile-field-wide { grid-column: 1 / -1; }
+.psy-profile-actions { display: flex; align-items: center; justify-content: flex-end; gap: 1rem; padding-top: 1.5rem; }
+.psy-profile-message { color: #8ee7c2; font-size: 0.85rem; }
+
 .psy-dash-nav-item--active {
   background: rgba(126, 87, 194, 0.15);
   color: #b388ff;
@@ -2434,4 +2506,11 @@ body:has(.psy-dash) {
   .psy-cal-title { font-size: 0.875rem; }
   .psy-cal-views { gap: 0.35rem; }
   .psy-cal-view-btn { flex: 1 1 auto; min-width: 0; }
+  .psy-profile-grid { grid-template-columns: 1fr; gap: 0.8rem; }
+  .psy-profile-field-wide { grid-column: auto; }
+  .psy-profile-card { padding: 1rem; border-radius: 16px; }
+  .psy-profile-card-head { align-items: flex-start; }
+  .psy-profile-actions { align-items: stretch; flex-direction: column; }
+  .psy-profile-actions .psy-dash-btn-primary { width: 100%; }
+  .psy-profile-message { text-align: center; }
 }
