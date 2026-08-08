@@ -361,6 +361,7 @@
 
 .cal__week-body {
   display: grid;
+  grid-template-columns: 56px repeat(7, minmax(0, 1fr));
   grid-template-rows: repeat(15, minmax(0, 1fr));
   height: min(100%, calc(100dvh - 230px));
   min-height: 0;
@@ -404,8 +405,8 @@
 .cal__day {
   display: flex;
   flex-direction: column;
-  min-height: 0;
-  height: min(100%, calc(100dvh - 230px));
+  min-height: 420px;
+  height: calc(100dvh - 270px);
   border-radius: 11px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.07);
@@ -660,6 +661,7 @@
   .cal__week-body,
   .cal__day {
     height: auto;
+    min-height: 0;
     max-height: none;
     overflow: visible;
   }
