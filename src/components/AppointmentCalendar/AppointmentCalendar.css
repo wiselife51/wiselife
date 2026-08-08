@@ -826,22 +826,10 @@
     text-align: center;
   }
 
-  .cal__filters {
-    position: fixed;
-    top: max(0.85rem, env(safe-area-inset-top));
-    left: 4.25rem;
-    z-index: 1100;
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    width: calc(100vw - 5rem);
-    max-width: none;
-    overflow-x: auto;
-    padding: 0.05rem 0;
-    scrollbar-width: none;
+  .cal__filters,
+  .cal__filters::-webkit-scrollbar {
+    display: none;
   }
-
-  .cal__filters::-webkit-scrollbar { display: none; }
 
   .cal__views {
     grid-column: 1 / -1;

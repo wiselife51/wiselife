@@ -136,7 +136,7 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
       draggable={Boolean(onReschedule)}
       onDragStart={() => setDragging(a)}
       onDragEnd={() => setDragging(null)}
-      onClick={(e) => {
+      onPointerUp={(e) => {
         e.stopPropagation();
         onSelect?.(a);
       }}
