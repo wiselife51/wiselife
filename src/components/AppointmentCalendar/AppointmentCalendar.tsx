@@ -171,6 +171,25 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><polyline points="9 18 15 12 9 6" /></svg>
           </button>
           <button type="button" className="cal__today" onClick={() => setCursor(new Date())}>Hoy</button>
+          <div className="cal__filters" aria-label="Filtros de citas">
+            {Object.entries(STATUS_META).map(([value, meta]) => (
+              <button
+                key={value}
+                type="button"
+                className={`cal__filter cal__filter--${meta.key} ${statuses.includes(value) ? 'cal__filter--on' : ''}`}
+                onClick={() => toggleStatus(value)}
+              >
+                <span className={`cal__dot cal__dot--${meta.key}`} />
+                {meta.label}
+              </button>
+            ))}
+            {statuses.length > 0 && (
+              <button type="button" className="cal__filter-clear" onClick={() => setStatuses([])}>
+                Quitar filtros
+              </button>
+            )}
+          </div>
+          {onReschedule && <p className="cal__hint">Arrastra una cita a otro dia para reprogramarla.</p>}
         </div>
 
         <div className="cal__views">
@@ -187,28 +206,6 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
         </div>
       </header>
 
-      <div className="cal__filters">
-        {Object.entries(STATUS_META).map(([value, meta]) => (
-          <button
-            key={value}
-            type="button"
-            className={`cal__filter cal__filter--${meta.key} ${statuses.includes(value) ? 'cal__filter--on' : ''}`}
-            onClick={() => toggleStatus(value)}
-          >
-            <span className={`cal__dot cal__dot--${meta.key}`} />
-            {meta.label}
-          </button>
-        ))}
-        {statuses.length > 0 && (
-          <button type="button" className="cal__filter-clear" onClick={() => setStatuses([])}>
-            Quitar filtros
-          </button>
-        )}
-      </div>
-
-      {onReschedule && (
-        <p className="cal__hint">Arrastra una cita a otro dia para reprogramarla.</p>
-      )}
 
       {/* ===== Vista mes ===== */}
       {view === 'month' && (
