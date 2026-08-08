@@ -10,7 +10,7 @@ body:has(.psy-dash) {
   --psy-gradient: linear-gradient(135deg, #5c6bc0 0%, #7e57c2 50%, #9c27b0 100%);
   --psy-accent: #7e57c2;
   --psy-bg: #0a0f19;
-  --psy-surface: rgba(17, 24, 39, 0.7);
+  --psy-surface: rgba(17, 24, 39, 0.52);
   --psy-border: rgba(255, 255, 255, 0.08);
   --psy-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -124,9 +124,16 @@ body:has(.psy-dash) {
 
 .psy-dash-sidebar-header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  align-items: flex-start;
+  justify-content: flex-start;
   margin-bottom: 1.5rem;
+}
+
+.psy-dash-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
 }
 
 .psy-dash-logo {
@@ -768,13 +775,53 @@ body:has(.psy-dash) {
 
 /* ===== Upcoming Mini (sidebar) ===== */
 .psy-dash-upcoming-mini {
-  margin-top: 1rem;
+  margin-top: auto;
   padding-top: 1rem;
   border-top: 1px solid var(--psy-border);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  min-height: 0;
 }
+
+.psy-dash-upcoming-carousel {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.psy-dash-upcoming-carousel > .psy-dash-upcoming-item {
+  flex: 1;
+  min-width: 0;
+}
+
+.psy-dash-upcoming-arrow {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  border: 1px solid var(--psy-border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+}
+
+.psy-dash-upcoming-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.3rem;
+}
+
+.psy-dash-upcoming-dot {
+  width: 5px;
+  height: 5px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.psy-dash-upcoming-dot--active { background: #4dd0e1; }
 
 .psy-dash-upcoming-mini h4 {
   font-size: 0.75rem;
@@ -1632,7 +1679,9 @@ body:has(.psy-dash) {
   max-width: 320px;
   height: 100dvh;
   z-index: 150;
-  background: #19142a;
+  background: rgba(17, 24, 39, 0.68);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   transform: translate3d(-105%, 0, 0);
   transition: transform 0.28s var(--psy-smooth);
   box-shadow: 20px 0 48px rgba(0, 0, 0, 0.42);

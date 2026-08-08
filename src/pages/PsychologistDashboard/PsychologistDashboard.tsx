@@ -715,20 +715,22 @@ const PsychologistDashboard: React.FC = () => {
       {/* Sidebar */}
       <aside className={`psy-dash-sidebar ${showMobileMenu ? 'psy-dash-sidebar--open' : ''}`}>
         <div className="psy-dash-sidebar-header">
-          <div className="psy-dash-logo">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" strokeWidth="2">
-              <defs>
-                <linearGradient id="dash-logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#4dd0e1" />
-                  <stop offset="50%" stopColor="#42a5f5" />
-                  <stop offset="100%" stopColor="#7e57c2" />
-                </linearGradient>
-              </defs>
-              <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="url(#dash-logo-grad)" />
-            </svg>
-            <span>Vida Sabia</span>
+          <div className="psy-dash-brand">
+            <div className="psy-dash-logo">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" strokeWidth="2">
+                <defs>
+                  <linearGradient id="dash-logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#4dd0e1" />
+                    <stop offset="50%" stopColor="#42a5f5" />
+                    <stop offset="100%" stopColor="#7e57c2" />
+                  </linearGradient>
+                </defs>
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="url(#dash-logo-grad)" />
+              </svg>
+              <span>Vida Sabia</span>
+            </div>
+            <div className="psy-dash-badge">Profesional</div>
           </div>
-          <div className="psy-dash-badge">Profesional</div>
         </div>
 
         <div className="psy-dash-profile">
