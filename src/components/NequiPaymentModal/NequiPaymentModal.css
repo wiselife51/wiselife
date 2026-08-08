@@ -1,0 +1,412 @@
+/* ============================================
+   NEQUI PAYMENT MODAL
+   Estilos para modal de pago con Nequi
+   ============================================ */
+
+.nequi-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2500;
+  padding: 1rem;
+  animation: nequiFadeIn 0.3s ease-out;
+}
+
+@keyframes nequiFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.nequi-modal {
+  background: linear-gradient(145deg, #ffffff 0%, #f8f8f8 100%);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: nequiSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes nequiSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Header */
+.nequi-header {
+  position: relative;
+  text-align: center;
+  padding: 2rem 2rem 1.5rem 2rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.nequi-logo {
+  margin: 0 auto 1rem auto;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: nequiPulse 2s ease-in-out infinite;
+}
+
+@keyframes nequiPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.nequi-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.nequi-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nequi-close:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+/* Content */
+.nequi-content {
+  padding: 2rem;
+}
+
+.nequi-details {
+  background: #f5f5f5;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.nequi-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.nequi-detail-row:last-child {
+  border-bottom: none;
+}
+
+.nequi-detail-row--amount {
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 2px solid #FF006B;
+}
+
+.nequi-label {
+  font-size: 0.875rem;
+  color: #666;
+  font-weight: 600;
+}
+
+.nequi-value {
+  font-size: 0.9375rem;
+  color: #333;
+  font-weight: 500;
+  text-align: right;
+}
+
+.nequi-amount {
+  font-size: 1.75rem;
+  color: #FF006B;
+  font-weight: 700;
+}
+
+/* Info Box */
+.nequi-info {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: #e3f2fd;
+  border: 1px solid #90caf9;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.nequi-info svg {
+  flex-shrink: 0;
+  color: #1976d2;
+}
+
+.nequi-info p {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.875rem;
+  color: #333;
+}
+
+.nequi-info ol {
+  margin: 0.5rem 0 0 0;
+  padding-left: 1.25rem;
+  font-size: 0.8125rem;
+  color: #555;
+}
+
+.nequi-info li {
+  margin-bottom: 0.25rem;
+}
+
+/* Error */
+.nequi-error {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 1rem;
+  background: #ffebee;
+  border: 1px solid #ef5350;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.nequi-error svg {
+  flex-shrink: 0;
+  color: #d32f2f;
+}
+
+.nequi-error p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #d32f2f;
+  font-weight: 600;
+}
+
+/* Pay Button */
+.nequi-pay-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #FF006B 0%, #FF4081 100%);
+  border: none;
+  border-radius: 16px;
+  color: white;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 16px rgba(255, 0, 107, 0.4);
+}
+
+.nequi-pay-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(255, 0, 107, 0.5);
+}
+
+.nequi-pay-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.nequi-spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: nequiSpin 0.6s linear infinite;
+}
+
+@keyframes nequiSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.nequi-secure {
+  margin: 1rem 0 0 0;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: #666;
+}
+
+/* Success State */
+.nequi-success {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.nequi-success-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #66bb6a 0%, #4caf50 100%);
+  border-radius: 50%;
+  color: white;
+  animation: nequiSuccessPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes nequiSuccessPop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.nequi-success h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.nequi-success p {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9375rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+.nequi-success-note {
+  font-size: 0.8125rem !important;
+  color: #999 !important;
+  font-style: italic;
+}
+
+.nequi-success-animation {
+  margin-top: 2rem;
+  position: relative;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nequi-phone {
+  font-size: 3rem;
+  animation: nequiPhoneShake 1s ease-in-out infinite;
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes nequiPhoneShake {
+  0%, 100% {
+    transform: translateX(0) rotate(0deg);
+  }
+  25% {
+    transform: translateX(-5px) rotate(-5deg);
+  }
+  75% {
+    transform: translateX(5px) rotate(5deg);
+  }
+}
+
+.nequi-waves {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+.nequi-waves span {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border: 2px solid #FF006B;
+  border-radius: 50%;
+  opacity: 0;
+  animation: nequiWave 2s ease-out infinite;
+}
+
+.nequi-waves span:nth-child(2) {
+  animation-delay: 0.7s;
+}
+
+.nequi-waves span:nth-child(3) {
+  animation-delay: 1.4s;
+}
+
+@keyframes nequiWave {
+  0% {
+    transform: scale(0.5);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nequi-modal {
+    max-width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .nequi-header,
+  .nequi-content {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .nequi-amount {
+    font-size: 1.5rem;
+  }
+
+  .nequi-pay-btn {
+    font-size: 0.9375rem;
+    padding: 0.875rem 1.5rem;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .nequi-backdrop,
+  .nequi-modal,
+  .nequi-success-icon,
+  .nequi-logo,
+  .nequi-phone,
+  .nequi-waves span {
+    animation: none;
+    transition: none;
+  }
+}
