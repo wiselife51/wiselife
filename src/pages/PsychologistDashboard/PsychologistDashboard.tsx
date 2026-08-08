@@ -811,6 +811,15 @@ const PsychologistDashboard: React.FC = () => {
         </button>
       </aside>
 
+      {showMobileMenu && (
+        <button
+          type="button"
+          className="psy-mobile-menu-backdrop"
+          aria-label="Cerrar menú"
+          onClick={() => setShowMobileMenu(false)}
+        />
+      )}
+
       {/* Mobile menu toggle */}
       <button className="psy-mobile-menu-toggle" onClick={() => setShowMobileMenu(!showMobileMenu)} type="button">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

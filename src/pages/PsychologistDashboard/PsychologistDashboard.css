@@ -1678,7 +1678,7 @@ body:has(.psy-dash) {
   width: min(86vw, 320px);
   max-width: 320px;
   height: 100dvh;
-  z-index: 150;
+  z-index: 210;
   background: rgba(17, 24, 39, 0.68);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -1686,6 +1686,7 @@ body:has(.psy-dash) {
   transition: transform 0.28s var(--psy-smooth);
   box-shadow: 20px 0 48px rgba(0, 0, 0, 0.42);
   overflow-x: hidden;
+  visibility: visible;
   overscroll-behavior: contain;
   }
 
@@ -1693,8 +1694,17 @@ body:has(.psy-dash) {
   transform: translate3d(0, 0, 0);
   }
 
+  .psy-mobile-menu-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 205;
+    border: 0;
+    background: rgba(0, 0, 0, 0.42);
+    backdrop-filter: blur(2px);
+  }
+
   .psy-mobile-menu-toggle {
-    top: max(0.75rem, env(safe-area-inset-top));
+  top: max(0.75rem, env(safe-area-inset-top));
     right: max(0.75rem, env(safe-area-inset-right));
     left: auto;
     min-width: 44px;
@@ -2117,6 +2127,63 @@ body:has(.psy-dash) {
     justify-content: center;
   }
 }
+@media (max-width: 768px) {
+  .psy-dash-main {
+    width: 100%;
+    height: 100dvh;
+    padding: 4.5rem 0.75rem 1rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .psy-dash-sidebar {
+    visibility: hidden;
+  }
+
+  .psy-dash-sidebar--open {
+    visibility: visible;
+  }
+
+  .psy-dash-upcoming-mini {
+    margin-top: 1.25rem;
+  }
+
+  .psy-dash-modal-backdrop {
+    z-index: 300;
+    padding: 0.75rem;
+  }
+
+  .psy-dash-modal {
+    width: 100%;
+    max-width: 360px;
+    padding: 1rem;
+    gap: 0.75rem;
+    border-radius: 14px;
+    max-height: calc(100dvh - 1.5rem);
+  }
+
+  .psy-dash-modal h3,
+  .psy-appt-modal-header h3 {
+    font-size: 0.95rem;
+  }
+
+  .psy-dash-modal-actions,
+  .psy-appt-modal-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .psy-dash-modal-actions button,
+  .psy-appt-modal-actions button,
+  .psy-history-btn {
+    min-width: 0;
+    padding: 0.55rem 0.6rem;
+    font-size: 0.7rem;
+    line-height: 1.2;
+  }
+}
+
 /* ===== Gate de verificacion profesional ===== */
 .psy-verify-gate {
   min-height: 100vh;

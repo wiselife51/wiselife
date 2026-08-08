@@ -650,8 +650,13 @@
     min-width: 680px;
   }
 
+  .cal__month {
+    grid-auto-rows: minmax(58px, auto);
+  }
+
   .cal__cell {
-    min-height: 68px;
+    min-height: 58px;
+    padding: 0.35rem;
   }
 
   .cal-chip__name {
