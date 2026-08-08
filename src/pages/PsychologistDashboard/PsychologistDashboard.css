@@ -884,8 +884,8 @@ body:has(.psy-dash) {
 }
 
 .psy-dash-sidebar-pending {
-  margin-top: 1.4rem;
-  padding-top: 1.2rem;
+  margin-top: 0.85rem;
+  padding-top: 0.8rem;
   border-top: 1px solid var(--psy-border);
 }
 
@@ -979,7 +979,7 @@ body:has(.psy-dash) {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 0.625rem;
+  padding: 0.4rem 0.625rem;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--psy-border);
@@ -1807,8 +1807,13 @@ body:has(.psy-dash) {
 
 @media (max-width: 768px) {
   .psy-mobile-menu-toggle {
-    display: flex;
+  display: flex;
   }
+
+  .psy-dash-modal-backdrop { padding: 1rem; }
+  .psy-dash-modal--wide { width: min(100%, 430px); max-height: 88dvh; overflow-y: auto; }
+  .psy-appt-modal-actions { flex-direction: column; }
+  .psy-appt-modal-actions button { width: 100%; }
 
   .psy-dash {
     flex-direction: column;
@@ -1852,6 +1857,7 @@ body:has(.psy-dash) {
   }
 
   .psy-mobile-menu-close {
+  display: none;
   position: absolute;
   top: max(0.75rem, env(safe-area-inset-top));
   right: 0.75rem;
@@ -1875,8 +1881,10 @@ body:has(.psy-dash) {
   outline: none;
   }
 
+  .psy-mobile-menu-close { display: grid; }
+
   .psy-mobile-menu-backdrop {
-    position: fixed;
+  position: fixed;
     inset: 0;
     z-index: 90 !important;
     border: 0;
