@@ -310,10 +310,29 @@ body:has(.psy-dash) {
 .psy-profile-avatar { flex: 0 0 auto; width: 64px; height: 64px; }
 
 .psy-profile-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding-top: 0.85rem;
+}
+
+.psy-profile-row {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.7rem;
-  padding-top: 1rem;
+  gap: 0.55rem;
+}
+
+.psy-profile-row-four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.psy-profile-row-three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+.psy-profile-row select[multiple] {
+  min-height: 66px;
+  height: 66px;
+  overflow-y: auto;
+}
+
+.psy-profile-row select[multiple] option:checked {
+  background: rgba(126, 87, 194, 0.72);
+  color: #ffffff;
 }
 
 .psy-profile-phone-field {
@@ -371,7 +390,7 @@ body:has(.psy-dash) {
 .psy-profile-grid input:focus,
 .psy-profile-grid select:focus,
 .psy-profile-grid textarea:focus { border-color: #8a5cf6; box-shadow: 0 0 0 3px rgba(138,92,246,0.16); }
-.psy-profile-grid textarea { resize: vertical; min-height: 120px; }
+.psy-profile-grid textarea { resize: vertical; min-height: 72px; }
 .psy-profile-field-wide { grid-column: 1 / -1; }
 .psy-profile-actions { display: flex; align-items: center; justify-content: flex-end; gap: 1rem; padding-top: 1.5rem; }
 .psy-profile-message { color: #8ee7c2; font-size: 0.85rem; }
@@ -2774,9 +2793,11 @@ body:has(.psy-dash) {
   .psy-cal-title { font-size: 0.875rem; }
   .psy-cal-views { gap: 0.35rem; }
   .psy-cal-view-btn { flex: 1 1 auto; min-width: 0; }
-  .psy-profile-grid { grid-template-columns: 1fr; gap: 0.65rem; }
+  .psy-profile-grid { gap: 0.5rem; }
+  .psy-profile-row-four,
+  .psy-profile-row-three { grid-template-columns: 1fr; gap: 0.5rem; }
   .psy-profile-phone-field { grid-template-columns: 82px minmax(0, 1fr); }
-  .psy-profile-grid select[multiple] { min-height: 68px; }
+  .psy-profile-row select[multiple] { min-height: 64px; height: 64px; }
   .psy-profile-field-wide { grid-column: auto; }
   .psy-profile-card { padding: 1rem; border-radius: 16px; }
   .psy-profile-card-head { align-items: flex-start; }
