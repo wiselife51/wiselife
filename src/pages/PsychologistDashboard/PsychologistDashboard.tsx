@@ -156,6 +156,7 @@ const PsychologistDashboard: React.FC = () => {
   const [availability, setAvailability] = useState<AvailabilitySlot[]>([]);
   const [blocks, setBlocks] = useState<ScheduleBlock[]>([]);
   const [loadingData, setLoadingData] = useState(true);
+  const [dataError, setDataError] = useState('');
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileMessage, setProfileMessage] = useState('');
 
@@ -300,17 +301,24 @@ const PsychologistDashboard: React.FC = () => {
   const fetchData = useCallback(async () => {
     if (!user) return;
     setLoadingData(true);
+    setDataError('');
 
-    const { data: psyData } = await supabase
+    const { data: psyData, error: profileLoadError } = await supabase
       .from('psychologists')
       .select('*')
       .eq('user_id', user.id)
       .single();
 
-    if (!psyData || !psyData.onboarding_completed) {
-      navigate('/psicologo/onboarding');
-      return;
-    }
+  if (profileLoadError) {
+  setDataError('No pudimos cargar tu información. Intenta nuevamente.');
+  setLoadingData(false);
+  return;
+  }
+
+  if (!psyData || !psyData.onboarding_completed) {
+  navigate('/psicologo/onboarding');
+  return;
+  }
 
     setProfile(psyData as PsychologistProfile);
 
@@ -759,12 +767,19 @@ const PsychologistDashboard: React.FC = () => {
   };
 
   if (authLoading || loadingData) {
-    return (
-      <div className="psy-dash-loading">
-        <div className="psy-dash-spinner" />
-        <p>Cargando tu panel...</p>
-      </div>
-    );
+  return (
+  <div className="psy-dash-loading">
+  <div className="psy-profile-loading-card"><div className="psy-dash-spinner" /><p>Cargando tu perfil...</p></div>
+  </div>
+  );
+  }
+
+  if (dataError) {
+  return (
+  <div className="psy-dash-loading">
+  <div className="psy-profile-loading-card psy-profile-error-card"><strong>{dataError}</strong><button type="button" onClick={fetchData}>Reintentar</button></div>
+  </div>
+  );
   }
 
   // Mientras la verificacion profesional no este aprobada no se muestra el
