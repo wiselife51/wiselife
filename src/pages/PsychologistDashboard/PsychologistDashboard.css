@@ -333,12 +333,82 @@ body:has(.psy-dash) {
 .psy-profile-multi-label { gap: 0.35rem; }
 
 .psy-profile-multi-select {
+  position: relative;
+  min-height: 28px;
+}
+
+.psy-profile-multi-summary {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  min-height: 28px;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 7px;
+  background: #111827;
+  color: rgba(255, 255, 255, 0.86);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.7rem;
+  text-align: left;
+}
+
+.psy-profile-multi-summary span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.psy-profile-multi-select.is-open .psy-profile-multi-summary {
+  border-color: rgba(138, 92, 246, 0.7);
+  border-radius: 7px 7px 0 0;
+}
+
+.psy-profile-multi-options {
+  position: absolute;
+  z-index: 20;
+  top: 100%;
+  right: 0;
+  left: 0;
   display: flex;
   flex-direction: column;
-  min-height: 66px;
-  max-height: 66px;
+  max-height: 118px;
   overflow-y: auto;
   padding: 0.25rem;
+  border: 1px solid rgba(138, 92, 246, 0.55);
+  border-top: 0;
+  border-radius: 0 0 7px 7px;
+  background: #111827;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+}
+
+.psy-profile-multi-select .psy-profile-multi-option {
+  width: 100%;
+}
+
+.psy-profile-multi-select .psy-profile-multi-option {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 20px;
+  padding: 0.1rem 0.3rem;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.86);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.7rem;
+  text-align: left;
+}
+
+/* legacy option container spacing */
+.psy-profile-multi-select {
+  overflow: visible;
+  padding: 0;
+
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 7px;
   background: #111827;

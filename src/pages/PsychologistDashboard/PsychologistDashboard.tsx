@@ -47,6 +47,7 @@ function ProfileMultiSelect({
   value: string[];
 }) {
   const [selected, setSelected] = useState<string[]>(value);
+  const [open, setOpen] = useState(false);
 
   const toggle = (option: string) => {
     setSelected((current) => current.includes(option) ? current.filter((item) => item !== option) : [...current, option]);
@@ -55,7 +56,12 @@ function ProfileMultiSelect({
   return (
     <label className="psy-profile-multi-label">
       {label}
-      <div className="psy-profile-multi-select" role="group" aria-label={label}>
+      <div className={`psy-profile-multi-select${open ? ' is-open' : ''}`} role="group" aria-label={label}>
+        <button type="button" className="psy-profile-multi-summary" aria-expanded={open} onClick={() => setOpen((current) => !current)}>
+          <span>{selected.length ? selected.join(', ') : `Selecciona ${label.toLowerCase()}`}</span>
+          <span aria-hidden="true">{open ? '⌃' : '⌄'}</span>
+        </button>
+        {open && <div className="psy-profile-multi-options">
         {options.map((option) => {
           const checked = selected.includes(option);
           return (
@@ -71,6 +77,7 @@ function ProfileMultiSelect({
             </button>
           );
         })}
+        </div>}
       </div>
       {selected.map((option) => <input key={option} type="hidden" name={name} value={option} />)}
     </label>
