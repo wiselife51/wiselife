@@ -1271,19 +1271,21 @@ const PsychologistDashboard: React.FC = () => {
 
         {activeTab === 'perfil' && profile && (
           <section className="psy-profile-page">
-            <div className="psy-dash-header">
-              <div>
-  <h1>Mi perfil</h1>
-                <p>Actualiza la información que verán tus pacientes.</p>
+            <div className="psy-profile-intro">
+              <div className="psy-dash-header">
+                <div>
+                  <h1>Mi perfil</h1>
+                  <p>Actualiza la información que verán tus pacientes.</p>
+                </div>
               </div>
-            </div>
-            <form className="psy-profile-card" onSubmit={handleProfileSave}>
               <div className="psy-profile-card-head">
                 <div className="psy-dash-avatar psy-profile-avatar">
                   {profile.avatar_url ? <img src={profile.avatar_url} alt={profile.full_name} crossOrigin="anonymous" /> : <span>{profile.full_name.charAt(0)}</span>}
                 </div>
                 <div><h2>Información del profesional</h2><p>{profile.email}</p></div>
               </div>
+            </div>
+            <form className="psy-profile-card" onSubmit={handleProfileSave}>
               <div className="psy-profile-grid">
                 <div className="psy-profile-row psy-profile-row-four">
                   <label>Nombre completo<input name="full_name" defaultValue={profile.full_name} required /></label>
