@@ -261,6 +261,19 @@ body:has(.psy-dash) {
 .psy-profile-page {
   width: min(100%, 980px);
   margin: 0 auto;
+  color: #f7f8ff;
+}
+
+.psy-profile-page .psy-dash-header h1 {
+  margin: 0;
+  font-size: clamp(1.55rem, 3vw, 2.15rem);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+}
+
+.psy-profile-page .psy-dash-header p {
+  font-size: 0.84rem;
+  line-height: 1.5;
 }
 
 .psy-profile-kicker {
@@ -312,6 +325,7 @@ body:has(.psy-dash) {
 }
 
 .psy-profile-grid input,
+.psy-profile-grid select,
 .psy-profile-grid textarea {
   width: 100%;
   border: 1px solid rgba(255,255,255,0.12);
@@ -323,7 +337,18 @@ body:has(.psy-dash) {
   font: inherit;
 }
 
+.psy-profile-grid select {
+  appearance: auto;
+  cursor: pointer;
+}
+
+.psy-profile-grid select option {
+  color: #f7f8ff;
+  background: #111827;
+}
+
 .psy-profile-grid input:focus,
+.psy-profile-grid select:focus,
 .psy-profile-grid textarea:focus { border-color: #8a5cf6; box-shadow: 0 0 0 3px rgba(138,92,246,0.16); }
 .psy-profile-grid textarea { resize: vertical; min-height: 120px; }
 .psy-profile-field-wide { grid-column: 1 / -1; }

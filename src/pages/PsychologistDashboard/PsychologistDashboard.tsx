@@ -1205,8 +1205,7 @@ const PsychologistDashboard: React.FC = () => {
           <section className="psy-profile-page">
             <div className="psy-dash-header">
               <div>
-                <span className="psy-profile-kicker">CUENTA PROFESIONAL</span>
-                <h1>Mi perfil</h1>
+  <h1>Mi perfil</h1>
                 <p>Actualiza la información que verán tus pacientes.</p>
               </div>
             </div>
@@ -1222,9 +1221,9 @@ const PsychologistDashboard: React.FC = () => {
                 <label>Teléfono<input name="phone" defaultValue={profile.phone || ''} placeholder="Tu número de contacto" /></label>
                 <label>Ciudad<input name="city" defaultValue={profile.city || ''} placeholder="Bogotá" /></label>
                 <label>Años de experiencia<input name="years_experience" type="number" min="0" defaultValue={profile.years_experience || 0} /></label>
-                <label>Especialidades<input name="specialties" defaultValue={(profile.specialties || []).join(', ')} placeholder="Ansiedad, pareja, duelo" /></label>
-                <label>Modalidad<input name="modality" defaultValue={(profile.modality || []).join(', ')} placeholder="Virtual, presencial" /></label>
-                <label>Idiomas<input name="languages" defaultValue={(profile.languages || []).join(', ')} placeholder="Español, inglés" /></label>
+  <label>Especialidades<select name="specialties" defaultValue={(profile.specialties || [])[0] || ''}><option value="">Selecciona una especialidad</option><option value="Ansiedad">Ansiedad</option><option value="Depresión">Depresión</option><option value="Pareja">Pareja</option><option value="Duelo">Duelo</option><option value="Adolescentes">Adolescentes</option><option value="Autoestima">Autoestima</option></select></label>
+  <label>Modalidad<select name="modality" defaultValue={(profile.modality || [])[0] || ''}><option value="">Selecciona una modalidad</option><option value="Virtual">Virtual</option><option value="Presencial">Presencial</option><option value="Mixta">Virtual y presencial</option></select></label>
+  <label>Idiomas<select name="languages" defaultValue={(profile.languages || [])[0] || ''}><option value="">Selecciona un idioma</option><option value="Español">Español</option><option value="Inglés">Inglés</option><option value="Español, Inglés">Español e inglés</option></select></label>
                 <label>Duración de sesión (minutos)<input name="session_duration" type="number" min="15" step="5" defaultValue={profile.session_duration || 50} /></label>
                 <label>Tarifa por sesión<input name="session_price" type="number" min="0" defaultValue={profile.session_price || 0} /></label>
                 <label className="psy-profile-field-wide">Biografía<textarea name="bio" defaultValue={profile.bio || ''} rows={5} placeholder="Cuéntales a tus pacientes sobre tu enfoque profesional..." /></label>
