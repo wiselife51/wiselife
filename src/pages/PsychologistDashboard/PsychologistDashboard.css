@@ -1119,6 +1119,20 @@ body:has(.psy-dash) {
   flex-wrap: wrap;
 }
 
+.psy-income-page { width: min(100%, 980px); margin: 0 auto; }
+.psy-income-summary-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-bottom: 1rem; }
+.psy-income-summary-card, .psy-income-list-card { border: 1px solid var(--psy-border); border-radius: 16px; background: var(--psy-surface); padding: 1.2rem; }
+.psy-income-summary-card { display: flex; flex-direction: column; gap: 0.3rem; }
+.psy-income-summary-card span, .psy-income-summary-card small, .psy-income-list-heading span { color: rgba(255,255,255,0.55); font-size: 0.78rem; }
+.psy-income-summary-card strong { color: #8ee7c2; font-size: 1.7rem; }
+.psy-income-list-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.75rem; }
+.psy-income-list-heading h2 { margin: 0; font-size: 1.1rem; }
+.psy-income-list { display: flex; flex-direction: column; }
+.psy-income-row { display: grid; grid-template-columns: 100px 1fr auto; gap: 1rem; align-items: center; padding: 0.8rem 0; border-bottom: 1px solid var(--psy-border); }
+.psy-income-row-date, .psy-income-row-patient small { color: rgba(255,255,255,0.5); font-size: 0.78rem; }
+.psy-income-row-patient { display: flex; flex-direction: column; gap: 0.15rem; }
+.psy-income-row-amount { color: #8ee7c2; }
+
 /* ===== Upcoming Mini (sidebar) ===== */
 .psy-dash-upcoming-mini {
   margin-top: 0.35rem;

@@ -138,7 +138,7 @@ const HOUR_OPTIONS = Array.from({ length: 15 }, (_, i) => {
 });
 
 
-type ActiveTab = 'calendario' | 'agenda' | 'bloqueos' | 'perfil';
+type ActiveTab = 'calendario' | 'agenda' | 'bloqueos' | 'perfil' | 'ingresos';
 
 function formatTime(t: string): string {
   const [h, m] = t.split(':');
@@ -729,6 +729,10 @@ const PsychologistDashboard: React.FC = () => {
   const upcomingAppts = appointments.filter(
   (a) => a.appointment_date >= toDateStr(today) && (a.status === 'confirmada' || a.status === 'pendiente_pago')
   );
+  const paidAppointments = appointments.filter((a) => a.payment_status === 'pagado');
+  const totalIncome = paidAppointments.reduce((sum, a) => sum + Number(a.payment_amount || 0), 0);
+  const pendingPayments = appointments.filter((a) => a.payment_status !== 'pagado' && a.status !== 'cancelada');
+  const formatCurrency = (value: number) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(value);
 
   useEffect(() => {
     if (upcomingAppts.length <= 1) {
@@ -916,6 +920,10 @@ const PsychologistDashboard: React.FC = () => {
           <button type="button" className={`psy-dash-nav-item ${activeTab === 'perfil' ? 'psy-dash-nav-item--active' : ''}`} onClick={() => { setActiveTab('perfil'); setProfileMessage(''); setShowMobileMenu(false); }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="8" r="3" /><path d="M5 20c.8-3.2 3.1-5 7-5s6.2 1.8 7 5" /></svg>
             <span>Perfil</span>
+          </button>
+          <button type="button" className={`psy-dash-nav-item ${activeTab === 'ingresos' ? 'psy-dash-nav-item--active' : ''}`} onClick={() => { setActiveTab('ingresos'); setShowMobileMenu(false); }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18v12H3z" /><path d="M3 10h18M7 14h3" /></svg>
+            <span>Ingresos</span>
           </button>
         {upcomingAppts.length > 0 && (
           <div className="psy-dash-upcoming-mini">
@@ -1275,8 +1283,21 @@ const PsychologistDashboard: React.FC = () => {
           </>
         )}
 
-        {activeTab === 'perfil' && profile && (
-          <section className="psy-profile-page">
+  {activeTab === 'ingresos' && (
+  <section className="psy-income-page">
+    <div className="psy-dash-header"><div><h1>Ingresos</h1><p>Resumen de pagos registrados en tus citas.</p></div></div>
+    <div className="psy-income-summary-grid">
+      <article className="psy-income-summary-card"><span>Total registrado</span><strong>{formatCurrency(totalIncome)}</strong><small>{paidAppointments.length} citas pagadas</small></article>
+      <article className="psy-income-summary-card"><span>Pagos pendientes</span><strong>{pendingPayments.length}</strong><small>Citas por confirmar</small></article>
+    </div>
+    <div className="psy-income-list-card"><div className="psy-income-list-heading"><h2>Movimientos recientes</h2><span>{appointments.length} citas</span></div>
+      {appointments.length === 0 ? <div className="psy-dash-empty"><p>Aún no tienes movimientos registrados.</p></div> : <div className="psy-income-list">{appointments.map((appointment) => <div key={appointment.id} className="psy-income-row"><span className="psy-income-row-date">{appointment.appointment_date.split('-').reverse().join('/')}</span><span className="psy-income-row-patient"><strong>{appointment.patient?.full_name || 'Paciente'}</strong><small>{appointment.payment_status === 'pagado' ? 'Pago confirmado' : 'Pago pendiente'}</small></span><strong className="psy-income-row-amount">{formatCurrency(Number(appointment.payment_amount || 0))}</strong></div>)}</div>}
+    </div>
+  </section>
+  )}
+
+  {activeTab === 'perfil' && profile && (
+  <section className="psy-profile-page">
             <div className="psy-profile-intro">
               <div className="psy-dash-header">
                 <div>
