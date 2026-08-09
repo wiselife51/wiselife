@@ -911,7 +911,7 @@ const PsychologistDashboard: React.FC = () => {
               </svg>
               <span>Vida Sabia</span>
             </div>
-            <div className="psy-dash-badge">psicólogo profesional</div>
+            <div className="psy-dash-badge">Psicologo Profesional</div>
           </div>
         </div>
 
