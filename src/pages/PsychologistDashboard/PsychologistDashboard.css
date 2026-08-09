@@ -2209,19 +2209,18 @@ body:has(.psy-dash) {
   left: 0;
   z-index: 1200;
   display: flex;
-  min-height: 68px;
+  min-height: 44px;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.65rem 0.75rem 0.65rem 4.35rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(7, 10, 18, 0.94);
-  backdrop-filter: blur(12px);
+  gap: 0.65rem;
+  padding: 0.3rem 0.65rem 0.3rem 3.95rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: transparent;
 }
 
   .psy-mobile-profile-title {
   flex: 0 0 auto;
   color: #f7f8ff;
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 700;
 }
 
@@ -2234,10 +2233,10 @@ body:has(.psy-dash) {
 }
 
   .psy-mobile-profile-avatar {
-  width: 32px;
-  height: 32px;
-  flex: 0 0 32px;
-  font-size: 0.75rem;
+  width: 27px;
+  height: 27px;
+  flex: 0 0 27px;
+  font-size: 0.68rem;
 }
 
   .psy-mobile-profile-professional > div:last-child {
@@ -2264,7 +2263,7 @@ body:has(.psy-dash) {
 }
 
   .psy-profile-intro { display: none; }
-  .psy-dash-main { padding-top: 5.1rem; }
+  .psy-dash-main { padding-top: 3.8rem; }
 
   .psy-dash-modal-backdrop { padding: 1rem; }
   .psy-dash-modal--wide { width: min(100%, 430px); max-height: 88dvh; overflow-y: auto; }
