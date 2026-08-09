@@ -1275,7 +1275,6 @@ const PsychologistDashboard: React.FC = () => {
               <div className="psy-dash-header">
                 <div>
                   <h1>Mi perfil</h1>
-                  <p>Actualiza la información que verán tus pacientes.</p>
                 </div>
               </div>
               <div className="psy-profile-card-head">
