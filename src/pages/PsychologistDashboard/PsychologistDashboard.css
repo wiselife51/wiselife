@@ -1134,6 +1134,23 @@ body:has(.psy-dash) {
 .psy-patient-history-btn { width: 100%; padding: 0.65rem; border: 1px solid rgba(171, 127, 255, 0.35); border-radius: 10px; background: rgba(171, 127, 255, 0.1); color: #c9b2ff; font: inherit; font-weight: 650; cursor: pointer; }
 .psy-patient-history-btn:hover { background: rgba(171, 127, 255, 0.18); }
 
+.psy-alert-page { width: min(100%, 980px); margin: 0 auto; }
+.psy-alert-page .psy-dash-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.psy-alert-count { display: grid; min-width: 2.3rem; height: 2.3rem; place-items: center; border: 1px solid rgba(77, 208, 225, 0.35); border-radius: 50%; background: rgba(77, 208, 225, 0.1); color: #8ee7c2; font-weight: 700; }
+.psy-alert-count--warning { border-color: rgba(255, 193, 7, 0.4); background: rgba(255, 193, 7, 0.1); color: #ffd54f; }
+.psy-alert-list { display: flex; flex-direction: column; gap: 0.7rem; }
+.psy-alert-card { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.8rem; width: 100%; padding: 0.9rem 1rem; border: 1px solid var(--psy-border); border-radius: 14px; background: var(--psy-surface); color: var(--psy-text); text-align: left; cursor: pointer; font: inherit; }
+.psy-alert-card:hover, .psy-alert-card:focus-visible { border-color: rgba(171, 127, 255, 0.55); background: rgba(171, 127, 255, 0.08); outline: none; }
+.psy-alert-card--warning { border-color: rgba(255, 193, 7, 0.25); }
+.psy-alert-card-text { display: flex; flex-direction: column; gap: 0.2rem; min-width: 0; }
+.psy-alert-card-text strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.psy-alert-card-text small { color: rgba(255,255,255,0.55); }
+.psy-dash-nav-item { position: relative; }
+.psy-dash-nav-badge { display: grid; min-width: 1.25rem; height: 1.25rem; margin-left: auto; place-items: center; border-radius: 999px; background: rgba(77, 208, 225, 0.18); color: #8ee7c2; font-size: 0.68rem; font-weight: 700; }
+.psy-dash-nav-badge--warning { background: rgba(255, 193, 7, 0.18); color: #ffd54f; }
+.psy-dash-bell--active { animation: psy-bell-swing 1.8s ease-in-out infinite; transform-origin: 50% 10%; }
+@keyframes psy-bell-swing { 0%, 72%, 100% { transform: rotate(0); } 78% { transform: rotate(10deg); } 84% { transform: rotate(-8deg); } 90% { transform: rotate(5deg); } }
+
 .psy-income-page { width: min(100%, 980px); margin: 0 auto; }
 .psy-income-summary-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-bottom: 1rem; }
 .psy-income-summary-card, .psy-income-list-card { border: 1px solid var(--psy-border); border-radius: 16px; background: var(--psy-surface); padding: 1.2rem; }
@@ -3063,6 +3080,8 @@ body:has(.psy-dash) {
   .psy-profile-actions { align-items: stretch; flex-direction: column; }
   .psy-profile-actions .psy-dash-btn-primary { width: 100%; }
   .psy-profile-message { text-align: center; }
+  .psy-alert-page .psy-dash-header { align-items: center; }
+  .psy-alert-card { padding: 0.8rem; }
   .psy-patients-grid { grid-template-columns: 1fr; gap: 0.7rem; }
   .psy-patient-card { padding: 0.85rem; }
   .psy-patient-meta { flex-direction: column; gap: 0.2rem; }

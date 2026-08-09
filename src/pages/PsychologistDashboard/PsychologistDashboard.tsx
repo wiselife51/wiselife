@@ -149,7 +149,7 @@ const HOUR_OPTIONS = Array.from({ length: 15 }, (_, i) => {
 });
 
 
-type ActiveTab = 'calendario' | 'agenda' | 'pacientes' | 'bloqueos' | 'perfil' | 'ingresos';
+type ActiveTab = 'calendario' | 'agenda' | 'pacientes' | 'bloqueos' | 'perfil' | 'ingresos' | 'proximas' | 'pendientes';
 
 function formatTime(t: string): string {
   const [h, m] = t.split(':');
@@ -180,8 +180,6 @@ const PsychologistDashboard: React.FC = () => {
 
   // Appointment detail modal
   const [selectedAppt, setSelectedAppt] = useState<Appointment | null>(null);
-  const [upcomingIndex, setUpcomingIndex] = useState(0);
-  const [pendingIndex, setPendingIndex] = useState(0);
 
   // Block form
   const [showBlockForm, setShowBlockForm] = useState(false);
@@ -778,19 +776,6 @@ const PsychologistDashboard: React.FC = () => {
   const pendingPayments = appointments.filter((a) => a.payment_status !== 'pagado' && a.status !== 'cancelada');
   const formatCurrency = (value: number) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(value);
 
-  useEffect(() => {
-    if (upcomingAppts.length <= 1) {
-      setUpcomingIndex(0);
-      return;
-    }
-    setUpcomingIndex((current) => Math.min(current, upcomingAppts.length - 1));
-    const timer = window.setInterval(() => {
-      setUpcomingIndex((current) => (current + 1) % upcomingAppts.length);
-    }, 5000);
-    return () => window.clearInterval(timer);
-  }, [upcomingAppts.length]);
-
-
   // Adaptacion al contrato del calendario compartido. En el panel del
   // psicologo la contraparte visible es el paciente.
   const calendarAppointments: CalendarAppointment[] = appointments.map((a) => ({
@@ -961,6 +946,14 @@ const PsychologistDashboard: React.FC = () => {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="8" r="3" /><circle cx="17" cy="10" r="2" /><path d="M3 20c.7-3.2 2.7-5 6-5s5.3 1.8 6 5M14 16c2.5-.2 4.5 1.2 5 4" /></svg>
             <span>Mis Pacientes</span>
           </button>
+          <button type="button" className={`psy-dash-nav-item ${activeTab === 'proximas' ? 'psy-dash-nav-item--active' : ''}`} onClick={() => { setActiveTab('proximas'); setShowMobileMenu(false); }}>
+            <svg className={upcomingAppts.length > 0 ? 'psy-dash-bell psy-dash-bell--active' : ''} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" /></svg>
+            <span>Próximas citas</span>{upcomingAppts.length > 0 && <span className="psy-dash-nav-badge">{upcomingAppts.length}</span>}
+          </button>
+          <button type="button" className={`psy-dash-nav-item ${activeTab === 'pendientes' ? 'psy-dash-nav-item--active' : ''}`} onClick={() => { setActiveTab('pendientes'); setShowMobileMenu(false); }}>
+            <svg className={warnings.length > 0 ? 'psy-dash-bell psy-dash-bell--active' : ''} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 3v11M12 18v2" /><circle cx="12" cy="12" r="9" /></svg>
+            <span>Pendientes</span>{warnings.length > 0 && <span className="psy-dash-nav-badge psy-dash-nav-badge--warning">{warnings.length}</span>}
+          </button>
           <button type="button" className={`psy-dash-nav-item ${activeTab === 'bloqueos' ? 'psy-dash-nav-item--active' : ''}`} onClick={() => { setActiveTab('bloqueos'); setShowMobileMenu(false); }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" /></svg>
             <span>Bloqueos</span>
@@ -973,68 +966,7 @@ const PsychologistDashboard: React.FC = () => {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18v12H3z" /><path d="M3 10h18M7 14h3" /></svg>
             <span>Ingresos</span>
           </button>
-        {upcomingAppts.length > 0 && (
-          <div className="psy-dash-upcoming-mini">
-            <h4>Próximas citas</h4>
-            <div className="psy-dash-upcoming-carousel" aria-live="polite">
-              {(upcomingAppts.length > 0 ? [upcomingAppts[upcomingIndex]] : []).map((a) => (
-                <button key={a.id} className="psy-dash-upcoming-item" data-testid={`upcoming-appointment-${a.id}`} onPointerUp={(event) => { event.preventDefault(); event.stopPropagation(); openAppointmentDetails(a); }} onClick={(event) => { event.preventDefault(); event.stopPropagation(); }} type="button">
-                  <div className="psy-dash-upcoming-avatar-sm">
-                    {a.patient?.avatar_url ? (
-                      <img src={a.patient.avatar_url} alt="" crossOrigin="anonymous" />
-                    ) : (
-                      <span>{(a.patient?.full_name || 'P').charAt(0)}</span>
-                    )}
-                  </div>
-                  <div className="psy-dash-upcoming-text">
-                    <strong>{a.patient?.full_name?.split(' ')[0] || 'Paciente'}</strong>
-                    <span>{a.appointment_date.split('-').reverse().join('/')} {formatTime(a.start_time)}</span>
-                  </div>
-                  <span className={`psy-dash-mini-status psy-dash-mini-status--${a.status}`}>
-                    {a.status === 'confirmada' ? 'OK' : '$'}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-        {warnings.length > 0 && (
-          <div className="psy-dash-sidebar-pending">
-            <div className="psy-dash-section-heading">
-              <h4>Pendientes importantes</h4>
-              {warnings.length > 1 && (
-                <div className="psy-dash-carousel-controls" aria-label="Navegar pendientes">
-                  <button type="button" aria-label="Pendiente anterior" onClick={() => setPendingIndex((pendingIndex - 1 + warnings.length) % warnings.length)}>‹</button>
-                  <button type="button" aria-label="Siguiente pendiente" onClick={() => setPendingIndex((pendingIndex + 1) % warnings.length)}>›</button>
-                </div>
-              )}
-            </div>
-            {(() => {
-              const warning = warnings[pendingIndex % warnings.length];
-              return (
-                <button
-                  key={warning.appointmentId}
-                  className="psy-dash-sidebar-pending-card"
-                  onClick={() => {
-                    const appt = appointments.find((a) => a.id === warning.appointmentId);
-                    if (appt) {
-                      setPendingAppointmentToComplete(appt);
-                      setShowClinicalRecordModal(true);
-                    }
-                  }}
-                  type="button"
-                >
-                  <span className="psy-dash-pending-avatar" aria-hidden="true">!</span>
-                  <span className="psy-dash-pending-text">
-                    <strong>{warning.message.split(' - ')[0]}</strong>
-                    <small>{warning.message.split(' - ').slice(1).join(' - ')}</small>
-                  </span>
-                  <span className="psy-dash-pending-status">HC</span>
-                </button>
-              );
-            })()}
-          </div>
-        )}
+
         </nav>
 
         <button type="button" className="psy-dash-signout" onClick={handleSignOut}>
@@ -1068,6 +1000,19 @@ const PsychologistDashboard: React.FC = () => {
 
       {/* Main content */}
       <main className="psy-dash-main">
+        {activeTab === 'proximas' && (
+          <section className="psy-alert-page">
+            <div className="psy-dash-header"><div><h1>Próximas citas</h1><p>Consulta tus próximas sesiones y abre sus detalles.</p></div><span className="psy-alert-count">{upcomingAppts.length}</span></div>
+            {upcomingAppts.length === 0 ? <div className="psy-dash-empty"><p>No tienes próximas citas.</p></div> : <div className="psy-alert-list">{upcomingAppts.map((a) => <button key={a.id} type="button" className="psy-alert-card" onClick={() => openAppointmentDetails(a)}><span className="psy-dash-upcoming-avatar-sm">{a.patient?.avatar_url ? <img src={a.patient.avatar_url} alt="" crossOrigin="anonymous" /> : <span>{(a.patient?.full_name || 'P').charAt(0)}</span>}</span><span className="psy-alert-card-text"><strong>{a.patient?.full_name || 'Paciente'}</strong><small>{a.appointment_date.split('-').reverse().join('/')} · {formatTime(a.start_time)}</small></span><span className={`psy-dash-mini-status psy-dash-mini-status--${a.status}`}>{a.status === 'confirmada' ? 'OK' : '$'}</span></button>)}</div>}
+          </section>
+        )}
+        {activeTab === 'pendientes' && (
+          <section className="psy-alert-page">
+            <div className="psy-dash-header"><div><h1>Pendientes importantes</h1><p>Acciones clínicas que requieren tu atención.</p></div><span className="psy-alert-count psy-alert-count--warning">{warnings.length}</span></div>
+            {warnings.length === 0 ? <div className="psy-dash-empty"><p>No tienes pendientes importantes.</p></div> : <div className="psy-alert-list">{warnings.map((warning) => { const appt = appointments.find((a) => a.id === warning.appointmentId); return <button key={warning.appointmentId} type="button" className="psy-alert-card psy-alert-card--warning" onClick={() => { if (appt) { setPendingAppointmentToComplete(appt); setShowClinicalRecordModal(true); } }}><span className="psy-dash-pending-avatar" aria-hidden="true">!</span><span className="psy-alert-card-text"><strong>{warning.message.split(' - ')[0]}</strong><small>{warning.message.split(' - ').slice(1).join(' - ')}</small></span><span className="psy-dash-pending-status">HC</span></button>; })}</div>}
+          </section>
+        )}
+
         {/* CALENDARIO TAB */}
         {activeTab === 'calendario' && (
           <AppointmentCalendar
