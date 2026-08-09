@@ -103,6 +103,17 @@ interface Appointment {
   } | null;
 }
 
+interface PatientSummary {
+  id: string;
+  full_name: string | null;
+  avatar_url: string | null;
+  phone: string | null;
+  email: string | null;
+  appointmentCount: number;
+  lastAppointment: string;
+  lastStatus: string;
+}
+
 interface AvailabilitySlot {
   id: string;
   day_of_week: number;
@@ -138,7 +149,7 @@ const HOUR_OPTIONS = Array.from({ length: 15 }, (_, i) => {
 });
 
 
-type ActiveTab = 'calendario' | 'agenda' | 'bloqueos' | 'perfil' | 'ingresos';
+type ActiveTab = 'calendario' | 'agenda' | 'pacientes' | 'bloqueos' | 'perfil' | 'ingresos';
 
 function formatTime(t: string): string {
   const [h, m] = t.split(':');
@@ -153,6 +164,9 @@ const PsychologistDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<PsychologistProfile | null>(null);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [patients, setPatients] = useState<PatientSummary[]>([]);
+  const [patientSearch, setPatientSearch] = useState('');
+  const [patientsLoading, setPatientsLoading] = useState(false);
   const [availability, setAvailability] = useState<AvailabilitySlot[]>([]);
   const [blocks, setBlocks] = useState<ScheduleBlock[]>([]);
   const [loadingData, setLoadingData] = useState(true);
@@ -501,10 +515,10 @@ const PsychologistDashboard: React.FC = () => {
     const { data: patientProfiles } = patientIds.length
       ? await supabase.from('profiles').select('id, full_name, avatar_url, phone').in('id', patientIds)
       : { data: [] };
-    const patientById = new Map((patientProfiles || []).map((patient) => [patient.id, patient]));
+    const patientProfileById = new Map((patientProfiles || []).map((patient) => [patient.id, patient]));
 
     for (const appointment of apptData || []) {
-      const patient = patientById.get(appointment.patient_id);
+      const patient = patientProfileById.get(appointment.patient_id);
       enriched.push({
         ...appointment,
         patient: patient ? {
@@ -516,6 +530,36 @@ const PsychologistDashboard: React.FC = () => {
       });
     }
     setAppointments(enriched);
+    setPatientsLoading(true);
+    const patientById = new Map<string, PatientSummary>();
+    for (const appointment of enriched) {
+      if (!appointment.patient?.id) continue;
+      const current = patientById.get(appointment.patient.id);
+      if (!current || appointment.appointment_date >= current.lastAppointment) {
+        patientById.set(appointment.patient.id, {
+          id: appointment.patient.id,
+          full_name: appointment.patient.full_name,
+          avatar_url: appointment.patient.avatar_url,
+          phone: appointment.patient.phone,
+          email: null,
+          appointmentCount: (current?.appointmentCount || 0) + 1,
+          lastAppointment: appointment.appointment_date,
+          lastStatus: appointment.status,
+        });
+      } else {
+        patientById.set(appointment.patient.id, { ...current, appointmentCount: current.appointmentCount + 1 });
+      }
+    }
+    const patientIdsForEmail = [...patientById.keys()];
+    if (patientIdsForEmail.length) {
+      const { data: patientContactData } = await supabase.from('profiles').select('id, email').in('id', patientIdsForEmail);
+      for (const contact of patientContactData || []) {
+        const current = patientById.get(contact.id);
+        if (current) patientById.set(contact.id, { ...current, email: contact.email || null });
+      }
+    }
+    setPatients([...patientById.values()].sort((a, b) => b.lastAppointment.localeCompare(a.lastAppointment)));
+    setPatientsLoading(false);
 
     // Establecer la disponibilidad (ya sea la existente o la recién creada)
     setAvailability((existingAvail || []) as AvailabilitySlot[]);
@@ -913,6 +957,10 @@ const PsychologistDashboard: React.FC = () => {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
             <span>Mi Agenda</span>
           </button>
+          <button type="button" className={`psy-dash-nav-item ${activeTab === 'pacientes' ? 'psy-dash-nav-item--active' : ''}`} onClick={() => { setActiveTab('pacientes'); setShowMobileMenu(false); }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="8" r="3" /><circle cx="17" cy="10" r="2" /><path d="M3 20c.7-3.2 2.7-5 6-5s5.3 1.8 6 5M14 16c2.5-.2 4.5 1.2 5 4" /></svg>
+            <span>Mis Pacientes</span>
+          </button>
           <button type="button" className={`psy-dash-nav-item ${activeTab === 'bloqueos' ? 'psy-dash-nav-item--active' : ''}`} onClick={() => { setActiveTab('bloqueos'); setShowMobileMenu(false); }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" /></svg>
             <span>Bloqueos</span>
@@ -1282,6 +1330,24 @@ const PsychologistDashboard: React.FC = () => {
             )}
           </>
         )}
+
+  {activeTab === 'pacientes' && (
+  <section className="psy-patients-page">
+    <div className="psy-dash-header"><div><h1>Mis Pacientes</h1><p>Consulta el historial y la información de las personas que has atendido.</p></div></div>
+    <label className="psy-patients-search"><span className="sr-only">Buscar pacientes</span><input type="search" value={patientSearch} onChange={(event) => setPatientSearch(event.target.value)} placeholder="Buscar por nombre o teléfono" /></label>
+    {patientsLoading ? <div className="psy-dash-empty"><p>Cargando pacientes...</p></div> : (() => {
+      const query = patientSearch.trim().toLowerCase();
+      const visiblePatients = patients.filter((patient) => `${patient.full_name || ''} ${patient.phone || ''}`.toLowerCase().includes(query));
+      return visiblePatients.length === 0 ? <div className="psy-dash-empty"><p>{query ? 'No encontramos pacientes con esa búsqueda.' : 'Aún no tienes pacientes registrados.'}</p></div> : <div className="psy-patients-grid">{visiblePatients.map((patient) => (
+        <article key={patient.id} className="psy-patient-card">
+          <div className="psy-patient-card-top"><div className="psy-patient-avatar">{patient.avatar_url ? <img src={patient.avatar_url} alt="" crossOrigin="anonymous" /> : <span>{(patient.full_name || 'P').charAt(0).toUpperCase()}</span>}</div><div><h2>{patient.full_name || 'Paciente sin nombre'}</h2><p>{patient.phone || 'Sin teléfono registrado'}</p></div></div>
+          <div className="psy-patient-meta"><span>{patient.appointmentCount} {patient.appointmentCount === 1 ? 'cita' : 'citas'}</span><span>Última: {patient.lastAppointment.split('-').reverse().join('/')}</span></div>
+          <button type="button" className="psy-patient-history-btn" onClick={() => { setSelectedPatientForHistory({ id: patient.id, name: patient.full_name || 'Paciente' }); setShowClinicalHistoryView(true); }}>Ver historia clínica</button>
+        </article>
+      ))}</div>;
+    })()}
+  </section>
+  )}
 
   {activeTab === 'ingresos' && (
   <section className="psy-income-page">
