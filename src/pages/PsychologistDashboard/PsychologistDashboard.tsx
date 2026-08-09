@@ -31,6 +31,59 @@ interface PsychologistProfile {
   rejection_reason?: string | null;
 }
 
+const PROFILE_SPECIALTIES = ['Ansiedad', 'Depresión', 'Pareja', 'Duelo', 'Adolescentes', 'Autoestima'];
+const PROFILE_MODALITIES = ['Virtual', 'Presencial', 'Mixta'];
+const PROFILE_LANGUAGES = ['Español', 'Inglés', 'Francés', 'Portugués'];
+
+function ProfileMultiSelect({
+  name,
+  label,
+  options,
+  value,
+}: {
+  name: string;
+  label: string;
+  options: string[];
+  value: string[];
+}) {
+  const [selected, setSelected] = useState<string[]>(value);
+  const [open, setOpen] = useState(false);
+
+  const toggle = (option: string) => {
+    setSelected((current) => current.includes(option) ? current.filter((item) => item !== option) : [...current, option]);
+  };
+
+  return (
+    <label className="psy-profile-multi-label">
+      {label}
+      <div className={`psy-profile-multi-select${open ? ' is-open' : ''}`} role="group" aria-label={label}>
+        <button type="button" className="psy-profile-multi-summary" aria-expanded={open} onClick={() => setOpen((current) => !current)}>
+          <span>{selected.length ? selected.join(', ') : `Selecciona ${label.toLowerCase()}`}</span>
+          <span aria-hidden="true">{open ? '⌃' : '⌄'}</span>
+        </button>
+        {open && <div className="psy-profile-multi-options">
+        {options.map((option) => {
+          const checked = selected.includes(option);
+          return (
+            <button
+              key={option}
+              type="button"
+              className={`psy-profile-multi-option${checked ? ' is-selected' : ''}`}
+              aria-pressed={checked}
+              onClick={() => toggle(option)}
+            >
+              <span className="psy-profile-check" aria-hidden="true">{checked ? '✓' : ''}</span>
+              <span>{option}</span>
+            </button>
+          );
+        })}
+        </div>}
+      </div>
+      {selected.map((option) => <input key={option} type="hidden" name={name} value={option} />)}
+    </label>
+  );
+}
+
 interface Appointment {
   id: string;
   appointment_date: string;
@@ -103,6 +156,7 @@ const PsychologistDashboard: React.FC = () => {
   const [availability, setAvailability] = useState<AvailabilitySlot[]>([]);
   const [blocks, setBlocks] = useState<ScheduleBlock[]>([]);
   const [loadingData, setLoadingData] = useState(true);
+  const [dataError, setDataError] = useState('');
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileMessage, setProfileMessage] = useState('');
 
@@ -224,22 +278,22 @@ const PsychologistDashboard: React.FC = () => {
     const form = new FormData(event.currentTarget);
     const payload = {
       full_name: String(form.get('full_name') || '').trim(),
-      phone: String(form.get('phone') || '').trim() || null,
+      phone: `${String(form.get('phone_country') || '+57')} ${String(form.get('phone') || '').trim()}`.trim() || null,
       bio: String(form.get('bio') || '').trim() || null,
-      specialties: String(form.get('specialties') || '').split(',').map((item) => item.trim()).filter(Boolean),
-      modality: String(form.get('modality') || '').split(',').map((item) => item.trim()).filter(Boolean),
+      specialties: form.getAll('specialties').map(String).filter(Boolean),
+      modality: form.getAll('modality').map(String).filter(Boolean),
       city: String(form.get('city') || '').trim() || null,
       years_experience: Number(form.get('years_experience') || 0),
-      languages: String(form.get('languages') || '').split(',').map((item) => item.trim()).filter(Boolean),
+      languages: form.getAll('languages').map(String).filter(Boolean),
       session_duration: Number(form.get('session_duration') || 50),
       session_price: Number(form.get('session_price') || 0),
     };
     const { data, error } = await supabase.from('psychologists').update(payload).eq('id', profile.id).select('*').single();
-    if (error) {
+    if (error || !data) {
       setProfileMessage('No fue posible guardar los cambios. Verifica los datos e inténtalo de nuevo.');
     } else {
       setProfile(data as PsychologistProfile);
-      setProfileMessage('Perfil actualizado correctamente.');
+      setProfileMessage(`Guardado en la base de datos · ${new Intl.DateTimeFormat('es-CO', { hour: '2-digit', minute: '2-digit' }).format(new Date())}`);
     }
     setSavingProfile(false);
   };
@@ -247,17 +301,24 @@ const PsychologistDashboard: React.FC = () => {
   const fetchData = useCallback(async () => {
     if (!user) return;
     setLoadingData(true);
+    setDataError('');
 
-    const { data: psyData } = await supabase
+    const { data: psyData, error: profileLoadError } = await supabase
       .from('psychologists')
       .select('*')
       .eq('user_id', user.id)
       .single();
 
-    if (!psyData || !psyData.onboarding_completed) {
-      navigate('/psicologo/onboarding');
-      return;
-    }
+  if (profileLoadError) {
+  setDataError('No pudimos cargar tu información. Intenta nuevamente.');
+  setLoadingData(false);
+  return;
+  }
+
+  if (!psyData || !psyData.onboarding_completed) {
+  navigate('/psicologo/onboarding');
+  return;
+  }
 
     setProfile(psyData as PsychologistProfile);
 
@@ -706,12 +767,19 @@ const PsychologistDashboard: React.FC = () => {
   };
 
   if (authLoading || loadingData) {
-    return (
-      <div className="psy-dash-loading">
-        <div className="psy-dash-spinner" />
-        <p>Cargando tu panel...</p>
-      </div>
-    );
+  return (
+  <div className="psy-dash-loading">
+  <div className="psy-profile-loading-card"><div className="psy-dash-spinner" /><p>Cargando tu perfil...</p></div>
+  </div>
+  );
+  }
+
+  if (dataError) {
+  return (
+  <div className="psy-dash-loading">
+  <div className="psy-profile-loading-card psy-profile-error-card"><strong>{dataError}</strong><button type="button" onClick={fetchData}>Reintentar</button></div>
+  </div>
+  );
   }
 
   // Mientras la verificacion profesional no este aprobada no se muestra el
@@ -923,7 +991,7 @@ const PsychologistDashboard: React.FC = () => {
       )}
 
       {/* Mobile menu toggle */}
-      <button           className="psy-mobile-menu-toggle"
+      <button aria-label="Abrir menú de Perfil" title="Perfil" className="psy-mobile-menu-toggle"
           style={{ zIndex: 1300, left: '0.75rem', right: 'auto' }}
           onClick={() => setShowMobileMenu(!showMobileMenu)}
           type="button">
@@ -1203,31 +1271,39 @@ const PsychologistDashboard: React.FC = () => {
 
         {activeTab === 'perfil' && profile && (
           <section className="psy-profile-page">
-            <div className="psy-dash-header">
-              <div>
-                <span className="psy-profile-kicker">CUENTA PROFESIONAL</span>
-                <h1>Mi perfil</h1>
-                <p>Actualiza la información que verán tus pacientes.</p>
+            <div className="psy-profile-intro">
+              <div className="psy-dash-header">
+                <div>
+                  <h1>Mi perfil</h1>
+                </div>
               </div>
-            </div>
-            <form className="psy-profile-card" onSubmit={handleProfileSave}>
               <div className="psy-profile-card-head">
                 <div className="psy-dash-avatar psy-profile-avatar">
                   {profile.avatar_url ? <img src={profile.avatar_url} alt={profile.full_name} crossOrigin="anonymous" /> : <span>{profile.full_name.charAt(0)}</span>}
                 </div>
                 <div><h2>Información del profesional</h2><p>{profile.email}</p></div>
               </div>
+            </div>
+            <form className="psy-profile-card" onSubmit={handleProfileSave}>
               <div className="psy-profile-grid">
-                <label>Nombre completo<input name="full_name" defaultValue={profile.full_name} required /></label>
-                <label>Teléfono<input name="phone" defaultValue={profile.phone || ''} placeholder="Tu número de contacto" /></label>
-                <label>Ciudad<input name="city" defaultValue={profile.city || ''} placeholder="Bogotá" /></label>
-                <label>Años de experiencia<input name="years_experience" type="number" min="0" defaultValue={profile.years_experience || 0} /></label>
-                <label>Especialidades<input name="specialties" defaultValue={(profile.specialties || []).join(', ')} placeholder="Ansiedad, pareja, duelo" /></label>
-                <label>Modalidad<input name="modality" defaultValue={(profile.modality || []).join(', ')} placeholder="Virtual, presencial" /></label>
-                <label>Idiomas<input name="languages" defaultValue={(profile.languages || []).join(', ')} placeholder="Español, inglés" /></label>
-                <label>Duración de sesión (minutos)<input name="session_duration" type="number" min="15" step="5" defaultValue={profile.session_duration || 50} /></label>
-                <label>Tarifa por sesión<input name="session_price" type="number" min="0" defaultValue={profile.session_price || 0} /></label>
-                <label className="psy-profile-field-wide">Biografía<textarea name="bio" defaultValue={profile.bio || ''} rows={5} placeholder="Cuéntales a tus pacientes sobre tu enfoque profesional..." /></label>
+                <div className="psy-profile-row psy-profile-row-four">
+                  <label>Nombre completo<input name="full_name" defaultValue={profile.full_name} required /></label>
+                  <label>Teléfono<div className="psy-profile-phone-field"><select name="phone_country" defaultValue={profile.phone?.match(/^\+\d+/)?.[0] || '+57'} aria-label="Indicativo de país"><option value="+57">🇨🇴 +57</option><option value="+1">🇺🇸 +1</option><option value="+52">🇲🇽 +52</option><option value="+34">🇪🇸 +34</option><option value="+54">🇦🇷 +54</option><option value="+56">🇨🇱 +56</option><option value="+51">🇵🇪 +51</option><option value="+55">🇧🇷 +55</option><option value="+44">🇬🇧 +44</option><option value="+49">🇩🇪 +49</option><option value="+33">🇫🇷 +33</option><option value="+39">🇮🇹 +39</option><option value="+81">🇯🇵 +81</option><option value="+86">🇨🇳 +86</option><option value="+91">🇮🇳 +91</option><option value="+61">🇦🇺 +61</option><option value="+351">🇵🇹 +351</option><option value="+7">🇷🇺 +7</option></select><input name="phone" defaultValue={profile.phone?.replace(/^\+\d+\s*/, '') || ''} placeholder="Número" inputMode="tel" /></div></label>
+                  <label>Ciudad<input name="city" defaultValue={profile.city || ''} placeholder="Bogotá" /></label>
+                  <label>Años de experiencia<input name="years_experience" type="number" min="0" defaultValue={profile.years_experience || 0} /></label>
+                </div>
+                <div className="psy-profile-row psy-profile-row-three">
+                  <ProfileMultiSelect name="specialties" label="Especialidades" options={PROFILE_SPECIALTIES} value={profile.specialties || []} />
+                  <ProfileMultiSelect name="modality" label="Modalidad" options={PROFILE_MODALITIES} value={profile.modality || []} />
+                  <ProfileMultiSelect name="languages" label="Idiomas" options={PROFILE_LANGUAGES} value={profile.languages || []} />
+                </div>
+                <div className="psy-profile-row psy-profile-row-four">
+                  <label>Duración de sesión<input name="session_duration" type="number" min="15" step="5" defaultValue={profile.session_duration || 50} /></label>
+                  <label>Tarifa por sesión<input name="session_price" type="number" min="0" defaultValue={profile.session_price || 0} /></label>
+                  <label>Enfoque terapéutico<select name="therapy_approach" defaultValue={(profile as any).therapy_approach || ''}><option value="">Selecciona</option><option value="Cognitivo-conductual">Cognitivo-conductual</option><option value="Humanista">Humanista</option><option value="Sistémico">Sistémico</option><option value="Integrativo">Integrativo</option></select></label>
+                  <label>Atención a<select name="patient_type" defaultValue={(profile as any).patient_type || ''}><option value="">Selecciona</option><option value="Adultos">Adultos</option><option value="Adolescentes">Adolescentes</option><option value="Parejas">Parejas</option><option value="Familias">Familias</option></select></label>
+                </div>
+                <label className="psy-profile-field-wide">Biografía<textarea name="bio" defaultValue={profile.bio || ''} rows={3} placeholder="Cuéntales a tus pacientes sobre tu enfoque profesional..." /></label>
               </div>
               <div className="psy-profile-actions">
                 {profileMessage && <span className="psy-profile-message" role="status">{profileMessage}</span>}
