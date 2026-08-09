@@ -1588,8 +1588,9 @@ body:has(.psy-dash) {
 }
 
 /* ===== Day View ===== */
-.psy-day-view {
+  .psy-day-view {
   display: flex;
+  min-height: 0;
   flex-direction: column;
   background: var(--psy-surface);
   border: 1px solid var(--psy-border);
@@ -1597,9 +1598,12 @@ body:has(.psy-dash) {
   overflow: hidden;
   backdrop-filter: blur(12px);
   max-height: 75vh;
-}
+  }
 
-.psy-day-view-scroll {
+  .psy-day-view-scroll {
+  min-height: 0;
+  flex: 1 1 auto;
+  width: 100%;
   overflow-y: auto;
   overflow-x: hidden;
   scroll-behavior: smooth;
@@ -1856,10 +1860,6 @@ body:has(.psy-dash) {
 }
 
 /* ===== Appointment Detail Modal ===== */
-.psy-dash-modal--wide {
-  max-width: 500px;
-}
-
 .psy-appt-modal-header {
   display: flex;
   align-items: center;

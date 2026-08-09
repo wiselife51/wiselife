@@ -489,26 +489,25 @@ const PsychologistDashboard: React.FC = () => {
       .order('appointment_date')
       .order('start_time');
 
-    // Enrich with patient profile data
+    // Enrich appointments with one batched patient-profile query instead of one query per appointment.
     const enriched: Appointment[] = [];
-    if (apptData) {
-      for (const a of apptData) {
-        const { data: prof } = await supabase
-          .from('profiles')
-          .select('full_name, avatar_url, phone')
-          .eq('id', a.patient_id)
-          .single();
+    const patientIds = [...new Set((apptData || []).map((appointment) => appointment.patient_id).filter(Boolean))];
+    const { data: patientProfiles } = patientIds.length
+      ? await supabase.from('profiles').select('id, full_name, avatar_url, phone').in('id', patientIds)
+      : { data: [] };
+    const patientById = new Map((patientProfiles || []).map((patient) => [patient.id, patient]));
 
-        enriched.push({
-          ...a,
-          patient: prof ? {
-            id: a.patient_id,
-            full_name: prof.full_name,
-            avatar_url: prof.avatar_url,
-            phone: prof.phone,
-          } : { id: a.patient_id, full_name: null, avatar_url: null, phone: null },
-        });
-      }
+    for (const appointment of apptData || []) {
+      const patient = patientById.get(appointment.patient_id);
+      enriched.push({
+        ...appointment,
+        patient: patient ? {
+          id: appointment.patient_id,
+          full_name: patient.full_name,
+          avatar_url: patient.avatar_url,
+          phone: patient.phone,
+        } : { id: appointment.patient_id, full_name: null, avatar_url: null, phone: null },
+      });
     }
     setAppointments(enriched);
 
