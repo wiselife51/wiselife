@@ -3034,4 +3034,9 @@ body:has(.psy-dash) {
   .psy-profile-actions { align-items: stretch; flex-direction: column; }
   .psy-profile-actions .psy-dash-btn-primary { width: 100%; }
   .psy-profile-message { text-align: center; }
+  .psy-income-summary-grid { grid-template-columns: 1fr; gap: 0.65rem; }
+  .psy-income-summary-card, .psy-income-list-card { padding: 0.9rem; border-radius: 14px; }
+  .psy-income-row { grid-template-columns: 72px 1fr auto; gap: 0.5rem; }
+  .psy-income-row-date, .psy-income-row-patient small { font-size: 0.68rem; }
+  .psy-income-row-amount { font-size: 0.78rem; }
 }
