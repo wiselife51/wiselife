@@ -990,19 +990,8 @@ const PsychologistDashboard: React.FC = () => {
         />
       )}
 
-      {/* Mobile header context */}
-      {profile && <div className="psy-mobile-profile-context">
-        <div className="psy-mobile-profile-title">Mi perfil</div>
-        <div className="psy-mobile-profile-professional">
-          <div className="psy-dash-avatar psy-mobile-profile-avatar">
-            {profile.avatar_url ? <img src={profile.avatar_url} alt={profile.full_name} crossOrigin="anonymous" /> : <span>{profile.full_name.charAt(0)}</span>}
-          </div>
-          <div><strong>Información del profesional</strong><small>{profile.email}</small></div>
-        </div>
-      </div>}
-
       {/* Mobile menu toggle */}
-      <button           className="psy-mobile-menu-toggle"
+      <button aria-label="Abrir menú de Perfil" title="Perfil" className="psy-mobile-menu-toggle"
           style={{ zIndex: 1300, left: '0.75rem', right: 'auto' }}
           onClick={() => setShowMobileMenu(!showMobileMenu)}
           type="button">
