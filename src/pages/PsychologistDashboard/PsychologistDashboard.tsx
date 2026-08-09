@@ -113,6 +113,7 @@ const PsychologistDashboard: React.FC = () => {
   // Appointment detail modal
   const [selectedAppt, setSelectedAppt] = useState<Appointment | null>(null);
   const [upcomingIndex, setUpcomingIndex] = useState(0);
+  const [pendingIndex, setPendingIndex] = useState(0);
 
   // Block form
   const [showBlockForm, setShowBlockForm] = useState(false);
@@ -869,28 +870,39 @@ const PsychologistDashboard: React.FC = () => {
         )}
         {warnings.length > 0 && (
           <div className="psy-dash-sidebar-pending">
-            <h4>Pendientes importantes</h4>
-            {warnings.map((warning) => (
-              <button
-                key={warning.appointmentId}
-                className="psy-dash-sidebar-pending-card"
-                onClick={() => {
-                  const appt = appointments.find((a) => a.id === warning.appointmentId);
-                  if (appt) {
-                    setPendingAppointmentToComplete(appt);
-                    setShowClinicalRecordModal(true);
-                  }
-                }}
-                type="button"
-              >
-                <span className="psy-dash-pending-avatar" aria-hidden="true">!</span>
-                <span className="psy-dash-pending-text">
-                  <strong>{warning.message.split(' - ')[0]}</strong>
-                  <small>{warning.message.split(' - ').slice(1).join(' - ')}</small>
-                </span>
-                <span className="psy-dash-pending-status">HC</span>
-              </button>
-            ))}
+            <div className="psy-dash-section-heading">
+              <h4>Pendientes importantes</h4>
+              {warnings.length > 1 && (
+                <div className="psy-dash-carousel-controls" aria-label="Navegar pendientes">
+                  <button type="button" aria-label="Pendiente anterior" onClick={() => setPendingIndex((pendingIndex - 1 + warnings.length) % warnings.length)}>‹</button>
+                  <button type="button" aria-label="Siguiente pendiente" onClick={() => setPendingIndex((pendingIndex + 1) % warnings.length)}>›</button>
+                </div>
+              )}
+            </div>
+            {(() => {
+              const warning = warnings[pendingIndex % warnings.length];
+              return (
+                <button
+                  key={warning.appointmentId}
+                  className="psy-dash-sidebar-pending-card"
+                  onClick={() => {
+                    const appt = appointments.find((a) => a.id === warning.appointmentId);
+                    if (appt) {
+                      setPendingAppointmentToComplete(appt);
+                      setShowClinicalRecordModal(true);
+                    }
+                  }}
+                  type="button"
+                >
+                  <span className="psy-dash-pending-avatar" aria-hidden="true">!</span>
+                  <span className="psy-dash-pending-text">
+                    <strong>{warning.message.split(' - ')[0]}</strong>
+                    <small>{warning.message.split(' - ').slice(1).join(' - ')}</small>
+                  </span>
+                  <span className="psy-dash-pending-status">HC</span>
+                </button>
+              );
+            })()}
           </div>
         )}
         </nav>
