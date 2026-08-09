@@ -2199,7 +2199,14 @@ body:has(.psy-dash) {
   .psy-mobile-menu-close { display: grid; }
 
   .psy-mobile-menu-toggle {
+  top: 0.35rem;
+  left: 0.65rem;
   display: flex;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.12);
   }
 
   .psy-mobile-profile-context {
@@ -2230,6 +2237,11 @@ body:has(.psy-dash) {
   align-items: center;
   gap: 0.4rem;
   margin-left: auto;
+}
+
+  .psy-mobile-profile-context + .psy-mobile-menu-toggle {
+  position: fixed;
+  transform: none;
 }
 
   .psy-mobile-profile-avatar {
@@ -2263,7 +2275,7 @@ body:has(.psy-dash) {
 }
 
   .psy-profile-intro { display: none; }
-  .psy-dash-main { padding-top: 3.8rem; }
+  .psy-dash-main { padding-top: 3.55rem; }
 
   .psy-dash-modal-backdrop { padding: 1rem; }
   .psy-dash-modal--wide { width: min(100%, 430px); max-height: 88dvh; overflow-y: auto; }
