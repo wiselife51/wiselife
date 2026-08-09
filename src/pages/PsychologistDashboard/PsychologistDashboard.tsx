@@ -260,8 +260,14 @@ const PsychologistDashboard: React.FC = () => {
       setProfileMessage('No fue posible subir la foto.');
       return;
     }
-    const { data: publicData } = supabase.storage.from('psychologist-documents').getPublicUrl(path);
-    const { data, error } = await supabase.from('psychologists').update({ avatar_url: publicData.publicUrl }).eq('id', profile.id).select('*').single();
+    const { data: signedData, error: signedUrlError } = await supabase.storage
+      .from('psychologist-documents')
+      .createSignedUrl(path, 60 * 60 * 24 * 365);
+    if (signedUrlError || !signedData?.signedUrl) {
+      setProfileMessage('La foto subió, pero no se pudo generar su vista.');
+      return;
+    }
+    const { data, error } = await supabase.from('psychologists').update({ avatar_url: signedData.signedUrl }).eq('id', profile.id).select('*').single();
     if (error) {
       setProfileMessage('La foto subió, pero no se pudo actualizar el perfil.');
       return;
@@ -889,6 +895,7 @@ const PsychologistDashboard: React.FC = () => {
               <span className="sr-only">Cambiar foto de perfil</span>
             </label>
           </div>
+          {profileMessage && <p className="psy-sidebar-profile-message" role="status" aria-live="polite">{profileMessage}</p>}
           <h3 className="psy-dash-name">{profile?.full_name}</h3>
           <p className="psy-dash-email">{profile?.email}</p>
         </div>
@@ -1305,7 +1312,6 @@ const PsychologistDashboard: React.FC = () => {
                 <label className="psy-profile-field-wide">Biografía<textarea name="bio" defaultValue={profile.bio || ''} rows={3} placeholder="Cuéntales a tus pacientes sobre tu enfoque profesional..." /></label>
               </div>
               <div className="psy-profile-actions">
-                {profileMessage && <span className="psy-profile-message" role="status">{profileMessage}</span>}
                 <button type="submit" className="psy-dash-btn-primary" disabled={savingProfile}>{savingProfile ? 'Guardando...' : 'Guardar cambios'}</button>
               </div>
             </form>
