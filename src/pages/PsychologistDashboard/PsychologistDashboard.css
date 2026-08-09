@@ -311,9 +311,30 @@ body:has(.psy-dash) {
 
 .psy-profile-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-  padding-top: 1.5rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+  padding-top: 1rem;
+}
+
+.psy-profile-phone-field {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: 0.35rem;
+}
+
+.psy-profile-grid select[multiple] {
+  min-height: 76px;
+  padding: 0.45rem 0.55rem;
+}
+
+.psy-profile-grid select[multiple] option {
+  padding: 0.2rem 0.3rem;
+}
+
+.psy-profile-grid small {
+  color: rgba(255, 255, 255, 0.46);
+  font-size: 0.65rem;
+  font-weight: 400;
 }
 
 .psy-profile-grid label {
@@ -330,7 +351,7 @@ body:has(.psy-dash) {
   width: 100%;
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 11px;
-  padding: 0.78rem 0.9rem;
+  padding: 0.58rem 0.7rem;
   color: #f7f8ff;
   background: rgba(255,255,255,0.06);
   outline: none;
@@ -2753,7 +2774,9 @@ body:has(.psy-dash) {
   .psy-cal-title { font-size: 0.875rem; }
   .psy-cal-views { gap: 0.35rem; }
   .psy-cal-view-btn { flex: 1 1 auto; min-width: 0; }
-  .psy-profile-grid { grid-template-columns: 1fr; gap: 0.8rem; }
+  .psy-profile-grid { grid-template-columns: 1fr; gap: 0.65rem; }
+  .psy-profile-phone-field { grid-template-columns: 82px minmax(0, 1fr); }
+  .psy-profile-grid select[multiple] { min-height: 68px; }
   .psy-profile-field-wide { grid-column: auto; }
   .psy-profile-card { padding: 1rem; border-radius: 16px; }
   .psy-profile-card-head { align-items: flex-start; }

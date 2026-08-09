@@ -224,13 +224,13 @@ const PsychologistDashboard: React.FC = () => {
     const form = new FormData(event.currentTarget);
     const payload = {
       full_name: String(form.get('full_name') || '').trim(),
-      phone: String(form.get('phone') || '').trim() || null,
+      phone: `${String(form.get('phone_country') || '+57')} ${String(form.get('phone') || '').trim()}`.trim() || null,
       bio: String(form.get('bio') || '').trim() || null,
-      specialties: String(form.get('specialties') || '').split(',').map((item) => item.trim()).filter(Boolean),
-      modality: String(form.get('modality') || '').split(',').map((item) => item.trim()).filter(Boolean),
+      specialties: form.getAll('specialties').map(String).filter(Boolean),
+      modality: form.getAll('modality').map(String).filter(Boolean),
       city: String(form.get('city') || '').trim() || null,
       years_experience: Number(form.get('years_experience') || 0),
-      languages: String(form.get('languages') || '').split(',').map((item) => item.trim()).filter(Boolean),
+      languages: form.getAll('languages').map(String).filter(Boolean),
       session_duration: Number(form.get('session_duration') || 50),
       session_price: Number(form.get('session_price') || 0),
     };
@@ -1218,12 +1218,12 @@ const PsychologistDashboard: React.FC = () => {
               </div>
               <div className="psy-profile-grid">
                 <label>Nombre completo<input name="full_name" defaultValue={profile.full_name} required /></label>
-                <label>Teléfono<input name="phone" defaultValue={profile.phone || ''} placeholder="Tu número de contacto" /></label>
+                <label>Teléfono<div className="psy-profile-phone-field"><select name="phone_country" defaultValue={profile.phone?.match(/^\+\d+/)?.[0] || '+57'} aria-label="Indicativo de país"><option value="+57">+57 CO</option><option value="+1">+1 US/CA</option><option value="+52">+52 MX</option><option value="+34">+34 ES</option><option value="+54">+54 AR</option><option value="+56">+56 CL</option><option value="+51">+51 PE</option></select><input name="phone" defaultValue={profile.phone?.replace(/^\+\d+\s*/, '') || ''} placeholder="Tu número de contacto" inputMode="tel" /></div></label>
                 <label>Ciudad<input name="city" defaultValue={profile.city || ''} placeholder="Bogotá" /></label>
                 <label>Años de experiencia<input name="years_experience" type="number" min="0" defaultValue={profile.years_experience || 0} /></label>
-  <label>Especialidades<select name="specialties" defaultValue={(profile.specialties || [])[0] || ''}><option value="">Selecciona una especialidad</option><option value="Ansiedad">Ansiedad</option><option value="Depresión">Depresión</option><option value="Pareja">Pareja</option><option value="Duelo">Duelo</option><option value="Adolescentes">Adolescentes</option><option value="Autoestima">Autoestima</option></select></label>
-  <label>Modalidad<select name="modality" defaultValue={(profile.modality || [])[0] || ''}><option value="">Selecciona una modalidad</option><option value="Virtual">Virtual</option><option value="Presencial">Presencial</option><option value="Mixta">Virtual y presencial</option></select></label>
-  <label>Idiomas<select name="languages" defaultValue={(profile.languages || [])[0] || ''}><option value="">Selecciona un idioma</option><option value="Español">Español</option><option value="Inglés">Inglés</option><option value="Español, Inglés">Español e inglés</option></select></label>
+  <label>Especialidades<select name="specialties" multiple defaultValue={profile.specialties || []} aria-label="Selecciona una o varias especialidades"><option value="Ansiedad">Ansiedad</option><option value="Depresión">Depresión</option><option value="Pareja">Pareja</option><option value="Duelo">Duelo</option><option value="Adolescentes">Adolescentes</option><option value="Autoestima">Autoestima</option></select><small>Selecciona una o varias opciones</small></label>
+  <label>Modalidad<select name="modality" multiple defaultValue={profile.modality || []} aria-label="Selecciona una o varias modalidades"><option value="Virtual">Virtual</option><option value="Presencial">Presencial</option><option value="Mixta">Virtual y presencial</option></select></label>
+  <label>Idiomas<select name="languages" multiple defaultValue={profile.languages || []} aria-label="Selecciona uno o varios idiomas"><option value="Español">Español</option><option value="Inglés">Inglés</option><option value="Francés">Francés</option><option value="Portugués">Portugués</option></select></label>
                 <label>Duración de sesión (minutos)<input name="session_duration" type="number" min="15" step="5" defaultValue={profile.session_duration || 50} /></label>
                 <label>Tarifa por sesión<input name="session_price" type="number" min="0" defaultValue={profile.session_price || 0} /></label>
                 <label className="psy-profile-field-wide">Biografía<textarea name="bio" defaultValue={profile.bio || ''} rows={5} placeholder="Cuéntales a tus pacientes sobre tu enfoque profesional..." /></label>
