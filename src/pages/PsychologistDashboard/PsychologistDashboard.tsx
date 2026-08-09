@@ -911,7 +911,7 @@ const PsychologistDashboard: React.FC = () => {
               </svg>
               <span>Vida Sabia</span>
             </div>
-            <div className="psy-dash-badge">Psicólogo profesional</div>
+            <div className="psy-dash-badge">psicólogo profesional</div>
           </div>
         </div>
 
@@ -944,7 +944,7 @@ const PsychologistDashboard: React.FC = () => {
           </button>
           <button type="button" className={`psy-dash-nav-item ${activeTab === 'pacientes' ? 'psy-dash-nav-item--active' : ''}`} onClick={() => { setActiveTab('pacientes'); setShowMobileMenu(false); }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="8" r="3" /><circle cx="17" cy="10" r="2" /><path d="M3 20c.7-3.2 2.7-5 6-5s5.3 1.8 6 5M14 16c2.5-.2 4.5 1.2 5 4" /></svg>
-            <span>Mis Pacientes</span>
+            <span>Mis Pacientes</span>{patients.length > 0 && <span className="psy-dash-nav-badge">{patients.length}</span>}
           </button>
           <button type="button" className={`psy-dash-nav-item ${activeTab === 'proximas' ? 'psy-dash-nav-item--active' : ''}`} onClick={() => { setActiveTab('proximas'); setShowMobileMenu(false); }}>
             <svg className={upcomingAppts.length > 0 ? 'psy-dash-bell psy-dash-bell--active' : ''} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" /></svg>
