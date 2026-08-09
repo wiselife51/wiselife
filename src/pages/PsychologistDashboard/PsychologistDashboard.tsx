@@ -289,11 +289,11 @@ const PsychologistDashboard: React.FC = () => {
       session_price: Number(form.get('session_price') || 0),
     };
     const { data, error } = await supabase.from('psychologists').update(payload).eq('id', profile.id).select('*').single();
-    if (error) {
+    if (error || !data) {
       setProfileMessage('No fue posible guardar los cambios. Verifica los datos e inténtalo de nuevo.');
     } else {
       setProfile(data as PsychologistProfile);
-      setProfileMessage('Perfil actualizado correctamente.');
+      setProfileMessage(`Guardado en la base de datos · ${new Intl.DateTimeFormat('es-CO', { hour: '2-digit', minute: '2-digit' }).format(new Date())}`);
     }
     setSavingProfile(false);
   };
