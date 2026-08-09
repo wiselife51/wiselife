@@ -31,6 +31,52 @@ interface PsychologistProfile {
   rejection_reason?: string | null;
 }
 
+const PROFILE_SPECIALTIES = ['Ansiedad', 'Depresión', 'Pareja', 'Duelo', 'Adolescentes', 'Autoestima'];
+const PROFILE_MODALITIES = ['Virtual', 'Presencial', 'Mixta'];
+const PROFILE_LANGUAGES = ['Español', 'Inglés', 'Francés', 'Portugués'];
+
+function ProfileMultiSelect({
+  name,
+  label,
+  options,
+  value,
+}: {
+  name: string;
+  label: string;
+  options: string[];
+  value: string[];
+}) {
+  const [selected, setSelected] = useState<string[]>(value);
+
+  const toggle = (option: string) => {
+    setSelected((current) => current.includes(option) ? current.filter((item) => item !== option) : [...current, option]);
+  };
+
+  return (
+    <label className="psy-profile-multi-label">
+      {label}
+      <div className="psy-profile-multi-select" role="group" aria-label={label}>
+        {options.map((option) => {
+          const checked = selected.includes(option);
+          return (
+            <button
+              key={option}
+              type="button"
+              className={`psy-profile-multi-option${checked ? ' is-selected' : ''}`}
+              aria-pressed={checked}
+              onClick={() => toggle(option)}
+            >
+              <span className="psy-profile-check" aria-hidden="true">{checked ? '✓' : ''}</span>
+              <span>{option}</span>
+            </button>
+          );
+        })}
+      </div>
+      {selected.map((option) => <input key={option} type="hidden" name={name} value={option} />)}
+    </label>
+  );
+}
+
 interface Appointment {
   id: string;
   appointment_date: string;
@@ -1224,9 +1270,9 @@ const PsychologistDashboard: React.FC = () => {
                   <label>Años de experiencia<input name="years_experience" type="number" min="0" defaultValue={profile.years_experience || 0} /></label>
                 </div>
                 <div className="psy-profile-row psy-profile-row-three">
-                  <label>Especialidades<select name="specialties" multiple size={3} defaultValue={profile.specialties || []} aria-label="Selecciona varias especialidades"><option value="Ansiedad">Ansiedad</option><option value="Depresión">Depresión</option><option value="Pareja">Pareja</option><option value="Duelo">Duelo</option><option value="Adolescentes">Adolescentes</option><option value="Autoestima">Autoestima</option></select></label>
-                  <label>Modalidad<select name="modality" multiple size={3} defaultValue={profile.modality || []} aria-label="Selecciona varias modalidades"><option value="Virtual">Virtual</option><option value="Presencial">Presencial</option><option value="Mixta">Virtual y presencial</option></select></label>
-                  <label>Idiomas<select name="languages" multiple size={3} defaultValue={profile.languages || []} aria-label="Selecciona varios idiomas"><option value="Español">Español</option><option value="Inglés">Inglés</option><option value="Francés">Francés</option><option value="Portugués">Portugués</option></select></label>
+                  <ProfileMultiSelect name="specialties" label="Especialidades" options={PROFILE_SPECIALTIES} value={profile.specialties || []} />
+                  <ProfileMultiSelect name="modality" label="Modalidad" options={PROFILE_MODALITIES} value={profile.modality || []} />
+                  <ProfileMultiSelect name="languages" label="Idiomas" options={PROFILE_LANGUAGES} value={profile.languages || []} />
                 </div>
                 <div className="psy-profile-row psy-profile-row-four">
                   <label>Duración de sesión<input name="session_duration" type="number" min="15" step="5" defaultValue={profile.session_duration || 50} /></label>
