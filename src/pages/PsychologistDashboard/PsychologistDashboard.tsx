@@ -100,6 +100,7 @@ interface Appointment {
     full_name: string | null;
     avatar_url: string | null;
     phone: string | null;
+    email: string | null;
   } | null;
 }
 
@@ -515,7 +516,7 @@ const PsychologistDashboard: React.FC = () => {
     const enriched: Appointment[] = [];
     const patientIds = [...new Set((apptData || []).map((appointment) => appointment.patient_id).filter(Boolean))];
     const { data: patientProfiles } = patientIds.length
-      ? await supabase.from('profiles').select('id, full_name, avatar_url, phone').in('id', patientIds)
+      ? await supabase.from('profiles').select('id, full_name, avatar_url, phone, email').in('id', patientIds)
       : { data: [] };
     const patientProfileById = new Map((patientProfiles || []).map((patient) => [patient.id, patient]));
 
@@ -528,7 +529,8 @@ const PsychologistDashboard: React.FC = () => {
           full_name: patient.full_name,
           avatar_url: patient.avatar_url,
           phone: patient.phone,
-        } : { id: appointment.patient_id, full_name: null, avatar_url: null, phone: null },
+          email: patient.email,
+        } : { id: appointment.patient_id, full_name: null, avatar_url: null, phone: null, email: null },
       });
     }
     setAppointments(enriched);
@@ -1402,22 +1404,23 @@ const PsychologistDashboard: React.FC = () => {
               <button className="psy-appt-modal-close" onClick={() => setSelectedAppt(null)} type="button" aria-label="Cerrar">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
               </button>
-            </div>
+  </div>
+  <div className="psy-appt-brand" aria-label="Vida Sabia">Vida Sabia</div>
 
-            <div className="psy-appt-modal-body">
-              {/* Patient section */}
+  <div className="psy-appt-modal-body">
+  {/* Patient section */}
               <div className="psy-appt-patient">
-                <div className="psy-appt-patient-avatar">
-                  {selectedAppt.patient?.avatar_url ? (
-                    <img src={selectedAppt.patient.avatar_url} alt="" crossOrigin="anonymous" />
-                  ) : (
-                    <span>{(selectedAppt.patient?.full_name || 'P').charAt(0)}</span>
-                  )}
-                </div>
-                <div>
-                  <h4>{selectedAppt.patient?.full_name || 'Paciente'}</h4>
-                  {selectedAppt.patient?.phone && <p className="psy-appt-phone">Tel: {selectedAppt.patient.phone}</p>}
-                </div>
+  <div className="psy-appt-patient-avatar">
+  {selectedAppt.patient?.avatar_url ? (
+  <img src={selectedAppt.patient.avatar_url} alt={`Foto de ${selectedAppt.patient.full_name || 'paciente'}`} crossOrigin="anonymous" />
+  ) : (
+  <span>{(selectedAppt.patient?.full_name || 'P').charAt(0)}</span>
+  )}
+  </div>
+  <div className="psy-appt-patient-copy">
+  <h4>{selectedAppt.patient?.full_name || 'Paciente'}</h4>
+  <p className="psy-appt-email">{selectedAppt.patient?.email || 'Correo no registrado'}</p>
+  </div>
               </div>
 
               <div className="psy-appt-details">
