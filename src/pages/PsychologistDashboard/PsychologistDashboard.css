@@ -2286,6 +2286,33 @@ body:has(.psy-dash) {
 }
 .psy-appt-modal-layer .psy-appt-detail-row:hover svg {
   color: #b388ff;
+  }
+
+.psy-appt-modal-layer .psy-appt-date-row {
+  gap: 0.75rem;
+  padding: 0.5rem 0.875rem;
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  text-align: left;
+}
+
+.psy-appt-modal-layer .psy-appt-date-row svg {
+  width: 20px;
+  height: 20px;
+  color: rgba(255, 255, 255, 0.6);
+  flex: 0 0 20px;
+}
+
+.psy-appt-modal-layer .psy-appt-date-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.psy-appt-modal-layer .psy-appt-date-row:hover svg {
+  color: rgba(255, 255, 255, 0.9);
 }
 .psy-appt-modal-layer .psy-appt-detail-row .psy-appt-pay-badge,
 .psy-appt-modal-layer .psy-appt-detail-row .psy-appt-status-badge {
