@@ -2291,6 +2291,11 @@ body:has(.psy-dash) {
 .psy-appt-modal-layer .psy-appt-detail-row:hover svg {
   color: rgba(255, 255, 255, 0.9);
 }
+.psy-appt-modal-layer .psy-appt-detail-row svg {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+}
 
 .psy-appt-modal-layer .psy-appt-date-row {
   gap: 0.75rem;
@@ -2332,7 +2337,23 @@ body:has(.psy-dash) {
   font-weight: 700;
   line-height: 1.25rem;
 }
-.psy-appt-modal-layer .psy-appt-actions { gap: 0.4rem; }
+.psy-appt-modal-layer .psy-appt-modal-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+}
+.psy-appt-modal-layer .psy-appt-details {
+  display: flex;
+  flex-direction: column;
+}
+.psy-appt-modal-layer .psy-appt-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: auto;
+  padding-top: 1rem;
+}
 .psy-appt-modal-layer .psy-complete-btn,
 .psy-appt-modal-layer .psy-history-btn {
   width: 100%;
