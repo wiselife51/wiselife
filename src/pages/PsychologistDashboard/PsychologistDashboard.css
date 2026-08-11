@@ -611,12 +611,6 @@ body:has(.psy-dash) {
   text-align: center;
   transition: background 0.2s var(--psy-smooth), border-color 0.2s var(--psy-smooth), color 0.2s var(--psy-smooth);
 }
-.psy-appt-modal-layer .psy-appt-detail-row { font-size: 0.9rem; }
-.psy-appt-modal-layer .psy-appt-detail-row svg { width: 22px; height: 22px; flex-basis: 22px; }
-.psy-appt-modal-layer .psy-complete-btn,
-.psy-appt-modal-layer .psy-history-btn { font-size: 0.9375rem; }
-.psy-appt-modal-layer .psy-wa-btn,
-.psy-appt-modal-layer .psy-confirm-pay-btn { font-size: 0.9375rem; }
 .psy-appt-modal-layer .psy-wa-btn:hover,
 .psy-appt-modal-layer .psy-confirm-pay-btn:hover,
 .psy-appt-modal-layer .psy-complete-btn:hover,
@@ -1448,15 +1442,15 @@ body:has(.psy-dash) {
 .psy-appt-modal-layer .psy-appt-patient-avatar { width: 32px; height: 32px; }
 .psy-appt-modal-layer .psy-appt-patient h4 { font-size: 0.78rem; }
 .psy-appt-modal-layer .psy-appt-details { gap: 0.32rem; }
-.psy-appt-modal-layer .psy-appt-detail-row { font-size: 0.9rem; gap: 0.75rem; }
-.psy-appt-modal-layer .psy-appt-detail-row svg { width: 22px; height: 22px; }
+.psy-appt-modal-layer .psy-appt-detail-row { font-size: 0.78rem; gap: 0.75rem; }
+.psy-appt-modal-layer .psy-appt-detail-row svg { width: 20px; height: 20px; }
 .psy-appt-modal-layer .psy-appt-actions { gap: 0.35rem; }
 .psy-appt-modal-layer .psy-complete-btn,
 .psy-appt-modal-layer .psy-history-btn {
   min-height: 32px;
   padding: 0.35rem 0.5rem;
   border-radius: 8px;
-  font-size: 0.9375rem;
+  font-size: 0.8125rem;
   }
   @media (max-width: 768px) {
   .psy-appt-modal-layer { padding: 0.5rem; }
