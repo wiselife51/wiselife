@@ -2251,34 +2251,23 @@ body:has(.psy-dash) {
 .psy-appt-modal-layer .psy-appt-patient h4 { color: #f4f2ff; }
 .psy-appt-modal-layer .psy-appt-patient-copy { display: flex; flex-direction: column; gap: 0.15rem; }
 .psy-appt-modal-layer .psy-appt-email { margin: 0; color: rgba(255, 255, 255, 0.52); font-size: 0.68rem; overflow-wrap: anywhere; }
-.psy-appt-modal-layer .psy-appt-detail-row { color: #ffffff; }
-.psy-appt-modal-layer .psy-appt-detail-row svg { width: 16px; height: 16px; color: #ffffff; flex: 0 0 16px; }
-.psy-appt-modal-layer .psy-appt-detail-row > span:nth-child(2) { flex: 1; }
-.psy-appt-modal-layer .psy-appt-detail-row .psy-appt-pay-badge,
-.psy-appt-modal-layer .psy-appt-detail-row .psy-appt-status-badge { margin-left: auto; }
-.psy-appt-modal-layer .psy-appt-patient h4 { font-size: 0.8rem; }
-.psy-appt-modal-layer .psy-appt-detail-list { gap: 0.38rem; }
-.psy-appt-modal-layer .psy-appt-detail-row { gap: 0.75rem; font-size: 0.8125rem; }
-.psy-appt-modal-layer .psy-appt-detail-row svg { width: 16px; height: 16px; }
+.psy-appt-modal-layer .psy-appt-details { gap: 0; }
 .psy-appt-modal-layer .psy-appt-detail-row {
-  display: flex;
-  align-items: center;
-  min-height: 36px;
+  min-height: auto;
   padding: 0.5rem 0.875rem;
   gap: 0.75rem;
-  border-radius: 12px;
-  background: none;
-  color: rgba(255, 255, 255, 0.9);
-  font-family: 'Inter', sans-serif;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  transition: background 0.2s var(--psy-smooth), color 0.2s var(--psy-smooth);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.78rem;
+  font-weight: 500;
 }
-.psy-appt-modal-layer .psy-appt-detail-row:hover {
-  background: rgba(126, 87, 194, 0.2);
-  color: #c7a7ff;
+.psy-appt-modal-layer .psy-appt-detail-row svg {
+  width: 20px;
+  height: 20px;
+  color: rgba(255, 255, 255, 0.6);
+  flex: 0 0 20px;
 }
-.psy-appt-modal-layer .psy-appt-detail-row svg { width: 16px; height: 16px; color: #ffffff; flex: 0 0 16px; }
+.psy-appt-modal-layer .psy-appt-detail-row > span:nth-child(2) { flex: 1; }
+.psy-appt-modal-layer .psy-appt-detail-row .psy-dash-nav-badge { margin-left: auto; }
 .psy-appt-modal-layer .psy-wa-btn,
 .psy-appt-modal-layer .psy-confirm-pay-btn,
 .psy-appt-modal-layer .psy-complete-btn,
