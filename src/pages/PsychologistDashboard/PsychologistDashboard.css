@@ -2234,6 +2234,8 @@ body:has(.psy-dash) {
   animation: psy-dash-sidebar-in 0.25s var(--psy-smooth);
 }
 .psy-appt-modal-layer .psy-appt-modal-header h3 { display: none; }
+.psy-appt-sidebar-header { position: relative; width: 100%; }
+.psy-appt-sidebar-header .psy-appt-modal-close { position: absolute; top: 0; right: 0; }
 .psy-appt-logo { display: flex; align-items: center; justify-content: center; gap: 0.45rem; color: #8d63d2; font-size: 1.05rem; font-weight: 700; }
 .psy-appt-logo-mark { color: #4dd0e1; font-size: 1.5rem; line-height: 1; }
 .psy-appt-role { margin-top: 0.35rem; color: rgba(255, 255, 255, 0.52); font-size: 0.9375rem; font-weight: 600; text-align: center; }
