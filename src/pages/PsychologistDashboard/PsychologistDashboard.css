@@ -2305,16 +2305,16 @@ body:has(.psy-dash) {
   background: transparent;
   color: rgba(255, 255, 255, 0.6);
   font-family: 'Inter', sans-serif;
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 500;
   text-align: left;
 }
 
 .psy-appt-modal-layer .psy-appt-date-row svg {
-  width: 22px;
-  height: 22px;
+  width: 30px;
+  height: 30px;
   color: rgba(255, 255, 255, 0.6);
-  flex: 0 0 22px;
+  flex: 0 0 30px;
 }
 
 .psy-appt-modal-layer .psy-appt-date-row:hover {
