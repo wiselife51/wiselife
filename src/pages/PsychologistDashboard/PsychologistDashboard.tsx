@@ -1424,7 +1424,7 @@ const PsychologistDashboard: React.FC = () => {
                     <span>{(selectedAppt.patient?.full_name || 'P').charAt(0)}</span>
                   )}
                 </div>
-                <h3 className="psy-dash-name">{selectedAppt.patient?.full_name || 'Paciente'}</h3>
+                <h3 className="psy-dash-name">Detalle de la Cita</h3>
                 <p className="psy-dash-email">{selectedAppt.patient?.email || 'Correo no registrado'}</p>
               </div>
 
