@@ -2252,7 +2252,10 @@ body:has(.psy-dash) {
 .psy-appt-modal-layer .psy-appt-patient-copy { display: flex; flex-direction: column; gap: 0.15rem; }
 .psy-appt-modal-layer .psy-appt-email { margin: 0; color: rgba(255, 255, 255, 0.52); font-size: 0.68rem; overflow-wrap: anywhere; }
 .psy-appt-modal-layer .psy-appt-detail-row { color: rgba(255, 255, 255, 0.62); }
-.psy-appt-modal-layer .psy-appt-detail-row svg { color: #9b82c9; }
+.psy-appt-modal-layer .psy-appt-detail-row svg { width: 16px; height: 16px; color: #b388ff; flex: 0 0 16px; }
+.psy-appt-modal-layer .psy-appt-detail-row > span:nth-child(2) { flex: 1; }
+.psy-appt-modal-layer .psy-appt-detail-row .psy-appt-pay-badge,
+.psy-appt-modal-layer .psy-appt-detail-row .psy-appt-status-badge { margin-left: auto; }
 .psy-appt-modal-layer .psy-appt-patient h4 { font-size: 0.8rem; }
 .psy-appt-modal-layer .psy-appt-detail-list { gap: 0.38rem; }
 .psy-appt-modal-layer .psy-appt-detail-row { gap: 0.4rem; font-size: 0.72rem; }
@@ -2303,7 +2306,9 @@ body:has(.psy-dash) {
 }
 .psy-appt-modal-layer .psy-appt-pay-badge,
 .psy-appt-modal-layer .psy-appt-status-badge { min-height: 18px; padding: 0.14rem 0.42rem; font-size: 0.58rem; }
-.psy-appt-modal-layer .psy-appt-actions { gap: 0.4rem; }
+.psy-appt-modal-layer .psy-appt-modal-body { display: flex; flex: 1; min-height: 0; gap: 0.8rem; }
+.psy-appt-modal-layer .psy-appt-details { display: flex; flex-direction: column; gap: 0.38rem; }
+.psy-appt-modal-layer .psy-appt-actions { display: flex; flex-direction: column; gap: 0.4rem; margin-top: auto; padding-top: 1rem; }
 .psy-appt-modal-layer .psy-complete-btn,
 .psy-appt-modal-layer .psy-history-btn {
   min-height: 38px;
@@ -2355,6 +2360,7 @@ body:has(.psy-dash) {
   .psy-dash-modal-backdrop { padding: 0; }
   .psy-appt-modal-layer { justify-content: flex-start; align-items: stretch; }
   .psy-appt-modal-layer .psy-dash-modal--wide { width: min(82vw, 260px); max-width: 260px; min-height: 100dvh; max-height: 100dvh; overflow-y: auto; border-radius: 0 16px 16px 0; padding: 1.5rem; }
+  .psy-appt-modal-layer .psy-appt-modal-body { min-height: calc(100dvh - 12rem); }
   .psy-dash-modal--wide { width: min(100%, 430px); max-height: 88dvh; overflow-y: auto; }
   .psy-appt-modal-actions { flex-direction: column; }
   .psy-appt-modal-actions button { width: 100%; }
