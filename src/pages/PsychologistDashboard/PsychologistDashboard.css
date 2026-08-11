@@ -2280,7 +2280,7 @@ body:has(.psy-dash) {
   border-radius: 12px;
   background: transparent;
   color: rgba(255, 255, 255, 0.6);
-  font-size: 0.78rem;
+  font-size: 1rem;
   font-weight: 500;
   line-height: 1.4;
 }
@@ -2292,9 +2292,9 @@ body:has(.psy-dash) {
   color: rgba(255, 255, 255, 0.9);
 }
 .psy-appt-modal-layer .psy-appt-detail-row svg {
-  width: 20px;
-  height: 20px;
-  flex: 0 0 20px;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
 }
 
 .psy-appt-modal-layer .psy-appt-date-row {
@@ -2364,9 +2364,11 @@ body:has(.psy-dash) {
   background: rgba(126, 87, 194, 0.12);
   color: #b388ff;
   font-family: 'Inter', sans-serif;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 600;
   text-align: center;
+  cursor: pointer;
+  transition: background 0.2s var(--psy-smooth), border-color 0.2s var(--psy-smooth), color 0.2s var(--psy-smooth);
 }
 .psy-appt-modal-layer .psy-complete-btn:hover,
 .psy-appt-modal-layer .psy-history-btn:hover {
