@@ -2251,8 +2251,8 @@ body:has(.psy-dash) {
 .psy-appt-modal-layer .psy-appt-patient h4 { color: #f4f2ff; }
 .psy-appt-modal-layer .psy-appt-patient-copy { display: flex; flex-direction: column; gap: 0.15rem; }
 .psy-appt-modal-layer .psy-appt-email { margin: 0; color: rgba(255, 255, 255, 0.52); font-size: 0.68rem; overflow-wrap: anywhere; }
-.psy-appt-modal-layer .psy-appt-detail-row { color: rgba(255, 255, 255, 0.62); }
-.psy-appt-modal-layer .psy-appt-detail-row svg { width: 16px; height: 16px; color: #b388ff; flex: 0 0 16px; }
+.psy-appt-modal-layer .psy-appt-detail-row { color: #ffffff; }
+.psy-appt-modal-layer .psy-appt-detail-row svg { width: 16px; height: 16px; color: #ffffff; flex: 0 0 16px; }
 .psy-appt-modal-layer .psy-appt-detail-row > span:nth-child(2) { flex: 1; }
 .psy-appt-modal-layer .psy-appt-detail-row .psy-appt-pay-badge,
 .psy-appt-modal-layer .psy-appt-detail-row .psy-appt-status-badge { margin-left: auto; }
@@ -2297,6 +2297,7 @@ body:has(.psy-dash) {
   font-family: 'Inter', sans-serif;
   font-size: 0.8125rem;
   font-weight: 600;
+  line-height: 1.4;
   text-align: center;
   transition: background 0.2s var(--psy-smooth), border-color 0.2s var(--psy-smooth), color 0.2s var(--psy-smooth);
 }
