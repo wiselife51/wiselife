@@ -599,24 +599,24 @@ body:has(.psy-dash) {
   width: 100%;
   margin-top: auto;
   gap: 0.625rem;
-  padding: 0.75rem 0.875rem;
-  border: 1px solid rgba(126, 87, 194, 0.45);
+  padding: 0.7rem 0.875rem;
+  border: 1px solid rgba(126, 87, 194, 0.28);
   border-radius: 12px;
-  background: linear-gradient(135deg, rgba(126, 87, 194, 0.82), rgba(92, 63, 145, 0.82));
-  color: rgba(255, 255, 255, 0.92);
+  background: rgba(126, 87, 194, 0.12);
+  color: #b388ff;
   font-family: 'Inter', sans-serif;
   font-size: 0.8125rem;
   font-weight: 600;
   text-align: center;
   cursor: pointer;
-  transition: all 0.2s var(--psy-smooth);
+  transition: background 0.2s var(--psy-smooth), border-color 0.2s var(--psy-smooth), color 0.2s var(--psy-smooth);
 }
 
 .psy-dash-signout:hover {
-  background: linear-gradient(135deg, rgba(139, 99, 207, 0.94), rgba(106, 74, 165, 0.94));
-  color: #ffffff;
-  border-color: rgba(171, 135, 230, 0.72);
-  box-shadow: 0 8px 24px rgba(126, 87, 194, 0.28);
+  background: rgba(126, 87, 194, 0.2);
+  color: #c7a7ff;
+  border-color: rgba(126, 87, 194, 0.48);
+  box-shadow: none;
 }
 
 /* ===== Main ===== */
