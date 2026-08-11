@@ -1399,17 +1399,16 @@ const PsychologistDashboard: React.FC = () => {
       {selectedAppt && (
         <div className="psy-dash-modal-backdrop psy-appt-modal-layer" style={{ zIndex: 5000 }} onClick={() => setSelectedAppt(null)}>
           <div className="psy-dash-modal psy-dash-modal--wide" role="dialog" aria-modal="true" aria-labelledby="appointment-detail-title" onClick={(e) => e.stopPropagation()}>
-            <div className="psy-appt-modal-header">
-              <h3 id="appointment-detail-title">Detalle de cita</h3>
+  <div className="psy-appt-modal-header">
+  <div className="psy-appt-logo" aria-label="Vida Sabia"><span className="psy-appt-logo-mark">⌁</span><span>Vida Sabia</span></div>
+  <div className="psy-appt-role">Detalle de la Cita</div>
               <button className="psy-appt-modal-close" onClick={() => setSelectedAppt(null)} type="button" aria-label="Cerrar">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
               </button>
   </div>
-  <div className="psy-appt-brand" aria-label="Vida Sabia">Vida Sabia</div>
-
   <div className="psy-appt-modal-body">
   {/* Patient section */}
-              <div className="psy-appt-patient">
+  <div className="psy-appt-patient psy-appt-patient--profile">
   <div className="psy-appt-patient-avatar">
   {selectedAppt.patient?.avatar_url ? (
   <img src={selectedAppt.patient.avatar_url} alt={`Foto de ${selectedAppt.patient.full_name || 'paciente'}`} crossOrigin="anonymous" />
@@ -1421,7 +1420,7 @@ const PsychologistDashboard: React.FC = () => {
   <h4>{selectedAppt.patient?.full_name || 'Paciente'}</h4>
   <p className="psy-appt-email">{selectedAppt.patient?.email || 'Correo no registrado'}</p>
   </div>
-              </div>
+  </div>
 
               <div className="psy-appt-details">
                 <div className="psy-appt-detail-row">
