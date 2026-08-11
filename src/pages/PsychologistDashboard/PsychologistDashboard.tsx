@@ -262,14 +262,18 @@ const PsychologistDashboard: React.FC = () => {
     }
     setProfileMessage('Subiendo foto...');
     const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-    const path = `${profile.id}/profile/avatar-${Date.now()}.${extension}`;
+    if (!user?.id) {
+      setProfileMessage('Tu sesión expiró. Vuelve a iniciar sesión e inténtalo de nuevo.');
+      return;
+    }
+    const path = `${user.id}/profile/avatar-${Date.now()}.${extension}`;
     const { error: uploadError } = await supabase.storage.from('psychologist-documents').upload(path, file, {
       cacheControl: '3600',
       contentType: file.type,
       upsert: true,
     });
     if (uploadError) {
-      setProfileMessage('No fue posible subir la foto.');
+      setProfileMessage(uploadError.message || 'No fue posible subir la foto.');
       return;
     }
     const { data: signedData, error: signedUrlError } = await supabase.storage
