@@ -2271,6 +2271,7 @@ body:has(.psy-dash) {
   height: 20px;
   color: rgba(255, 255, 255, 0.6);
   flex: 0 0 20px;
+  stroke-width: 1.8;
 }
 .psy-appt-modal-layer .psy-appt-detail-row > span:nth-child(2) {
   flex: 0 1 auto;
@@ -2333,6 +2334,7 @@ body:has(.psy-dash) {
   font-family: 'Inter', sans-serif;
   font-size: 0.8125rem;
   font-weight: 600;
+  line-height: 1.4;
 }
 .psy-appt-modal-layer .psy-complete-btn:hover,
 .psy-appt-modal-layer .psy-history-btn:hover { background: rgba(126, 87, 194, 0.2); border-color: rgba(126, 87, 194, 0.48); color: #c7a7ff; box-shadow: none; }
