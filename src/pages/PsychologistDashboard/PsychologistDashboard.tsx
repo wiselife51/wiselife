@@ -1399,27 +1399,33 @@ const PsychologistDashboard: React.FC = () => {
       {selectedAppt && (
         <div className="psy-dash-modal-backdrop psy-appt-modal-layer" style={{ zIndex: 5000 }} onClick={() => setSelectedAppt(null)}>
           <div className="psy-dash-modal psy-dash-modal--wide" role="dialog" aria-modal="true" aria-labelledby="appointment-detail-title" onClick={(e) => e.stopPropagation()}>
-            <div className="psy-appt-modal-header">
-              <div className="psy-appt-logo" aria-label="Vida Sabia"><span className="psy-appt-logo-mark">⌁</span><span>Vida Sabia</span></div>
-              <div className="psy-appt-role">Detalle de la Cita</div>
+            <div className="psy-dash-sidebar-header">
+              <div className="psy-dash-brand">
+                <div className="psy-dash-logo">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" strokeWidth="2" aria-hidden="true">
+                    <defs><linearGradient id="dash-logo-grad-appointment" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#4dd0e1" /><stop offset="50%" stopColor="#42a5f5" /><stop offset="100%" stopColor="#7e57c2" /></linearGradient></defs>
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="url(#dash-logo-grad-appointment)" />
+                  </svg>
+                  <span>Vida Sabia</span>
+                </div>
+                <div id="appointment-detail-title" className="psy-dash-badge">Paciente</div>
+              </div>
               <button className="psy-appt-modal-close" onClick={() => setSelectedAppt(null)} type="button" aria-label="Cerrar">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
               </button>
             </div>
             <div className="psy-appt-modal-body">
               {/* Patient section */}
-              <div className="psy-appt-patient psy-appt-patient--profile">
-                <div className="psy-appt-patient-avatar">
+              <div className="psy-dash-profile">
+                <div className="psy-dash-avatar">
                   {selectedAppt.patient?.avatar_url ? (
                     <img src={selectedAppt.patient.avatar_url} alt={`Foto de ${selectedAppt.patient.full_name || 'paciente'}`} crossOrigin="anonymous" />
                   ) : (
                     <span>{(selectedAppt.patient?.full_name || 'P').charAt(0)}</span>
                   )}
                 </div>
-                <div className="psy-appt-patient-copy">
-                  <h4>{selectedAppt.patient?.full_name || 'Paciente'}</h4>
-                  <p className="psy-appt-email">{selectedAppt.patient?.email || 'Correo no registrado'}</p>
-                </div>
+                <h3 className="psy-dash-name">{selectedAppt.patient?.full_name || 'Paciente'}</h3>
+                <p className="psy-dash-email">{selectedAppt.patient?.email || 'Correo no registrado'}</p>
               </div>
 
               <div className="psy-appt-details">

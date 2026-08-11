@@ -2233,6 +2233,21 @@ body:has(.psy-dash) {
   backdrop-filter: blur(12px);
   animation: psy-dash-sidebar-in 0.25s var(--psy-smooth);
 }
+.psy-appt-modal-layer .psy-dash-sidebar-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0;
+}
+.psy-appt-modal-layer .psy-dash-sidebar-header .psy-appt-modal-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.psy-appt-modal-layer .psy-dash-profile {
+  margin-bottom: 1rem;
+}
 .psy-appt-modal-layer .psy-appt-modal-header h3 { display: none; }
 .psy-appt-logo { display: flex; align-items: center; justify-content: center; gap: 0.45rem; color: #8d63d2; font-size: 1.05rem; font-weight: 700; }
 .psy-appt-logo-mark { color: #4dd0e1; font-size: 1.5rem; line-height: 1; }
