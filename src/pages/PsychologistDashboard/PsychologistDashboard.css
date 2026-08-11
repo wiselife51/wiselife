@@ -600,10 +600,10 @@ body:has(.psy-dash) {
   margin-top: auto;
   gap: 0.625rem;
   padding: 0.75rem 0.875rem;
-  border: 1.5px solid rgba(255, 59, 59, 0.72);
+  border: 1px solid rgba(126, 87, 194, 0.45);
   border-radius: 12px;
-  background: rgba(120, 18, 24, 0.08);
-  color: #ff5c5c;
+  background: linear-gradient(135deg, rgba(126, 87, 194, 0.82), rgba(92, 63, 145, 0.82));
+  color: rgba(255, 255, 255, 0.92);
   font-family: 'Inter', sans-serif;
   font-size: 0.8125rem;
   font-weight: 600;
@@ -613,9 +613,10 @@ body:has(.psy-dash) {
 }
 
 .psy-dash-signout:hover {
-  background: rgba(239, 83, 80, 0.16);
-  color: #ff7777;
-  border-color: rgba(255, 59, 59, 0.95);
+  background: linear-gradient(135deg, rgba(139, 99, 207, 0.94), rgba(106, 74, 165, 0.94));
+  color: #ffffff;
+  border-color: rgba(171, 135, 230, 0.72);
+  box-shadow: 0 8px 24px rgba(126, 87, 194, 0.28);
 }
 
 /* ===== Main ===== */
