@@ -2364,7 +2364,7 @@ body:has(.psy-dash) {
   background: rgba(126, 87, 194, 0.12);
   color: #b388ff;
   font-family: 'Inter', sans-serif;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 600;
   text-align: center;
 }
