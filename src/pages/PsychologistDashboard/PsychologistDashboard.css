@@ -2270,26 +2270,48 @@ body:has(.psy-dash) {
 .psy-appt-modal-layer .psy-appt-detail-row { color: rgba(255, 255, 255, 0.62); }
 .psy-appt-modal-layer .psy-appt-detail-row svg { color: #9b82c9; }
 .psy-appt-modal-layer .psy-appt-patient h4 { font-size: 0.8rem; }
-.psy-appt-modal-layer .psy-appt-detail-list { gap: 0.38rem; }
-.psy-appt-modal-layer .psy-appt-detail-row { gap: 0.4rem; font-size: 0.72rem; }
-.psy-appt-modal-layer .psy-appt-detail-row svg { width: 14px; height: 14px; }
-.psy-appt-modal-layer .psy-appt-pay-badge,
-.psy-appt-modal-layer .psy-appt-status-badge { min-height: 18px; padding: 0.14rem 0.42rem; font-size: 0.58rem; }
+.psy-appt-modal-layer .psy-appt-detail-list { gap: 0; }
+.psy-appt-modal-layer .psy-appt-detail-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.875rem;
+  border-radius: 12px;
+  font-size: 0.78rem;
+}
+.psy-appt-modal-layer .psy-appt-detail-row .psy-appt-pay-badge,
+.psy-appt-modal-layer .psy-appt-detail-row .psy-appt-status-badge {
+  margin-left: auto;
+  height: 1.25rem;
+  min-height: 1.25rem;
+  padding: 0 0.5rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1.25rem;
+}
 .psy-appt-modal-layer .psy-appt-actions { gap: 0.4rem; }
 .psy-appt-modal-layer .psy-complete-btn,
 .psy-appt-modal-layer .psy-history-btn {
-  min-height: 38px;
-  padding: 0.5rem 0.875rem;
+  width: 100%;
+  justify-content: center;
+  padding: 0.7rem 0.875rem;
   border: 1px solid rgba(126, 87, 194, 0.28);
   border-radius: 12px;
   background: rgba(126, 87, 194, 0.12);
   color: #b388ff;
   font-family: 'Inter', sans-serif;
-  font-size: 0.78rem;
-  font-weight: 500;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-align: center;
 }
 .psy-appt-modal-layer .psy-complete-btn:hover,
-.psy-appt-modal-layer .psy-history-btn:hover { background: rgba(126, 87, 194, 0.24); border-color: rgba(171, 135, 230, 0.68); }
+.psy-appt-modal-layer .psy-history-btn:hover {
+  background: rgba(126, 87, 194, 0.2);
+  color: #c7a7ff;
+  border-color: rgba(126, 87, 194, 0.48);
+  box-shadow: none;
+}
 
 /* ===== Responsive ===== */
 @media (max-width: 1024px) {
