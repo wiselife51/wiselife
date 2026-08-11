@@ -2279,6 +2279,14 @@ body:has(.psy-dash) {
   border-radius: 12px;
   font-size: 0.78rem;
 }
+.psy-appt-modal-layer .psy-appt-detail-row:hover {
+  background: rgba(126, 87, 194, 0.15);
+  color: #b388ff;
+  border: 1px solid rgba(126, 87, 194, 0.2);
+}
+.psy-appt-modal-layer .psy-appt-detail-row:hover svg {
+  color: #b388ff;
+}
 .psy-appt-modal-layer .psy-appt-detail-row .psy-appt-pay-badge,
 .psy-appt-modal-layer .psy-appt-detail-row .psy-appt-status-badge {
   margin-left: auto;
