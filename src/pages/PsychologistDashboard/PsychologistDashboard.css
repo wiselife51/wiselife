@@ -2281,7 +2281,7 @@ body:has(.psy-dash) {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.38rem 0.875rem;
+  padding: 0.25rem 0.75rem;
   border: 0;
   border-radius: 12px;
   background: transparent;
@@ -2307,7 +2307,7 @@ body:has(.psy-dash) {
 
 .psy-appt-modal-layer .psy-appt-date-row {
   gap: 0.75rem;
-  padding: 0.38rem 0.875rem;
+  padding: 0.25rem 0.75rem;
   border: 0;
   border-radius: 12px;
   background: transparent;
