@@ -62,21 +62,21 @@ function ProfileMultiSelect({
           <span aria-hidden="true">{open ? '⌃' : '⌄'}</span>
         </button>
         {open && <div className="psy-profile-multi-options">
-        {options.map((option) => {
-          const checked = selected.includes(option);
-          return (
-            <button
-              key={option}
-              type="button"
-              className={`psy-profile-multi-option${checked ? ' is-selected' : ''}`}
-              aria-pressed={checked}
-              onClick={() => toggle(option)}
-            >
-              <span className="psy-profile-check" aria-hidden="true">{checked ? '✓' : ''}</span>
-              <span>{option}</span>
-            </button>
-          );
-        })}
+          {options.map((option) => {
+            const checked = selected.includes(option);
+            return (
+              <button
+                key={option}
+                type="button"
+                className={`psy-profile-multi-option${checked ? ' is-selected' : ''}`}
+                aria-pressed={checked}
+                onClick={() => toggle(option)}
+              >
+                <span className="psy-profile-check" aria-hidden="true">{checked ? '✓' : ''}</span>
+                <span>{option}</span>
+              </button>
+            );
+          })}
         </div>}
       </div>
       {selected.map((option) => <input key={option} type="hidden" name={name} value={option} />)}
@@ -100,6 +100,7 @@ interface Appointment {
     full_name: string | null;
     avatar_url: string | null;
     phone: string | null;
+    email: string | null;
   } | null;
 }
 
@@ -262,14 +263,18 @@ const PsychologistDashboard: React.FC = () => {
     }
     setProfileMessage('Subiendo foto...');
     const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-    const path = `${profile.id}/profile/avatar-${Date.now()}.${extension}`;
+    if (!user?.id) {
+      setProfileMessage('Tu sesión expiró. Vuelve a iniciar sesión e inténtalo de nuevo.');
+      return;
+    }
+    const path = `${user.id}/profile/avatar-${Date.now()}.${extension}`;
     const { error: uploadError } = await supabase.storage.from('psychologist-documents').upload(path, file, {
       cacheControl: '3600',
       contentType: file.type,
       upsert: true,
     });
     if (uploadError) {
-      setProfileMessage('No fue posible subir la foto.');
+      setProfileMessage(uploadError.message || 'No fue posible subir la foto.');
       return;
     }
     const { data: signedData, error: signedUrlError } = await supabase.storage
@@ -327,16 +332,16 @@ const PsychologistDashboard: React.FC = () => {
       .eq('user_id', user.id)
       .single();
 
-  if (profileLoadError) {
-  setDataError('No pudimos cargar tu información. Intenta nuevamente.');
-  setLoadingData(false);
-  return;
-  }
+    if (profileLoadError) {
+      setDataError('No pudimos cargar tu información. Intenta nuevamente.');
+      setLoadingData(false);
+      return;
+    }
 
-  if (!psyData || !psyData.onboarding_completed) {
-  navigate('/psicologo/onboarding');
-  return;
-  }
+    if (!psyData || !psyData.onboarding_completed) {
+      navigate('/psicologo/onboarding');
+      return;
+    }
 
     setProfile(psyData as PsychologistProfile);
 
@@ -350,7 +355,7 @@ const PsychologistDashboard: React.FC = () => {
     if (!existingAvail || existingAvail.length === 0) {
       console.log('🔄 Creando disponibilidad por defecto automáticamente (hora por hora)...');
       const defaultSlots = [];
-      
+
       // Lunes a Viernes (1-5) - NO sábado
       for (let day = 1; day <= 5; day++) {
         // 7AM - 12PM (hora por hora)
@@ -363,7 +368,7 @@ const PsychologistDashboard: React.FC = () => {
             is_available: true,
           });
         }
-        
+
         // 1PM - 8PM (hora por hora) - Saltar 12-1 PM
         for (let hour = 13; hour <= 20; hour++) {
           defaultSlots.push({
@@ -375,12 +380,12 @@ const PsychologistDashboard: React.FC = () => {
           });
         }
       }
-      
+
       const { data: insertedData, error } = await supabase
         .from('psychologist_availability')
         .insert(defaultSlots)
         .select();
-      
+
       if (error) {
         console.error('❌ Error creando disponibilidad por defecto:', error);
       } else {
@@ -408,7 +413,7 @@ const PsychologistDashboard: React.FC = () => {
     // Crear bloqueos para domingos y sábados
     const weekendBlocks = [];
     let currentDate = new Date(today);
-    
+
     if (shouldCreateAutoBlocks) {
       while (currentDate <= nextYear) {
         const dayOfWeek = currentDate.getDay();
@@ -428,7 +433,7 @@ const PsychologistDashboard: React.FC = () => {
         currentDate.setDate(currentDate.getDate() + 1);
       }
     }
-    
+
     // Bloquear todos los meses excepto el actual y el siguiente (solo la primera vez)
     const currentMonth = today.getMonth();
     const currentYear = today.getFullYear();
@@ -486,14 +491,14 @@ const PsychologistDashboard: React.FC = () => {
         }
       }
     }
-    
+
     const allBlocks = [...weekendBlocks, ...blocksForOtherMonths];
-    
+
     if (allBlocks.length > 0) {
       const { error: blockError } = await supabase
         .from('schedule_blocks')
         .insert(allBlocks);
-      
+
       if (!blockError) {
         console.log('✅ Bloques creados automáticamente:', allBlocks.length);
       }
@@ -511,7 +516,7 @@ const PsychologistDashboard: React.FC = () => {
     const enriched: Appointment[] = [];
     const patientIds = [...new Set((apptData || []).map((appointment) => appointment.patient_id).filter(Boolean))];
     const { data: patientProfiles } = patientIds.length
-      ? await supabase.from('profiles').select('id, full_name, avatar_url, phone').in('id', patientIds)
+      ? await supabase.from('profiles').select('id, full_name, avatar_url, phone, email').in('id', patientIds)
       : { data: [] };
     const patientProfileById = new Map((patientProfiles || []).map((patient) => [patient.id, patient]));
 
@@ -524,7 +529,8 @@ const PsychologistDashboard: React.FC = () => {
           full_name: patient.full_name,
           avatar_url: patient.avatar_url,
           phone: patient.phone,
-        } : { id: appointment.patient_id, full_name: null, avatar_url: null, phone: null },
+          email: patient.email,
+        } : { id: appointment.patient_id, full_name: null, avatar_url: null, phone: null, email: null },
       });
     }
     setAppointments(enriched);
@@ -769,7 +775,7 @@ const PsychologistDashboard: React.FC = () => {
   const daySlots = availability.filter((s) => s.day_of_week === selectedDay);
 
   const upcomingAppts = appointments.filter(
-  (a) => a.appointment_date >= toDateStr(today) && (a.status === 'confirmada' || a.status === 'pendiente_pago')
+    (a) => a.appointment_date >= toDateStr(today) && (a.status === 'confirmada' || a.status === 'pendiente_pago')
   );
   const paidAppointments = appointments.filter((a) => a.payment_status === 'pagado');
   const totalIncome = paidAppointments.reduce((sum, a) => sum + Number(a.payment_amount || 0), 0);
@@ -805,19 +811,19 @@ const PsychologistDashboard: React.FC = () => {
   };
 
   if (authLoading || loadingData) {
-  return (
-  <div className="psy-dash-loading">
-  <div className="psy-profile-loading-card"><div className="psy-dash-spinner" /><p>Cargando tu perfil...</p></div>
-  </div>
-  );
+    return (
+      <div className="psy-dash-loading">
+        <div className="psy-profile-loading-card"><div className="psy-dash-spinner" /><p>Cargando tu perfil...</p></div>
+      </div>
+    );
   }
 
   if (dataError) {
-  return (
-  <div className="psy-dash-loading">
-  <div className="psy-profile-loading-card psy-profile-error-card"><strong>{dataError}</strong><button type="button" onClick={fetchData}>Reintentar</button></div>
-  </div>
-  );
+    return (
+      <div className="psy-dash-loading">
+        <div className="psy-profile-loading-card psy-profile-error-card"><strong>{dataError}</strong><button type="button" onClick={fetchData}>Reintentar</button></div>
+      </div>
+    );
   }
 
   // Mientras la verificacion profesional no este aprobada no se muestra el
@@ -986,9 +992,9 @@ const PsychologistDashboard: React.FC = () => {
 
       {/* Mobile menu toggle */}
       <button aria-label="Abrir menú de Perfil" title="Perfil" className="psy-mobile-menu-toggle"
-          style={{ zIndex: 1300, left: '0.75rem', right: 'auto' }}
-          onClick={() => setShowMobileMenu(!showMobileMenu)}
-          type="button">
+        style={{ zIndex: 1300, left: '0.75rem', right: 'auto' }}
+        onClick={() => setShowMobileMenu(!showMobileMenu)}
+        type="button">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           {showMobileMenu ? (
             <><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></>
@@ -1276,39 +1282,39 @@ const PsychologistDashboard: React.FC = () => {
           </>
         )}
 
-  {activeTab === 'pacientes' && (
-  <section className="psy-patients-page">
-    <div className="psy-dash-header"><div><h1>Mis Pacientes</h1><p>Consulta el historial y la información de las personas que has atendido.</p></div></div>
-    <label className="psy-patients-search"><span className="sr-only">Buscar pacientes</span><input type="search" value={patientSearch} onChange={(event) => setPatientSearch(event.target.value)} placeholder="Buscar por nombre o teléfono" /></label>
-    {patientsLoading ? <div className="psy-dash-empty"><p>Cargando pacientes...</p></div> : (() => {
-      const query = patientSearch.trim().toLowerCase();
-      const visiblePatients = patients.filter((patient) => `${patient.full_name || ''} ${patient.phone || ''}`.toLowerCase().includes(query));
-      return visiblePatients.length === 0 ? <div className="psy-dash-empty"><p>{query ? 'No encontramos pacientes con esa búsqueda.' : 'Aún no tienes pacientes registrados.'}</p></div> : <div className="psy-patients-grid">{visiblePatients.map((patient) => (
-        <article key={patient.id} className="psy-patient-card">
-          <div className="psy-patient-card-top"><div className="psy-patient-avatar">{patient.avatar_url ? <img src={patient.avatar_url} alt="" crossOrigin="anonymous" /> : <span>{(patient.full_name || 'P').charAt(0).toUpperCase()}</span>}</div><div><h2>{patient.full_name || 'Paciente sin nombre'}</h2><p>{patient.phone || 'Sin teléfono registrado'}</p></div></div>
-          <div className="psy-patient-meta"><span>{patient.appointmentCount} {patient.appointmentCount === 1 ? 'cita' : 'citas'}</span><span>Última: {patient.lastAppointment.split('-').reverse().join('/')}</span></div>
-          <button type="button" className="psy-patient-history-btn" onClick={() => { setSelectedPatientForHistory({ id: patient.id, name: patient.full_name || 'Paciente' }); setShowClinicalHistoryView(true); }}>Ver historia clínica</button>
-        </article>
-      ))}</div>;
-    })()}
-  </section>
-  )}
+        {activeTab === 'pacientes' && (
+          <section className="psy-patients-page">
+            <div className="psy-dash-header"><div><h1>Mis Pacientes</h1><p>Consulta el historial y la información de las personas que has atendido.</p></div></div>
+            <label className="psy-patients-search"><span className="sr-only">Buscar pacientes</span><input type="search" value={patientSearch} onChange={(event) => setPatientSearch(event.target.value)} placeholder="Buscar por nombre o teléfono" /></label>
+            {patientsLoading ? <div className="psy-dash-empty"><p>Cargando pacientes...</p></div> : (() => {
+              const query = patientSearch.trim().toLowerCase();
+              const visiblePatients = patients.filter((patient) => `${patient.full_name || ''} ${patient.phone || ''}`.toLowerCase().includes(query));
+              return visiblePatients.length === 0 ? <div className="psy-dash-empty"><p>{query ? 'No encontramos pacientes con esa búsqueda.' : 'Aún no tienes pacientes registrados.'}</p></div> : <div className="psy-patients-grid">{visiblePatients.map((patient) => (
+                <article key={patient.id} className="psy-patient-card">
+                  <div className="psy-patient-card-top"><div className="psy-patient-avatar">{patient.avatar_url ? <img src={patient.avatar_url} alt="" crossOrigin="anonymous" /> : <span>{(patient.full_name || 'P').charAt(0).toUpperCase()}</span>}</div><div><h2>{patient.full_name || 'Paciente sin nombre'}</h2><p>{patient.phone || 'Sin teléfono registrado'}</p></div></div>
+                  <div className="psy-patient-meta"><span>{patient.appointmentCount} {patient.appointmentCount === 1 ? 'cita' : 'citas'}</span><span>Última: {patient.lastAppointment.split('-').reverse().join('/')}</span></div>
+                  <button type="button" className="psy-patient-history-btn" onClick={() => { setSelectedPatientForHistory({ id: patient.id, name: patient.full_name || 'Paciente' }); setShowClinicalHistoryView(true); }}>Ver historia clínica</button>
+                </article>
+              ))}</div>;
+            })()}
+          </section>
+        )}
 
-  {activeTab === 'ingresos' && (
-  <section className="psy-income-page">
-    <div className="psy-dash-header"><div><h1>Ingresos</h1><p>Resumen de pagos registrados en tus citas.</p></div></div>
-    <div className="psy-income-summary-grid">
-      <article className="psy-income-summary-card"><span>Total registrado</span><strong>{formatCurrency(totalIncome)}</strong><small>{paidAppointments.length} citas pagadas</small></article>
-      <article className="psy-income-summary-card"><span>Pagos pendientes</span><strong>{pendingPayments.length}</strong><small>Citas por confirmar</small></article>
-    </div>
-    <div className="psy-income-list-card"><div className="psy-income-list-heading"><h2>Movimientos recientes</h2><span>{appointments.length} citas</span></div>
-      {appointments.length === 0 ? <div className="psy-dash-empty"><p>Aún no tienes movimientos registrados.</p></div> : <div className="psy-income-list">{appointments.map((appointment) => <div key={appointment.id} className="psy-income-row"><span className="psy-income-row-date">{appointment.appointment_date.split('-').reverse().join('/')}</span><span className="psy-income-row-patient"><strong>{appointment.patient?.full_name || 'Paciente'}</strong><small>{appointment.payment_status === 'pagado' ? 'Pago confirmado' : 'Pago pendiente'}</small></span><strong className="psy-income-row-amount">{formatCurrency(Number(appointment.payment_amount || 0))}</strong></div>)}</div>}
-    </div>
-  </section>
-  )}
+        {activeTab === 'ingresos' && (
+          <section className="psy-income-page">
+            <div className="psy-dash-header"><div><h1>Ingresos</h1><p>Resumen de pagos registrados en tus citas.</p></div></div>
+            <div className="psy-income-summary-grid">
+              <article className="psy-income-summary-card"><span>Total registrado</span><strong>{formatCurrency(totalIncome)}</strong><small>{paidAppointments.length} citas pagadas</small></article>
+              <article className="psy-income-summary-card"><span>Pagos pendientes</span><strong>{pendingPayments.length}</strong><small>Citas por confirmar</small></article>
+            </div>
+            <div className="psy-income-list-card"><div className="psy-income-list-heading"><h2>Movimientos recientes</h2><span>{appointments.length} citas</span></div>
+              {appointments.length === 0 ? <div className="psy-dash-empty"><p>Aún no tienes movimientos registrados.</p></div> : <div className="psy-income-list">{appointments.map((appointment) => <div key={appointment.id} className="psy-income-row"><span className="psy-income-row-date">{appointment.appointment_date.split('-').reverse().join('/')}</span><span className="psy-income-row-patient"><strong>{appointment.patient?.full_name || 'Paciente'}</strong><small>{appointment.payment_status === 'pagado' ? 'Pago confirmado' : 'Pago pendiente'}</small></span><strong className="psy-income-row-amount">{formatCurrency(Number(appointment.payment_amount || 0))}</strong></div>)}</div>}
+            </div>
+          </section>
+        )}
 
-  {activeTab === 'perfil' && profile && (
-  <section className="psy-profile-page">
+        {activeTab === 'perfil' && profile && (
+          <section className="psy-profile-page">
             <div className="psy-profile-intro">
               <div className="psy-dash-header">
                 <div>
@@ -1393,53 +1399,59 @@ const PsychologistDashboard: React.FC = () => {
       {selectedAppt && (
         <div className="psy-dash-modal-backdrop psy-appt-modal-layer" style={{ zIndex: 5000 }} onClick={() => setSelectedAppt(null)}>
           <div className="psy-dash-modal psy-dash-modal--wide" role="dialog" aria-modal="true" aria-labelledby="appointment-detail-title" onClick={(e) => e.stopPropagation()}>
-            <div className="psy-appt-modal-header">
-              <h3 id="appointment-detail-title">Detalle de cita</h3>
+            <div className="psy-dash-sidebar-header">
+              <div className="psy-dash-brand">
+                <div className="psy-dash-logo">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" strokeWidth="2" aria-hidden="true">
+                    <defs><linearGradient id="dash-logo-grad-appointment" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#4dd0e1" /><stop offset="50%" stopColor="#42a5f5" /><stop offset="100%" stopColor="#7e57c2" /></linearGradient></defs>
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="url(#dash-logo-grad-appointment)" />
+                  </svg>
+                  <span>Vida Sabia</span>
+                </div>
+                <div id="appointment-detail-title" className="psy-dash-badge">Detalle de la Cita</div>
+              </div>
               <button className="psy-appt-modal-close" onClick={() => setSelectedAppt(null)} type="button" aria-label="Cerrar">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
               </button>
             </div>
-
             <div className="psy-appt-modal-body">
               {/* Patient section */}
-              <div className="psy-appt-patient">
-                <div className="psy-appt-patient-avatar">
+              <div className="psy-dash-profile">
+                <div className="psy-dash-avatar">
                   {selectedAppt.patient?.avatar_url ? (
-                    <img src={selectedAppt.patient.avatar_url} alt="" crossOrigin="anonymous" />
+                    <img src={selectedAppt.patient.avatar_url} alt={`Foto de ${selectedAppt.patient.full_name || 'paciente'}`} crossOrigin="anonymous" />
                   ) : (
                     <span>{(selectedAppt.patient?.full_name || 'P').charAt(0)}</span>
                   )}
                 </div>
-                <div>
-                  <h4>{selectedAppt.patient?.full_name || 'Paciente'}</h4>
-                  {selectedAppt.patient?.phone && <p className="psy-appt-phone">Tel: {selectedAppt.patient.phone}</p>}
-                </div>
+                <h3 className="psy-dash-name">{selectedAppt.patient?.full_name || 'Paciente'}</h3>
+                <p className="psy-dash-email">{selectedAppt.patient?.email || 'Correo no registrado'}</p>
               </div>
 
               <div className="psy-appt-details">
-                <div className="psy-appt-detail-row">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
+                <div className="psy-dash-nav-item psy-appt-detail-row psy-appt-date-row">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
                   <span>{selectedAppt.appointment_date.split('-').reverse().join('/')}</span>
                 </div>
-                <div className="psy-appt-detail-row">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+                <div className="psy-dash-nav-item psy-appt-detail-row">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
                   <span>{formatTime(selectedAppt.start_time)} - {formatTime(selectedAppt.end_time)}</span>
                 </div>
-                <div className="psy-appt-detail-row">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M12 7v10M15 9.5c-.7-.7-1.7-1-3-1-1.7 0-3 .8-3 2s1.3 2 3 2 3 .8 3 2-1.3 2-3 2c-1.3 0-2.3-.3-3-1" /></svg>
+                <div className="psy-dash-nav-item psy-appt-detail-row">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M12 7v10M15 9.5c-.7-.7-1.7-1-3-1-1.7 0-3 .8-3 2s1.3 2 3 2 3 .8 3 2-1.3 2-3 2c-1.3 0-2.3-.3-3-1" /></svg>
                   <span>${selectedAppt.payment_amount?.toLocaleString()} COP</span>
                   <span className={`psy-appt-pay-badge psy-appt-pay-badge--${selectedAppt.payment_status}`}>
                     {selectedAppt.payment_status === 'pagado' ? 'Pagado' : selectedAppt.payment_status === 'procesando' ? 'Procesando' : 'Pendiente'}
                   </span>
                 </div>
                 {selectedAppt.payment_reference && (
-                  <div className="psy-appt-detail-row">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 3h8l3 3v12l-3 3H8l-3-3V6z" /><path d="M9 9h6M9 13h6M9 17h4" /></svg>
+                  <div className="psy-dash-nav-item psy-appt-detail-row">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 3h8l3 3v12l-3 3H8l-3-3V6z" /><path d="M9 9h6M9 13h6M9 17h4" /></svg>
                     <span>Ref: {selectedAppt.payment_reference} ({selectedAppt.payment_method})</span>
                   </div>
                 )}
-                <div className="psy-appt-detail-row">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M8 12l2.5 2.5L16 9" /></svg>
+                <div className="psy-dash-nav-item psy-appt-detail-row">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M8 12l2.5 2.5L16 9" /></svg>
                   <span>Estado: </span>
                   <span className={`psy-appt-status-badge psy-appt-status-badge--${selectedAppt.status}`}>
                     {selectedAppt.status === 'confirmada' ? 'Confirmada' : selectedAppt.status === 'pendiente_pago' ? 'Pendiente de pago' : selectedAppt.status === 'completada' ? 'Completada' : selectedAppt.status}
@@ -1462,8 +1474,12 @@ const PsychologistDashboard: React.FC = () => {
                   </button>
                 )}
                 {selectedAppt.status === 'confirmada' && (
-                  <button className="psy-complete-btn" onClick={() => handleCompleteAppt(selectedAppt.id)} type="button">
-                    Marcar como completada
+<button className="psy-complete-btn" onClick={() => handleCompleteAppt(selectedAppt.id)} type="button">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+  <circle cx="12" cy="12" r="9" />
+  <path d="M8 12l2.5 2.5L16 9" />
+  </svg>
+  Marcar como completada
                   </button>
                 )}
                 {selectedAppt.patient && (
