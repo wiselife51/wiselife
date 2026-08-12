@@ -275,6 +275,7 @@ body:has(.psy-dash) {
   align-items: center;
   gap: 0.75rem;
   padding: 0.5rem 0.875rem;
+  border: 0;
   border-radius: 12px;
   background: none;
   border: none;
@@ -2270,12 +2271,17 @@ body:has(.psy-dash) {
 .psy-appt-modal-layer .psy-appt-detail-row { color: rgba(255, 255, 255, 0.62); }
 .psy-appt-modal-layer .psy-appt-detail-row svg { color: #9b82c9; }
 .psy-appt-modal-layer .psy-appt-patient h4 { font-size: 0.8rem; }
-.psy-appt-modal-layer .psy-appt-detail-list { gap: 0; }
+.psy-appt-modal-layer .psy-appt-detail-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.25rem 0;
+}
 .psy-appt-modal-layer .psy-appt-detail-row {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.5rem 0.875rem;
+  padding: 0.38rem 0.875rem;
   border: 0;
   border-radius: 12px;
   background: transparent;
@@ -2301,7 +2307,7 @@ body:has(.psy-dash) {
 
 .psy-appt-modal-layer .psy-appt-date-row {
   gap: 0.75rem;
-  padding: 0.5rem 0.875rem;
+  padding: 0.38rem 0.875rem;
   border: 0;
   border-radius: 12px;
   background: transparent;
