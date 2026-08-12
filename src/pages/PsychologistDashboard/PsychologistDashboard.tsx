@@ -1434,11 +1434,11 @@ const PsychologistDashboard: React.FC = () => {
                   <span>{selectedAppt.appointment_date.split('-').reverse().join('/')}</span>
                 </div>
                 <div className="psy-dash-nav-item psy-appt-detail-row">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
                   <span>{formatTime(selectedAppt.start_time)} - {formatTime(selectedAppt.end_time)}</span>
                 </div>
                 <div className="psy-dash-nav-item psy-appt-detail-row">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M12 7v10M15 9.5c-.7-.7-1.7-1-3-1-1.7 0-3 .8-3 2s1.3 2 3 2 3 .8 3 2-1.3 2-3 2c-1.3 0-2.3-.3-3-1" /></svg>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M12 7v10M15 9.5c-.7-.7-1.7-1-3-1-1.7 0-3 .8-3 2s1.3 2 3 2 3 .8 3 2-1.3 2-3 2c-1.3 0-2.3-.3-3-1" /></svg>
                   <span>${selectedAppt.payment_amount?.toLocaleString()} COP</span>
                   <span className={`psy-appt-pay-badge psy-appt-pay-badge--${selectedAppt.payment_status}`}>
                     {selectedAppt.payment_status === 'pagado' ? 'Pagado' : selectedAppt.payment_status === 'procesando' ? 'Procesando' : 'Pendiente'}
@@ -1446,12 +1446,12 @@ const PsychologistDashboard: React.FC = () => {
                 </div>
                 {selectedAppt.payment_reference && (
                   <div className="psy-dash-nav-item psy-appt-detail-row">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 3h8l3 3v12l-3 3H8l-3-3V6z" /><path d="M9 9h6M9 13h6M9 17h4" /></svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 3h8l3 3v12l-3 3H8l-3-3V6z" /><path d="M9 9h6M9 13h6M9 17h4" /></svg>
                     <span>Ref: {selectedAppt.payment_reference} ({selectedAppt.payment_method})</span>
                   </div>
                 )}
                 <div className="psy-dash-nav-item psy-appt-detail-row">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M8 12l2.5 2.5L16 9" /></svg>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M8 12l2.5 2.5L16 9" /></svg>
                   <span>Estado: </span>
                   <span className={`psy-appt-status-badge psy-appt-status-badge--${selectedAppt.status}`}>
                     {selectedAppt.status === 'confirmada' ? 'Confirmada' : selectedAppt.status === 'pendiente_pago' ? 'Pendiente de pago' : selectedAppt.status === 'completada' ? 'Completada' : selectedAppt.status}
