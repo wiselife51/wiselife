@@ -2382,7 +2382,7 @@ body:has(.psy-dash) {
   align-items: center;
   justify-content: center;
   font-family: 'Inter', sans-serif;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 600;
   line-height: normal;
   letter-spacing: normal;
@@ -2391,7 +2391,7 @@ body:has(.psy-dash) {
 
 .psy-appt-modal-layer .psy-complete-btn,
 .psy-appt-modal-layer .psy-history-btn {
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
 }
 
 .psy-appt-modal-layer .psy-complete-btn:hover,
