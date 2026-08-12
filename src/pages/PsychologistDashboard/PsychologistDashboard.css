@@ -3177,9 +3177,10 @@ body:has(.psy-dash) {
 .psy-appt-modal-layer .psy-appt-patient { padding: 0.55rem 0.65rem; }
 .psy-appt-modal-layer .psy-appt-patient-avatar { width: 32px; height: 32px; }
 .psy-appt-modal-layer .psy-appt-patient h4 { font-size: 0.78rem; }
-.psy-appt-modal-layer .psy-appt-details { gap: 0.32rem; }
-.psy-appt-modal-layer .psy-appt-detail-row { font-size: 0.68rem; gap: 0.35rem; }
-.psy-appt-modal-layer .psy-appt-detail-row svg { width: 13px; height: 13px; }
+  /* Override responsive de la descripción de la cita desactivado para conservar el tamaño visual del modal. */
+  /* .psy-appt-modal-layer .psy-appt-details { gap: 0.32rem; }
+  .psy-appt-modal-layer .psy-appt-detail-row { font-size: 0.68rem; gap: 0.35rem; }
+  .psy-appt-modal-layer .psy-appt-detail-row svg { width: 13px; height: 13px; } */
 .psy-appt-modal-layer .psy-appt-actions { gap: 0.35rem; }
 .psy-appt-modal-layer .psy-complete-btn,
 .psy-appt-modal-layer .psy-history-btn {
