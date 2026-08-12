@@ -3200,7 +3200,7 @@ body:has(.psy-dash) {
 .psy-appt-modal-layer .psy-appt-modal-header h3 { font-size: 0.84rem; }
 .psy-appt-modal-layer .psy-appt-patient { padding: 0.55rem 0.65rem; }
 .psy-appt-modal-layer .psy-appt-patient-avatar { width: 32px; height: 32px; }
-.psy-appt-modal-layer .psy-appt-patient h4 { font-size: 0.78rem; }
+.psy-appt-modal-layer .psy-appt-patient h4 { font-size: 0.84rem; }
 .psy-appt-modal-layer .psy-appt-actions { gap: 0.35rem; }
 
 @media (max-width: 768px) {
