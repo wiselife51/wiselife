@@ -2169,8 +2169,13 @@ body:has(.psy-dash) {
 
 /* Appointment detail panel. */
 .psy-appt-modal-layer {
-  position: fixed;
-  inset: 0;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: 100vw !important;
+  height: 100dvh !important;
   z-index: 5000 !important;
   display: flex;
   justify-content: flex-start;
@@ -2180,9 +2185,11 @@ body:has(.psy-dash) {
   backdrop-filter: blur(12px);
 }
 .psy-appt-modal-layer .psy-dash-modal--wide {
-  width: 260px;
-  max-width: 260px;
-  min-height: 100%;
+  width: 260px !important;
+  max-width: 260px !important;
+  min-height: 100dvh;
+  height: 100dvh;
+  margin: 0 !important;
   align-self: stretch;
   padding: 1.5rem;
   gap: 1rem;
