@@ -2386,7 +2386,7 @@ body:has(.psy-dash) {
 .psy-appt-modal-layer .psy-history-btn,
 .psy-appt-modal-layer .psy-wa-btn,
 .psy-appt-modal-layer .psy-confirm-pay-btn {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
 }
 
 .psy-appt-modal-layer .psy-complete-btn:hover,
