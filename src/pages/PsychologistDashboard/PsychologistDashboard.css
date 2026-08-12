@@ -2305,7 +2305,7 @@ body:has(.psy-dash) {
   background: transparent;
   color: rgba(255, 255, 255, 0.6);
   font-family: 'Inter', sans-serif;
-  font-size: 1rem;
+  font-size: 0.78rem;
   font-weight: 500;
   text-align: left;
 }
