@@ -2181,17 +2181,17 @@ body:has(.psy-dash) {
   justify-content: flex-start;
   align-items: stretch;
   padding: 0;
-  background: rgba(7, 10, 18, 0.72);
-  backdrop-filter: blur(12px);
+  background: transparent;
+  backdrop-filter: none;
 }
 .psy-appt-modal-layer .psy-dash-modal--wide {
   width: min(92vw, 390px) !important;
   max-width: 390px !important;
-  min-height: 0;
-  height: auto;
-  max-height: 88dvh;
+  min-height: 100dvh;
+  height: 100dvh;
+  max-height: 100dvh;
   margin: 0 !important;
-  align-self: center;
+  align-self: stretch;
   padding: 1.5rem;
   gap: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -3190,10 +3190,13 @@ body:has(.psy-dash) {
 .psy-appt-modal-layer .psy-appt-actions { gap: 0.35rem; }
 
 @media (max-width: 768px) {
-  .psy-appt-modal-layer { padding: 0.5rem; }
+  .psy-appt-modal-layer { padding: 0; }
   .psy-appt-modal-layer .psy-dash-modal--wide {
-    width: min(86vw, 292px);
-    max-height: 86dvh;
+    width: min(92vw, 390px) !important;
+    max-width: 390px !important;
+    min-height: 100dvh;
+    height: 100dvh;
+    max-height: 100dvh;
     padding: 0.9rem;
   }
 }
