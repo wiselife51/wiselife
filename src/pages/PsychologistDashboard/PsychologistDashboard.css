@@ -2150,7 +2150,7 @@ body:has(.psy-dash) {
 .psy-appt-detail-row { gap: 0.6rem; color: rgba(255,255,255,0.68); }
 .psy-appt-detail-row svg { color: rgba(255,255,255,0.42); }
 .psy-appt-actions { gap: 0.55rem; }
-  .psy-complete-btn, .psy-history-btn, .psy-confirm-pay-btn, .psy-wa-btn { border-radius: 12px; }
+.psy-complete-btn, .psy-history-btn, .psy-confirm-pay-btn, .psy-wa-btn { border-radius: 12px; min-height: 50px; }
   .psy-complete-btn, .psy-history-btn { background: rgba(126,87,194,0.13); border-color: rgba(138,92,246,0.48); color: #c49bff; }
   .psy-dash-modal--wide .psy-appt-pay-badge,
   .psy-dash-modal--wide .psy-appt-status-badge { display: inline-flex; align-items: center; min-height: 22px; padding: 0.18rem 0.6rem; border: 1px solid rgba(126,87,194,0.3); border-radius: 999px; font-size: 0.68rem; font-weight: 700; line-height: 1; }
@@ -2197,6 +2197,7 @@ body:has(.psy-dash) {
   align-items: center;
   justify-content: center;
   width: 100%;
+  min-height: 50px;
   border-radius: 12px;
   background: rgba(126, 87, 194, 0.14);
   border-color: rgba(138, 92, 246, 0.52);
@@ -2263,10 +2264,6 @@ body:has(.psy-dash) {
 .psy-appt-modal-layer .psy-appt-detail-row { color: rgba(255, 255, 255, 0.62); }
 .psy-appt-modal-layer .psy-appt-detail-row svg { color: #9b82c9; }
 .psy-appt-modal-layer .psy-appt-patient h4 { font-size: 0.8rem; }
-.psy-appt-modal-layer .psy-appt-details {
-  gap: 0;
-}
-
 .psy-appt-modal-layer .psy-appt-detail-list {
   display: flex;
   flex-direction: column;
@@ -2277,7 +2274,7 @@ body:has(.psy-dash) {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 0.875rem;
+  padding: 0.15rem 0.5rem;
   border: 0;
   border-radius: 12px;
   background: transparent;
@@ -2303,7 +2300,7 @@ body:has(.psy-dash) {
 
 .psy-appt-modal-layer .psy-appt-date-row {
   gap: 0.5rem;
-  padding: 0.5rem 0.875rem;
+  padding: 0.15rem 0.5rem;
   border: 0;
   border-radius: 12px;
   background: transparent;
@@ -2439,21 +2436,8 @@ body:has(.psy-dash) {
   .psy-dash-main { padding-top: 3.2rem; }
 
   .psy-dash-modal-backdrop { padding: 0; }
-  .psy-appt-modal-layer {
-    justify-content: center;
-    align-items: center;
-    padding: 0.75rem;
-  }
-  .psy-appt-modal-layer .psy-dash-modal--wide {
-    width: min(100%, 430px);
-    max-width: 430px;
-    margin-left: 0;
-    min-height: 0;
-    max-height: 88dvh;
-    overflow-y: auto;
-    border-radius: 14px;
-    padding: 1rem;
-  }
+  .psy-appt-modal-layer { justify-content: flex-start; align-items: stretch; }
+  .psy-appt-modal-layer .psy-dash-modal--wide { width: min(82vw, 260px); max-width: 260px; min-height: 100dvh; max-height: 100dvh; overflow-y: auto; border-radius: 0 16px 16px 0; padding: 1.5rem; }
   .psy-dash-modal--wide { width: min(100%, 430px); max-height: 88dvh; overflow-y: auto; }
   .psy-appt-modal-actions { flex-direction: column; }
   .psy-appt-modal-actions button { width: 100%; }
@@ -3204,13 +3188,6 @@ body:has(.psy-dash) {
 .psy-dash, .psy-dash-main, .psy-dash-header, .psy-cal-controls,
 .psy-cal-nav, .psy-cal-views { min-width: 0; }
 .psy-dash-main { min-height: 100dvh; box-sizing: border-box; padding-bottom: 3rem; }
-
-/* Desktop: keep the appointment panel directly beside the 260px sidebar. */
-@media (min-width: 769px) {
-  .psy-appt-modal-layer .psy-dash-modal--wide {
-    margin-left: 260px;
-  }
-}
 
 /* Compact sizing shared by the appointment panel at every viewport. */
 .psy-appt-modal-layer .psy-dash-modal--wide {
