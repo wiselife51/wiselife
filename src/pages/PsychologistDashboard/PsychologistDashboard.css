@@ -2280,9 +2280,11 @@ body:has(.psy-dash) {
   border-radius: 12px;
   background: transparent;
   color: rgba(255, 255, 255, 0.6);
-  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
   font-weight: 500;
   line-height: 1.4;
+  text-align: left;
 }
 .psy-appt-modal-layer .psy-appt-detail-row:hover {
   background: rgba(255, 255, 255, 0.05);
@@ -2337,6 +2339,10 @@ body:has(.psy-dash) {
   font-weight: 700;
   line-height: 1.25rem;
 }
+.psy-appt-modal-layer .psy-appt-detail-row svg {
+  color: rgba(255, 255, 255, 0.6);
+}
+
 .psy-appt-modal-layer .psy-appt-modal-body {
   display: flex;
   flex: 1;
