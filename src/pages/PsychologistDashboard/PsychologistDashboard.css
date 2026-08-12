@@ -2389,9 +2389,10 @@ body:has(.psy-dash) {
   align-items: center;
   justify-content: center;
   font-family: 'Inter', sans-serif;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 600;
   line-height: normal;
+  letter-spacing: normal;
   text-align: center;
 }
 
