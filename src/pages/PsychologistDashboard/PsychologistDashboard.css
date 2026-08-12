@@ -3189,6 +3189,16 @@ body:has(.psy-dash) {
 .psy-cal-nav, .psy-cal-views { min-width: 0; }
 .psy-dash-main { min-height: 100dvh; box-sizing: border-box; padding-bottom: 3rem; }
 
+/* Appointment detail stays attached to the dashboard menu. */
+.psy-appt-modal-layer {
+  justify-content: flex-start;
+  padding: 0;
+}
+
+.psy-appt-modal-layer .psy-dash-modal--wide {
+  margin-left: 260px;
+}
+
 /* Compact sizing shared by the appointment panel at every viewport. */
 .psy-appt-modal-layer .psy-dash-modal--wide {
   width: min(86vw, 292px);
@@ -3204,8 +3214,13 @@ body:has(.psy-dash) {
 .psy-appt-modal-layer .psy-appt-actions { gap: 0.35rem; }
 
 @media (max-width: 768px) {
-  .psy-appt-modal-layer { padding: 0.5rem; }
+  .psy-appt-modal-layer {
+    justify-content: flex-start;
+    padding: 0;
+  }
   .psy-appt-modal-layer .psy-dash-modal--wide {
+    margin-left: 0;
+
     width: min(86vw, 292px);
     max-height: 86dvh;
     padding: 0.9rem;
