@@ -2396,6 +2396,11 @@ body:has(.psy-dash) {
   text-align: center;
 }
 
+.psy-appt-modal-layer .psy-complete-btn,
+.psy-appt-modal-layer .psy-history-btn {
+  font-size: 0.875rem;
+}
+
 .psy-appt-modal-layer .psy-complete-btn:hover,
 .psy-appt-modal-layer .psy-history-btn:hover {
   background: rgba(126, 87, 194, 0.2);
