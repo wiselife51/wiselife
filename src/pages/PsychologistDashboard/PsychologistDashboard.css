@@ -3201,6 +3201,14 @@ body:has(.psy-dash) {
 .psy-cal-nav, .psy-cal-views { min-width: 0; }
 .psy-dash-main { min-height: 100dvh; box-sizing: border-box; padding-bottom: 3rem; }
 
+/* Keep appointment details centered in the full viewport. */
+.psy-dash-modal-backdrop:has(.psy-dash-modal--wide) {
+  inset: 0;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
 /* Compact sizing shared by the appointment panel at every viewport. */
 .psy-appt-modal-layer .psy-dash-modal--wide {
   width: min(86vw, 292px);
