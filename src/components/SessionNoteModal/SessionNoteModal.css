@@ -870,8 +870,8 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 0.65rem;
-    padding: 0.75rem 1.25rem 0.8rem;
+    gap: 1rem;
+    padding: 0.9rem 1.25rem 1rem;
   }
 
   .sn-modal-heading {
@@ -895,8 +895,8 @@
     max-width: 100%;
     transform: none;
     justify-content: center;
-    margin: 0 auto;
-    padding: 0.35rem 0.7rem;
+    margin: 0.15rem auto;
+    padding: 0.45rem 0.7rem;
   }
 
   .sn-patient-avatar {
