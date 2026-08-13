@@ -749,6 +749,9 @@ const PsychologistDashboard: React.FC = () => {
         clinicalRecordId: clinicalRecord.id,
         sessionNumber: (count || 0) + 1,
       });
+      // Cerrar el detalle antes de abrir Evolución para evitar que su overlay
+      // quede por encima del modal de la nota de sesión en producción/móvil.
+      setSelectedAppt(null);
       setShowSessionNoteModal(true);
     } catch (err) {
       console.error('Error in handleCompleteAppt:', err);
@@ -1519,6 +1522,8 @@ const PsychologistDashboard: React.FC = () => {
           psychologistId={profile!.id}
           onSuccess={(_clinicalRecordId) => {
             setShowClinicalRecordModal(false);
+            // El detalle de la cita no debe quedar montado detrás de Evolución.
+            setSelectedAppt(null);
             // Después de crear HC, abrir automáticamente el modal de nota de sesión
             if (pendingAppointmentToComplete) {
               handleCompleteAppt(pendingAppointmentToComplete.id);
