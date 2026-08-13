@@ -883,7 +883,9 @@
   }
 
   .sn-modal-title {
-    font-size: 0.85rem;
+    color: #f4f2ff;
+    font-size: 0.95rem;
+    font-weight: 600;
     line-height: 1.25;
     white-space: nowrap;
   }
