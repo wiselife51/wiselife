@@ -2045,14 +2045,54 @@ body:has(.psy-dash) {
   font-weight: 500;
 }
 
-.psy-appt-payment--pagado,
-.psy-appt-status--confirmada {
-  background: rgba(76, 175, 80, 0.14) !important;
-  border: 1px solid rgba(102, 187, 106, 0.28) !important;
+.psy-appt-payment--pagado {
+  position: relative;
+  background: transparent !important;
+  border: 1px solid transparent !important;
   color: rgba(255, 255, 255, 0.7) !important;
 }
 
+.psy-appt-payment--pagado::after,
+.psy-appt-payment--procesando::after,
+.psy-appt-payment--pendiente::after {
+  content: '';
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-left: auto;
+  border-radius: 999px;
+  flex: 0 0 auto;
+}
+
+.psy-appt-payment--pagado::after {
+  background: #66bb6a;
+  box-shadow: 0 0 7px rgba(102, 187, 106, 0.55);
+}
+
+.psy-appt-payment--procesando::after {
+  background: #ffc107;
+  box-shadow: 0 0 7px rgba(255, 193, 7, 0.55);
+  animation: psyStatusAlert 1.35s ease-in-out infinite;
+}
+
+.psy-appt-payment--pendiente::after {
+  background: #ef5350;
+  box-shadow: 0 0 7px rgba(239, 83, 80, 0.55);
+  animation: psyStatusAlert 1.35s ease-in-out infinite;
+}
+
 .psy-appt-payment--pagado > span:last-child,
+.psy-appt-payment--procesando > span:last-child,
+.psy-appt-payment--pendiente > span:last-child {
+  color: rgba(255, 255, 255, 0.7) !important;
+  text-shadow: none;
+}
+
+.psy-appt-payment--pagado .psy-appt-state-icon,
+.psy-appt-payment--procesando .psy-appt-state-icon,
+.psy-appt-payment--pendiente .psy-appt-state-icon {
+  color: rgba(255, 255, 255, 0.35) !important;
+}
+
 .psy-appt-status--confirmada > span:last-child,
 .psy-appt-status--confirmada .psy-appt-status-label {
   color: #66bb6a !important;
@@ -2112,6 +2152,13 @@ body:has(.psy-dash) {
 .psy-appt-status--cancelada .psy-appt-state-icon {
   animation: psy-bell-swing 1.8s ease-in-out infinite;
   transform-origin: 50% 10%;
+}
+
+.psy-appt-payment--procesando,
+.psy-appt-payment--pendiente {
+  background: transparent !important;
+  border-color: transparent !important;
+  color: rgba(255, 255, 255, 0.7) !important;
 }
 
 @keyframes psyStatusAlert {
