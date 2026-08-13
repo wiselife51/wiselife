@@ -1476,7 +1476,7 @@ const PsychologistDashboard: React.FC = () => {
   <circle cx="12" cy="12" r="9" />
   <path d="M8 12l2.5 2.5L16 9" />
   </svg>
-  Marcar como completada
+  Evolucionar
                   </button>
                 )}
                 {selectedAppt.patient && (
