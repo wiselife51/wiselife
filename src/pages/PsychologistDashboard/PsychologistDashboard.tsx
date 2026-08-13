@@ -1429,6 +1429,13 @@ const PsychologistDashboard: React.FC = () => {
               </div>
 
               <div className="psy-appt-details">
+                <div className={`psy-dash-nav-item psy-appt-detail-row psy-appt-status--${selectedAppt.status}`}>
+                  <svg className="psy-appt-state-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M8 12l2.5 2.5L16 9" /></svg>
+                  <span className="psy-appt-status-label">Estado: </span>
+                  <span className="psy-appt-status-value">
+                    {selectedAppt.status === 'confirmada' ? 'Confirmada' : selectedAppt.status === 'pendiente_pago' ? 'Pendiente de pago' : selectedAppt.status === 'completada' ? 'Completada' : selectedAppt.status}
+                  </span>
+                </div>
                 <div className="psy-dash-nav-item psy-appt-detail-row psy-appt-date-row">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
                   <span>{selectedAppt.appointment_date.split('-').reverse().join('/')}</span>
@@ -1437,22 +1444,15 @@ const PsychologistDashboard: React.FC = () => {
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
                   <span>{formatTime(selectedAppt.start_time)} - {formatTime(selectedAppt.end_time)}</span>
                 </div>
-                <div className={`psy-dash-nav-item psy-appt-detail-row psy-appt-payment--${selectedAppt.payment_status}`}>
-<svg className="psy-appt-state-icon psy-dash-bell--active" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" /><path d="M10 21h4" /></svg>
-  <span>${selectedAppt.payment_amount?.toLocaleString()} COP</span>
-                </div>
                 {selectedAppt.payment_reference && (
                   <div className="psy-dash-nav-item psy-appt-detail-row">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 3h8l3 3v12l-3 3H8l-3-3V6z" /><path d="M9 9h6M9 13h6M9 17h4" /></svg>
                     <span>Ref: {selectedAppt.payment_reference} ({selectedAppt.payment_method})</span>
                   </div>
                 )}
-                <div className={`psy-dash-nav-item psy-appt-detail-row psy-appt-status--${selectedAppt.status}`}>
-                  <svg className="psy-appt-state-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M8 12l2.5 2.5L16 9" /></svg>
-                  <span className="psy-appt-status-label">Estado: </span>
-                  <span className="psy-appt-status-value">
-                    {selectedAppt.status === 'confirmada' ? 'Confirmada' : selectedAppt.status === 'pendiente_pago' ? 'Pendiente de pago' : selectedAppt.status === 'completada' ? 'Completada' : selectedAppt.status}
-                  </span>
+                <div className={`psy-dash-nav-item psy-appt-detail-row psy-appt-payment--${selectedAppt.payment_status}`}>
+                  <svg className="psy-appt-state-icon psy-dash-bell--active" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" /><path d="M10 21h4" /></svg>
+                  <span>${selectedAppt.payment_amount?.toLocaleString()} COP</span>
                 </div>
               </div>
 
