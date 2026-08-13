@@ -2217,9 +2217,72 @@ body:has(.psy-dash) {
 .psy-appt-payment--pendiente > span:last-child,
 .psy-appt-payment--pagado .psy-appt-state-icon,
 .psy-appt-payment--procesando .psy-appt-state-icon,
-.psy-appt-payment--pendiente .psy-appt-state-icon {
+.psy-appt-payment--pendiente .psy-appt-state-icon,
+.psy-appt-status--confirmada > span,
+.psy-appt-status--confirmada .psy-appt-state-icon,
+.psy-appt-status--pendiente_pago > span,
+.psy-appt-status--pendiente_pago .psy-appt-state-icon,
+.psy-appt-status--cancelada > span,
+.psy-appt-status--cancelada .psy-appt-state-icon {
   color: rgba(255, 255, 255, 0.35) !important;
   text-shadow: none;
+}
+
+.psy-appt-status--confirmada,
+.psy-appt-status--pendiente_pago,
+.psy-appt-status--cancelada {
+  position: relative;
+  background: rgba(126, 87, 194, 0.15) !important;
+  border: 1px solid rgba(126, 87, 194, 0.28) !important;
+}
+
+.psy-appt-status--confirmada::after,
+.psy-appt-status--pendiente_pago::after,
+.psy-appt-status--cancelada::after {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-left: auto;
+  border-radius: 999px;
+  flex: 0 0 auto;
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.psy-appt-status--confirmada {
+  background: rgba(76, 175, 80, 0.14) !important;
+  border-color: rgba(102, 187, 106, 0.28) !important;
+}
+
+.psy-appt-status--pendiente_pago {
+  background: rgba(255, 193, 7, 0.14) !important;
+  border-color: rgba(255, 193, 7, 0.28) !important;
+}
+
+.psy-appt-status--cancelada {
+  background: rgba(239, 83, 80, 0.14) !important;
+  border-color: rgba(239, 83, 80, 0.28) !important;
+}
+
+.psy-appt-status--confirmada::after {
+  content: '✓';
+  background: rgba(64, 126, 142, 0.45);
+  color: #9bd7df;
+}
+
+.psy-appt-status--pendiente_pago::after {
+  content: '!';
+  background: rgba(255, 193, 7, 0.3);
+  color: #ffc107;
+}
+
+.psy-appt-status--cancelada::after {
+  content: '!';
+  background: rgba(239, 83, 80, 0.3);
+  color: #ef5350;
 }
 
 @keyframes psyStatusAlert {
