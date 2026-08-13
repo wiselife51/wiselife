@@ -25,6 +25,9 @@ const SessionNoteModal: React.FC<SessionNoteModalProps> = ({
   clinicalRecordId,
   sessionNumber,
   patientId,
+  patientName,
+  patientEmail,
+  patientAvatarUrl,
   psychologistId,
   onSuccess,
 }) => {
@@ -783,9 +786,22 @@ const SessionNoteModal: React.FC<SessionNoteModalProps> = ({
       <div className="sn-modal" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="sn-modal-header">
-          <div>
+          <div className="sn-modal-heading">
+            <div className="sn-brand" aria-label="Vida Sabia">
+              <span className="sn-brand-mark">✦</span>
+              <span>Vida Sabia</span>
+            </div>
             <h2>Nota de Sesión #{sessionNumber}</h2>
             <p className="sn-modal-subtitle">Registro de evolución clínica - Resolución 1995/1999</p>
+          </div>
+          <div className="sn-patient-summary">
+            <div className="sn-patient-avatar">
+              {patientAvatarUrl ? <img src={patientAvatarUrl} alt={patientName || 'Paciente'} /> : (patientName || 'P').charAt(0).toUpperCase()}
+            </div>
+            <div className="sn-patient-copy">
+              <strong>{patientName || 'Paciente'}</strong>
+              <span>{patientEmail || 'Información del paciente'}</span>
+            </div>
           </div>
           <button className="sn-modal-close" onClick={onClose} aria-label="Cerrar">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

@@ -102,6 +102,8 @@
 .sn-tabs {
   display: flex;
   gap: 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: thin;
   padding: 1rem 2.5rem;
   background: rgba(255, 255, 255, 0.02);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -616,6 +618,24 @@
     padding-right: 1.25rem;
   }
 
+  .sn-modal-header {
+    flex-wrap: wrap;
+  }
+
+  .sn-patient-summary {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .sn-tabs {
+    justify-content: flex-start;
+  }
+
+  .sn-tab {
+    flex: 0 0 auto;
+    min-width: 9rem;
+  }
+
   .sn-tabs {
     gap: 0.25rem;
   }
@@ -656,6 +676,75 @@
   .sn-cie10-dropdown {
     max-height: 240px;
   }
+}
+
+/* Session header aligned with the psychologist menu */
+.sn-modal-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.sn-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #8d63d2;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.sn-brand-mark {
+  color: #4dd0e1;
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.sn-patient-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-left: auto;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.sn-patient-avatar {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  overflow: hidden;
+  border: 1px solid rgba(126, 87, 194, 0.42);
+  border-radius: 50%;
+  background: rgba(126, 87, 194, 0.22);
+  color: #d9ccff;
+  font-weight: 700;
+}
+
+.sn-patient-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sn-patient-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.sn-patient-copy strong {
+  color: #f4f2ff;
+  font-size: 0.78rem;
+}
+
+.sn-patient-copy span {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.7rem;
 }
 
 /* Full-screen drawer and dashboard typography */

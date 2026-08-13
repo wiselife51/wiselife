@@ -1540,6 +1540,9 @@ const PsychologistDashboard: React.FC = () => {
           clinicalRecordId={sessionNoteData.clinicalRecordId}
           sessionNumber={sessionNoteData.sessionNumber}
           patientId={appointments.find(a => a.id === sessionNoteData.appointmentId)?.patient?.id || ''}
+          patientName={appointments.find(a => a.id === sessionNoteData.appointmentId)?.patient?.full_name || 'Paciente'}
+          patientEmail={appointments.find(a => a.id === sessionNoteData.appointmentId)?.patient?.email || ''}
+          patientAvatarUrl={appointments.find(a => a.id === sessionNoteData.appointmentId)?.patient?.avatar_url || null}
           psychologistId={profile.id}
           onSuccess={() => {
             setShowSessionNoteModal(false);

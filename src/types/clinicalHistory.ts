@@ -523,6 +523,9 @@ export interface SessionNoteModalProps {
   clinicalRecordId: string;
   sessionNumber: number;
   patientId: string;
+  patientName?: string;
+  patientEmail?: string;
+  patientAvatarUrl?: string | null;
   psychologistId: string;
   onSuccess: () => void;
 }
