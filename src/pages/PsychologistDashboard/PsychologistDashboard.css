@@ -2077,38 +2077,28 @@ body:has(.psy-dash) {
   50% { transform: scale(1.16); opacity: 1; filter: drop-shadow(0 0 5px currentColor); }
 }
 
-.psy-appt-payment--pagado::after,
-.psy-appt-status--confirmada::after,
-.psy-appt-payment--procesando::after,
-.psy-appt-status--pendiente_pago::after,
-.psy-appt-payment--pendiente::after,
-.psy-appt-status--cancelada::after {
-  content: '';
-  width: 0.5rem;
-  height: 0.5rem;
-  margin-left: auto;
-  border-radius: 999px;
-  flex: 0 0 auto;
+.psy-appt-payment--pagado,
+.psy-appt-status--confirmada,
+.psy-appt-payment--procesando,
+.psy-appt-status--pendiente_pago,
+.psy-appt-payment--pendiente,
+.psy-appt-status--cancelada {
+  border: 1px solid transparent;
+  transition: background 0.2s var(--psy-smooth), border-color 0.2s var(--psy-smooth), color 0.2s var(--psy-smooth);
 }
 
-.psy-appt-payment--pagado::after,
-.psy-appt-status--confirmada::after {
-  background: #66bb6a;
-  box-shadow: 0 0 8px rgba(102, 187, 106, 0.65);
+.psy-appt-payment--pagado:hover,
+.psy-appt-status--confirmada:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
-.psy-appt-payment--procesando::after,
-.psy-appt-status--pendiente_pago::after {
-  background: #ffc107;
-  box-shadow: 0 0 8px rgba(255, 193, 7, 0.65);
-  animation: psyStatusAlert 1.35s ease-in-out infinite;
-}
-
-.psy-appt-payment--pendiente::after,
-.psy-appt-status--cancelada::after {
-  background: #ef5350;
-  box-shadow: 0 0 8px rgba(239, 83, 80, 0.65);
-  animation: psyStatusAlert 1.35s ease-in-out infinite;
+.psy-appt-payment--procesando:hover,
+.psy-appt-status--pendiente_pago:hover,
+.psy-appt-payment--pendiente:hover,
+.psy-appt-status--cancelada:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .psy-appt-pay-badge--pagado {
