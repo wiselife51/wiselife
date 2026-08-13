@@ -2078,27 +2078,27 @@ body:has(.psy-dash) {
   content: '!';
   background: rgba(255, 193, 7, 0.3);
   color: #ffc107;
-  animation: psyStatusAlert 1.35s ease-in-out infinite;
+  animation: none;
 }
 
 .psy-appt-payment--pendiente::after {
   content: '!';
   background: rgba(239, 83, 80, 0.3);
   color: #ef5350;
-  animation: psyStatusAlert 1.35s ease-in-out infinite;
+  animation: none;
 }
 
 .psy-appt-payment--pagado,
 .psy-appt-payment--procesando,
 .psy-appt-payment--pendiente {
-  color: rgba(255, 255, 255, 0.7) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
   font-weight: 500;
 }
 
 .psy-appt-payment--pagado .psy-appt-state-icon,
 .psy-appt-payment--procesando .psy-appt-state-icon,
 .psy-appt-payment--pendiente .psy-appt-state-icon {
-  color: rgba(255, 255, 255, 0.35) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
 }
 
 .psy-appt-payment--pagado > span:last-child,
@@ -2112,20 +2112,20 @@ body:has(.psy-dash) {
 .psy-appt-payment--pagado .psy-appt-state-icon,
 .psy-appt-payment--procesando .psy-appt-state-icon,
 .psy-appt-payment--pendiente .psy-appt-state-icon {
-  color: rgba(255, 255, 255, 0.35) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
 }
 
 .psy-appt-payment--pagado,
 .psy-appt-payment--procesando,
 .psy-appt-payment--pendiente {
-  color: rgba(255, 255, 255, 0.7) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
   font-weight: 500;
 }
 
 .psy-appt-payment--pagado .psy-appt-state-icon,
 .psy-appt-payment--procesando .psy-appt-state-icon,
 .psy-appt-payment--pendiente .psy-appt-state-icon {
-  color: rgba(255, 255, 255, 0.35) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
 }
 
 .psy-appt-payment--pagado > span:last-child,
