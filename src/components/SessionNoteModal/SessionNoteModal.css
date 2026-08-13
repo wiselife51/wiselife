@@ -660,10 +660,15 @@
 
 /* Full-screen drawer and dashboard typography */
 .sn-modal-backdrop {
-  z-index: 2000;
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw;
+  height: 100dvh;
+  z-index: 2147483647 !important;
 }
 
 .sn-modal {
+  position: relative;
   width: 100vw;
   min-width: 100vw;
   height: 100dvh;
