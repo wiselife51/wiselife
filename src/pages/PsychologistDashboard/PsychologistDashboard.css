@@ -2053,7 +2053,8 @@ body:has(.psy-dash) {
 
 .psy-appt-payment--procesando .psy-appt-state-icon,
 .psy-appt-status--pendiente_pago .psy-appt-state-icon {
-  animation: psyStatusAlert 1.35s ease-in-out infinite;
+  animation: psy-bell-swing 1.8s ease-in-out infinite;
+  transform-origin: 50% 10%;
 }
 
 .psy-appt-payment--pendiente,
@@ -2065,7 +2066,8 @@ body:has(.psy-dash) {
 
 .psy-appt-payment--pendiente .psy-appt-state-icon,
 .psy-appt-status--cancelada .psy-appt-state-icon {
-  animation: psyStatusAlert 1.35s ease-in-out infinite;
+  animation: psy-bell-swing 1.8s ease-in-out infinite;
+  transform-origin: 50% 10%;
 }
 
 @keyframes psyStatusAlert {
@@ -2082,7 +2084,7 @@ body:has(.psy-dash) {
   width: 100%;
   min-height: 2.25rem;
   padding: 0.5rem 0.75rem;
-  border: 1px solid rgba(126, 87, 194, 0.28);
+  border: 1px solid rgba(138, 92, 246, 0.52);
   border-radius: 12px;
   box-sizing: border-box;
   transition: background 0.2s var(--psy-smooth), border-color 0.2s var(--psy-smooth), color 0.2s var(--psy-smooth);
@@ -2091,7 +2093,8 @@ body:has(.psy-dash) {
 .psy-appt-payment--pagado:hover,
 .psy-appt-status--confirmada:hover {
   background: rgba(76, 175, 80, 0.22) !important;
-  border-color: rgba(102, 187, 106, 0.62) !important;
+  border-color: rgba(138, 92, 246, 0.7) !important;
+  box-shadow: 0 4px 16px rgba(126, 87, 194, 0.15);
 }
 
 .psy-appt-payment--procesando:hover,

@@ -1332,7 +1332,7 @@ const PsychologistDashboard: React.FC = () => {
               <div className="psy-profile-grid">
                 <div className="psy-profile-row psy-profile-row-four">
                   <label>Nombre completo<input name="full_name" defaultValue={profile.full_name} required /></label>
-                  <label>Teléfono<div className="psy-profile-phone-field"><select name="phone_country" defaultValue={profile.phone?.match(/^\+\d+/)?.[0] || '+57'} aria-label="Indicativo de país"><option value="+57">🇨🇴 +57</option><option value="+1">🇺🇸 +1</option><option value="+52">🇲🇽 +52</option><option value="+34">🇪🇸 +34</option><option value="+54">🇦🇷 +54</option><option value="+56">🇨🇱 +56</option><option value="+51">🇵🇪 +51</option><option value="+55">🇧🇷 +55</option><option value="+44">🇬🇧 +44</option><option value="+49">🇩🇪 +49</option><option value="+33">🇫🇷 +33</option><option value="+39">🇮🇹 +39</option><option value="+81">🇯🇵 +81</option><option value="+86">🇨🇳 +86</option><option value="+91">🇮🇳 +91</option><option value="+61">🇦🇺 +61</option><option value="+351">🇵🇹 +351</option><option value="+7">🇷🇺 +7</option></select><input name="phone" defaultValue={profile.phone?.replace(/^\+\d+\s*/, '') || ''} placeholder="Número" inputMode="tel" /></div></label>
+                  <label>Teléfono<div className="psy-profile-phone-field"><select name="phone_country" defaultValue={profile.phone?.match(/^\+\d+/)?.[0] || '+57'} aria-label="Indicativo de país"><option value="+57">��🇴 +57</option><option value="+1">🇺🇸 +1</option><option value="+52">🇲🇽 +52</option><option value="+34">🇪🇸 +34</option><option value="+54">🇦🇷 +54</option><option value="+56">🇨🇱 +56</option><option value="+51">🇵🇪 +51</option><option value="+55">🇧🇷 +55</option><option value="+44">🇬🇧 +44</option><option value="+49">🇩🇪 +49</option><option value="+33">🇫🇷 +33</option><option value="+39">🇮🇹 +39</option><option value="+81">🇯🇵 +81</option><option value="+86">🇨🇳 +86</option><option value="+91">🇮🇳 +91</option><option value="+61">🇦🇺 +61</option><option value="+351">🇵🇹 +351</option><option value="+7">🇷🇺 +7</option></select><input name="phone" defaultValue={profile.phone?.replace(/^\+\d+\s*/, '') || ''} placeholder="Número" inputMode="tel" /></div></label>
                   <label>Ciudad<input name="city" defaultValue={profile.city || ''} placeholder="Bogotá" /></label>
                   <label>Años de experiencia<input name="years_experience" type="number" min="0" defaultValue={profile.years_experience || 0} /></label>
                 </div>
@@ -1438,7 +1438,7 @@ const PsychologistDashboard: React.FC = () => {
                   <span>{formatTime(selectedAppt.start_time)} - {formatTime(selectedAppt.end_time)}</span>
                 </div>
                 <div className={`psy-dash-nav-item psy-appt-detail-row psy-appt-payment--${selectedAppt.payment_status}`}>
-<svg className="psy-appt-state-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" /><path d="M10 21h4" /></svg>
+<svg className="psy-appt-state-icon psy-dash-bell--active" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" /><path d="M10 21h4" /></svg>
   <span>${selectedAppt.payment_amount?.toLocaleString()} COP</span>
                 </div>
                 {selectedAppt.payment_reference && (
