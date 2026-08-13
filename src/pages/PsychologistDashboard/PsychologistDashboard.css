@@ -2023,22 +2023,58 @@ body:has(.psy-dash) {
   flex-shrink: 0;
 }
 
+.psy-appt-payment--pagado,
+.psy-appt-status--confirmada {
+  background: rgba(76, 175, 80, 0.14);
+  border: 1px solid rgba(102, 187, 106, 0.28);
+  color: #9be7a0;
+}
+
 .psy-appt-payment--pagado > span:last-child,
 .psy-appt-status--confirmada > span:last-child {
-  color: #66bb6a;
+  color: #9be7a0;
   text-shadow: 0 0 10px rgba(102, 187, 106, 0.45);
+}
+
+.psy-appt-payment--procesando,
+.psy-appt-status--pendiente_pago {
+  background: rgba(255, 193, 7, 0.14);
+  border: 1px solid rgba(255, 193, 7, 0.32);
+  color: #ffd45a;
 }
 
 .psy-appt-payment--procesando > span:last-child,
 .psy-appt-status--pendiente_pago > span:last-child {
-  color: #ffc107;
-  text-shadow: 0 0 10px rgba(255, 193, 7, 0.45);
+  color: #ffd45a;
+  text-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+}
+
+.psy-appt-payment--procesando .psy-appt-state-icon,
+.psy-appt-status--pendiente_pago .psy-appt-state-icon {
+  animation: psyStatusAlert 1.35s ease-in-out infinite;
+}
+
+.psy-appt-payment--pendiente,
+.psy-appt-status--cancelada {
+  background: rgba(239, 83, 80, 0.14);
+  border: 1px solid rgba(239, 83, 80, 0.3);
+  color: #ff8a85;
 }
 
 .psy-appt-payment--pendiente > span:last-child,
 .psy-appt-status--cancelada > span:last-child {
-  color: #ef5350;
-  text-shadow: 0 0 10px rgba(239, 83, 80, 0.45);
+  color: #ff8a85;
+  text-shadow: 0 0 10px rgba(239, 83, 80, 0.5);
+}
+
+.psy-appt-payment--pendiente .psy-appt-state-icon,
+.psy-appt-status--cancelada .psy-appt-state-icon {
+  animation: psyStatusAlert 1.35s ease-in-out infinite;
+}
+
+@keyframes psyStatusAlert {
+  0%, 100% { transform: scale(1); opacity: 0.78; }
+  50% { transform: scale(1.16); opacity: 1; filter: drop-shadow(0 0 5px currentColor); }
 }
 
 .psy-appt-payment--pagado,
