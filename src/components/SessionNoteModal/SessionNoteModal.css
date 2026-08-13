@@ -628,8 +628,13 @@
   }
 
   .sn-modal-heading {
+    position: absolute;
     top: 1.5rem;
+    left: 1.25rem;
     width: calc(100% - 2rem);
+    align-items: flex-start;
+    transform: none;
+    text-align: left;
   }
 
   .sn-modal-title {
@@ -637,8 +642,10 @@
   }
 
   .sn-patient-summary {
-    width: 100%;
+    left: 1.25rem;
+    width: calc(100% - 2.5rem);
     margin: 0;
+    transform: none;
   }
 
   .sn-tabs {
@@ -694,14 +701,11 @@
 
 /* Session header aligned with the psychologist menu */
 .sn-modal-heading {
-  position: absolute;
-  left: 50%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.45rem;
-  transform: translateX(-50%);
-  text-align: center;
+  text-align: left;
 }
 
 .sn-brand {
@@ -726,10 +730,13 @@
 }
 
 .sn-patient-summary {
+  position: absolute;
+  left: 50%;
   display: flex;
   align-items: center;
   justify-content: flex-start;
   gap: 0.9rem;
+  transform: translateX(-50%);
   margin: 0;
   padding: 0.75rem 1.25rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
