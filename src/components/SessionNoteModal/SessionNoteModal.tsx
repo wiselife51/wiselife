@@ -788,10 +788,13 @@ const SessionNoteModal: React.FC<SessionNoteModalProps> = ({
         <div className="sn-modal-header">
           <div className="sn-modal-heading">
             <div className="sn-brand" aria-label="Vida Sabia">
-              <span className="sn-brand-mark">✦</span>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" strokeWidth="2" aria-hidden="true">
+                <defs><linearGradient id="sn-logo-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#4dd0e1" /><stop offset="50%" stopColor="#42a5f5" /><stop offset="100%" stopColor="#7e57c2" /></linearGradient></defs>
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="url(#sn-logo-grad)" />
+              </svg>
               <span>Vida Sabia</span>
             </div>
-            <h2>Nota de Sesión #{sessionNumber}</h2>
+            <h2 className="sn-modal-title">Nota de Sesión #{sessionNumber}</h2>
             <p className="sn-modal-subtitle">Registro de evolución clínica - Resolución 1995/1999</p>
           </div>
           <div className="sn-patient-summary">
