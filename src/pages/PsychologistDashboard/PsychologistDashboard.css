@@ -2097,11 +2097,14 @@ body:has(.psy-dash) {
 
 .psy-appt-payment--pagado .psy-appt-state-icon,
 .psy-appt-payment--procesando .psy-appt-state-icon,
-.psy-appt-payment--pendiente .psy-appt-state-icon,
+.psy-appt-payment--pendiente .psy-appt-state-icon {
+  color: rgba(255, 255, 255, 0.35) !important;
+}
+
 .psy-appt-payment--pagado > span:last-child,
 .psy-appt-payment--procesando > span:last-child,
 .psy-appt-payment--pendiente > span:last-child {
-  color: rgba(255, 255, 255, 0.35) !important;
+  color: rgba(255, 255, 255, 0.7) !important;
   text-shadow: none;
 }
 
