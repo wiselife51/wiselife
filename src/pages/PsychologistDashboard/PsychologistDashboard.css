@@ -2055,28 +2055,36 @@ body:has(.psy-dash) {
 .psy-appt-payment--pagado::after,
 .psy-appt-payment--procesando::after,
 .psy-appt-payment--pendiente::after {
-  content: '';
-  width: 0.5rem;
-  height: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.1rem;
+  height: 1.1rem;
   margin-left: auto;
   border-radius: 999px;
   flex: 0 0 auto;
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1;
 }
 
 .psy-appt-payment--pagado::after {
-  background: #66bb6a;
-  box-shadow: 0 0 7px rgba(102, 187, 106, 0.55);
+  content: '✓';
+  background: rgba(64, 126, 142, 0.45);
+  color: #9bd7df;
 }
 
 .psy-appt-payment--procesando::after {
-  background: #ffc107;
-  box-shadow: 0 0 7px rgba(255, 193, 7, 0.55);
+  content: '!';
+  background: rgba(255, 193, 7, 0.3);
+  color: #ffc107;
   animation: psyStatusAlert 1.35s ease-in-out infinite;
 }
 
 .psy-appt-payment--pendiente::after {
-  background: #ef5350;
-  box-shadow: 0 0 7px rgba(239, 83, 80, 0.55);
+  content: '!';
+  background: rgba(239, 83, 80, 0.3);
+  color: #ef5350;
   animation: psyStatusAlert 1.35s ease-in-out infinite;
 }
 
@@ -2089,8 +2097,12 @@ body:has(.psy-dash) {
 
 .psy-appt-payment--pagado .psy-appt-state-icon,
 .psy-appt-payment--procesando .psy-appt-state-icon,
-.psy-appt-payment--pendiente .psy-appt-state-icon {
+.psy-appt-payment--pendiente .psy-appt-state-icon,
+.psy-appt-payment--pagado > span:last-child,
+.psy-appt-payment--procesando > span:last-child,
+.psy-appt-payment--pendiente > span:last-child {
   color: rgba(255, 255, 255, 0.35) !important;
+  text-shadow: none;
 }
 
 .psy-appt-status--confirmada > span:last-child,
