@@ -891,9 +891,10 @@
   .sn-patient-summary {
     position: static;
     left: auto;
-    width: min(100%, 22rem);
+    width: fit-content;
+    max-width: 100%;
     transform: none;
-    justify-content: flex-start;
+    justify-content: center;
     margin: 0 auto;
     padding: 0.35rem 0.7rem;
   }
