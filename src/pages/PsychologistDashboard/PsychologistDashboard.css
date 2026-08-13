@@ -2088,11 +2088,11 @@ body:has(.psy-dash) {
   animation: psyStatusAlert 1.35s ease-in-out infinite;
 }
 
-.psy-appt-payment--pagado > span:last-child,
-.psy-appt-payment--procesando > span:last-child,
-.psy-appt-payment--pendiente > span:last-child {
+.psy-appt-payment--pagado,
+.psy-appt-payment--procesando,
+.psy-appt-payment--pendiente {
   color: rgba(255, 255, 255, 0.7) !important;
-  text-shadow: none;
+  font-weight: 500;
 }
 
 .psy-appt-payment--pagado .psy-appt-state-icon,
@@ -2105,6 +2105,34 @@ body:has(.psy-dash) {
 .psy-appt-payment--procesando > span:last-child,
 .psy-appt-payment--pendiente > span:last-child {
   color: rgba(255, 255, 255, 0.7) !important;
+  font-weight: 500;
+  text-shadow: none;
+}
+
+.psy-appt-payment--pagado .psy-appt-state-icon,
+.psy-appt-payment--procesando .psy-appt-state-icon,
+.psy-appt-payment--pendiente .psy-appt-state-icon {
+  color: rgba(255, 255, 255, 0.35) !important;
+}
+
+.psy-appt-payment--pagado,
+.psy-appt-payment--procesando,
+.psy-appt-payment--pendiente {
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-weight: 500;
+}
+
+.psy-appt-payment--pagado .psy-appt-state-icon,
+.psy-appt-payment--procesando .psy-appt-state-icon,
+.psy-appt-payment--pendiente .psy-appt-state-icon {
+  color: rgba(255, 255, 255, 0.35) !important;
+}
+
+.psy-appt-payment--pagado > span:last-child,
+.psy-appt-payment--procesando > span:last-child,
+.psy-appt-payment--pendiente > span:last-child {
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-weight: 500;
   text-shadow: none;
 }
 
