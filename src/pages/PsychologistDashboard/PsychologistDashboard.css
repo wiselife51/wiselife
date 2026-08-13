@@ -3489,8 +3489,8 @@ body:has(.psy-dash) {
 }
 
 .psy-appt-payment--procesando {
-  background: rgba(255, 193, 7, 0.14) !important;
-  color: #ffc107 !important;
+  background: rgba(255, 193, 7, 0.09) !important;
+  color: #d6a800 !important;
 }
 
 .psy-appt-payment--pendiente {
