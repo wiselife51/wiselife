@@ -7,8 +7,8 @@
 .sn-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(8, 10, 24, 0.82);
-  backdrop-filter: blur(10px);
+  background: rgba(3, 7, 14, 0.78);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: stretch;
   justify-content: flex-start;
@@ -27,9 +27,10 @@
 
 /* Modal Container */
 .sn-modal {
-  background: linear-gradient(145deg, #1a1a2e 0%, #16162a 100%);
-  border-right: 1px solid rgba(126, 87, 194, 0.3);
-  border-radius: 0;
+  background: rgba(11, 18, 31, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-right-color: rgba(255, 255, 255, 0.14);
+  border-radius: 22px;
   width: 100%;
   max-width: none;
   height: 100dvh;
@@ -37,7 +38,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: 18px 0 60px rgba(0, 0, 0, 0.45), inset -1px 0 rgba(255, 255, 255, 0.03);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.58), 0 0 0 1px rgba(126, 87, 194, 0.08);
   animation: snSlideIn 0.3s ease-out;
 }
 
