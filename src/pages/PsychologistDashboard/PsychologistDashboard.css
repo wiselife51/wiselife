@@ -2025,8 +2025,8 @@ body:has(.psy-dash) {
 
 .psy-appt-payment--pagado,
 .psy-appt-status--confirmada {
-  background: rgba(126, 87, 194, 0.15) !important;
-  border-color: rgba(126, 87, 194, 0.48) !important;
+  background: rgba(76, 175, 80, 0.14) !important;
+  border-color: rgba(102, 187, 106, 0.48) !important;
   color: rgba(255, 255, 255, 0.7) !important;
 }
 
@@ -2038,8 +2038,8 @@ body:has(.psy-dash) {
 
 .psy-appt-payment--procesando,
 .psy-appt-status--pendiente_pago {
-  background: rgba(126, 87, 194, 0.15) !important;
-  border-color: rgba(126, 87, 194, 0.48) !important;
+  background: rgba(255, 193, 7, 0.14) !important;
+  border-color: rgba(255, 193, 7, 0.5) !important;
   color: rgba(255, 255, 255, 0.7) !important;
 }
 
@@ -2058,8 +2058,8 @@ body:has(.psy-dash) {
 
 .psy-appt-payment--pendiente,
 .psy-appt-status--cancelada {
-  background: rgba(126, 87, 194, 0.15) !important;
-  border-color: rgba(126, 87, 194, 0.48) !important;
+  background: rgba(239, 83, 80, 0.14) !important;
+  border-color: rgba(239, 83, 80, 0.5) !important;
   color: rgba(255, 255, 255, 0.7) !important;
 }
 
@@ -2089,16 +2089,20 @@ body:has(.psy-dash) {
 
 .psy-appt-payment--pagado:hover,
 .psy-appt-status--confirmada:hover {
-  background: rgba(126, 87, 194, 0.2);
-  border-color: rgba(126, 87, 194, 0.48);
+  background: rgba(76, 175, 80, 0.22) !important;
+  border-color: rgba(102, 187, 106, 0.62) !important;
 }
 
 .psy-appt-payment--procesando:hover,
-.psy-appt-status--pendiente_pago:hover,
+.psy-appt-status--pendiente_pago:hover {
+  background: rgba(255, 193, 7, 0.22) !important;
+  border-color: rgba(255, 193, 7, 0.68) !important;
+}
+
 .psy-appt-payment--pendiente:hover,
 .psy-appt-status--cancelada:hover {
-  background: rgba(126, 87, 194, 0.2);
-  border-color: rgba(126, 87, 194, 0.48);
+  background: rgba(239, 83, 80, 0.22) !important;
+  border-color: rgba(239, 83, 80, 0.66) !important;
 }
 
 .psy-appt-pay-badge--pagado {
