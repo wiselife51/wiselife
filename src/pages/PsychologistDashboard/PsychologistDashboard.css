@@ -2132,8 +2132,8 @@ body:has(.psy-dash) {
 
 /* ===== Appointment detail: login-inspired surface ===== */
 .psy-dash-modal--wide {
-  width: min(92vw, 390px);
-  max-width: 390px;
+  width: 260px;
+  max-width: 260px;
   padding: 1.15rem;
   gap: 1.1rem;
   background: rgba(11, 18, 31, 0.96);
@@ -2185,8 +2185,8 @@ body:has(.psy-dash) {
   backdrop-filter: none;
 }
 .psy-appt-modal-layer .psy-dash-modal--wide {
-  width: min(92vw, 390px) !important;
-  max-width: 390px !important;
+  width: 260px !important;
+  max-width: 260px !important;
   min-height: 100dvh;
   height: 100dvh;
   max-height: 100dvh;
@@ -3177,8 +3177,8 @@ body:has(.psy-dash) {
 
 /* Compact sizing shared by the appointment panel at every viewport. */
 .psy-appt-modal-layer .psy-dash-modal--wide {
-  width: min(92vw, 390px);
-  max-width: 390px;
+  width: 260px;
+  max-width: 260px;
   padding: 0.9rem;
   gap: 0.6rem;
   border-radius: 15px;
