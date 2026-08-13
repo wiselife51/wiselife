@@ -2656,8 +2656,9 @@ body:has(.psy-dash) {
 .psy-appt-modal-layer .psy-complete-btn,
 .psy-appt-modal-layer .psy-history-btn,
 .psy-appt-modal-layer .psy-wa-btn {
-  justify-content: flex-start;
-  gap: 0.6rem;
+  position: relative;
+  justify-content: center;
+  text-align: center;
 }
 
 .psy-appt-modal-layer .psy-complete-btn svg,
@@ -2670,7 +2671,8 @@ body:has(.psy-dash) {
 .psy-appt-modal-layer .psy-complete-btn svg,
 .psy-appt-modal-layer .psy-history-btn svg,
 .psy-appt-modal-layer .psy-wa-btn svg {
-  position: static;
+  position: absolute;
+  left: 0.875rem;
   flex: 0 0 auto;
 }
 
