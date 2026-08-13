@@ -658,6 +658,36 @@
   }
 }
 
+/* Full-screen drawer and dashboard typography */
+.sn-modal-backdrop {
+  z-index: 2000;
+}
+
+.sn-modal {
+  width: 100vw;
+  min-width: 100vw;
+  height: 100dvh;
+  min-height: 100dvh;
+  font-size: 0.78rem;
+}
+
+.sn-modal .sn-modal-subtitle,
+.sn-modal .sn-tab,
+.sn-modal .sn-field label,
+.sn-modal .sn-field input,
+.sn-modal .sn-field select,
+.sn-modal .sn-field textarea,
+.sn-modal .sn-hint,
+.sn-modal .sn-error,
+.sn-modal .sn-cie10-option,
+.sn-modal .sn-cie10-option-desc,
+.sn-modal .sn-cie10-option-cat,
+.sn-modal .sn-btn-primary,
+.sn-modal .sn-btn-ghost,
+.sn-modal .sn-modal-footer {
+  font-size: 0.78rem;
+}
+
 /* High contrast for accessibility */
 @media (prefers-contrast: high) {
   .sn-field input,
