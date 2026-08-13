@@ -2023,6 +2023,28 @@ body:has(.psy-dash) {
   flex-shrink: 0;
 }
 
+.psy-appt-detail-row > span {
+  font-weight: 500;
+}
+
+.psy-appt-payment--pagado .psy-appt-state-icon,
+.psy-appt-status--confirmada .psy-appt-state-icon,
+.psy-appt-payment--procesando .psy-appt-state-icon,
+.psy-appt-status--pendiente_pago .psy-appt-state-icon,
+.psy-appt-payment--pendiente .psy-appt-state-icon,
+.psy-appt-status--cancelada .psy-appt-state-icon {
+  color: currentColor;
+}
+
+.psy-appt-payment--pagado,
+.psy-appt-status--confirmada,
+.psy-appt-payment--procesando,
+.psy-appt-status--pendiente_pago,
+.psy-appt-payment--pendiente,
+.psy-appt-status--cancelada {
+  font-weight: 500;
+}
+
 .psy-appt-payment--pagado,
 .psy-appt-status--confirmada {
   background: rgba(76, 175, 80, 0.14) !important;
@@ -2031,9 +2053,15 @@ body:has(.psy-dash) {
 }
 
 .psy-appt-payment--pagado > span:last-child,
-.psy-appt-status--confirmada > span:last-child {
+.psy-appt-status--confirmada > span:last-child,
+.psy-appt-status--confirmada .psy-appt-status-label {
   color: #66bb6a !important;
   text-shadow: 0 0 8px rgba(102, 187, 106, 0.35);
+}
+
+.psy-appt-payment--pagado .psy-appt-state-icon,
+.psy-appt-status--confirmada .psy-appt-state-icon {
+  color: #66bb6a !important;
 }
 
 .psy-appt-payment--procesando,
@@ -2044,15 +2072,27 @@ body:has(.psy-dash) {
 }
 
 .psy-appt-payment--procesando > span:last-child,
-.psy-appt-status--pendiente_pago > span:last-child {
+.psy-appt-status--pendiente_pago > span:last-child,
+.psy-appt-status--pendiente_pago .psy-appt-status-label {
   color: #ffc107 !important;
   text-shadow: 0 0 8px rgba(255, 193, 7, 0.35);
 }
 
+.psy-appt-payment--procesando .psy-appt-state-icon,
+.psy-appt-status--pendiente_pago .psy-appt-state-icon {
+  color: #ffc107 !important;
+}
+
 .psy-appt-payment--pendiente > span:last-child,
-.psy-appt-status--cancelada > span:last-child {
+.psy-appt-status--cancelada > span:last-child,
+.psy-appt-status--cancelada .psy-appt-status-label {
   color: #ef5350 !important;
   text-shadow: 0 0 8px rgba(239, 83, 80, 0.35);
+}
+
+.psy-appt-payment--pendiente .psy-appt-state-icon,
+.psy-appt-status--cancelada .psy-appt-state-icon {
+  color: #ef5350 !important;
 }
 
 .psy-appt-payment--procesando .psy-appt-state-icon,

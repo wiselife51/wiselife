@@ -1449,7 +1449,7 @@ const PsychologistDashboard: React.FC = () => {
                 )}
                 <div className={`psy-dash-nav-item psy-appt-detail-row psy-appt-status--${selectedAppt.status}`}>
                   <svg className="psy-appt-state-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M8 12l2.5 2.5L16 9" /></svg>
-                  <span>Estado: </span>
+                  <span className="psy-appt-status-label">Estado: </span>
                   <span className="psy-appt-status-value">
                     {selectedAppt.status === 'confirmada' ? 'Confirmada' : selectedAppt.status === 'pendiente_pago' ? 'Pendiente de pago' : selectedAppt.status === 'completada' ? 'Completada' : selectedAppt.status}
                   </span>
