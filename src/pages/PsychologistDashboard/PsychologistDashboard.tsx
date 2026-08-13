@@ -1332,7 +1332,7 @@ const PsychologistDashboard: React.FC = () => {
               <div className="psy-profile-grid">
                 <div className="psy-profile-row psy-profile-row-four">
                   <label>Nombre completo<input name="full_name" defaultValue={profile.full_name} required /></label>
-                  <label>Teléfono<div className="psy-profile-phone-field"><select name="phone_country" defaultValue={profile.phone?.match(/^\+\d+/)?.[0] || '+57'} aria-label="Indicativo de país"><option value="+57">🇨🇴 +57</option><option value="+1">🇺🇸 +1</option><option value="+52">🇲🇽 +52</option><option value="+34">🇪🇸 +34</option><option value="+54">🇦🇷 +54</option><option value="+56">🇨🇱 +56</option><option value="+51">🇵🇪 +51</option><option value="+55">🇧🇷 +55</option><option value="+44">🇬🇧 +44</option><option value="+49">🇩🇪 +49</option><option value="+33">🇫🇷 +33</option><option value="+39">🇮🇹 +39</option><option value="+81">🇯🇵 +81</option><option value="+86">🇨🇳 +86</option><option value="+91">🇮🇳 +91</option><option value="+61">🇦🇺 +61</option><option value="+351">🇵🇹 +351</option><option value="+7">🇷🇺 +7</option></select><input name="phone" defaultValue={profile.phone?.replace(/^\+\d+\s*/, '') || ''} placeholder="Número" inputMode="tel" /></div></label>
+                  <label>Teléfono<div className="psy-profile-phone-field"><select name="phone_country" defaultValue={profile.phone?.match(/^\+\d+/)?.[0] || '+57'} aria-label="Indicativo de país"><option value="+57">��🇴 +57</option><option value="+1">🇺🇸 +1</option><option value="+52">🇲🇽 +52</option><option value="+34">🇪🇸 +34</option><option value="+54">🇦🇷 +54</option><option value="+56">🇨🇱 +56</option><option value="+51">🇵🇪 +51</option><option value="+55">🇧🇷 +55</option><option value="+44">🇬🇧 +44</option><option value="+49">🇩🇪 +49</option><option value="+33">🇫🇷 +33</option><option value="+39">🇮🇹 +39</option><option value="+81">🇯🇵 +81</option><option value="+86">🇨🇳 +86</option><option value="+91">🇮🇳 +91</option><option value="+61">🇦🇺 +61</option><option value="+351">🇵🇹 +351</option><option value="+7">🇷🇺 +7</option></select><input name="phone" defaultValue={profile.phone?.replace(/^\+\d+\s*/, '') || ''} placeholder="Número" inputMode="tel" /></div></label>
                   <label>Ciudad<input name="city" defaultValue={profile.city || ''} placeholder="Bogotá" /></label>
                   <label>Años de experiencia<input name="years_experience" type="number" min="0" defaultValue={profile.years_experience || 0} /></label>
                 </div>
@@ -1429,6 +1429,13 @@ const PsychologistDashboard: React.FC = () => {
               </div>
 
               <div className="psy-appt-details">
+                <div className={`psy-dash-nav-item psy-appt-detail-row psy-appt-status--${selectedAppt.status}`}>
+                  <svg className="psy-appt-state-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M8 12l2.5 2.5L16 9" /></svg>
+                  <span className="psy-appt-status-label">Estado: </span>
+                  <span className="psy-appt-status-value">
+                    {selectedAppt.status === 'confirmada' ? 'Confirmada' : selectedAppt.status === 'pendiente_pago' ? 'Pendiente de pago' : selectedAppt.status === 'completada' ? 'Completada' : selectedAppt.status}
+                  </span>
+                </div>
                 <div className="psy-dash-nav-item psy-appt-detail-row psy-appt-date-row">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
                   <span>{selectedAppt.appointment_date.split('-').reverse().join('/')}</span>
@@ -1437,25 +1444,15 @@ const PsychologistDashboard: React.FC = () => {
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
                   <span>{formatTime(selectedAppt.start_time)} - {formatTime(selectedAppt.end_time)}</span>
                 </div>
-                <div className="psy-dash-nav-item psy-appt-detail-row">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M12 7v10M15 9.5c-.7-.7-1.7-1-3-1-1.7 0-3 .8-3 2s1.3 2 3 2 3 .8 3 2-1.3 2-3 2c-1.3 0-2.3-.3-3-1" /></svg>
-                  <span>${selectedAppt.payment_amount?.toLocaleString()} COP</span>
-                  <span className={`psy-appt-pay-badge psy-appt-pay-badge--${selectedAppt.payment_status}`}>
-                    {selectedAppt.payment_status === 'pagado' ? 'Pagado' : selectedAppt.payment_status === 'procesando' ? 'Procesando' : 'Pendiente'}
-                  </span>
-                </div>
                 {selectedAppt.payment_reference && (
                   <div className="psy-dash-nav-item psy-appt-detail-row">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 3h8l3 3v12l-3 3H8l-3-3V6z" /><path d="M9 9h6M9 13h6M9 17h4" /></svg>
                     <span>Ref: {selectedAppt.payment_reference} ({selectedAppt.payment_method})</span>
                   </div>
                 )}
-                <div className="psy-dash-nav-item psy-appt-detail-row">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M8 12l2.5 2.5L16 9" /></svg>
-                  <span>Estado: </span>
-                  <span className={`psy-appt-status-badge psy-appt-status-badge--${selectedAppt.status}`}>
-                    {selectedAppt.status === 'confirmada' ? 'Confirmada' : selectedAppt.status === 'pendiente_pago' ? 'Pendiente de pago' : selectedAppt.status === 'completada' ? 'Completada' : selectedAppt.status}
-                  </span>
+                <div className={`psy-dash-nav-item psy-appt-detail-row psy-appt-payment--${selectedAppt.payment_status}`}>
+                  <svg className="psy-appt-state-icon psy-dash-bell--active" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" /><path d="M10 21h4" /></svg>
+                  <span>${selectedAppt.payment_amount?.toLocaleString()} COP</span>
                 </div>
               </div>
 
@@ -1479,7 +1476,7 @@ const PsychologistDashboard: React.FC = () => {
   <circle cx="12" cy="12" r="9" />
   <path d="M8 12l2.5 2.5L16 9" />
   </svg>
-  Marcar como completada
+  Evolucionar
                   </button>
                 )}
                 {selectedAppt.patient && (
@@ -1543,6 +1540,9 @@ const PsychologistDashboard: React.FC = () => {
           clinicalRecordId={sessionNoteData.clinicalRecordId}
           sessionNumber={sessionNoteData.sessionNumber}
           patientId={appointments.find(a => a.id === sessionNoteData.appointmentId)?.patient?.id || ''}
+          patientName={appointments.find(a => a.id === sessionNoteData.appointmentId)?.patient?.full_name || 'Paciente'}
+          patientEmail={appointments.find(a => a.id === sessionNoteData.appointmentId)?.patient?.email || ''}
+          patientAvatarUrl={appointments.find(a => a.id === sessionNoteData.appointmentId)?.patient?.avatar_url || null}
           psychologistId={profile.id}
           onSuccess={() => {
             setShowSessionNoteModal(false);
