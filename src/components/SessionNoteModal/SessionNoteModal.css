@@ -625,17 +625,17 @@
   }
 
   .sn-modal-header {
-    min-height: 7.5rem;
-    align-items: flex-end;
-    padding: 0.5rem 1.25rem;
+    min-height: 0;
+    align-items: stretch;
+    gap: 0.65rem;
+    padding: 0.75rem 1.25rem 0.8rem;
   }
 
   .sn-modal-heading {
-    position: absolute;
-    top: 0.75rem;
-    left: 1.25rem;
-    width: calc(100% - 2rem);
+    position: static;
+    width: 100%;
     align-items: flex-start;
+    gap: 0.05rem;
     transform: none;
     text-align: left;
   }
@@ -645,10 +645,27 @@
   }
 
   .sn-patient-summary {
-    left: 1.25rem;
-    width: calc(100% - 2.5rem);
+    position: static;
+    width: 100%;
     margin: 0;
+    padding: 0.35rem 0.7rem;
     transform: none;
+  }
+
+  .sn-patient-avatar {
+    width: 2.35rem;
+    height: 2.35rem;
+  }
+
+  .sn-patient-copy strong {
+    font-size: 0.82rem;
+  }
+
+  .sn-patient-copy span {
+    overflow: hidden;
+    font-size: 0.72rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .sn-tabs {
