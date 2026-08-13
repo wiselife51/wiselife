@@ -2026,29 +2026,33 @@ body:has(.psy-dash) {
 .psy-appt-payment--pagado,
 .psy-appt-status--confirmada {
   background: rgba(76, 175, 80, 0.14) !important;
-  border: 1px solid rgba(102, 187, 106, 0.72) !important;
+  border: 1px solid rgba(102, 187, 106, 0.28) !important;
   color: rgba(255, 255, 255, 0.7) !important;
 }
 
 .psy-appt-payment--pagado > span:last-child,
 .psy-appt-status--confirmada > span:last-child {
-  color: rgba(255, 255, 255, 0.7) !important;
-  text-shadow: none;
+  color: #66bb6a !important;
+  text-shadow: 0 0 8px rgba(102, 187, 106, 0.35);
 }
 
 .psy-appt-payment--procesando,
 .psy-appt-status--pendiente_pago {
   background: rgba(255, 193, 7, 0.14) !important;
-  border: 1px solid rgba(255, 193, 7, 0.78) !important;
+  border: 1px solid rgba(255, 193, 7, 0.28) !important;
   color: rgba(255, 255, 255, 0.7) !important;
 }
 
 .psy-appt-payment--procesando > span:last-child,
-.psy-appt-status--pendiente_pago > span:last-child,
+.psy-appt-status--pendiente_pago > span:last-child {
+  color: #ffc107 !important;
+  text-shadow: 0 0 8px rgba(255, 193, 7, 0.35);
+}
+
 .psy-appt-payment--pendiente > span:last-child,
 .psy-appt-status--cancelada > span:last-child {
-  color: rgba(255, 255, 255, 0.7) !important;
-  text-shadow: none;
+  color: #ef5350 !important;
+  text-shadow: 0 0 8px rgba(239, 83, 80, 0.35);
 }
 
 .psy-appt-payment--procesando .psy-appt-state-icon,
@@ -2060,7 +2064,7 @@ body:has(.psy-dash) {
 .psy-appt-payment--pendiente,
 .psy-appt-status--cancelada {
   background: rgba(239, 83, 80, 0.14) !important;
-  border: 1px solid rgba(239, 83, 80, 0.78) !important;
+  border: 1px solid rgba(239, 83, 80, 0.28) !important;
   color: rgba(255, 255, 255, 0.7) !important;
 }
 
@@ -2084,7 +2088,7 @@ body:has(.psy-dash) {
   width: 100%;
   min-height: 2.25rem;
   padding: 0.5rem 0.75rem;
-  border: 1px solid rgba(138, 92, 246, 0.52);
+  border: 1px solid rgba(126, 87, 194, 0.28);
   border-radius: 12px;
   box-sizing: border-box;
   transition: background 0.2s var(--psy-smooth), border-color 0.2s var(--psy-smooth), color 0.2s var(--psy-smooth);
