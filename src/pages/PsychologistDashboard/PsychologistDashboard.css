@@ -2207,9 +2207,30 @@ body:has(.psy-dash) {
 .psy-appt-payment--pagado,
 .psy-appt-payment--procesando,
 .psy-appt-payment--pendiente {
-  background: transparent !important;
   border: 0 !important;
-  color: rgba(255, 255, 255, 0.7) !important;
+  font-weight: 500;
+}
+
+.psy-appt-payment--pagado::after,
+.psy-appt-payment--procesando::after,
+.psy-appt-payment--pendiente::after {
+  display: none !important;
+  content: none !important;
+}
+
+.psy-appt-payment--pagado {
+  background: rgba(76, 175, 80, 0.14) !important;
+  color: #66bb6a !important;
+}
+
+.psy-appt-payment--procesando {
+  background: rgba(255, 193, 7, 0.14) !important;
+  color: #ffc107 !important;
+}
+
+.psy-appt-payment--pendiente {
+  background: rgba(239, 83, 80, 0.14) !important;
+  color: #ef5350 !important;
 }
 
 .psy-appt-payment--pagado > span:last-child,
@@ -2217,14 +2238,8 @@ body:has(.psy-dash) {
 .psy-appt-payment--pendiente > span:last-child,
 .psy-appt-payment--pagado .psy-appt-state-icon,
 .psy-appt-payment--procesando .psy-appt-state-icon,
-.psy-appt-payment--pendiente .psy-appt-state-icon,
-.psy-appt-status--confirmada > span,
-.psy-appt-status--confirmada .psy-appt-state-icon,
-.psy-appt-status--pendiente_pago > span,
-.psy-appt-status--pendiente_pago .psy-appt-state-icon,
-.psy-appt-status--cancelada > span,
-.psy-appt-status--cancelada .psy-appt-state-icon {
-  color: rgba(255, 255, 255, 0.35) !important;
+.psy-appt-payment--pendiente .psy-appt-state-icon {
+  color: currentColor !important;
   text-shadow: none;
 }
 
