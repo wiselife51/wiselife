@@ -58,8 +58,8 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  min-height: 12rem;
-  padding: 2rem 5rem 2rem 2rem;
+  min-height: 8.5rem;
+  padding: 1.25rem 5rem 1.25rem 2rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -73,7 +73,7 @@
 }
 
 .sn-modal-subtitle {
-  margin: 0.5rem 0 0 0;
+  margin: 0.15rem 0 0 0;
   font-size: 0.8125rem;
   color: rgba(255, 255, 255, 0.5);
 }
@@ -622,9 +622,9 @@
   }
 
   .sn-modal-header {
-    min-height: 15rem;
+    min-height: 11rem;
     align-items: flex-end;
-    padding: 1.5rem 1.25rem;
+    padding: 1rem 1.25rem;
   }
 
   .sn-modal-heading {
@@ -704,7 +704,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.45rem;
+  gap: 0.2rem;
   text-align: left;
 }
 
