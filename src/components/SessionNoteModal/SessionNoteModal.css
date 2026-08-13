@@ -863,6 +863,50 @@
   }
 }
 
+/* Mobile header must remain in normal flow after desktop overrides */
+@media (max-width: 768px) {
+  .sn-modal-header {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+    padding: 0.75rem 1.25rem 0.8rem;
+  }
+
+  .sn-modal-heading {
+    position: static;
+    width: 100%;
+    align-items: flex-start;
+    transform: none;
+    text-align: left;
+  }
+
+  .sn-patient-summary {
+    position: static;
+    left: auto;
+    width: 100%;
+    transform: none;
+    margin: 0;
+    padding: 0.35rem 0.7rem;
+  }
+
+  .sn-patient-avatar {
+    width: 2.35rem;
+    height: 2.35rem;
+  }
+
+  .sn-patient-copy {
+    min-width: 0;
+  }
+
+  .sn-patient-copy span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
 /* Print styles */
 @media print {
   .sn-modal-backdrop {
