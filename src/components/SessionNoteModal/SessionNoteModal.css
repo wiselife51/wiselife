@@ -107,15 +107,15 @@
   gap: 0.65rem;
   overflow-x: auto;
   scrollbar-width: thin;
-  padding: 0.5rem 2.5rem;
-  background: rgba(255, 255, 255, 0.02);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 0.2rem 2.5rem;
+  background: transparent;
+  border-bottom: 0;
 }
 
 .sn-tab {
   flex: 1;
-  min-height: 2.75rem;
-  padding: 0.6rem 1.25rem;
+  min-height: 2.25rem;
+  padding: 0.35rem 1.25rem;
   border: 1px solid transparent;
   border-radius: 14px;
   background: transparent;
@@ -662,8 +662,8 @@
 
   .sn-tabs {
     gap: 0.25rem;
-    padding-top: 0.35rem;
-    padding-bottom: 0.35rem;
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
   }
 
   .sn-tab {
