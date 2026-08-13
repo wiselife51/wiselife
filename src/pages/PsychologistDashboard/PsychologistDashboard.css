@@ -2161,6 +2161,24 @@ body:has(.psy-dash) {
   color: rgba(255, 255, 255, 0.7) !important;
 }
 
+.psy-appt-payment--pagado,
+.psy-appt-payment--procesando,
+.psy-appt-payment--pendiente {
+  background: transparent !important;
+  border: 0 !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.psy-appt-payment--pagado > span:last-child,
+.psy-appt-payment--procesando > span:last-child,
+.psy-appt-payment--pendiente > span:last-child,
+.psy-appt-payment--pagado .psy-appt-state-icon,
+.psy-appt-payment--procesando .psy-appt-state-icon,
+.psy-appt-payment--pendiente .psy-appt-state-icon {
+  color: rgba(255, 255, 255, 0.35) !important;
+  text-shadow: none;
+}
+
 @keyframes psyStatusAlert {
   0%, 100% { transform: scale(1); opacity: 0.78; }
   50% { transform: scale(1.16); opacity: 1; filter: drop-shadow(0 0 5px currentColor); }
