@@ -712,8 +712,8 @@
     justify-content: center;
   }
 
-  .sn-modal-header h2 {
-    font-size: 1.25rem;
+  .sn-modal-title {
+    font-size: 0.5rem;
   }
 
   .sn-cie10-dropdown {
