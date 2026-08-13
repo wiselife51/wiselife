@@ -54,11 +54,13 @@
 
 /* Header */
 .sn-modal-header {
+  position: relative;
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1.5rem 2.5rem 1.25rem 2.5rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 2.25rem 5rem 2rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -619,12 +621,16 @@
   }
 
   .sn-modal-header {
-    flex-wrap: wrap;
+    padding: 1.5rem 1.25rem;
+  }
+
+  .sn-modal-header h2 {
+    font-size: 1.35rem;
   }
 
   .sn-patient-summary {
     width: 100%;
-    margin-left: 0;
+    margin: 0;
   }
 
   .sn-tabs {
@@ -682,16 +688,22 @@
 .sn-modal-heading {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  align-items: center;
+  gap: 0.45rem;
+  text-align: center;
 }
 
 .sn-brand {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.55rem;
   color: #8d63d2;
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 700;
+}
+
+.sn-modal-header h2 {
+  font-size: 1.65rem;
 }
 
 .sn-brand-mark {
@@ -703,9 +715,10 @@
 .sn-patient-summary {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-  margin-left: auto;
-  padding: 0.5rem 0.75rem;
+  justify-content: center;
+  gap: 0.9rem;
+  margin: 0;
+  padding: 0.75rem 1.25rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.05);
@@ -714,8 +727,8 @@
 .sn-patient-avatar {
   display: grid;
   place-items: center;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 3.25rem;
+  height: 3.25rem;
   overflow: hidden;
   border: 1px solid rgba(126, 87, 194, 0.42);
   border-radius: 50%;
@@ -739,12 +752,12 @@
 
 .sn-patient-copy strong {
   color: #f4f2ff;
-  font-size: 0.78rem;
+  font-size: 0.95rem;
 }
 
 .sn-patient-copy span {
   color: rgba(255, 255, 255, 0.5);
-  font-size: 0.7rem;
+  font-size: 0.8rem;
 }
 
 /* Full-screen drawer and dashboard typography */
