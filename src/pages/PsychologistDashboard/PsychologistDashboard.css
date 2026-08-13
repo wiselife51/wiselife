@@ -3475,6 +3475,36 @@ body:has(.psy-dash) {
 .psy-appt-modal-layer .psy-appt-patient h4 { font-size: 0.84rem; }
 .psy-appt-modal-layer .psy-appt-actions { gap: 0.35rem; }
 
+.psy-appt-payment--pagado,
+.psy-appt-payment--procesando,
+.psy-appt-payment--pendiente {
+  border: 1px solid currentColor !important;
+  border-radius: 12px;
+  font-size: 0.75rem;
+}
+
+.psy-appt-payment--pagado {
+  background: rgba(76, 175, 80, 0.14) !important;
+  color: #66bb6a !important;
+}
+
+.psy-appt-payment--procesando {
+  background: rgba(255, 193, 7, 0.14) !important;
+  color: #ffc107 !important;
+}
+
+.psy-appt-payment--pendiente {
+  background: rgba(239, 83, 80, 0.14) !important;
+  color: #ef5350 !important;
+}
+
+.psy-appt-payment--pagado::after,
+.psy-appt-payment--procesando::after,
+.psy-appt-payment--pendiente::after {
+  display: none !important;
+  content: none !important;
+}
+
 @media (max-width: 768px) {
   .psy-appt-modal-layer { padding: 0; }
   .psy-appt-modal-layer .psy-dash-modal--wide {
