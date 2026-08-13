@@ -882,6 +882,12 @@
     text-align: left;
   }
 
+  .sn-modal-title {
+    font-size: 0.875rem;
+    line-height: 1.25;
+    white-space: nowrap;
+  }
+
   .sn-patient-summary {
     position: static;
     left: auto;
