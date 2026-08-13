@@ -107,14 +107,14 @@
   gap: 0.5rem;
   overflow-x: auto;
   scrollbar-width: thin;
-  padding: 1rem 2.5rem;
+  padding: 0.45rem 2.5rem;
   background: rgba(255, 255, 255, 0.02);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .sn-tab {
   flex: 1;
-  padding: 0.875rem 1.25rem;
+  padding: 0.55rem 1.25rem;
   border: none;
   border-radius: 12px;
   background: transparent;
@@ -128,8 +128,8 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 .sn-tab svg {
@@ -143,7 +143,7 @@
 }
 
 .sn-tab--active {
-  background: rgba(126, 87, 194, 0.15);
+  background: rgba(126, 87, 194, 0.22);
   color: #b388ff;
   box-shadow: 0 2px 8px rgba(126, 87, 194, 0.2);
 }
@@ -659,10 +659,12 @@
 
   .sn-tabs {
     gap: 0.25rem;
+    padding-top: 0.35rem;
+    padding-bottom: 0.35rem;
   }
 
   .sn-tab {
-    padding: 0.75rem 0.75rem;
+    padding: 0.45rem 0.75rem;
     font-size: 0.75rem;
   }
 
