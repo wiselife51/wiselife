@@ -1184,10 +1184,10 @@ body:has(.psy-dash) {
 .psy-alert-card-text { display: flex; flex-direction: row; align-items: baseline; gap: 0.65rem; min-width: 0; }
 .psy-alert-card-text strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: white; font-size: 1rem; font-weight: 600; }
 .psy-alert-card-text small { flex: 0 0 auto; color: rgba(255,255,255,0.55); font-size: 0.78rem; font-weight: 400; }
-.psy-alert-brand .psy-alert-count { background: rgba(77, 208, 225, 0.18); color: #8ee7c2; border-color: rgba(77, 208, 225, 0.28); }
+.psy-alert-brand .psy-alert-count { display: grid; background: rgba(77, 208, 225, 0.18); color: #8ee7c2; border-color: rgba(77, 208, 225, 0.28); -webkit-text-fill-color: #8ee7c2; }
 .psy-alert-brand { display: flex; align-items: center; justify-content: center; gap: 0.45rem; margin-bottom: 0.9rem; font-size: 1rem; font-weight: 700; }
 .psy-alert-brand svg { flex: 0 0 auto; }
-.psy-alert-brand span { background: var(--psy-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.psy-alert-brand > span:not(.psy-alert-count) { background: var(--psy-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 .psy-dash-nav-item { position: relative; }
 .psy-dash-nav-badge { display: grid; min-width: 1.25rem; height: 1.25rem; margin-left: auto; place-items: center; border-radius: 999px; background: rgba(77, 208, 225, 0.18); color: #8ee7c2; font-size: 0.68rem; font-weight: 700; }
 .psy-dash-nav-badge--warning { background: rgba(255, 193, 7, 0.18); color: #ffd54f; }
