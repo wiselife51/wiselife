@@ -1093,7 +1093,32 @@ height: auto;
 .cal__month .cal__weekday:first-child { border-top-left-radius: 11px; }
 .cal__month .cal__weekday:last-child { border-top-right-radius: 11px; }
 
+/* Igualar la tabla mensual al fondo y separadores de la vista semanal. */
+.cal__month {
+  border-color: rgba(255, 255, 255, 0.07);
+  background: transparent;
+}
+
+.cal__month .cal__weekday {
+  background: rgba(255, 255, 255, 0.03);
+  border-right-color: rgba(255, 255, 255, 0.06);
+  border-bottom-color: rgba(255, 255, 255, 0.07);
+}
+
+.cal__month .cal__cell,
+.cal__month .cal__cell--empty {
+  background: transparent;
+  border-right-color: rgba(255, 255, 255, 0.04);
+  border-bottom-color: rgba(255, 255, 255, 0.04);
+}
+
+.cal__month .cal__cell--blocked {
+  background: rgba(255, 255, 255, 0.02);
+}
+
 @media (max-width: 720px) {
+  .cal__month .cal__weekday { background: rgba(255, 255, 255, 0.03); }
+  .cal__month .cal__cell--blocked { background: rgba(255, 255, 255, 0.02); }
   .cal__month {
     grid-template-rows: 2.5rem repeat(6, 2.25rem);
     max-height: none;
