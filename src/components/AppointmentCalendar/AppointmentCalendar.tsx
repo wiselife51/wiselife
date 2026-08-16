@@ -158,8 +158,8 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
       }}
       title={`${fmtTime(a.start_time)} · ${a.title}`}
     >
-      <span className="cal-chip__time">{fmtTime(a.start_time)}</span>
-      <span className="cal-chip__name">{a.title}</span>
+      {!compact && <span className="cal-chip__time">{fmtTime(a.start_time)}</span>}
+      <span className="cal-chip__name">{compact ? a.title.trim().split(/\s+/)[0] : a.title}</span>
     </div>
   );
 
