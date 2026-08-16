@@ -240,7 +240,9 @@
 .cal__month {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-rows: repeat(7, 2.25rem);
   grid-auto-rows: 2.25rem;
+  align-content: start;
   width: 100%;
   min-width: 0;
   column-gap: 0;
@@ -1052,8 +1054,10 @@ height: auto;
 }
 
   .cal__month .cal__cell {
-    min-height: 2.25rem;
+    box-sizing: border-box;
+    min-height: 0;
     height: 2.25rem;
+    padding: 0;
     border-top: 0;
   border-left: 0;
   border-radius: 0;
@@ -1067,8 +1071,9 @@ height: auto;
 
 @media (max-width: 720px) {
   .cal__month {
-    grid-template-rows: 2.25rem repeat(6, 2.25rem);
+    grid-template-rows: repeat(7, 2.25rem);
     grid-auto-rows: 2.25rem;
+    align-content: start;
   }
 
   .cal__month .cal__weekday {
