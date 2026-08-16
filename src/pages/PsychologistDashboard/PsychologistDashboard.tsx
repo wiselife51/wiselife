@@ -160,6 +160,30 @@ function formatTime(t: string): string {
   return `${h12}:${m} ${ap}`;
 }
 
+const DashboardModuleHeader: React.FC<{
+  title: string;
+  subtitle?: string;
+  count?: number;
+  action?: React.ReactNode;
+  onMenu: () => void;
+}> = ({ title, subtitle, count, action, onMenu }) => (
+  <div className="psy-module-header">
+    <button type="button" className="psy-module-menu" aria-label="Abrir menú" onClick={onMenu}>
+      <span /><span /><span />
+    </button>
+    <div className="psy-module-brand" aria-label="Vida Sabia">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" strokeWidth="2" aria-hidden="true">
+        <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="url(#module-logo-grad)" />
+        <defs><linearGradient id="module-logo-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#4dd0e1" /><stop offset="50%" stopColor="#42a5f5" /><stop offset="100%" stopColor="#7e57c2" /></linearGradient></defs>
+      </svg>
+      <span>Vida Sabia</span>
+    </div>
+    {count !== undefined && <span className="psy-alert-count">{count}</span>}
+    <div className="psy-module-copy"><h1>{title}</h1>{subtitle && <p>{subtitle}</p>}</div>
+    {action}
+  </div>
+);
+
 const PsychologistDashboard: React.FC = () => {
   const { user, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
@@ -1035,6 +1059,8 @@ const PsychologistDashboard: React.FC = () => {
 
         {/* CALENDARIO TAB */}
         {activeTab === 'calendario' && (
+          <>
+          <DashboardModuleHeader title="Calendario" subtitle="Consulta y administra tus citas programadas." onMenu={() => setShowMobileMenu(!showMobileMenu)} />
           <AppointmentCalendar
             appointments={calendarAppointments}
             blockedDates={blockedDates}
@@ -1107,18 +1133,16 @@ const PsychologistDashboard: React.FC = () => {
               );
             }}
           />
+          </>
         )}
 
         {/* AGENDA TAB - availability config */}
         {activeTab === 'agenda' && (
           <>
-            <div className="psy-dash-header">
-              <h1>Mi Agenda</h1>
-              <button type="button" className="psy-dash-btn-primary" onClick={() => setShowAddSlot(true)}>
+            <DashboardModuleHeader title="Mi Agenda" subtitle="Configura tus horarios disponibles para recibir pacientes." onMenu={() => setShowMobileMenu(!showMobileMenu)} action={<button type="button" className="psy-dash-btn-primary" onClick={() => setShowAddSlot(true)}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
                 Agregar horario
-              </button>
-            </div>
+              </button>} />
 
             <div className="psy-dash-info-box">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>
@@ -1224,13 +1248,10 @@ const PsychologistDashboard: React.FC = () => {
         {/* BLOQUEOS TAB */}
         {activeTab === 'bloqueos' && (
           <>
-            <div className="psy-dash-header">
-              <h1>Bloqueos de horario</h1>
-              <button type="button" className="psy-dash-btn-primary" onClick={() => setShowBlockForm(true)}>
+            <DashboardModuleHeader title="Bloqueos de horario" subtitle="Administra las fechas en las que no atenderás pacientes." onMenu={() => setShowMobileMenu(!showMobileMenu)} action={<button type="button" className="psy-dash-btn-primary" onClick={() => setShowBlockForm(true)}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
                 Bloquear fecha
-              </button>
-            </div>
+              </button>} />
 
             <p className="psy-dash-block-desc">Bloquea fechas y horas especificas cuando no puedas atender. Los sabados y domingos estan bloqueados automáticamente, asi como todos los meses excepto el actual y el siguiente. Tambien puedes bloquear desde el calendario haciendo clic derecho en cualquier celda.</p>
 
@@ -1298,7 +1319,7 @@ const PsychologistDashboard: React.FC = () => {
 
         {activeTab === 'pacientes' && (
           <section className="psy-patients-page">
-            <div className="psy-dash-header"><div><h1>Mis Pacientes</h1><p>Consulta el historial y la información de las personas que has atendido.</p></div></div>
+            <DashboardModuleHeader title="Mis Pacientes" subtitle="Consulta el historial y la información de las personas que has atendido." onMenu={() => setShowMobileMenu(!showMobileMenu)} />
             <label className="psy-patients-search"><span className="sr-only">Buscar pacientes</span><input type="search" value={patientSearch} onChange={(event) => setPatientSearch(event.target.value)} placeholder="Buscar por nombre o teléfono" /></label>
             {patientsLoading ? <div className="psy-dash-empty"><p>Cargando pacientes...</p></div> : (() => {
               const query = patientSearch.trim().toLowerCase();
@@ -1316,7 +1337,7 @@ const PsychologistDashboard: React.FC = () => {
 
         {activeTab === 'ingresos' && (
           <section className="psy-income-page">
-            <div className="psy-dash-header"><div><h1>Ingresos</h1><p>Resumen de pagos registrados en tus citas.</p></div></div>
+            <DashboardModuleHeader title="Ingresos" subtitle="Resumen de pagos registrados en tus citas." onMenu={() => setShowMobileMenu(!showMobileMenu)} />
             <div className="psy-income-summary-grid">
               <article className="psy-income-summary-card"><span>Total registrado</span><strong>{formatCurrency(totalIncome)}</strong><small>{paidAppointments.length} citas pagadas</small></article>
               <article className="psy-income-summary-card"><span>Pagos pendientes</span><strong>{pendingPayments.length}</strong><small>Citas por confirmar</small></article>
@@ -1329,12 +1350,8 @@ const PsychologistDashboard: React.FC = () => {
 
         {activeTab === 'perfil' && profile && (
           <section className="psy-profile-page">
-            <div className="psy-profile-intro">
-              <div className="psy-dash-header">
-                <div>
-                  <h1>Mi perfil</h1>
-                </div>
-              </div>
+  <DashboardModuleHeader title="Mi perfil" subtitle="Mantén actualizada tu información profesional." onMenu={() => setShowMobileMenu(!showMobileMenu)} />
+  <div className="psy-profile-intro">
               <div className="psy-profile-card-head">
                 <div className="psy-dash-avatar psy-profile-avatar">
                   {profile.avatar_url ? <img src={profile.avatar_url} alt={profile.full_name} crossOrigin="anonymous" /> : <span>{profile.full_name.charAt(0)}</span>}
