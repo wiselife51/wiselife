@@ -1165,7 +1165,7 @@ body:has(.psy-dash) {
 .psy-alert-count { display: grid; min-width: 1.75rem; height: 1.75rem; place-items: center; border: 1px solid rgba(126, 87, 194, 0.32); border-radius: 999px; background: rgba(126, 87, 194, 0.12); color: #b388ff; font-size: 0.78rem; font-weight: 600; }
 .psy-alert-count--warning { border-color: rgba(255, 193, 7, 0.4); background: rgba(255, 193, 7, 0.1); color: #ffd54f; }
 .psy-alert-list { display: flex; flex-direction: column; gap: 0.8rem; padding-top: 1.15rem; }
-.psy-alert-card { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.9rem; width: 100%; padding: 1rem 1.1rem; border: 1px solid rgba(126, 87, 194, 0.22); border-radius: 16px; background: rgba(18, 24, 42, 0.78); color: var(--psy-text); text-align: left; cursor: pointer; font: inherit; transition: border-color 0.2s, background 0.2s, transform 0.2s; }
+.psy-alert-card { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.625rem; width: 100%; min-height: 2.75rem; padding: 0.7rem 0.875rem; border: 1px solid rgba(126, 87, 194, 0.22); border-radius: 12px; background: rgba(18, 24, 42, 0.78); color: var(--psy-text); text-align: left; cursor: pointer; font: inherit; transition: border-color 0.2s, background 0.2s, transform 0.2s; }
 .psy-alert-card:hover, .psy-alert-card:focus-visible { border-color: rgba(126, 87, 194, 0.58); background: rgba(126, 87, 194, 0.1); outline: none; transform: translateY(-1px); }
 .psy-alert-card-text strong { color: #f4f1ff; }
 .psy-alert-card-text small { color: rgba(255, 255, 255, 0.58); }
@@ -3604,7 +3604,7 @@ body:has(.psy-dash) {
 .psy-alert-page .psy-dash-header { align-items: center; }
 .psy-alert-page .psy-alert-count { right: 0; min-width: 1.5rem; height: 1.5rem; font-size: 0.7rem; }
 .psy-alert-count { min-width: 1.5rem; height: 1.5rem; font-size: 0.7rem; }
-  .psy-alert-card { padding: 0.8rem; }
+  .psy-alert-card { min-height: 2.75rem; padding: 0.7rem 0.875rem; }
   .psy-alert-card-text { gap: 0.45rem; }
   .psy-alert-card-text strong { font-size: 0.95rem; }
   .psy-alert-card-text small { font-size: 0.7rem; }
