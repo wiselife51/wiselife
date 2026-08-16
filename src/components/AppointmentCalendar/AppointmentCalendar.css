@@ -1036,3 +1036,65 @@ height: auto;
   .cal__filter { padding-inline: 0.55rem; }
   .cal__weekday { font-size: 0.625rem; padding-bottom: 0.3125rem; }
 }
+
+/* ===== Vista mensual: tabla continua como la vista semanal ===== */
+.cal__month {
+  grid-template-rows: 2.75rem repeat(6, minmax(4.25rem, 1fr));
+  grid-auto-rows: auto;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  background: rgba(7, 13, 25, 0.32);
+}
+
+.cal__month > * {
+  box-sizing: border-box;
+  min-height: 0;
+  border: 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 0;
+  background: transparent;
+}
+
+.cal__month > *:nth-child(7n) { border-right: 0; }
+.cal__month > *:nth-last-child(-n + 7) { border-bottom: 0; }
+
+.cal__month .cal__weekday {
+  min-height: 2.75rem;
+  height: 2.75rem;
+  padding: 0.25rem;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.cal__month .cal__cell {
+  height: auto;
+  min-height: 0;
+  padding: 0.5rem;
+  background: transparent;
+  box-shadow: none;
+}
+
+.cal__month .cal__cell:hover { background: rgba(255, 255, 255, 0.04); }
+.cal__month .cal__cell--today { background: rgba(66, 165, 245, 0.07); }
+.cal__month .cal__cell--selected { box-shadow: inset 0 0 0 1px rgba(66, 165, 245, 0.65); }
+
+@media (max-width: 720px) {
+  .cal__month {
+    grid-template-rows: 2.5rem repeat(6, minmax(3.5rem, 1fr));
+    max-height: none;
+    overflow: hidden;
+  }
+
+  .cal__month .cal__weekday {
+    height: 2.5rem;
+    min-height: 2.5rem;
+  }
+
+  .cal__month .cal__cell {
+    height: auto;
+    min-height: 0;
+    padding: 0.35rem;
+  }
+}
