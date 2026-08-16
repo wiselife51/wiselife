@@ -5,6 +5,30 @@
   gap: 0.875rem;
 }
 
+.cal__bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.cal__nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.cal__heading {
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 1.5rem;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
 .cal__icon-btn {
   display: inline-flex;
   align-items: center;
@@ -924,20 +948,20 @@ height: auto;
   }
 
   .cal__bar {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: start;
-    gap: 0.35rem;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
     padding-top: 0;
     margin-top: -0.5rem;
   }
 
   .cal__nav {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    display: flex;
+    flex-direction: row;
     align-items: center;
+    width: 100%;
     min-width: 0;
-    justify-content: center;
     gap: 0.3rem;
   }
 
@@ -954,8 +978,8 @@ height: auto;
   }
 
   .cal__views {
-    grid-column: 1 / -1;
-    justify-self: center;
+    align-self: center;
+    justify-self: auto;
     margin: 0;
   }
 
