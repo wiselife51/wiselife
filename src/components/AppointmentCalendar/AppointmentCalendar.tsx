@@ -62,7 +62,6 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
 }) => {
   const [view, setView] = useState<CalendarView>('month');
   const [cursor, setCursor] = useState(new Date());
-  const [statuses, setStatuses] = useState<string[]>([]);
   const [panelDay, setPanelDay] = useState<string | null>(null);
 
   const [dragging, setDragging] = useState<CalendarAppointment | null>(null);
@@ -72,10 +71,7 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
 
   const todayKey = toDateStr(new Date());
 
-  const visible = useMemo(
-    () => (statuses.length === 0 ? appointments : appointments.filter((a) => statuses.includes(a.status))),
-    [appointments, statuses]
-  );
+  const visible = useMemo(() => appointments, [appointments]);
 
   const byDate = useMemo(() => {
     const map = new Map<string, CalendarAppointment[]>();
@@ -89,9 +85,6 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
   }, [visible]);
 
   const blocked = useMemo(() => new Set(blockedDates), [blockedDates]);
-
-  const toggleStatus = (s: string) =>
-    setStatuses((prev) => (prev.includes(s) ? prev.filter((v) => v !== s) : [...prev, s]));
 
   const shift = (dir: -1 | 1) => {
     const d = new Date(cursor);
@@ -171,24 +164,6 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><polyline points="9 18 15 12 9 6" /></svg>
           </button>
           <button type="button" className="cal__today" onClick={() => setCursor(new Date())}>Hoy</button>
-          <div className="cal__filters" aria-label="Filtros de citas">
-            {Object.entries(STATUS_META).map(([value, meta]) => (
-              <button
-                key={value}
-                type="button"
-                className={`cal__filter cal__filter--${meta.key} ${statuses.includes(value) ? 'cal__filter--on' : ''}`}
-                onClick={() => toggleStatus(value)}
-              >
-                <span className={`cal__dot cal__dot--${meta.key}`} />
-                {meta.label}
-              </button>
-            ))}
-            {statuses.length > 0 && (
-              <button type="button" className="cal__filter-clear" onClick={() => setStatuses([])}>
-                Quitar filtros
-              </button>
-            )}
-          </div>
         </div>
 
         <div className="cal__views">
