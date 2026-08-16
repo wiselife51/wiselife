@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { toDateStr } from '../../lib/date';
 import { STATUS_META } from './status';
 import type { CalendarAppointment, CalendarView } from './status';
@@ -49,6 +49,7 @@ interface AppointmentCalendarProps {
   renderDayActions?: (dateKey: string) => React.ReactNode;
   onSelect?: (appointment: CalendarAppointment) => void;
   emptyLabel?: string;
+  onVisibleAppointmentsChange?: (appointments: CalendarAppointment[]) => void;
 }
 
 const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
@@ -59,6 +60,7 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
   renderDayActions,
   onSelect,
   emptyLabel = 'Sin citas en esta fecha.',
+  onVisibleAppointmentsChange,
 }) => {
   const [view, setView] = useState<CalendarView>('month');
   const [cursor, setCursor] = useState(new Date());
@@ -85,6 +87,27 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
   }, [visible]);
 
   const blocked = useMemo(() => new Set(blockedDates), [blockedDates]);
+
+  const visibleAppointments = useMemo(() => {
+    if (view === 'month') {
+      const month = cursor.getMonth();
+      const year = cursor.getFullYear();
+      return visible.filter((appointment) => {
+        const date = new Date(`${appointment.appointment_date}T12:00:00`);
+        return date.getFullYear() === year && date.getMonth() === month;
+      });
+    }
+    if (view === 'week') {
+      const keys = new Set(weekGrid(cursor).map(toDateStr));
+      return visible.filter((appointment) => keys.has(appointment.appointment_date));
+    }
+    const key = toDateStr(cursor);
+    return visible.filter((appointment) => appointment.appointment_date === key);
+  }, [cursor, view, visible]);
+
+  useEffect(() => {
+    onVisibleAppointmentsChange?.(visibleAppointments);
+  }, [onVisibleAppointmentsChange, visibleAppointments]);
 
   const shift = (dir: -1 | 1) => {
     const d = new Date(cursor);

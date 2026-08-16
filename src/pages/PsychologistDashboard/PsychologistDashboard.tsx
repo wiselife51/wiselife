@@ -207,6 +207,7 @@ const PsychologistDashboard: React.FC = () => {
   // Tabs and calendar
   const [activeTab, setActiveTab] = useState<ActiveTab>('proximas');
   const [selectedDay, setSelectedDay] = useState<number>(new Date().getDay());
+  const [visibleCalendarAppointments, setVisibleCalendarAppointments] = useState<Appointment[]>([]);
 
   // Appointment detail modal
   const [selectedAppt, setSelectedAppt] = useState<Appointment | null>(null);
@@ -1070,10 +1071,10 @@ const PsychologistDashboard: React.FC = () => {
             title="Calendario"
             subtitle="Consulta y administra tus citas programadas."
             statusSummary={[
-              { label: 'Confirmada', count: calendarAppointments.filter((a) => a.status === 'confirmada').length, key: 'confirmed' },
-              { label: 'Pago pendiente', count: calendarAppointments.filter((a) => a.status === 'pendiente_pago').length, key: 'pending' },
-              { label: 'Completada', count: calendarAppointments.filter((a) => a.status === 'completada').length, key: 'done' },
-              { label: 'Cancelada', count: calendarAppointments.filter((a) => a.status === 'cancelada').length, key: 'cancelled' },
+              { label: 'Confirmada', count: visibleCalendarAppointments.filter((a) => a.status === 'confirmada').length, key: 'confirmed' },
+              { label: 'Pago pendiente', count: visibleCalendarAppointments.filter((a) => a.status === 'pendiente_pago').length, key: 'pending' },
+              { label: 'Completada', count: visibleCalendarAppointments.filter((a) => a.status === 'completada').length, key: 'done' },
+              { label: 'Cancelada', count: visibleCalendarAppointments.filter((a) => a.status === 'cancelada').length, key: 'cancelled' },
             ]}
             onMenu={() => setShowMobileMenu(!showMobileMenu)}
           />
@@ -1081,6 +1082,7 @@ const PsychologistDashboard: React.FC = () => {
             appointments={calendarAppointments}
             blockedDates={blockedDates}
             onReschedule={handleCalendarReschedule}
+            onVisibleAppointmentsChange={setVisibleCalendarAppointments}
             onSelect={(a) => {
               const original = appointments.find((x) => x.id === a.id);
               if (original) {

@@ -3703,8 +3703,8 @@ body:has(.psy-dash) {
 }
 .psy-module-brand { grid-column: 2; display: flex; align-items: center; gap: 0.5rem; color: var(--psy-text); font-weight: 700; white-space: nowrap; }
 .psy-module-brand span { background: var(--psy-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-.psy-module-status-summary { grid-column: 3; justify-self: end; display: flex; align-items: center; gap: 0.35rem; }
-.psy-module-status { display: grid; min-width: 1.75rem; height: 1.75rem; padding: 0; place-items: center; border: 1px solid rgba(126, 87, 194, 0.32); border-radius: 999px; background: rgba(126, 87, 194, 0.12); color: #b388ff; font-size: 0.78rem; font-weight: 600; }
+.psy-module-status-summary { grid-column: 3; justify-self: end; display: flex; align-items: center; gap: 0.25rem; }
+.psy-module-status { display: grid; min-width: 1.35rem; height: 1.35rem; padding: 0; place-items: center; border: 1px solid rgba(126, 87, 194, 0.32); border-radius: 999px; background: rgba(126, 87, 194, 0.12); color: #b388ff; font-size: 0.78rem; font-weight: 600; }
 .psy-module-status--confirmed { background: rgba(71, 190, 119, 0.22); color: #8ee0a8; }
 .psy-module-status--pending { background: rgba(245, 190, 66, 0.22); color: #f6d477; }
 .psy-module-status--done { background: rgba(126, 87, 194, 0.26); color: #c2a8f5; }
@@ -3770,7 +3770,7 @@ body:has(.psy-dash) {
   .psy-module-menu span { display: block; width: 100%; height: 2px; margin: 0; }
   .psy-module-brand { font-size: 0.95rem; }
   .psy-module-status-summary { gap: 0.2rem; }
-  .psy-module-status { min-width: 1.75rem; height: 1.75rem; padding: 0; font-size: 0.78rem; }
+  .psy-module-status { min-width: 1.35rem; height: 1.35rem; padding: 0; font-size: 0.68rem; }
   .psy-module-copy h1 { font-size: 1rem; }
   .psy-module-copy p { font-size: 0.75rem; }
   .psy-module-header > .psy-dash-btn-primary { grid-column: 1 / -1; justify-self: stretch; }
