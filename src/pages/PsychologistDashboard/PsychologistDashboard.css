@@ -2756,6 +2756,21 @@ body:has(.psy-dash) {
   background: transparent;
   border-color: rgba(255, 255, 255, 0.12);
   }
+  .psy-alert-page .psy-alert-brand .psy-mobile-menu-toggle {
+  position: static;
+  display: flex;
+  flex: 0 0 auto;
+  margin-right: auto;
+  }
+  .psy-alert-page .psy-alert-brand {
+  justify-content: flex-start;
+  }
+  .psy-alert-page .psy-alert-brand > span:not(.psy-alert-count) {
+  margin: 0 auto;
+  }
+  .psy-alert-page .psy-alert-brand .psy-alert-count {
+  margin-left: 0;
+  }
 
   .psy-profile-intro { display: none; }
 
