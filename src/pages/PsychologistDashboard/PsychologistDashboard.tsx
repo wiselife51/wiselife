@@ -164,10 +164,9 @@ const DashboardModuleHeader: React.FC<{
   title: string;
   subtitle?: string;
   count?: number;
-  statusSummary?: Array<{ label: string; count: number; key: string }>;
   action?: React.ReactNode;
   onMenu: () => void;
-}> = ({ title, subtitle, count, statusSummary, action, onMenu }) => (
+}> = ({ title, subtitle, count, action, onMenu }) => (
   <div className="psy-module-header">
     <button type="button" className="psy-module-menu" aria-label="Abrir menú" onClick={onMenu}>
       <span /><span /><span />
@@ -179,11 +178,7 @@ const DashboardModuleHeader: React.FC<{
       </svg>
       <span>Vida Sabia</span>
     </div>
-    {statusSummary ? (
-      <div className="psy-module-status-summary" aria-label="Resumen de estados de citas">
-        {statusSummary.map((status) => <span key={status.key} className={`psy-module-status psy-module-status--${status.key}`} title={status.label}>{status.count}</span>)}
-      </div>
-    ) : count !== undefined ? <span className="psy-alert-count">{count}</span> : null}
+    {count !== undefined ? <span className="psy-alert-count">{count}</span> : null}
     <div className="psy-module-copy"><h1>{title}</h1>{subtitle && <p>{subtitle}</p>}</div>
     {action}
   </div>
@@ -207,7 +202,6 @@ const PsychologistDashboard: React.FC = () => {
   // Tabs and calendar
   const [activeTab, setActiveTab] = useState<ActiveTab>('proximas');
   const [selectedDay, setSelectedDay] = useState<number>(new Date().getDay());
-  const [visibleCalendarAppointments, setVisibleCalendarAppointments] = useState<Appointment[]>([]);
 
   // Appointment detail modal
   const [selectedAppt, setSelectedAppt] = useState<Appointment | null>(null);
@@ -1070,19 +1064,12 @@ const PsychologistDashboard: React.FC = () => {
           <DashboardModuleHeader
             title="Calendario"
             subtitle="Consulta y administra tus citas programadas."
-            statusSummary={[
-              { label: 'Confirmada', count: visibleCalendarAppointments.filter((a) => a.status === 'confirmada').length, key: 'confirmed' },
-              { label: 'Pago pendiente', count: visibleCalendarAppointments.filter((a) => a.status === 'pendiente_pago').length, key: 'pending' },
-              { label: 'Completada', count: visibleCalendarAppointments.filter((a) => a.status === 'completada').length, key: 'done' },
-              { label: 'Cancelada', count: visibleCalendarAppointments.filter((a) => a.status === 'cancelada').length, key: 'cancelled' },
-            ]}
             onMenu={() => setShowMobileMenu(!showMobileMenu)}
           />
           <AppointmentCalendar
             appointments={calendarAppointments}
             blockedDates={blockedDates}
             onReschedule={handleCalendarReschedule}
-            onVisibleAppointmentsChange={setVisibleCalendarAppointments}
             onSelect={(a) => {
               const original = appointments.find((x) => x.id === a.id);
               if (original) {

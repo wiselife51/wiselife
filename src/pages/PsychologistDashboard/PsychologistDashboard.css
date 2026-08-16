@@ -3703,12 +3703,6 @@ body:has(.psy-dash) {
 }
 .psy-module-brand { grid-column: 2; display: flex; align-items: center; gap: 0.5rem; color: var(--psy-text); font-weight: 700; white-space: nowrap; }
 .psy-module-brand span { background: var(--psy-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-.psy-module-status-summary { grid-column: 3; justify-self: end; display: flex; align-items: center; gap: 0.25rem; }
-.psy-module-status { display: grid; min-width: 1.35rem; height: 1.35rem; padding: 0; place-items: center; border: 1px solid rgba(126, 87, 194, 0.32); border-radius: 999px; background: rgba(126, 87, 194, 0.12); color: #b388ff; font-size: 0.78rem; font-weight: 600; }
-.psy-module-status--confirmed { background: rgba(71, 190, 119, 0.22); color: #8ee0a8; }
-.psy-module-status--pending { background: rgba(245, 190, 66, 0.22); color: #f6d477; }
-.psy-module-status--done { background: rgba(126, 87, 194, 0.26); color: #c2a8f5; }
-.psy-module-status--cancelled { background: rgba(235, 93, 117, 0.22); color: #f2a0ad; }
 .psy-module-copy { grid-column: 1 / -1; text-align: center; }
 .psy-module-copy h1 { margin: 0; font-size: 1.1rem; font-weight: 700; }
 .psy-module-copy p { margin: 0.3rem 0 0; color: var(--psy-muted); font-size: 0.82rem; }
