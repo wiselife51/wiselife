@@ -248,12 +248,14 @@
   min-height: 0;
   width: 100%;
   min-width: 0;
-  gap: 0;
-  column-gap: 0;
-  row-gap: 0;
-  grid-row-gap: 0;
+  gap: 0.35rem;
+  column-gap: 0.35rem;
+  row-gap: 0.35rem;
+  grid-row-gap: 0.35rem;
   overflow: hidden;
-  border: 1px solid var(--psy-border);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   border-radius: 11px;
   background: var(--psy-surface);
 }
@@ -262,10 +264,10 @@
   box-sizing: border-box;
   min-height: 0;
   margin: 0;
-  border-right: 1px solid rgba(255, 255, 255, 0.04);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  border-radius: 0;
-  background: transparent;
+  border: 1px solid var(--psy-border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .cal__month > *:nth-child(7n) { border-right: 0; }
@@ -293,6 +295,11 @@
   border-top: 0;
   border-left: 0;
   box-shadow: none;
+}
+
+.cal__month .cal__cell:hover {
+  background: rgba(126, 87, 194, 0.1);
+  border-color: rgba(126, 87, 194, 0.25);
 }
 
 .cal__month .cal__cell--today { background: rgba(66, 165, 245, 0.06); }
