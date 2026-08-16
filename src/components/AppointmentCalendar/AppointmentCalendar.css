@@ -250,8 +250,8 @@
   text-align: center;
   font-size: 0.625rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  text-transform: none;
+  letter-spacing: 0.02em;
   color: rgba(255, 255, 255, 0.35);
 }
 
