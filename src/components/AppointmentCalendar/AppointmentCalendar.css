@@ -252,7 +252,8 @@
   row-gap: 0;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.07);
-  background: rgba(7, 13, 25, 0.3);
+  border-radius: 11px;
+  background: transparent;
 }
 
 .cal__month > * {
@@ -271,6 +272,7 @@
   min-height: 2.25rem;
   height: 2.25rem;
   padding: 0;
+  box-sizing: border-box;
   background: rgba(255, 255, 255, 0.03);
   border-bottom-color: rgba(255, 255, 255, 0.07);
 }
@@ -281,6 +283,9 @@
 .cal__month .cal__cell--today,
 .cal__month .cal__cell--selected,
 .cal__month .cal__cell--blocked {
+  min-height: 2.25rem;
+  height: 2.25rem;
+  box-sizing: border-box;
   border-radius: 0;
   border-top: 0;
   border-left: 0;
