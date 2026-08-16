@@ -3436,10 +3436,12 @@ body:has(.psy-dash) {
   overflow-x: hidden;
   overflow-y: auto;
   }
-  .psy-dash-main--flush {
+  .psy-dash-main--flush,
+  .psy-dash-main:has(.psy-calendar-page) {
   padding-top: 0 !important;
   margin-top: 0;
   }
+  .psy-dash-main:has(.psy-calendar-page) .psy-calendar-page { margin-top: 0; }
   .psy-dash-main--flush .psy-alert-page {
   margin-top: 0.5rem;
   transform: none;
@@ -3752,7 +3754,19 @@ body:has(.psy-dash) {
   .psy-calendar-page .psy-module-header { padding-inline: 0.25rem; }
   .psy-calendar-page .psy-module-copy h1 { font-size: 1rem; }
   .psy-calendar-page .psy-module-copy p { font-size: 0.75rem; }
-  .psy-module-menu { display: block; }
+  .psy-module-menu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0.45rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(9, 14, 28, 0.72);
+  color: rgba(255, 255, 255, 0.82);
+  }
+  .psy-module-menu span { width: 100%; }
   .psy-module-brand { font-size: 0.95rem; }
   .psy-module-status-summary { gap: 0.2rem; }
   .psy-module-status { min-width: 1.75rem; height: 1.75rem; padding: 0; font-size: 0.78rem; }
