@@ -232,9 +232,11 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
                 {...dayCellProps(key)}
               >
                 <span className="cal__daynum">{d.getDate()}</span>
-                <div className="cal__month-items" aria-label={`${list.length} citas`}>
-                  {list.slice(0, 2).map((appointment) => chip(appointment, true))}
-                  {list.length > 2 && <span className="cal__more">+{list.length - 2}</span>}
+                <div className="cal__cell-statuses" aria-label={`${list.length} citas`}>
+                  {Object.entries(STATUS_META).map(([status, meta]) => {
+                    const total = list.filter((appointment) => appointment.status === status).length;
+                    return total > 0 ? <span key={status} className={`cal__status-total cal__status-total--${meta.key}`} title={meta.label}>{total}</span> : null;
+                  })}
                 </div>
               </div>
             );
