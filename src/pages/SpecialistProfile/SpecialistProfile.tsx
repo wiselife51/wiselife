@@ -240,6 +240,19 @@ const SpecialistProfile: React.FC = () => {
     setBookingLoading(false);
 
     if (error) {
+      if (error.code === '23505' && error.message.includes('appointments_psychologist_slot_active_uidx')) {
+        alert('Este horario acaba de ser reservado por otro paciente. Selecciona otro horario.');
+        setExistingAppts((current) => [
+          ...current,
+          {
+            appointment_date: toDateStr(selectedDay.date),
+            start_time: selectedSlot.start_time,
+          },
+        ]);
+        setBookingStep('select');
+        setSelectedSlot(null);
+        return;
+      }
       alert('Error al crear la cita. Intenta de nuevo.');
       return;
     }
