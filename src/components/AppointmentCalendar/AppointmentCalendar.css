@@ -7,7 +7,8 @@
 
 .cal__bar {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
   gap: 0.75rem;
   width: 100%;
 }
@@ -24,8 +25,8 @@
   flex: 1 1 auto;
   min-width: 0;
   color: rgba(255, 255, 255, 0.92);
-  font-size: 1.5rem;
-  line-height: 1.2;
+  font-size: 1rem;
+  line-height: 1.5;
   font-weight: 700;
 }
 
@@ -66,6 +67,7 @@
 
 .cal__views {
   display: flex;
+  flex: 0 0 auto;
   gap: 0.25rem;
   padding: 0.25rem;
   border-radius: 9999px;
@@ -949,9 +951,9 @@ height: auto;
 
   .cal__bar {
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.5rem;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.35rem;
     padding-top: 0;
     margin-top: -0.5rem;
   }
@@ -960,16 +962,17 @@ height: auto;
     display: flex;
     flex-direction: row;
     align-items: center;
-    width: 100%;
+    flex: 1 1 auto;
+    width: auto;
     min-width: 0;
     gap: 0.3rem;
   }
 
   .cal__heading {
     flex: 1 1 auto;
-    min-width: 8ch;
+    min-width: 0;
     max-width: none;
-    text-align: center;
+    text-align: left;
   }
 
   .cal__filters,
@@ -981,6 +984,7 @@ height: auto;
     align-self: center;
     justify-self: auto;
     margin: 0;
+    flex: 0 0 auto;
   }
 
   .cal__month { grid-auto-rows: 3.5rem; column-gap: 0; }
