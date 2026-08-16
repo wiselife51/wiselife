@@ -1139,13 +1139,19 @@ body:has(.psy-dash) {
 .psy-patient-history-btn { width: 100%; padding: 0.65rem; border: 1px solid rgba(171, 127, 255, 0.35); border-radius: 10px; background: rgba(171, 127, 255, 0.1); color: #c9b2ff; font: inherit; font-weight: 650; cursor: pointer; }
 .psy-patient-history-btn:hover { background: rgba(171, 127, 255, 0.18); }
 
-.psy-alert-page { width: min(100%, 980px); margin: 0 auto; }
-.psy-alert-page .psy-dash-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
-.psy-alert-count { display: grid; min-width: 2.3rem; height: 2.3rem; place-items: center; border: 1px solid rgba(77, 208, 225, 0.35); border-radius: 50%; background: rgba(77, 208, 225, 0.1); color: #8ee7c2; font-weight: 700; }
-.psy-alert-count--warning { border-color: rgba(255, 193, 7, 0.4); background: rgba(255, 193, 7, 0.1); color: #ffd54f; }
-.psy-alert-list { display: flex; flex-direction: column; gap: 0.7rem; }
-.psy-alert-card { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.8rem; width: 100%; padding: 0.9rem 1rem; border: 1px solid var(--psy-border); border-radius: 14px; background: var(--psy-surface); color: var(--psy-text); text-align: left; cursor: pointer; font: inherit; }
-.psy-alert-card:hover, .psy-alert-card:focus-visible { border-color: rgba(171, 127, 255, 0.55); background: rgba(171, 127, 255, 0.08); outline: none; }
+  .psy-alert-page { width: min(100%, 980px); margin: 0 auto; }
+  .psy-alert-page .psy-dash-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+  .psy-alert-page .psy-dash-header h1 { background: linear-gradient(135deg, #f4f1ff, #b388ff 65%, #4dd0e1); background-clip: text; -webkit-background-clip: text; color: transparent; }
+  .psy-alert-page .psy-dash-header p { color: rgba(255, 255, 255, 0.58); }
+  .psy-alert-count { display: grid; min-width: 2.3rem; height: 2.3rem; place-items: center; border: 1px solid rgba(77, 208, 225, 0.35); border-radius: 50%; background: rgba(77, 208, 225, 0.1); color: #8ee7c2; font-weight: 700; }
+  .psy-alert-count--warning { border-color: rgba(255, 193, 7, 0.4); background: rgba(255, 193, 7, 0.1); color: #ffd54f; }
+  .psy-alert-list { display: flex; flex-direction: column; gap: 0.7rem; }
+  .psy-alert-card { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.8rem; width: 100%; padding: 0.9rem 1rem; border: 1px solid rgba(126, 87, 194, 0.2); border-radius: 16px; background: linear-gradient(135deg, rgba(24, 30, 50, 0.86), rgba(29, 22, 54, 0.72)); color: var(--psy-text); text-align: left; cursor: pointer; font: inherit; box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16); transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s; }
+  .psy-alert-card:hover, .psy-alert-card:focus-visible { border-color: rgba(77, 208, 225, 0.5); background: linear-gradient(135deg, rgba(34, 42, 68, 0.92), rgba(40, 28, 72, 0.82)); outline: none; transform: translateY(-2px); box-shadow: 0 14px 30px rgba(77, 208, 225, 0.1); }
+  .psy-dash-nav-item--priority { border-color: rgba(126, 87, 194, 0.28); background: linear-gradient(135deg, rgba(126, 87, 194, 0.16), rgba(77, 208, 225, 0.08)); }
+  .psy-dash-nav-item--priority:not(.psy-dash-nav-item--active) { color: #d5c4ff; }
+  .psy-dash-nav-item--priority:not(.psy-dash-nav-item--active) svg { color: #8ee7c2; }
+  .psy-dash-nav-item--priority.psy-dash-nav-item--active { box-shadow: 0 8px 24px rgba(126, 87, 194, 0.22); }
 .psy-alert-card--warning { border-color: rgba(255, 193, 7, 0.25); }
 .psy-alert-card-text { display: flex; flex-direction: column; gap: 0.2rem; min-width: 0; }
 .psy-alert-card-text strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

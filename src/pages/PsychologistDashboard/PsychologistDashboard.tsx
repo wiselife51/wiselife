@@ -176,7 +176,7 @@ const PsychologistDashboard: React.FC = () => {
   const [profileMessage, setProfileMessage] = useState('');
 
   // Tabs and calendar
-  const [activeTab, setActiveTab] = useState<ActiveTab>('calendario');
+  const [activeTab, setActiveTab] = useState<ActiveTab>('proximas');
   const [selectedDay, setSelectedDay] = useState<number>(new Date().getDay());
 
   // Appointment detail modal
@@ -943,6 +943,10 @@ const PsychologistDashboard: React.FC = () => {
         </div>
 
         <nav className="psy-dash-nav">
+          <button type="button" className={`psy-dash-nav-item psy-dash-nav-item--priority ${activeTab === 'proximas' ? 'psy-dash-nav-item--active' : ''}`} onClick={() => { setActiveTab('proximas'); setShowMobileMenu(false); }}>
+            <svg className={upcomingAppts.length > 0 ? 'psy-dash-bell psy-dash-bell--active' : ''} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" /></svg>
+            <span>Próximas citas</span>{upcomingAppts.length > 0 && <span className="psy-dash-nav-badge">{upcomingAppts.length}</span>}
+          </button>
           <button type="button" className={`psy-dash-nav-item ${activeTab === 'calendario' ? 'psy-dash-nav-item--active' : ''}`} onClick={() => { setActiveTab('calendario'); setShowMobileMenu(false); }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
             <span>Calendario</span>
@@ -954,10 +958,6 @@ const PsychologistDashboard: React.FC = () => {
           <button type="button" className={`psy-dash-nav-item ${activeTab === 'pacientes' ? 'psy-dash-nav-item--active' : ''}`} onClick={() => { setActiveTab('pacientes'); setShowMobileMenu(false); }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="8" r="3" /><circle cx="17" cy="10" r="2" /><path d="M3 20c.7-3.2 2.7-5 6-5s5.3 1.8 6 5M14 16c2.5-.2 4.5 1.2 5 4" /></svg>
             <span>Mis Pacientes</span>{patients.length > 0 && <span className="psy-dash-nav-badge">{patients.length}</span>}
-          </button>
-          <button type="button" className={`psy-dash-nav-item ${activeTab === 'proximas' ? 'psy-dash-nav-item--active' : ''}`} onClick={() => { setActiveTab('proximas'); setShowMobileMenu(false); }}>
-            <svg className={upcomingAppts.length > 0 ? 'psy-dash-bell psy-dash-bell--active' : ''} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" /></svg>
-            <span>Próximas citas</span>{upcomingAppts.length > 0 && <span className="psy-dash-nav-badge">{upcomingAppts.length}</span>}
           </button>
           <button type="button" className={`psy-dash-nav-item ${activeTab === 'pendientes' ? 'psy-dash-nav-item--active' : ''}`} onClick={() => { setActiveTab('pendientes'); setShowMobileMenu(false); }}>
             <svg className={warnings.length > 0 ? 'psy-dash-bell psy-dash-bell--active' : ''} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 3v11M12 18v2" /><circle cx="12" cy="12" r="9" /></svg>
