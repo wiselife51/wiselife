@@ -2778,7 +2778,15 @@ body:has(.psy-dash) {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.45rem;
+  gap: 0.5rem;
+  }
+  .psy-alert-brand-center span {
+  font-size: 1rem;
+  font-weight: 700;
+  background: var(--psy-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   }
   .psy-alert-page .psy-alert-brand .psy-alert-count {
   grid-column: 3;
