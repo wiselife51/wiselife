@@ -3738,8 +3738,8 @@ body:has(.psy-dash) {
   font-weight: inherit;
   color: inherit;
 }
-.psy-calendar-page .psy-module-copy h1 { font-size: 1.1rem; font-weight: 700; }
-.psy-calendar-page .psy-module-copy p { margin-top: 0.3rem; color: var(--psy-muted); font-size: 0.82rem; }
+.psy-calendar-page .psy-module-copy h1 { font-size: 1rem; font-weight: 700; }
+.psy-calendar-page .psy-module-copy p { margin-top: 0.3rem; color: var(--psy-muted); font-size: 0.75rem; }
 .psy-calendar-page .cal { width: 100%; max-width: 100%; min-width: 0; }
 .psy-dash-header { align-items: flex-start; }
 .psy-dash-header h1 { min-width: 0; overflow-wrap: anywhere; }
