@@ -1017,8 +1017,9 @@ const PsychologistDashboard: React.FC = () => {
                 <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="url(#upcoming-logo-grad)" />
               </svg>
               <span>Vida Sabia</span>
+              <span className="psy-alert-count">{upcomingAppts.length}</span>
             </div>
-            <div className="psy-dash-header"><div><h1>Próximas citas</h1><p>Consulta tus próximas sesiones y abre sus detalles.</p></div><span className="psy-alert-count">{upcomingAppts.length}</span></div>
+            <div className="psy-dash-header"><div><h1>Próximas citas</h1><p>Consulta tus próximas sesiones y abre sus detalles.</p></div></div>
             {upcomingAppts.length === 0 ? <div className="psy-dash-empty"><p>No tienes próximas citas.</p></div> : <div className="psy-alert-list">{upcomingAppts.map((a) => <button key={a.id} type="button" className="psy-alert-card" onClick={() => openAppointmentDetails(a)}><span className="psy-dash-upcoming-avatar-sm">{a.patient?.avatar_url ? <img src={a.patient.avatar_url} alt="" crossOrigin="anonymous" /> : <span>{(a.patient?.full_name || 'P').charAt(0)}</span>}</span><span className="psy-alert-card-text"><strong>{a.patient?.full_name || 'Paciente'}</strong><small>{a.appointment_date.split('-').reverse().join('/')} · {formatTime(a.start_time)}</small></span><span className={`psy-dash-mini-status psy-dash-mini-status--${a.status}`}>{a.status === 'confirmada' ? 'OK' : '$'}</span></button>)}</div>}
           </section>
         )}
