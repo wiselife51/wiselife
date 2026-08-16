@@ -1060,6 +1060,7 @@ const PsychologistDashboard: React.FC = () => {
         {/* CALENDARIO TAB */}
         {activeTab === 'calendario' && (
           <>
+          <section className="psy-calendar-page">
           <DashboardModuleHeader title="Calendario" subtitle="Consulta y administra tus citas programadas." onMenu={() => setShowMobileMenu(!showMobileMenu)} />
           <AppointmentCalendar
             appointments={calendarAppointments}
@@ -1133,6 +1134,7 @@ const PsychologistDashboard: React.FC = () => {
               );
             }}
           />
+          </section>
           </>
         )}
 

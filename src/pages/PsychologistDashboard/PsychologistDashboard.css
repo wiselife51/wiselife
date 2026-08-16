@@ -3707,7 +3707,19 @@ body:has(.psy-dash) {
 .psy-module-menu { grid-column: 1; justify-self: start; display: none; width: 32px; height: 32px; padding: 0.45rem; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; background: transparent; }
 .psy-module-menu span { display: block; height: 2px; margin: 4px 0; background: currentColor; border-radius: 2px; }
 .psy-module-header > .psy-dash-btn-primary { grid-column: 3; justify-self: end; }
-.psy-patients-page, .psy-income-page { background: var(--psy-surface); border-radius: 18px; padding: 0.75rem; }
+.psy-patients-page, .psy-income-page, .psy-calendar-page {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  background: var(--psy-surface);
+  border: 1px solid rgba(126, 87, 194, 0.22);
+  border-radius: 18px;
+  padding: 0.75rem;
+  overflow: hidden;
+}
+.psy-calendar-page .psy-module-header { margin-bottom: 0.9rem; }
+.psy-calendar-page .cal { width: 100%; max-width: 100%; min-width: 0; }
 .psy-dash-header { align-items: flex-start; }
 .psy-dash-header h1 { min-width: 0; overflow-wrap: anywhere; }
 .psy-cal-controls { align-items: stretch; }
@@ -3721,7 +3733,15 @@ body:has(.psy-dash) {
   .psy-module-copy h1 { font-size: 1rem; }
   .psy-module-copy p { font-size: 0.75rem; }
   .psy-module-header > .psy-dash-btn-primary { grid-column: 1 / -1; justify-self: stretch; }
-  .psy-patients-page, .psy-income-page { padding: 0.5rem; }
+  .psy-patients-page, .psy-income-page, .psy-calendar-page { padding: 0.5rem; }
+  .psy-calendar-page .cal__bar { width: 100%; max-width: 100%; }
+  .psy-calendar-page .cal__nav { flex-wrap: wrap; }
+  .psy-calendar-page .cal__filters { flex-basis: 100%; }
+  .psy-calendar-page .cal__views { width: 100%; justify-content: center; }
+  .psy-calendar-page .cal__view { flex: 1 1 0; min-width: 0; }
+  .psy-calendar-page .cal__month { grid-auto-rows: minmax(64px, 1fr); }
+  .psy-calendar-page .cal__cell { padding: 0.25rem; }
+  .psy-calendar-page .cal-chip { max-width: 100%; }
   .psy-dash-header, .psy-cal-controls { gap: 0.75rem; }
   .psy-cal-nav, .psy-cal-views { width: 100%; justify-content: center; }
   .psy-cal-title { flex: 1 1 auto; }
