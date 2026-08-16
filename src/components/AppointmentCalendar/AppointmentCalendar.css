@@ -953,6 +953,7 @@ height: auto;
   .cal__bar {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
     align-items: center;
     gap: 0.35rem;
     padding-top: 0;
@@ -960,6 +961,8 @@ height: auto;
   }
 
   .cal__nav {
+    grid-column: 1 / -1;
+
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -982,6 +985,7 @@ height: auto;
   }
 
   .cal__views {
+    grid-column: 2;
     align-self: center;
     justify-self: end;
     margin: 0;
