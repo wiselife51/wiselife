@@ -274,22 +274,22 @@ body:has(.psy-dash) {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.5rem 0.875rem;
-  border: 0;
-  border-radius: 12px;
-  background: none;
-  border: none;
-  color: rgba(255, 255, 255, 0.6);
+  padding: 0.6rem 0.875rem;
+  border: 1px solid var(--psy-border);
+  border-radius: 16px;
+  background: var(--psy-surface);
+  color: rgba(255, 255, 255, 0.65);
   font-family: 'Inter', sans-serif;
   font-size: 0.78rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s var(--psy-smooth);
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
   text-align: center;
   }
 
   .psy-dash-nav-item:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(171, 127, 255, 0.08);
+  border-color: rgba(171, 127, 255, 0.55);
   color: rgba(255, 255, 255, 0.9);
 }
 
@@ -593,9 +593,9 @@ body:has(.psy-dash) {
 }
 
 .psy-dash-nav-item--active {
-  background: rgba(126, 87, 194, 0.15);
+  background: rgba(171, 127, 255, 0.08);
+  border-color: rgba(171, 127, 255, 0.55);
   color: #b388ff;
-  border: 1px solid rgba(126, 87, 194, 0.2);
 }
 
 .psy-dash-signout {
@@ -1153,9 +1153,9 @@ body:has(.psy-dash) {
   .psy-alert-list { display: flex; flex-direction: column; gap: 0.7rem; }
   .psy-alert-card { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.8rem; width: 100%; padding: 1rem; border: 1px solid var(--psy-border); border-radius: 16px; background: var(--psy-surface); color: var(--psy-text); text-align: left; cursor: pointer; font: inherit; transition: border-color 0.2s, background 0.2s; }
   .psy-alert-card:hover, .psy-alert-card:focus-visible { border-color: rgba(171, 127, 255, 0.55); background: rgba(171, 127, 255, 0.08); outline: none; }
-  .psy-dash-nav-item--priority { border-color: rgba(126, 87, 194, 0.28); background: linear-gradient(135deg, rgba(126, 87, 194, 0.16), rgba(77, 208, 225, 0.08)); }
-  .psy-dash-nav-item--priority:not(.psy-dash-nav-item--active) { color: #d5c4ff; }
-  .psy-dash-nav-item--priority:not(.psy-dash-nav-item--active) svg { color: #8ee7c2; }
+  .psy-dash-nav-item--priority { border-color: var(--psy-border); background: var(--psy-surface); }
+  .psy-dash-nav-item--priority:not(.psy-dash-nav-item--active) { color: rgba(255, 255, 255, 0.65); }
+  .psy-dash-nav-item--priority:not(.psy-dash-nav-item--active) svg { color: inherit; }
   .psy-dash-nav-item--priority.psy-dash-nav-item--active,
   .psy-dash-nav-item--priority.psy-dash-nav-item--active:focus,
   .psy-dash-nav-item--priority.psy-dash-nav-item--active:focus-visible {
