@@ -3349,8 +3349,8 @@ body:has(.psy-dash) {
   margin-top: 0;
   }
   .psy-dash-main--flush .psy-alert-page {
-  margin-top: 0;
-  transform: translateY(-0.25rem);
+  margin-top: 0.5rem;
+  transform: none;
   }
 
   .psy-profile-page { width: 100%; }
