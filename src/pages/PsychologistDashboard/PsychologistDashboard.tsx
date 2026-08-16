@@ -1429,7 +1429,7 @@ const PsychologistDashboard: React.FC = () => {
       {/* Appointment Detail Modal */}
       {selectedAppt && (
         <div className="psy-dash-modal-backdrop psy-appt-modal-layer" style={{ zIndex: 5000 }} onClick={() => setSelectedAppt(null)}>
-          <div className="psy-dash-modal psy-dash-modal--wide" role="dialog" aria-modal="true" aria-labelledby="appointment-detail-title" onClick={(e) => e.stopPropagation()}>
+          <div className="psy-dash-modal psy-dash-modal--wide psy-dash-sidebar psy-dash-appointment-detail" role="dialog" aria-modal="true" aria-labelledby="appointment-detail-title" onClick={(e) => e.stopPropagation()}>
             <div className="psy-dash-sidebar-header">
               <div className="psy-dash-brand">
                 <div className="psy-dash-logo">

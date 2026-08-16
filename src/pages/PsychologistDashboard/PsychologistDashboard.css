@@ -1057,8 +1057,20 @@ body:has(.psy-dash) {
   margin: 0;
 }
 
-/* Appointment detail mirrors the psychologist sidebar menu */
-.psy-appt-modal-layer .psy-dash-modal {
+/* Appointment detail reuses the psychologist sidebar menu surface exactly */
+.psy-appt-modal-layer .psy-dash-appointment-detail {
+  width: min(90vw, 420px);
+  max-width: 420px;
+  height: auto;
+  min-height: 0;
+  display: block;
+  flex: none;
+  position: relative;
+  top: auto;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+.psy-appt-modal-layer .psy-dash-appointment-detail {
   background: rgba(17, 24, 39, 0.94);
   border-color: rgba(255, 255, 255, 0.1);
   border-radius: 20px;
