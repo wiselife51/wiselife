@@ -1008,7 +1008,7 @@ const PsychologistDashboard: React.FC = () => {
       </button>
 
       {/* Main content */}
-      <main className="psy-dash-main">
+      <main className={`psy-dash-main ${activeTab === 'proximas' || activeTab === 'pendientes' ? 'psy-dash-main--flush' : ''}`}>
         {activeTab === 'proximas' && (
           <section className="psy-alert-page">
             <div className="psy-alert-brand" aria-label="Vida Sabia">
