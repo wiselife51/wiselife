@@ -1144,15 +1144,26 @@ body:has(.psy-dash) {
 .psy-patient-history-btn { width: 100%; padding: 0.65rem; border: 1px solid rgba(171, 127, 255, 0.35); border-radius: 10px; background: rgba(171, 127, 255, 0.1); color: #c9b2ff; font: inherit; font-weight: 650; cursor: pointer; }
 .psy-patient-history-btn:hover { background: rgba(171, 127, 255, 0.18); }
 
-  .psy-alert-page { width: min(100%, 980px); margin: 0 auto; }
-  .psy-alert-page .psy-dash-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
-  .psy-alert-page .psy-dash-header h1 { color: white; }
-  .psy-alert-page .psy-dash-header p { color: rgba(255, 255, 255, 0.55); }
-  .psy-alert-count { display: grid; min-width: 2.3rem; height: 2.3rem; place-items: center; border: 1px solid rgba(77, 208, 225, 0.35); border-radius: 50%; background: rgba(77, 208, 225, 0.1); color: #8ee7c2; font-weight: 700; }
-  .psy-alert-count--warning { border-color: rgba(255, 193, 7, 0.4); background: rgba(255, 193, 7, 0.1); color: #ffd54f; }
-  .psy-alert-list { display: flex; flex-direction: column; gap: 0.7rem; }
-  .psy-alert-card { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.8rem; width: 100%; padding: 1rem; border: 1px solid var(--psy-border); border-radius: 16px; background: var(--psy-surface); color: var(--psy-text); text-align: left; cursor: pointer; font: inherit; transition: border-color 0.2s, background 0.2s; }
-  .psy-alert-card:hover, .psy-alert-card:focus-visible { border-color: rgba(171, 127, 255, 0.55); background: rgba(171, 127, 255, 0.08); outline: none; }
+  .psy-alert-page {
+  width: min(100%, 980px);
+  margin: 0 auto;
+  padding: 1.5rem;
+  border: 1px solid rgba(126, 87, 194, 0.24);
+  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(22, 20, 42, 0.94), rgba(12, 17, 31, 0.96));
+  box-shadow: 0 22px 55px rgba(0, 0, 0, 0.2);
+}
+.psy-alert-page .psy-dash-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-bottom: 1.15rem; border-bottom: 1px solid rgba(126, 87, 194, 0.2); }
+.psy-alert-page .psy-dash-header h1 { margin: 0; color: #f4f1ff; font-size: clamp(1.35rem, 2.5vw, 1.8rem); letter-spacing: -0.02em; }
+.psy-alert-page .psy-dash-header p { margin: 0.35rem 0 0; color: rgba(255, 255, 255, 0.58); }
+.psy-alert-count { display: grid; min-width: 2.75rem; height: 2.75rem; place-items: center; border: 1px solid rgba(126, 87, 194, 0.42); border-radius: 999px; background: rgba(126, 87, 194, 0.15); color: #b388ff; font-size: 1rem; font-weight: 700; }
+.psy-alert-count--warning { border-color: rgba(255, 193, 7, 0.4); background: rgba(255, 193, 7, 0.1); color: #ffd54f; }
+.psy-alert-list { display: flex; flex-direction: column; gap: 0.8rem; padding-top: 1.15rem; }
+.psy-alert-card { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.9rem; width: 100%; padding: 1rem 1.1rem; border: 1px solid rgba(126, 87, 194, 0.22); border-radius: 16px; background: rgba(18, 24, 42, 0.78); color: var(--psy-text); text-align: left; cursor: pointer; font: inherit; transition: border-color 0.2s, background 0.2s, transform 0.2s; }
+.psy-alert-card:hover, .psy-alert-card:focus-visible { border-color: rgba(126, 87, 194, 0.58); background: rgba(126, 87, 194, 0.1); outline: none; transform: translateY(-1px); }
+.psy-alert-card-text strong { color: #f4f1ff; }
+.psy-alert-card-text small { color: rgba(255, 255, 255, 0.58); }
+.psy-alert-card--warning { border-color: rgba(255, 193, 7, 0.28); }
   .psy-dash-nav-item--priority { border-color: var(--psy-border); background: var(--psy-surface); }
   .psy-dash-nav-item--priority:not(.psy-dash-nav-item--active) { color: rgba(255, 255, 255, 0.65); }
   .psy-dash-nav-item--priority:not(.psy-dash-nav-item--active) svg { color: inherit; }
@@ -3579,8 +3590,9 @@ body:has(.psy-dash) {
   .psy-profile-actions { align-items: stretch; flex-direction: column; }
   .psy-profile-actions .psy-dash-btn-primary { width: 100%; }
   .psy-profile-message { text-align: center; }
-  .psy-alert-page .psy-dash-header { align-items: center; }
-  .psy-alert-card { padding: 0.8rem; }
+.psy-alert-page { padding: 1rem; border-radius: 18px; }
+.psy-alert-page .psy-dash-header { align-items: center; }
+.psy-alert-card { padding: 0.8rem; }
   .psy-patients-grid { grid-template-columns: 1fr; gap: 0.7rem; }
   .psy-patient-card { padding: 0.85rem; }
   .psy-patient-meta { flex-direction: column; gap: 0.2rem; }
