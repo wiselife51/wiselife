@@ -262,7 +262,7 @@
   min-height: 64px;
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.25rem;
   padding: 0.375rem;
   border-radius: 9px;
@@ -327,6 +327,7 @@
   align-items: center;
   gap: 0.15rem;
   margin: 0 0 0 auto;
+  align-self: center;
   justify-content: flex-end;
   flex: 0 1 auto;
 }
