@@ -792,9 +792,22 @@
   min-width: 0;
 }
 
-.cal__nav,
+.cal__bar {
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.cal__nav {
+  flex: 1 1 auto;
+  flex-wrap: nowrap;
+  gap: 0.25rem;
+}
+
 .cal__views {
-  flex-wrap: wrap;
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+  gap: 0.1rem;
 }
 
 .cal__heading {
@@ -965,9 +978,11 @@
   }
 
   .cal__views {
-    grid-column: 1 / -1;
-    justify-self: center;
+    grid-column: auto;
+    justify-self: auto;
     margin: 0;
+    flex: 0 0 auto;
+    flex-wrap: nowrap;
   }
 
   .cal__month { grid-auto-rows: 3.25rem; column-gap: 0.35rem; }
@@ -980,8 +995,9 @@
   .cal__cell { gap: 0.15rem; padding-inline: 0.2rem; }
   .cal__cell-statuses { gap: 0.1rem; max-width: 78%; }
   .cal__status-total { min-width: 0.9rem; height: 0.9rem; font-size: 0.52rem; }
-  .cal__heading { font-size: 0.875rem; }
+  .cal__heading { font-size: 0.875rem; min-width: 0; }
   .cal__today { padding-inline: 0.55rem; }
+  .cal__view { padding-inline: 0.45rem; }
   .cal__filter { padding-inline: 0.55rem; }
   .cal__weekday { font-size: 0.625rem; padding-bottom: 0.3125rem; }
 }
