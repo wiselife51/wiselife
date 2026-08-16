@@ -201,13 +201,19 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
                   dragOver === key ? 'cal__cell--dragover' : '',
                   panelDay === key ? 'cal__cell--selected' : '',
                 ].join(' ')}
-                onClick={() => setPanelDay(key)}
+                onClick={() => { setCursor(d); setPanelDay(key); setView('day'); }}
+                onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setCursor(d); setPanelDay(key); setView('day'); } }}
+                role="button"
+                tabIndex={0}
+                aria-label={`Ver citas del ${d.getDate()} de ${MONTHS[d.getMonth()]}`}
                 {...dayCellProps(key)}
               >
                 <span className="cal__daynum">{d.getDate()}</span>
-                <div className="cal__cell-items">
-                  {list.slice(0, 3).map((a) => chip(a, true))}
-                  {list.length > 3 && <span className="cal__more">+{list.length - 3} mas</span>}
+                <div className="cal__cell-statuses" aria-label={`${list.length} citas`}>
+                  {Object.entries(STATUS_META).map(([status, meta]) => {
+                    const total = list.filter((appointment) => appointment.status === status).length;
+                    return total > 0 ? <span key={status} className={`cal__status-total cal__status-total--${meta.key}`} title={meta.label}>{total}</span> : null;
+                  })}
                 </div>
               </div>
             );
