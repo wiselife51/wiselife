@@ -164,9 +164,10 @@ const DashboardModuleHeader: React.FC<{
   title: string;
   subtitle?: string;
   count?: number;
+  statusSummary?: Array<{ label: string; count: number; key: string }>;
   action?: React.ReactNode;
   onMenu: () => void;
-}> = ({ title, subtitle, count, action, onMenu }) => (
+}> = ({ title, subtitle, count, statusSummary, action, onMenu }) => (
   <div className="psy-module-header">
     <button type="button" className="psy-module-menu" aria-label="Abrir menú" onClick={onMenu}>
       <span /><span /><span />
@@ -178,7 +179,11 @@ const DashboardModuleHeader: React.FC<{
       </svg>
       <span>Vida Sabia</span>
     </div>
-    {count !== undefined && <span className="psy-alert-count">{count}</span>}
+    {statusSummary ? (
+      <div className="psy-module-status-summary" aria-label="Resumen de estados de citas">
+        {statusSummary.map((status) => <span key={status.key} className={`psy-module-status psy-module-status--${status.key}`} title={status.label}>{status.count}</span>)}
+      </div>
+    ) : count !== undefined ? <span className="psy-alert-count">{count}</span> : null}
     <div className="psy-module-copy"><h1>{title}</h1>{subtitle && <p>{subtitle}</p>}</div>
     {action}
   </div>
@@ -1061,7 +1066,17 @@ const PsychologistDashboard: React.FC = () => {
         {activeTab === 'calendario' && (
           <>
           <section className="psy-calendar-page">
-          <DashboardModuleHeader title="Calendario" subtitle="Consulta y administra tus citas programadas." onMenu={() => setShowMobileMenu(!showMobileMenu)} />
+          <DashboardModuleHeader
+            title="Calendario"
+            subtitle="Consulta y administra tus citas programadas."
+            statusSummary={[
+              { label: 'Confirmada', count: calendarAppointments.filter((a) => a.status === 'confirmada').length, key: 'confirmed' },
+              { label: 'Pago pendiente', count: calendarAppointments.filter((a) => a.status === 'pendiente_pago').length, key: 'pending' },
+              { label: 'Completada', count: calendarAppointments.filter((a) => a.status === 'completada').length, key: 'done' },
+              { label: 'Cancelada', count: calendarAppointments.filter((a) => a.status === 'cancelada').length, key: 'cancelled' },
+            ]}
+            onMenu={() => setShowMobileMenu(!showMobileMenu)}
+          />
           <AppointmentCalendar
             appointments={calendarAppointments}
             blockedDates={blockedDates}
