@@ -2763,12 +2763,26 @@ body:has(.psy-dash) {
   margin-right: auto;
   }
   .psy-alert-page .psy-alert-brand {
-  justify-content: flex-start;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  justify-content: initial;
+  gap: 0;
   }
-  .psy-alert-page .psy-alert-brand > span:not(.psy-alert-count) {
-  margin: 0 auto;
+  .psy-alert-page .psy-alert-brand .psy-mobile-menu-toggle {
+  grid-column: 1;
+  justify-self: start;
+  margin-right: 0;
+  }
+  .psy-alert-brand-center {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
   }
   .psy-alert-page .psy-alert-brand .psy-alert-count {
+  grid-column: 3;
+  justify-self: end;
   margin-left: 0;
   }
 
