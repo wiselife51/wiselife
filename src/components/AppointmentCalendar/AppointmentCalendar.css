@@ -68,6 +68,7 @@
 .cal__views {
   display: flex;
   flex: 0 0 auto;
+  margin-left: auto;
   gap: 0.25rem;
   padding: 0.25rem;
   border-radius: 9999px;
@@ -983,7 +984,7 @@ height: auto;
   .cal__views {
     align-self: center;
     justify-self: auto;
-    margin: 0;
+    margin: 0 0 0 auto;
     flex: 0 0 auto;
   }
 
