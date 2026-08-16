@@ -288,9 +288,14 @@ body:has(.psy-dash) {
   text-align: center;
   }
 
-.psy-dash-nav-item:hover {
+  .psy-dash-nav-item:hover {
   background: rgba(255, 255, 255, 0.05);
   color: rgba(255, 255, 255, 0.9);
+}
+
+.psy-dash-nav-item:focus-visible {
+  outline: none;
+  box-shadow: none;
 }
 
 .psy-profile-page {
@@ -1151,7 +1156,13 @@ body:has(.psy-dash) {
   .psy-dash-nav-item--priority { border-color: rgba(126, 87, 194, 0.28); background: linear-gradient(135deg, rgba(126, 87, 194, 0.16), rgba(77, 208, 225, 0.08)); }
   .psy-dash-nav-item--priority:not(.psy-dash-nav-item--active) { color: #d5c4ff; }
   .psy-dash-nav-item--priority:not(.psy-dash-nav-item--active) svg { color: #8ee7c2; }
-  .psy-dash-nav-item--priority.psy-dash-nav-item--active { box-shadow: none; border-color: rgba(126, 87, 194, 0.2); }
+  .psy-dash-nav-item--priority.psy-dash-nav-item--active,
+  .psy-dash-nav-item--priority.psy-dash-nav-item--active:focus,
+  .psy-dash-nav-item--priority.psy-dash-nav-item--active:focus-visible {
+    outline: none;
+    box-shadow: none;
+    border-color: rgba(126, 87, 194, 0.2);
+  }
 .psy-alert-card--warning { border-color: rgba(255, 193, 7, 0.25); }
 .psy-alert-card-text { display: flex; flex-direction: column; gap: 0.2rem; min-width: 0; }
 .psy-alert-card-text strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
