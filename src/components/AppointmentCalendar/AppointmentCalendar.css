@@ -253,9 +253,9 @@
   row-gap: 0;
   grid-row-gap: 0;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--psy-border);
   border-radius: 11px;
-  background: transparent;
+  background: var(--psy-surface);
 }
 
 .cal__month > * {
