@@ -309,7 +309,7 @@
 }
 
 .cal__daynum {
-  order: 2;
+  order: 1;
   font-size: 0.75rem;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.55);
@@ -320,7 +320,7 @@
 }
 
 .cal__cell-statuses {
-  order: 1;
+  order: 2;
   position: static;
   display: flex;
   flex-wrap: wrap;
