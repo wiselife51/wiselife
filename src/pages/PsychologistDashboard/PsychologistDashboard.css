@@ -3330,7 +3330,7 @@ body:has(.psy-dash) {
   overflow-y: auto;
   }
   .psy-dash-main--flush {
-  padding-top: 0;
+  padding-top: 0 !important;
   margin-top: 0;
   }
   .psy-dash-main--flush .psy-alert-page {
