@@ -1106,3 +1106,28 @@ height: auto;
   .cal__filter { padding-inline: 0.55rem; }
   .cal__weekday { font-size: 0.625rem; padding-bottom: 0.3125rem; }
 }
+
+/* La vista mensual reutiliza exactamente la tarjeta de Próximas citas. */
+.cal__month {
+  gap: 0;
+  column-gap: 0;
+  row-gap: 0;
+  grid-row-gap: 0;
+  border: 0;
+  background: transparent;
+}
+
+.cal__month .cal__cell {
+  min-height: 4.25rem;
+  height: 4.25rem;
+  padding: 0.4rem 0.625rem;
+  border: 1px solid var(--psy-border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  transition: all 0.2s;
+}
+
+.cal__month .cal__cell:hover {
+  background: rgba(126, 87, 194, 0.1);
+  border-color: rgba(126, 87, 194, 0.25);
+}
