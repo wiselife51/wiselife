@@ -1500,7 +1500,15 @@ height: auto;
 @media (max-width: 720px) {
   .cal-week-new .cal__week-head,
   .cal-week-new .cal__week-body {
-    grid-template-columns: 1.75rem repeat(7, minmax(0, 1fr));
+    grid-template-columns: 2.5rem repeat(7, minmax(0, 1fr));
+  }
+  .cal-week-new .cal__hour,
+  .cal-day-new .cal__hour {
+    padding: 0 0.25rem 0 0;
+    font-size: 0.5rem;
+    line-height: 1;
+    white-space: nowrap;
+    text-align: right;
   }
   .cal-week-new .cal__week-body {
     grid-template-rows: repeat(15, 1.25rem);
