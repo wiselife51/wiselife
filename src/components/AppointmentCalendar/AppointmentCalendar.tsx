@@ -208,14 +208,14 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
           <div className="cal__proposal-month">
             {DAY_SHORT.map((day) => <span key={day} className="cal__proposal-weekday">{day}</span>)}
             {monthGrid(cursor.getFullYear(), cursor.getMonth()).map((date, index) => {
-              if (!date) return <span key={`empty-${index}`} className="cal__proposal-day cal__proposal-day--empty" />;
+              if (!date) return <span key={`empty-${index}`} className="cal__proposal-empty" />;
               const dateKey = toDateStr(date);
               const total = (byDate.get(dateKey) || []).length;
               return (
                 <button
                   key={dateKey}
                   type="button"
-                  className={`cal__proposal-day psy-dash-upcoming-item ${dateKey === todayKey ? 'cal__proposal-day--today' : ''}`}
+                  className="psy-dash-upcoming-item"
                   onClick={() => { setCursor(date); setPanelDay(dateKey); }}
                 >
                   <span className="cal__proposal-number">{date.getDate()}</span>

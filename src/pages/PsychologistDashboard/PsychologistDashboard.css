@@ -1424,8 +1424,7 @@ body:has(.psy-dash) {
   margin: 0 0 0.25rem;
 }
 
-.psy-dash-upcoming-item,
-.cal__proposal-day {
+.psy-dash-upcoming-item {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -1439,8 +1438,7 @@ body:has(.psy-dash) {
   text-align: left;
 }
 
-.psy-dash-upcoming-item:hover,
-.cal__proposal-day:hover {
+.psy-dash-upcoming-item:hover {
   background: rgba(126, 87, 194, 0.1);
   border-color: rgba(126, 87, 194, 0.25);
 }

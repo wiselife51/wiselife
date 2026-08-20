@@ -236,7 +236,9 @@
   white-space: nowrap;
 }
 
-/* ===== Vista mes ===== */
+/* ===== Vista mes legacy, oculta ===== */
+.cal__legacy-view { display: none !important; }
+
 .cal__month {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
@@ -1283,16 +1285,10 @@ height: auto;
   text-align: center;
 }
 
-.cal__proposal-day {
+.cal__proposal-empty {
   min-height: 4.25rem;
-  align-items: flex-start;
-  justify-content: space-between;
-}
-
-.cal__proposal-day--empty {
-  border-color: transparent;
+  border: 0;
   background: transparent;
-  cursor: default;
 }
 
 .cal__proposal-number { font-size: 0.7rem; font-weight: 700; }
