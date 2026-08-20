@@ -145,24 +145,6 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
     setPending(null);
   };
 
-  const chip = (a: CalendarAppointment, compact = false) => (
-    <div
-      key={a.id}
-      className={`cal-chip cal-chip--${STATUS_META[a.status]?.key || 'other'} ${compact ? 'cal-chip--compact' : ''}`}
-      draggable={Boolean(onReschedule)}
-      onDragStart={() => setDragging(a)}
-      onDragEnd={() => setDragging(null)}
-      onPointerUp={(e) => {
-        e.stopPropagation();
-        onSelect?.(a);
-      }}
-      title={`${fmtTime(a.start_time)} · ${a.title}`}
-    >
-      {!compact && <span className="cal-chip__time">{fmtTime(a.start_time)}</span>}
-      <span className="cal-chip__name">{compact ? a.title.trim().split(/\s+/)[0] : a.title}</span>
-    </div>
-  );
-
   const dayCellProps = (key: string) => ({
     onDragOver: (e: React.DragEvent) => {
       if (!onReschedule || !dragging) return;
@@ -301,7 +283,10 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
                     <div
                       key={`${key}-${h}`}
                       className={`cal__slot psy-dash-upcoming-item ${dragOver === key ? 'cal__slot--dragover' : ''} ${blocked.has(key) ? 'cal-month-new__day--blocked' : ''} ${list.some((a) => a.status === 'confirmada') ? 'cal-month-new__day--confirmed' : ''} ${list.length > 0 && list.every((a) => a.status === 'completada') ? 'cal-month-new__day--completed' : ''}`}
-                      onClick={() => setPanelDay(key)}
+                      onClick={() => {
+                        setPanelDay(key);
+                        if (list[0]) onSelect?.(list[0]);
+                      }}
                       {...dayCellProps(key)}
                     >
                       {list.length > 0 && (
@@ -333,6 +318,9 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
                 <div className="cal__hour">{`${h}:00`}</div>
                 <div
                   className={`cal__day-slot psy-dash-upcoming-item ${dragOver === key ? 'cal__slot--dragover' : ''} ${blocked.has(key) ? 'cal-month-new__day--blocked' : ''} ${list.some((a) => a.status === 'confirmada') ? 'cal-month-new__day--confirmed' : ''} ${list.length > 0 && list.every((a) => a.status === 'completada') ? 'cal-month-new__day--completed' : ''}`}
+                  onClick={() => {
+                    if (list[0]) onSelect?.(list[0]);
+                  }}
                   {...dayCellProps(key)}
                 >
                   {list.length > 0 && (
