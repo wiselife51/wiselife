@@ -1306,8 +1306,8 @@ height: auto;
 }
 
 .cal-month-new__day--blocked {
-  background: rgba(239, 83, 80, 0.035) !important;
-  border-color: rgba(239, 83, 80, 0.12) !important;
+  background: rgba(239, 83, 80, 0.018) !important;
+  border-color: rgba(239, 83, 80, 0.06) !important;
 }
 
 .cal-month-new__day--blocked:hover {
@@ -1316,8 +1316,8 @@ height: auto;
 }
 
 .cal-month-new__day--unattended {
-  background: rgba(255, 183, 77, 0.035) !important;
-  border-color: rgba(255, 183, 77, 0.12) !important;
+  background: rgba(255, 183, 77, 0.018) !important;
+  border-color: rgba(255, 183, 77, 0.06) !important;
 }
 
 .cal-month-new__day--unattended:hover {
