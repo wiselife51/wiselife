@@ -203,12 +203,12 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
         </div>
       </header>
 
-      <section className="cal__proposal" aria-label="Propuesta de calendario">
+      <section className="cal-month-new" aria-label="Calendario mensual">
         {view === 'month' ? (
-          <div className="cal__proposal-month">
-            {DAY_SHORT.map((day) => <span key={day} className="cal__proposal-weekday">{day}</span>)}
+          <div className="cal-month-new__grid">
+            {DAY_SHORT.map((day) => <span key={day} className="cal-month-new__weekday">{day}</span>)}
             {monthGrid(cursor.getFullYear(), cursor.getMonth()).map((date, index) => {
-              if (!date) return <span key={`empty-${index}`} className="cal__proposal-empty" />;
+              if (!date) return <span key={`empty-${index}`} className="cal-month-new__empty" />;
               const dateKey = toDateStr(date);
               const total = (byDate.get(dateKey) || []).length;
               return (
@@ -218,14 +218,14 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
                   className="psy-dash-upcoming-item"
                   onClick={() => { setCursor(date); setPanelDay(dateKey); }}
                 >
-                  <span className="cal__proposal-number">{date.getDate()}</span>
-                  {total > 0 && <span className="cal__proposal-count">{total}</span>}
+                  <span className="cal-month-new__number">{date.getDate()}</span>
+                  {total > 0 && <span className="cal-month-new__count">{total}</span>}
                 </button>
               );
             })}
           </div>
         ) : (
-          <div className="cal__proposal-placeholder">
+          <div className="cal-month-new__placeholder">
             <strong>{view === 'week' ? 'Calendario semanal' : 'Calendario diario'}</strong>
             <span>Espacio reservado para esta vista.</span>
           </div>
