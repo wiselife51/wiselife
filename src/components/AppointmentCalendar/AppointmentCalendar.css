@@ -47,7 +47,8 @@
 }
 
 .cal__icon-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(126, 87, 194, 0.1);
+  border-color: rgba(126, 87, 194, 0.25);
   color: #fff;
 }
 
