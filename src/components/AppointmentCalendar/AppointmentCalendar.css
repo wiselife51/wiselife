@@ -1305,6 +1305,17 @@ height: auto;
   font-weight: 500;
 }
 
+.cal-month-new__name {
+  min-width: 0;
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.625rem;
+  font-weight: 500;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .cal-month-new__day--blocked {
   background: rgba(239, 83, 80, 0.018) !important;
   border-color: rgba(239, 83, 80, 0.06) !important;

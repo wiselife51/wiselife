@@ -304,8 +304,11 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
                       onClick={() => setPanelDay(key)}
                       {...dayCellProps(key)}
                     >
-                      <span className="cal-month-new__number">{d.getDate()}</span>
-                      {list.length > 0 && <span className="cal-month-new__count">{list.length}</span>}
+                      {list.length > 0 && (
+                        <span className="cal-month-new__name" title={list.map((a) => a.title).join(', ')}>
+                          {list.map((a) => a.title.trim().split(/\s+/)[0]).join(', ')}
+                        </span>
+                      )}
                     </div>
                   );
                 })}
@@ -332,8 +335,11 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
                   className={`cal__day-slot psy-dash-upcoming-item ${dragOver === key ? 'cal__slot--dragover' : ''} ${blocked.has(key) ? 'cal-month-new__day--blocked' : ''} ${list.some((a) => a.status === 'confirmada') ? 'cal-month-new__day--confirmed' : ''} ${list.length > 0 && list.every((a) => a.status === 'completada') ? 'cal-month-new__day--completed' : ''}`}
                   {...dayCellProps(key)}
                 >
-                  <span className="cal-month-new__number">{cursor.getDate()}</span>
-                  {list.length > 0 && <span className="cal-month-new__count">{list.length}</span>}
+                  {list.length > 0 && (
+                    <span className="cal-month-new__name" title={list.map((a) => a.title).join(', ')}>
+                      {list.map((a) => a.title.trim().split(/\s+/)[0]).join(', ')}
+                    </span>
+                  )}
                 </div>
               </div>
             );
