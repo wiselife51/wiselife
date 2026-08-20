@@ -1519,6 +1519,40 @@ height: auto;
   }
 }
 
+/* Encabezados de Mes, Semana y Día: una única especificación visual. */
+.cal-month-new__weekday,
+.cal-week-new .cal__week-day,
+.cal-day-new__head {
+  box-sizing: border-box;
+  min-height: 2.5rem;
+  padding: 0.375rem 0.25rem 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.cal-week-new .cal__week-day,
+.cal-day-new__head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cal-day-new__head {
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.cal-week-new .cal__week-day strong,
+.cal-day-new__head strong {
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
 @media (max-width: 720px) {
   .cal-month-new__grid { gap: 0.25rem; }
   .cal-month-new__grid {
