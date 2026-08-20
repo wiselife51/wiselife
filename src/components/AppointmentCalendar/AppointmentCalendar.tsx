@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { toDateStr } from '../../lib/date';
 import { STATUS_META } from './status';
 import type { CalendarAppointment, CalendarView } from './status';
@@ -49,6 +49,7 @@ interface AppointmentCalendarProps {
   renderDayActions?: (dateKey: string) => React.ReactNode;
   onSelect?: (appointment: CalendarAppointment) => void;
   emptyLabel?: string;
+  onVisibleAppointmentsChange?: (appointments: CalendarAppointment[]) => void;
 }
 
 const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
@@ -59,10 +60,10 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
   renderDayActions,
   onSelect,
   emptyLabel = 'Sin citas en esta fecha.',
+  onVisibleAppointmentsChange,
 }) => {
   const [view, setView] = useState<CalendarView>('month');
   const [cursor, setCursor] = useState(new Date());
-  const [statuses, setStatuses] = useState<string[]>([]);
   const [panelDay, setPanelDay] = useState<string | null>(null);
 
   const [dragging, setDragging] = useState<CalendarAppointment | null>(null);
@@ -72,10 +73,7 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
 
   const todayKey = toDateStr(new Date());
 
-  const visible = useMemo(
-    () => (statuses.length === 0 ? appointments : appointments.filter((a) => statuses.includes(a.status))),
-    [appointments, statuses]
-  );
+  const visible = useMemo(() => appointments, [appointments]);
 
   const byDate = useMemo(() => {
     const map = new Map<string, CalendarAppointment[]>();
@@ -90,8 +88,26 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
 
   const blocked = useMemo(() => new Set(blockedDates), [blockedDates]);
 
-  const toggleStatus = (s: string) =>
-    setStatuses((prev) => (prev.includes(s) ? prev.filter((v) => v !== s) : [...prev, s]));
+  const visibleAppointments = useMemo(() => {
+    if (view === 'month') {
+      const month = cursor.getMonth();
+      const year = cursor.getFullYear();
+      return visible.filter((appointment) => {
+        const date = new Date(`${appointment.appointment_date}T12:00:00`);
+        return date.getFullYear() === year && date.getMonth() === month;
+      });
+    }
+    if (view === 'week') {
+      const keys = new Set(weekGrid(cursor).map(toDateStr));
+      return visible.filter((appointment) => keys.has(appointment.appointment_date));
+    }
+    const key = toDateStr(cursor);
+    return visible.filter((appointment) => appointment.appointment_date === key);
+  }, [cursor, view, visible]);
+
+  useEffect(() => {
+    onVisibleAppointmentsChange?.(visibleAppointments);
+  }, [onVisibleAppointmentsChange, visibleAppointments]);
 
   const shift = (dir: -1 | 1) => {
     const d = new Date(cursor);
@@ -129,24 +145,6 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
     setPending(null);
   };
 
-  const chip = (a: CalendarAppointment, compact = false) => (
-    <div
-      key={a.id}
-      className={`cal-chip cal-chip--${STATUS_META[a.status]?.key || 'other'} ${compact ? 'cal-chip--compact' : ''}`}
-      draggable={Boolean(onReschedule)}
-      onDragStart={() => setDragging(a)}
-      onDragEnd={() => setDragging(null)}
-      onPointerUp={(e) => {
-        e.stopPropagation();
-        onSelect?.(a);
-      }}
-      title={`${fmtTime(a.start_time)} · ${a.title}`}
-    >
-      <span className="cal-chip__time">{fmtTime(a.start_time)}</span>
-      <span className="cal-chip__name">{a.title}</span>
-    </div>
-  );
-
   const dayCellProps = (key: string) => ({
     onDragOver: (e: React.DragEvent) => {
       if (!onReschedule || !dragging) return;
@@ -171,24 +169,6 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><polyline points="9 18 15 12 9 6" /></svg>
           </button>
           <button type="button" className="cal__today" onClick={() => setCursor(new Date())}>Hoy</button>
-          <div className="cal__filters" aria-label="Filtros de citas">
-            {Object.entries(STATUS_META).map(([value, meta]) => (
-              <button
-                key={value}
-                type="button"
-                className={`cal__filter cal__filter--${meta.key} ${statuses.includes(value) ? 'cal__filter--on' : ''}`}
-                onClick={() => toggleStatus(value)}
-              >
-                <span className={`cal__dot cal__dot--${meta.key}`} />
-                {meta.label}
-              </button>
-            ))}
-            {statuses.length > 0 && (
-              <button type="button" className="cal__filter-clear" onClick={() => setStatuses([])}>
-                Quitar filtros
-              </button>
-            )}
-          </div>
         </div>
 
         <div className="cal__views">
@@ -205,10 +185,37 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
         </div>
       </header>
 
+      {view === 'month' && (
+        <section className="cal-month-new" aria-label="Calendario mensual">
+          <div className="cal-month-new__grid">
+            {DAY_SHORT.map((day) => <span key={day} className="cal-month-new__weekday">{day}</span>)}
+            {monthGrid(cursor.getFullYear(), cursor.getMonth()).map((date, index) => {
+              if (!date) return <span key={`empty-${index}`} className="cal-month-new__empty" />;
+              const dateKey = toDateStr(date);
+              const dayAppointments = byDate.get(dateKey) || [];
+              const total = dayAppointments.length;
+              const hasConfirmedAppointments = dayAppointments.some((appointment) => appointment.status === 'confirmada');
+              const hasCompletedAppointments = dayAppointments.length > 0 && dayAppointments.every((appointment) => appointment.status === 'completada');
+              const isBlockedDay = blocked.has(dateKey);
+              return (
+                <button
+                  key={dateKey}
+                  type="button"
+                  className={`psy-dash-upcoming-item ${isBlockedDay ? 'cal-month-new__day--blocked' : ''} ${hasConfirmedAppointments ? 'cal-month-new__day--confirmed' : ''} ${hasCompletedAppointments ? 'cal-month-new__day--completed' : ''}`}
+                  onClick={() => { setCursor(date); setPanelDay(dateKey); }}
+                >
+                  <span className="cal-month-new__number">{date.getDate()}</span>
+                  {total > 0 && <span className="cal-month-new__count">{total}</span>}
+                </button>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       {/* ===== Vista mes ===== */}
       {view === 'month' && (
-        <div className="cal__month">
+        <div className="cal__month cal__legacy-view">
           {DAY_SHORT.map((d) => (
             <div key={d} className="cal__weekday">{d}</div>
           ))}
@@ -226,13 +233,19 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
                   dragOver === key ? 'cal__cell--dragover' : '',
                   panelDay === key ? 'cal__cell--selected' : '',
                 ].join(' ')}
-                onClick={() => setPanelDay(key)}
+                onClick={() => { setCursor(d); setPanelDay(key); setView('day'); }}
+                onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setCursor(d); setPanelDay(key); setView('day'); } }}
+                role="button"
+                tabIndex={0}
+                aria-label={`Ver citas del ${d.getDate()} de ${MONTHS[d.getMonth()]}`}
                 {...dayCellProps(key)}
               >
                 <span className="cal__daynum">{d.getDate()}</span>
-                <div className="cal__cell-items">
-                  {list.slice(0, 3).map((a) => chip(a, true))}
-                  {list.length > 3 && <span className="cal__more">+{list.length - 3} mas</span>}
+                <div className="cal__cell-statuses" aria-label={`${list.length} citas`}>
+                  {Object.entries(STATUS_META).map(([status, meta]) => {
+                    const total = list.filter((appointment) => appointment.status === status).length;
+                    return total > 0 ? <span key={status} className={`cal__status-total cal__status-total--${meta.key}`} title={meta.label}>{total}</span> : null;
+                  })}
                 </div>
               </div>
             );
@@ -242,7 +255,7 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
 
       {/* ===== Vista semana ===== */}
       {view === 'week' && (
-        <div className="cal__week">
+        <div className="cal-week-new">
           <div className="cal__week-head">
             <div className="cal__gutter" />
             {weekGrid(cursor).map((d) => {
@@ -269,11 +282,18 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
                   return (
                     <div
                       key={`${key}-${h}`}
-                      className={`cal__slot ${dragOver === key ? 'cal__slot--dragover' : ''} ${blocked.has(key) ? 'cal__slot--blocked' : ''}`}
-                      onClick={() => setPanelDay(key)}
+                      className={`cal__slot psy-dash-upcoming-item ${dragOver === key ? 'cal__slot--dragover' : ''} ${blocked.has(key) ? 'cal-month-new__day--blocked' : ''} ${list.some((a) => a.status === 'confirmada') ? 'cal-month-new__day--confirmed' : ''} ${list.length > 0 && list.every((a) => a.status === 'completada') ? 'cal-month-new__day--completed' : ''}`}
+                      onClick={() => {
+                        setPanelDay(key);
+                        if (list[0]) onSelect?.(list[0]);
+                      }}
                       {...dayCellProps(key)}
                     >
-                      {list.map((a) => chip(a, true))}
+                      {list.length > 0 && (
+                        <span className="cal-month-new__name" title={list.map((a) => a.title).join(', ')}>
+                          {list.map((a) => a.title.trim().split(/\s+/)[0]).join(', ')}
+                        </span>
+                      )}
                     </div>
                   );
                 })}
@@ -285,7 +305,11 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
 
       {/* ===== Vista dia ===== */}
       {view === 'day' && (
-        <div className="cal__day">
+        <div className="cal-day-new">
+          <div className="cal-day-new__head">
+            <span>{DAY_SHORT[cursor.getDay()]}</span>
+            <strong>{cursor.getDate()}</strong>
+          </div>
           {HOURS.map((h) => {
             const key = toDateStr(cursor);
             const list = (byDate.get(key) || []).filter((a) => parseInt(a.start_time.slice(0, 2), 10) === h);
@@ -293,10 +317,17 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
               <div key={h} className="cal__day-row">
                 <div className="cal__hour">{`${h}:00`}</div>
                 <div
-                  className={`cal__day-slot ${dragOver === key ? 'cal__slot--dragover' : ''}`}
+                  className={`cal__day-slot psy-dash-upcoming-item ${dragOver === key ? 'cal__slot--dragover' : ''} ${blocked.has(key) ? 'cal-month-new__day--blocked' : ''} ${list.some((a) => a.status === 'confirmada') ? 'cal-month-new__day--confirmed' : ''} ${list.length > 0 && list.every((a) => a.status === 'completada') ? 'cal-month-new__day--completed' : ''}`}
+                  onClick={() => {
+                    if (list[0]) onSelect?.(list[0]);
+                  }}
                   {...dayCellProps(key)}
                 >
-                  {list.length === 0 ? <span className="cal__free">Libre</span> : list.map((a) => chip(a))}
+                  {list.length > 0 && (
+                    <span className="cal-month-new__name" title={list.map((a) => a.title).join(', ')}>
+                      {list.map((a) => a.title.trim().split(/\s+/)[0]).join(', ')}
+                    </span>
+                  )}
                 </div>
               </div>
             );

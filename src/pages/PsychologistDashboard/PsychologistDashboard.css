@@ -288,9 +288,14 @@ body:has(.psy-dash) {
   text-align: center;
   }
 
-.psy-dash-nav-item:hover {
+  .psy-dash-nav-item:hover {
   background: rgba(255, 255, 255, 0.05);
   color: rgba(255, 255, 255, 0.9);
+}
+
+.psy-dash-nav-item:focus-visible {
+  outline: none;
+  box-shadow: none;
 }
 
 .psy-profile-page {
@@ -1027,10 +1032,11 @@ body:has(.psy-dash) {
 .psy-dash-modal {
   width: 90%;
   max-width: 420px;
-  background: #111827;
+  background: rgba(17, 24, 39, 0.94);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
-  padding: 1.75rem;
+  padding: 1.5rem;
+  backdrop-filter: blur(12px);
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
@@ -1050,6 +1056,75 @@ body:has(.psy-dash) {
   font-weight: 700;
   margin: 0;
 }
+
+/* Appointment detail reuses the psychologist sidebar menu surface exactly */
+.psy-appt-modal-layer .psy-dash-appointment-detail {
+  width: 260px;
+  max-width: 260px;
+  height: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: none;
+  position: relative;
+  top: auto;
+  padding: 1.5rem;
+  border-radius: 0;
+  overflow-y: auto;
+  background: rgba(17, 24, 39, 0.68);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+}
+.psy-appt-modal-layer .psy-dash-appointment-detail {
+  background: rgba(17, 24, 39, 0.94);
+  border-color: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+}
+.psy-appt-modal-layer .psy-dash-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+.psy-appt-modal-layer .psy-dash-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+.psy-appt-modal-layer .psy-dash-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.psy-appt-modal-layer .psy-dash-logo span {
+  font-size: 1rem;
+  font-weight: 700;
+  background: var(--psy-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.psy-appt-modal-layer .psy-dash-badge {
+  margin-top: 0.5rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-align: center;
+}
+.psy-appt-modal-layer .psy-dash-profile {
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--psy-border);
+  margin-bottom: 1rem;
+}
+.psy-appt-modal-layer .psy-dash-nav-item {
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.78);
+}
+.psy-appt-modal-layer .psy-dash-nav-item:hover {
+  background: rgba(126, 87, 194, 0.08);
+}
+
 
 .psy-modal-subtitle {
   font-size: 0.875rem;
@@ -1139,17 +1214,50 @@ body:has(.psy-dash) {
 .psy-patient-history-btn { width: 100%; padding: 0.65rem; border: 1px solid rgba(171, 127, 255, 0.35); border-radius: 10px; background: rgba(171, 127, 255, 0.1); color: #c9b2ff; font: inherit; font-weight: 650; cursor: pointer; }
 .psy-patient-history-btn:hover { background: rgba(171, 127, 255, 0.18); }
 
-.psy-alert-page { width: min(100%, 980px); margin: 0 auto; }
-.psy-alert-page .psy-dash-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
-.psy-alert-count { display: grid; min-width: 2.3rem; height: 2.3rem; place-items: center; border: 1px solid rgba(77, 208, 225, 0.35); border-radius: 50%; background: rgba(77, 208, 225, 0.1); color: #8ee7c2; font-weight: 700; }
+  .psy-alert-page {
+  width: min(100%, 980px);
+  margin: 0 auto;
+  padding: 1.5rem;
+  border: 1px solid rgba(126, 87, 194, 0.24);
+  border-radius: 24px;
+  background: var(--psy-surface);
+  box-shadow: 0 22px 55px rgba(0, 0, 0, 0.2);
+}
+.psy-alert-page .psy-dash-header { position: relative; display: flex; align-items: center; justify-content: center; gap: 1rem; padding-bottom: 1.15rem; border-bottom: 1px solid rgba(126, 87, 194, 0.2); text-align: center; }
+.psy-alert-page .psy-dash-header > div { width: 100%; }
+.psy-alert-page .psy-alert-count { position: absolute; right: 0; top: 50%; transform: translateY(-50%); }
+.psy-alert-brand { position: relative; width: 100%; }
+.psy-alert-brand .psy-alert-count { right: 0; }
+.psy-alert-page .psy-dash-header .psy-alert-count { position: static; transform: none; }
+
+.psy-alert-page .psy-dash-header h1 { margin: 0; color: #f4f1ff; font-size: 1rem; font-weight: 600; letter-spacing: 0; }
+.psy-alert-page .psy-dash-header p { margin: 0.25rem 0 0; color: rgba(255, 255, 255, 0.58); font-size: 0.78rem; }
+.psy-alert-count { display: grid; min-width: 1.75rem; height: 1.75rem; place-items: center; border: 1px solid rgba(126, 87, 194, 0.32); border-radius: 999px; background: rgba(126, 87, 194, 0.12); color: #b388ff; font-size: 0.78rem; font-weight: 600; }
 .psy-alert-count--warning { border-color: rgba(255, 193, 7, 0.4); background: rgba(255, 193, 7, 0.1); color: #ffd54f; }
-.psy-alert-list { display: flex; flex-direction: column; gap: 0.7rem; }
-.psy-alert-card { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.8rem; width: 100%; padding: 0.9rem 1rem; border: 1px solid var(--psy-border); border-radius: 14px; background: var(--psy-surface); color: var(--psy-text); text-align: left; cursor: pointer; font: inherit; }
-.psy-alert-card:hover, .psy-alert-card:focus-visible { border-color: rgba(171, 127, 255, 0.55); background: rgba(171, 127, 255, 0.08); outline: none; }
+.psy-alert-list { display: flex; flex-direction: column; gap: 0.8rem; padding-top: 1.15rem; }
+.psy-alert-card { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.625rem; width: 100%; min-height: 2.75rem; padding: 0.7rem 0.875rem; border: 1px solid rgba(126, 87, 194, 0.22); border-radius: 12px; background: rgba(18, 24, 42, 0.78); color: var(--psy-text); text-align: left; cursor: pointer; font: inherit; transition: border-color 0.2s, background 0.2s, transform 0.2s; }
+.psy-alert-card:hover, .psy-alert-card:focus-visible { border-color: rgba(126, 87, 194, 0.58); background: rgba(126, 87, 194, 0.1); outline: none; transform: translateY(-1px); }
+.psy-alert-card-text strong { color: #f4f1ff; }
+.psy-alert-card-text small { color: rgba(255, 255, 255, 0.58); }
+.psy-alert-card--warning { border-color: rgba(255, 193, 7, 0.28); }
+  .psy-dash-nav-item--priority { border-color: var(--psy-border); background: var(--psy-surface); }
+  .psy-dash-nav-item--priority:not(.psy-dash-nav-item--active) { color: rgba(255, 255, 255, 0.65); }
+  .psy-dash-nav-item--priority:not(.psy-dash-nav-item--active) svg { color: inherit; }
+  .psy-dash-nav-item--priority.psy-dash-nav-item--active,
+  .psy-dash-nav-item--priority.psy-dash-nav-item--active:focus,
+  .psy-dash-nav-item--priority.psy-dash-nav-item--active:focus-visible {
+    outline: none;
+    box-shadow: none;
+    border-color: rgba(126, 87, 194, 0.2);
+  }
 .psy-alert-card--warning { border-color: rgba(255, 193, 7, 0.25); }
-.psy-alert-card-text { display: flex; flex-direction: column; gap: 0.2rem; min-width: 0; }
-.psy-alert-card-text strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.psy-alert-card-text small { color: rgba(255,255,255,0.55); }
+.psy-alert-card-text { display: flex; flex-direction: row; align-items: baseline; gap: 0.65rem; min-width: 0; }
+.psy-alert-card-text strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: white; font-size: 0.9rem; font-weight: 600; }
+.psy-alert-card-text small { flex: 0 0 auto; color: rgba(255,255,255,0.55); font-size: 0.78rem; font-weight: 400; }
+.psy-alert-brand .psy-alert-count { display: grid; background: rgba(77, 208, 225, 0.18); color: #8ee7c2; border-color: rgba(77, 208, 225, 0.28); -webkit-text-fill-color: #8ee7c2; }
+.psy-alert-brand { display: flex; align-items: center; justify-content: center; gap: 0.45rem; margin-bottom: 0.9rem; font-size: 1rem; font-weight: 700; }
+.psy-alert-brand svg { flex: 0 0 auto; }
+.psy-alert-brand > span:not(.psy-alert-count) { background: var(--psy-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 .psy-dash-nav-item { position: relative; }
 .psy-dash-nav-badge { display: grid; min-width: 1.25rem; height: 1.25rem; margin-left: auto; place-items: center; border-radius: 999px; background: rgba(77, 208, 225, 0.18); color: #8ee7c2; font-size: 0.68rem; font-weight: 700; }
 .psy-dash-nav-badge--warning { background: rgba(255, 193, 7, 0.18); color: #ffd54f; }
@@ -2718,9 +2826,45 @@ body:has(.psy-dash) {
   background: transparent;
   border-color: rgba(255, 255, 255, 0.12);
   }
+  .psy-alert-page .psy-alert-brand .psy-mobile-menu-toggle {
+  position: static;
+  display: flex;
+  flex: 0 0 auto;
+  margin-right: auto;
+  }
+  .psy-alert-page .psy-alert-brand {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  justify-content: initial;
+  gap: 0;
+  }
+  .psy-alert-page .psy-alert-brand .psy-mobile-menu-toggle {
+  grid-column: 1;
+  justify-self: start;
+  margin-right: 0;
+  }
+  .psy-alert-brand-center {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  }
+  .psy-alert-brand-center span {
+  font-size: 1rem;
+  font-weight: 700;
+  background: var(--psy-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  }
+  .psy-alert-page .psy-alert-brand .psy-alert-count {
+  grid-column: 3;
+  justify-self: end;
+  margin-left: 0;
+  }
 
   .psy-profile-intro { display: none; }
-  .psy-dash-main { padding-top: 3.2rem; }
 
   .psy-dash-modal-backdrop { padding: 0; }
   .psy-appt-modal-layer { justify-content: flex-start; align-items: stretch; }
@@ -3059,6 +3203,9 @@ body:has(.psy-dash) {
   .psy-dash-main {
     padding: 1rem 0.75rem;
   }
+  .psy-dash-main--flush {
+    padding-top: 0;
+  }
 
   .psy-month-cell {
     min-height: 75px;
@@ -3285,9 +3432,19 @@ body:has(.psy-dash) {
   .psy-dash-main {
   width: 100%;
   height: 100dvh;
-  padding: 5.1rem 0.75rem 1rem;
+  padding: 1.25rem 0.75rem 1rem;
   overflow-x: hidden;
   overflow-y: auto;
+  }
+  .psy-dash-main--flush,
+  .psy-dash-main:has(.psy-calendar-page) {
+  padding-top: 0 !important;
+  margin-top: 0;
+  }
+  .psy-dash-main:has(.psy-calendar-page) .psy-calendar-page { margin-top: 0; }
+  .psy-dash-main--flush .psy-alert-page {
+  margin-top: 0.5rem;
+  transform: none;
   }
 
   .psy-profile-page { width: 100%; }
@@ -3531,6 +3688,56 @@ body:has(.psy-dash) {
     padding: 0.9rem;
   }
 }
+.psy-module-header {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem 1.1rem;
+  margin-bottom: 1rem;
+  border-radius: 18px;
+  background: var(--psy-surface);
+  border: 1px solid rgba(126, 87, 194, 0.22);
+  box-shadow: 0 12px 30px rgba(4, 7, 18, 0.18);
+}
+.psy-module-brand { grid-column: 2; display: flex; align-items: center; gap: 0.5rem; color: var(--psy-text); font-weight: 700; white-space: nowrap; }
+.psy-module-brand span { background: var(--psy-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.psy-module-copy { grid-column: 1 / -1; text-align: center; }
+.psy-module-copy h1 { margin: 0; font-size: 1.1rem; font-weight: 700; }
+.psy-module-copy p { margin: 0.3rem 0 0; color: var(--psy-muted); font-size: 0.82rem; }
+.psy-module-menu { grid-column: 1; justify-self: start; display: none; width: 40px; height: 40px; padding: 0.6rem; border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; background: rgba(9,14,28,0.72); color: rgba(255,255,255,0.72); }
+.psy-module-menu span { display: block; width: 100%; height: 2px; margin: 0; background: currentColor; border-radius: 2px; }
+.psy-module-menu { flex-direction: column; align-items: center; justify-content: center; gap: 5px; }
+.psy-module-header > .psy-dash-btn-primary { grid-column: 3; justify-self: end; }
+.psy-patients-page, .psy-income-page, .psy-calendar-page {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  background: var(--psy-surface);
+  border: 1px solid rgba(126, 87, 194, 0.22);
+  border-radius: 18px;
+  padding: 0.75rem;
+  overflow: hidden;
+}
+.psy-calendar-page .psy-module-header {
+  margin: 0 0 0.9rem;
+  border: 0;
+  border-bottom: 1px solid rgba(126, 87, 194, 0.22);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.psy-calendar-page .psy-module-copy h1,
+.psy-calendar-page .psy-module-copy p {
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+}
+.psy-calendar-page .psy-module-copy h1 { font-size: 1rem; font-weight: 700; }
+.psy-calendar-page .psy-module-copy p { margin-top: 0.3rem; color: rgba(255, 255, 255, 0.5); font-size: 0.75rem; }
+.psy-calendar-page .cal { width: 100%; max-width: 100%; min-width: 0; }
 .psy-dash-header { align-items: flex-start; }
 .psy-dash-header h1 { min-width: 0; overflow-wrap: anywhere; }
 .psy-cal-controls { align-items: stretch; }
@@ -3538,6 +3745,50 @@ body:has(.psy-dash) {
 .psy-cal-title { min-width: 0; text-align: center; overflow-wrap: anywhere; }
 
 @media (max-width: 768px) {
+  .psy-module-header { grid-template-columns: 1fr auto 1fr; padding: 0.75rem 0.35rem 0.9rem; margin-bottom: 0.75rem; }
+  .psy-calendar-page .psy-module-header { padding-inline: 0.25rem; }
+  .psy-calendar-page .psy-module-header > .psy-mobile-menu-toggle {
+  position: static;
+  grid-column: 1;
+  justify-self: start;
+  display: flex;
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  border-radius: 8px;
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.12);
+  }
+  .psy-calendar-page .psy-module-copy h1 { font-size: 1rem; }
+  .psy-calendar-page .psy-module-copy p { font-size: 0.75rem; }
+  .psy-module-menu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding: 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  background: rgba(9, 14, 28, 0.72);
+  color: rgba(255, 255, 255, 0.72);
+  }
+  .psy-module-menu span { display: block; width: 100%; height: 2px; margin: 0; }
+  .psy-module-brand { font-size: 0.95rem; }
+  .psy-module-status-summary { gap: 0.2rem; }
+  .psy-module-status { min-width: 1.35rem; height: 1.35rem; padding: 0; font-size: 0.68rem; }
+  .psy-module-copy h1 { font-size: 1rem; }
+  .psy-module-copy p { font-size: 0.75rem; }
+  .psy-module-header > .psy-dash-btn-primary { grid-column: 1 / -1; justify-self: stretch; }
+  .psy-patients-page, .psy-income-page, .psy-calendar-page { padding: 0.5rem; }
+  .psy-calendar-page .cal__bar { width: 100%; max-width: 100%; }
+  .psy-calendar-page .cal__nav { flex-wrap: wrap; }
+  .psy-calendar-page .cal__filters { flex-basis: 100%; }
+  .psy-calendar-page .cal__views { width: 100%; justify-content: center; }
+  .psy-calendar-page .cal__view { flex: 1 1 0; min-width: 0; }
+  .psy-calendar-page .cal__month { grid-auto-rows: minmax(64px, 1fr); }
+  .psy-calendar-page .cal__cell { padding: 0.25rem; }
+  .psy-calendar-page .cal-chip { max-width: 100%; }
   .psy-dash-header, .psy-cal-controls { gap: 0.75rem; }
   .psy-cal-nav, .psy-cal-views { width: 100%; justify-content: center; }
   .psy-cal-title { flex: 1 1 auto; }
@@ -3562,8 +3813,14 @@ body:has(.psy-dash) {
   .psy-profile-actions { align-items: stretch; flex-direction: column; }
   .psy-profile-actions .psy-dash-btn-primary { width: 100%; }
   .psy-profile-message { text-align: center; }
-  .psy-alert-page .psy-dash-header { align-items: center; }
-  .psy-alert-card { padding: 0.8rem; }
+.psy-alert-page { padding: 1rem; border-radius: 18px; }
+.psy-alert-page .psy-dash-header { align-items: center; }
+.psy-alert-page .psy-alert-count { right: 0; min-width: 1.5rem; height: 1.5rem; font-size: 0.7rem; }
+.psy-alert-count { min-width: 1.5rem; height: 1.5rem; font-size: 0.7rem; }
+  .psy-alert-card { min-height: 2.75rem; padding: 0.7rem 0.875rem; }
+  .psy-alert-card-text { gap: 0.45rem; }
+  .psy-alert-card-text strong { font-size: 0.95rem; }
+  .psy-alert-card-text small { font-size: 0.7rem; }
   .psy-patients-grid { grid-template-columns: 1fr; gap: 0.7rem; }
   .psy-patient-card { padding: 0.85rem; }
   .psy-patient-meta { flex-direction: column; gap: 0.2rem; }

@@ -71,6 +71,10 @@ function getNextDaysForWeek(): { date: Date; dayOfWeek: number; label: string }[
   return days;
 }
 
+function normalizeTime(time: string): string {
+  return time.slice(0, 5);
+}
+
 function formatTime(time: string): string {
   const [h, m] = time.split(':');
   const hour = parseInt(h, 10);
@@ -207,7 +211,7 @@ const SpecialistProfile: React.FC = () => {
         (b) => b.block_date === dateStr && b.start_time <= slot.start_time && b.end_time >= slot.end_time
       );
       const isTaken = existingAppts.some(
-        (a) => a.appointment_date === dateStr && a.start_time === slot.start_time
+        (a) => a.appointment_date === dateStr && normalizeTime(a.start_time) === normalizeTime(slot.start_time)
       );
       return !isBlocked && !isTaken;
     });
@@ -240,6 +244,19 @@ const SpecialistProfile: React.FC = () => {
     setBookingLoading(false);
 
     if (error) {
+      if (error.code === '23505' && error.message.includes('appointments_psychologist_slot_active_uidx')) {
+        alert('Este horario acaba de ser reservado por otro paciente. Selecciona otro horario.');
+        setExistingAppts((current) => [
+          ...current,
+          {
+            appointment_date: toDateStr(selectedDay.date),
+            start_time: selectedSlot.start_time,
+          },
+        ]);
+        setBookingStep('select');
+        setSelectedSlot(null);
+        return;
+      }
       alert('Error al crear la cita. Intenta de nuevo.');
       return;
     }
