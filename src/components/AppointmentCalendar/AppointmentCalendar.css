@@ -1235,7 +1235,7 @@ height: auto;
     flex-wrap: wrap;
     column-gap: 0.625rem;
     row-gap: 1rem;
-    padding-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
   }
   .cal__nav {
     width: 100%;
