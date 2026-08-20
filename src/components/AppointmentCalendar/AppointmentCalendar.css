@@ -1287,14 +1287,6 @@ height: auto;
   min-height: 4.25rem;
   align-items: flex-start;
   justify-content: space-between;
-  color: rgba(255, 255, 255, 0.82);
-  font-family: inherit;
-  text-align: left;
-}
-
-.cal__proposal-day:hover {
-  filter: none;
-  transform: none;
 }
 
 .cal__proposal-day--empty {
