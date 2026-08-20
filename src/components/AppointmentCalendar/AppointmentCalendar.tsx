@@ -304,7 +304,8 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
                       onClick={() => setPanelDay(key)}
                       {...dayCellProps(key)}
                     >
-                      {list.map((a) => chip(a, true))}
+                      <span className="cal-month-new__number">{d.getDate()}</span>
+                      {list.length > 0 && <span className="cal-month-new__count">{list.length}</span>}
                     </div>
                   );
                 })}
@@ -331,7 +332,8 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
                   className={`cal__day-slot psy-dash-upcoming-item ${dragOver === key ? 'cal__slot--dragover' : ''} ${blocked.has(key) ? 'cal-month-new__day--blocked' : ''} ${list.some((a) => a.status === 'confirmada') ? 'cal-month-new__day--confirmed' : ''} ${list.length > 0 && list.every((a) => a.status === 'completada') ? 'cal-month-new__day--completed' : ''}`}
                   {...dayCellProps(key)}
                 >
-                  {list.length === 0 ? <span className="cal__free">Libre</span> : list.map((a) => chip(a))}
+                  <span className="cal-month-new__number">{cursor.getDate()}</span>
+                  {list.length > 0 && <span className="cal-month-new__count">{list.length}</span>}
                 </div>
               </div>
             );
