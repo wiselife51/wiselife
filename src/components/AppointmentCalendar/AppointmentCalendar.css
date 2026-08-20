@@ -1231,9 +1231,21 @@ height: auto;
 }
 
 @media (max-width: 720px) {
-  .cal__bar { flex-wrap: wrap; gap: 0.625rem; }
-  .cal__nav { width: 100%; }
-  .cal__views { width: 100%; margin-left: 0; }
+  .cal__bar {
+    flex-wrap: wrap;
+    column-gap: 0.625rem;
+    row-gap: 1rem;
+    padding-bottom: 1.25rem;
+  }
+  .cal__nav {
+    width: 100%;
+    gap: 0.625rem;
+  }
+  .cal__views {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 0.25rem;
+  }
   .cal__view { flex: 1; }
   .cal__month {
     grid-template-rows: 2rem repeat(6, minmax(3.25rem, auto));
