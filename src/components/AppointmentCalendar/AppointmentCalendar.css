@@ -1531,7 +1531,13 @@ height: auto;
   }
   .cal-week-new .cal__week-body {
     grid-template-rows: repeat(15, 1.25rem);
-    row-gap: 0.3rem;
+    row-gap: 0.2rem;
+    align-content: start;
+    padding-bottom: 0;
+  }
+  .cal-week-new {
+    padding-bottom: 0;
+    margin-bottom: -0.25rem;
   }
   .cal-week-new .cal__slot,
   .cal-day-new .cal__day-slot {
