@@ -1546,6 +1546,21 @@ height: auto;
   gap: 0;
 }
 
+/* Evita que el separador del encabezado se superponga con la primera fila. */
+.cal-week-new .cal__week-head {
+  border-bottom: 0;
+  margin-bottom: 0.3rem;
+}
+
+.cal-week-new .cal__week-day,
+.cal-day-new__head {
+  border-bottom: 0;
+}
+
+.cal-day-new__head {
+  margin-bottom: 0.3rem;
+}
+
 .cal-week-new .cal__week-day strong,
 .cal-day-new__head strong {
   color: inherit;
