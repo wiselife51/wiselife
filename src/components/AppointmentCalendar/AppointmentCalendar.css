@@ -1264,9 +1264,9 @@ height: auto;
   width: 100%;
   margin-top: 0.5rem;
   padding: 0.75rem;
-  border: 1px solid var(--psy-border);
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.03);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
 .cal__proposal-month {
