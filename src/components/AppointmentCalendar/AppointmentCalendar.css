@@ -1109,25 +1109,138 @@ height: auto;
 
 /* La vista mensual reutiliza exactamente la tarjeta de Próximas citas. */
 .cal__month {
-  gap: 0;
-  column-gap: 0;
-  row-gap: 0;
-  grid-row-gap: 0;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-rows: 2.35rem repeat(6, minmax(4.4rem, auto));
+  grid-auto-rows: minmax(4.4rem, auto);
+  gap: 0.375rem;
+  height: auto;
   border: 0;
+  border-radius: 0;
   background: transparent;
 }
 
-.cal__month .cal__cell {
-  min-height: 4.25rem;
-  height: 4.25rem;
-  padding: 0.4rem 0.625rem;
+.cal__month > *,
+.cal__month > *:nth-child(7n),
+.cal__month > *:nth-last-child(-n + 7) {
   border: 1px solid var(--psy-border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.cal__month > .cal__weekday {
+  min-height: 2.35rem;
+  height: 2.35rem;
+  padding: 0 0.35rem;
+  background: rgba(255, 255, 255, 0.045);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.cal__month > .cal__cell {
+  min-height: 4.4rem;
+  height: auto;
+  align-items: flex-start;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.cal__month > .cal__cell:hover,
+.cal__month > .cal__cell--selected {
+  border-color: rgba(126, 87, 194, 0.25);
+  background: rgba(126, 87, 194, 0.1);
+}
+
+.cal__month > .cal__cell--today {
+  border-color: rgba(77, 208, 225, 0.45);
+  background: rgba(77, 208, 225, 0.06);
+}
+
+.cal__daynum {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.cal__cell-statuses {
+  flex: 1;
+  justify-content: flex-start;
+  gap: 0.3rem;
+  padding-top: 0.1rem;
+}
+
+.cal__status-total {
+  min-width: 1.25rem;
+  height: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 800;
+}
+
+.cal__week,
+.cal__day {
+  overflow: hidden;
+  border: 1px solid var(--psy-border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.cal__week-head {
+  background: rgba(255, 255, 255, 0.045);
+  border-bottom: 1px solid var(--psy-border);
+}
+
+.cal__week-day,
+.cal__slot,
+.cal__day-row {
+  border-color: var(--psy-border);
+}
+
+.cal__week-day:hover,
+.cal__slot:hover,
+.cal__day-slot:hover {
+  background: rgba(126, 87, 194, 0.1);
+}
+
+.cal__slot,
+.cal__day-slot {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.cal-chip {
+  border: 1px solid var(--psy-border);
+  border-left-width: 3px;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.03);
   transition: all 0.2s;
 }
 
-.cal__month .cal__cell:hover {
-  background: rgba(126, 87, 194, 0.1);
+.cal-chip:hover {
   border-color: rgba(126, 87, 194, 0.25);
+  background: rgba(126, 87, 194, 0.1);
+  filter: none;
+  transform: none;
+}
+
+.cal-panel,
+.cal-confirm__box {
+  border-color: var(--psy-border);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+}
+
+@media (max-width: 720px) {
+  .cal__bar { flex-wrap: wrap; gap: 0.625rem; }
+  .cal__nav { width: 100%; }
+  .cal__views { width: 100%; margin-left: 0; }
+  .cal__view { flex: 1; }
+  .cal__month {
+    grid-template-rows: 2rem repeat(6, minmax(3.25rem, auto));
+    grid-auto-rows: minmax(3.25rem, auto);
+    gap: 0.25rem;
+  }
+  .cal__month > .cal__weekday { min-height: 2rem; height: 2rem; font-size: 0.58rem; }
+  .cal__month > .cal__cell { min-height: 3.25rem; padding: 0.35rem; }
+  .cal__status-total { min-width: 1.05rem; height: 1.05rem; font-size: 0.55rem; }
 }
