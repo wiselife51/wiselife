@@ -203,10 +203,38 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
         </div>
       </header>
 
+      <section className="cal__proposal" aria-label="Propuesta de calendario">
+        {view === 'month' ? (
+          <div className="cal__proposal-month">
+            {DAY_SHORT.map((day) => <span key={day} className="cal__proposal-weekday">{day}</span>)}
+            {monthGrid(cursor.getFullYear(), cursor.getMonth()).map((date, index) => {
+              if (!date) return <span key={`empty-${index}`} className="cal__proposal-day cal__proposal-day--empty" />;
+              const dateKey = toDateStr(date);
+              const total = (byDate.get(dateKey) || []).length;
+              return (
+                <button
+                  key={dateKey}
+                  type="button"
+                  className={`cal__proposal-day ${dateKey === todayKey ? 'cal__proposal-day--today' : ''}`}
+                  onClick={() => { setCursor(date); setPanelDay(dateKey); }}
+                >
+                  <span className="cal__proposal-number">{date.getDate()}</span>
+                  {total > 0 && <span className="cal__proposal-count">{total}</span>}
+                </button>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="cal__proposal-placeholder">
+            <strong>{view === 'week' ? 'Calendario semanal' : 'Calendario diario'}</strong>
+            <span>Espacio reservado para esta vista.</span>
+          </div>
+        )}
+      </section>
 
       {/* ===== Vista mes ===== */}
       {view === 'month' && (
-        <div className="cal__month">
+        <div className="cal__month cal__legacy-view">
           {DAY_SHORT.map((d) => (
             <div key={d} className="cal__weekday">{d}</div>
           ))}
@@ -246,7 +274,7 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
 
       {/* ===== Vista semana ===== */}
       {view === 'week' && (
-        <div className="cal__week">
+        <div className="cal__week cal__legacy-view">
           <div className="cal__week-head">
             <div className="cal__gutter" />
             {weekGrid(cursor).map((d) => {
@@ -289,7 +317,7 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
 
       {/* ===== Vista dia ===== */}
       {view === 'day' && (
-        <div className="cal__day">
+        <div className="cal__day cal__legacy-view">
           {HOURS.map((h) => {
             const key = toDateStr(cursor);
             const list = (byDate.get(key) || []).filter((a) => parseInt(a.start_time.slice(0, 2), 10) === h);
