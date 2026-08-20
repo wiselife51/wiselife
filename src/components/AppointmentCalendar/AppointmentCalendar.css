@@ -1262,7 +1262,7 @@ height: auto;
 
 .cal__proposal {
   width: 100%;
-  margin-top: 0.75rem;
+  margin-top: 0.5rem;
   padding: 0.75rem;
   border: 1px solid var(--psy-border);
   border-radius: 12px;
