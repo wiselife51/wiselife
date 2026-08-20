@@ -215,7 +215,7 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
                 <button
                   key={dateKey}
                   type="button"
-                  className={`cal__proposal-day ${dateKey === todayKey ? 'cal__proposal-day--today' : ''}`}
+                  className={`cal__proposal-day psy-dash-upcoming-item ${dateKey === todayKey ? 'cal__proposal-day--today' : ''}`}
                   onClick={() => { setCursor(date); setPanelDay(dateKey); }}
                 >
                   <span className="cal__proposal-number">{date.getDate()}</span>

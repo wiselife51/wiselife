@@ -1285,24 +1285,16 @@ height: auto;
 
 .cal__proposal-day {
   min-height: 4.25rem;
-  display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 0.35rem;
-  padding: 0.4rem 0.625rem;
-  border: 1px solid var(--psy-border);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.03);
   color: rgba(255, 255, 255, 0.82);
-  cursor: pointer;
   font-family: inherit;
   text-align: left;
-  transition: all 0.2s;
 }
 
 .cal__proposal-day:hover {
-  background: rgba(126, 87, 194, 0.1);
-  border-color: rgba(126, 87, 194, 0.25);
+  filter: none;
+  transform: none;
 }
 
 .cal__proposal-day--empty {
