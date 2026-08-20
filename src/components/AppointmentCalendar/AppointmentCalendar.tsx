@@ -210,12 +210,15 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
             {monthGrid(cursor.getFullYear(), cursor.getMonth()).map((date, index) => {
               if (!date) return <span key={`empty-${index}`} className="cal-month-new__empty" />;
               const dateKey = toDateStr(date);
-              const total = (byDate.get(dateKey) || []).length;
+              const dayAppointments = byDate.get(dateKey) || [];
+              const total = dayAppointments.length;
+              const hasUnattendedConfirmed = dayAppointments.some((appointment) => appointment.status === 'confirmada' && dateKey < todayKey);
+              const isBlockedDay = blocked.has(dateKey);
               return (
                 <button
                   key={dateKey}
                   type="button"
-                  className="psy-dash-upcoming-item"
+                  className={`psy-dash-upcoming-item ${isBlockedDay ? 'cal-month-new__day--blocked' : ''} ${hasUnattendedConfirmed ? 'cal-month-new__day--unattended' : ''}`}
                   onClick={() => { setCursor(date); setPanelDay(dateKey); }}
                 >
                   <span className="cal-month-new__number">{date.getDate()}</span>
