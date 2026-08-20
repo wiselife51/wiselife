@@ -1408,8 +1408,8 @@ height: auto;
 .cal-week-new .cal__week-body {
   display: grid;
   grid-template-columns: 2rem repeat(7, minmax(0, 1fr));
-  grid-template-rows: repeat(15, 1.65rem);
-  row-gap: 0.2rem;
+  grid-template-rows: repeat(15, 1.25rem);
+  row-gap: 0.3rem;
   overflow: hidden;
   max-height: none;
 }
@@ -1429,10 +1429,10 @@ height: auto;
 
 .cal-week-new .cal__slot,
 .cal-day-new .cal__day-slot {
-  min-height: 1.65rem;
-  height: 1.65rem;
+  min-height: 1.25rem;
+  height: 1.25rem;
   width: 100%;
-  padding: 0.1rem 0.25rem;
+  padding: 0.05rem 0.2rem;
   align-items: center;
   border: 1px solid var(--psy-border);
   border-radius: 10px;
@@ -1491,9 +1491,9 @@ height: auto;
 
 .cal-day-new .cal__day-row {
   grid-template-columns: 2rem 1fr;
-  min-height: 1.65rem;
-  height: 1.65rem;
-  margin-bottom: 0.2rem;
+  min-height: 1.25rem;
+  height: 1.25rem;
+  margin-bottom: 0.3rem;
   border-bottom: 0;
 }
 
@@ -1503,19 +1503,19 @@ height: auto;
     grid-template-columns: 1.75rem repeat(7, minmax(0, 1fr));
   }
   .cal-week-new .cal__week-body {
-    grid-template-rows: repeat(15, 1.65rem);
-    row-gap: 0.2rem;
+    grid-template-rows: repeat(15, 1.25rem);
+    row-gap: 0.3rem;
   }
   .cal-week-new .cal__slot,
   .cal-day-new .cal__day-slot {
-    min-height: 1.65rem;
-    height: 1.65rem;
+    min-height: 1.25rem;
+    height: 1.25rem;
   }
   .cal-day-new .cal__day-row {
     grid-template-columns: 2rem 1fr;
-    min-height: 1.65rem;
-    height: 1.65rem;
-    margin-bottom: 0.2rem;
+    min-height: 1.25rem;
+    height: 1.25rem;
+    margin-bottom: 0.3rem;
   }
 }
 
