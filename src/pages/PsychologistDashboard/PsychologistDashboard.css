@@ -3808,4 +3808,24 @@ body:has(.psy-dash) {
   .psy-income-row { grid-template-columns: 72px 1fr auto; gap: 0.5rem; }
   .psy-income-row-date, .psy-income-row-patient small { font-size: 0.68rem; }
   .psy-income-row-amount { font-size: 0.78rem; }
+
+  /* El módulo debe tocar el borde superior en móvil; evita que un wrapper
+     flex o una regla heredada reserve una franja vacía. */
+  html body #root .psy-dash {
+    align-items: flex-start;
+  }
+  html body #root .psy-dash-main,
+  html body #root .psy-dash-main.psy-dash-main--flush {
+    align-self: flex-start;
+    height: auto;
+    min-height: 0;
+    margin: 0 !important;
+    padding: 0 0.75rem 1rem !important;
+  }
+  html body #root .psy-dash-main > .psy-alert-page,
+  html body #root .psy-dash-main > .psy-calendar-page {
+    align-self: flex-start;
+    margin: 0 !important;
+    padding-top: 0 !important;
+  }
 }
