@@ -2843,6 +2843,18 @@ body:has(.psy-dash) {
   justify-self: start;
   margin-right: 0;
   }
+
+  /* El botón del header compartido permanece dentro de su contenedor;
+     evita heredar la posición fija del toggle global. */
+  .psy-module-header .psy-mobile-menu-toggle,
+  .psy-calendar-page .psy-mobile-menu-toggle {
+  position: static;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  left: auto;
+  z-index: 1;
+  }
   .psy-alert-brand-center {
   grid-column: 2;
   display: flex;
