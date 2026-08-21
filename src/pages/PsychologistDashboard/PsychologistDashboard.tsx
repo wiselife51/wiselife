@@ -1065,7 +1065,13 @@ const PsychologistDashboard: React.FC = () => {
         )}
         {activeTab === 'pendientes' && (
           <section className="psy-alert-page">
-            <div className="psy-dash-header"><div><h1>Pendientes importantes</h1><p>Acciones clínicas que requieren tu atención.</p></div><span className="psy-alert-count psy-alert-count--warning">{warnings.length}</span></div>
+            <DashboardModuleHeader
+              title="Pendientes importantes"
+              subtitle="Acciones clínicas que requieren tu atención."
+              count={warnings.length}
+              onMenu={() => setShowMobileMenu(!showMobileMenu)}
+              menuOpen={showMobileMenu}
+            />
             {warnings.length === 0 ? <div className="psy-dash-empty"><p>No tienes pendientes importantes.</p></div> : <div className="psy-alert-list">{warnings.map((warning) => { const appt = appointments.find((a) => a.id === warning.appointmentId); return <button key={warning.appointmentId} type="button" className="psy-alert-card psy-alert-card--warning" onClick={() => { if (appt) { setPendingAppointmentToComplete(appt); setShowClinicalRecordModal(true); } }}><span className="psy-dash-pending-avatar" aria-hidden="true">!</span><span className="psy-alert-card-text"><strong>{warning.message.split(' - ')[0]}</strong><small>{warning.message.split(' - ').slice(1).join(' - ')}</small></span><span className="psy-dash-pending-status">HC</span></button>; })}</div>}
           </section>
         )}
