@@ -2994,8 +2994,25 @@ body:has(.psy-dash) {
   .psy-dash-sidebar .psy-dash-sidebar-pending-card {
     position: relative;
     z-index: 3;
-    pointer-events: auto;
   }
+
+  /* En móvil el sidebar es fixed y no debe reservar una pantalla completa
+     antes del contenido principal. El main debe permanecer en el flujo. */
+  .psy-dash {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  .psy-dash-main {
+    flex: 0 0 auto;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    padding: 0.75rem;
+  }
+
 
   .psy-dash > .psy-mobile-menu-backdrop {
     position: fixed;
