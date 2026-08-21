@@ -3729,6 +3729,13 @@ body:has(.psy-dash) {
   padding: 0.75rem;
   overflow: hidden;
 }
+
+/* El header de Calendario se alinea arriba con el botón de menú, sin el
+   espacio superior que añadía el padding interno del contenedor. */
+.psy-calendar-page {
+  padding-top: 0;
+}
+
 .psy-calendar-page .psy-module-header {
   margin: 0 0 0.9rem;
   border: 0;
