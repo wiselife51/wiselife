@@ -3825,6 +3825,13 @@ body:has(.psy-dash) {
     background: transparent;
     border-color: rgba(255, 255, 255, 0.12);
   }
+
+  /* Calendario reutiliza exactamente el hover del menú de Próximas citas. */
+  .psy-calendar-page .psy-module-header > .psy-mobile-menu-toggle:hover {
+    background: rgba(126, 87, 194, 0.2);
+    color: #b388ff;
+    border-color: rgba(126, 87, 194, 0.3);
+  }
   .psy-calendar-page .psy-module-copy h1 { font-size: 1rem; }
   .psy-calendar-page .psy-module-copy p { font-size: 0.75rem; }
   .psy-module-menu {
