@@ -631,11 +631,11 @@ body:has(.psy-dash) {
   min-width: 0;
   min-height: 0;
   height: 100%;
-  padding: 2rem;
+  padding: 0 2rem 2rem;
   overflow: hidden;
-}
+  }
 
-.psy-dash-header {
+  .psy-dash-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
