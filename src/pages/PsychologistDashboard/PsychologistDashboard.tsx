@@ -1038,6 +1038,12 @@ const PsychologistDashboard: React.FC = () => {
         {activeTab === 'calendario' && (
           <>
           <section className="psy-calendar-page">
+          <DashboardModuleHeader
+            title="Calendario"
+            subtitle="Consulta y administra tus citas programadas."
+            onMenu={() => setShowMobileMenu(!showMobileMenu)}
+            menuOpen={showMobileMenu}
+          />
           <AppointmentCalendar
             appointments={calendarAppointments}
             blockedDates={blockedDates}
