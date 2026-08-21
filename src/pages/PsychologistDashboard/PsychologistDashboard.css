@@ -3738,6 +3738,7 @@ body:has(.psy-dash) {
 
 .psy-calendar-page .psy-module-header {
   margin: 0 0 0.9rem;
+  padding-top: 0;
   border: 0;
   border-bottom: 1px solid rgba(126, 87, 194, 0.22);
   border-radius: 0;
@@ -3761,6 +3762,7 @@ body:has(.psy-dash) {
 
 @media (max-width: 768px) {
   .psy-module-header { grid-template-columns: 1fr auto 1fr; padding: 0.35rem 0.35rem 0.55rem; margin-bottom: 0.5rem; }
+  .psy-calendar-page .psy-module-header { padding-top: 0; }
   .psy-calendar-page .psy-module-copy h1 { font-size: 1rem; }
   .psy-calendar-page .psy-module-copy p { font-size: 0.75rem; }
   .psy-module-menu {
