@@ -167,23 +167,23 @@ const DashboardModuleHeader: React.FC<{
   action?: React.ReactNode;
   onMenu: () => void;
   menuOpen?: boolean;
-  }> = ({ title, subtitle, count, action, onMenu, menuOpen = false }) => (
+}> = ({ title, subtitle, count, action, onMenu, menuOpen = false }) => (
   <div className="psy-module-header">
-  <button
-  type="button"
-  className="psy-mobile-menu-toggle"
-  aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú de Perfil'}
-  title="Perfil"
-  onClick={onMenu}
-  >
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-  {menuOpen ? (
-  <><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></>
-  ) : (
-  <><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="18" x2="21" y2="18" /></>
-  )}
-  </svg>
-  </button>
+    <button
+      type="button"
+      className="psy-mobile-menu-toggle"
+      aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú de Perfil'}
+      title="Perfil"
+      onClick={onMenu}
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        {menuOpen ? (
+          <><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></>
+        ) : (
+          <><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="18" x2="21" y2="18" /></>
+        )}
+      </svg>
+    </button>
     <div className="psy-module-brand" aria-label="Vida Sabia">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" strokeWidth="2" aria-hidden="true">
         <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="url(#module-logo-grad)" />
@@ -1073,86 +1073,86 @@ const PsychologistDashboard: React.FC = () => {
         {/* CALENDARIO TAB */}
         {activeTab === 'calendario' && (
           <>
-          <section className="psy-calendar-page">
-          <DashboardModuleHeader
-            title="Calendario"
-            subtitle="Consulta y administra tus citas programadas."
-            onMenu={() => setShowMobileMenu(!showMobileMenu)}
-            menuOpen={showMobileMenu}
-          />
-          <AppointmentCalendar
-            appointments={calendarAppointments}
-            blockedDates={blockedDates}
-            onReschedule={handleCalendarReschedule}
-            onSelect={(a) => {
-              const original = appointments.find((x) => x.id === a.id);
-              if (original) {
-                setSelectedAppt(original);
-                setShowMobileMenu(false);
-              }
-            }}
-            renderDayActions={(dateKey) => (
-              <button
-                type="button"
-                className="cal-action"
-                onClick={() => {
-                  const [y, m, d] = dateKey.split('-').map(Number);
-                  setQuickBlockDate(new Date(y, m - 1, d));
-                  setBlockDate(dateKey);
-                  setShowQuickBlock(true);
+            <section className="psy-calendar-page">
+              <DashboardModuleHeader
+                title="Calendario"
+                subtitle="Consulta y administra tus citas programadas."
+                onMenu={() => setShowMobileMenu(!showMobileMenu)}
+                menuOpen={showMobileMenu}
+              />
+              <AppointmentCalendar
+                appointments={calendarAppointments}
+                blockedDates={blockedDates}
+                onReschedule={handleCalendarReschedule}
+                onSelect={(a) => {
+                  const original = appointments.find((x) => x.id === a.id);
+                  if (original) {
+                    setSelectedAppt(original);
+                    setShowMobileMenu(false);
+                  }
                 }}
-              >
-                Bloquear horario
-              </button>
-            )}
-            renderActions={(a) => {
-              const original = appointments.find((x) => x.id === a.id);
-              if (!original) return null;
-              return (
-                <>
+                renderDayActions={(dateKey) => (
                   <button
                     type="button"
                     className="cal-action"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      setSelectedAppt(original);
-                      setShowMobileMenu(false);
+                    onClick={() => {
+                      const [y, m, d] = dateKey.split('-').map(Number);
+                      setQuickBlockDate(new Date(y, m - 1, d));
+                      setBlockDate(dateKey);
+                      setShowQuickBlock(true);
                     }}
                   >
-                    Ver detalle
+                    Bloquear horario
                   </button>
-                  {original.patient?.phone && (
-                    <button
-                      type="button"
-                      className="cal-action"
-                      onClick={() => handleOpenWhatsApp(original.patient?.phone, original.patient?.full_name || 'Paciente')}
-                    >
-                      WhatsApp
-                    </button>
-                  )}
-                  {original.status === 'confirmada' && (
-                    <button
-                      type="button"
-                      className="cal-action cal-action--primary"
-                      onClick={() => handleCompleteAppt(original.id)}
-                    >
-                      Marcar completada
-                    </button>
-                  )}
-                  {original.status === 'pendiente_pago' && (
-                    <button
-                      type="button"
-                      className="cal-action cal-action--primary"
-                      onClick={() => handleConfirmPayment(original.id)}
-                    >
-                      Confirmar pago
-                    </button>
-                  )}
-                </>
-              );
-            }}
-          />
-          </section>
+                )}
+                renderActions={(a) => {
+                  const original = appointments.find((x) => x.id === a.id);
+                  if (!original) return null;
+                  return (
+                    <>
+                      <button
+                        type="button"
+                        className="cal-action"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setSelectedAppt(original);
+                          setShowMobileMenu(false);
+                        }}
+                      >
+                        Ver detalle
+                      </button>
+                      {original.patient?.phone && (
+                        <button
+                          type="button"
+                          className="cal-action"
+                          onClick={() => handleOpenWhatsApp(original.patient?.phone, original.patient?.full_name || 'Paciente')}
+                        >
+                          WhatsApp
+                        </button>
+                      )}
+                      {original.status === 'confirmada' && (
+                        <button
+                          type="button"
+                          className="cal-action cal-action--primary"
+                          onClick={() => handleCompleteAppt(original.id)}
+                        >
+                          Marcar completada
+                        </button>
+                      )}
+                      {original.status === 'pendiente_pago' && (
+                        <button
+                          type="button"
+                          className="cal-action cal-action--primary"
+                          onClick={() => handleConfirmPayment(original.id)}
+                        >
+                          Confirmar pago
+                        </button>
+                      )}
+                    </>
+                  );
+                }}
+              />
+            </section>
           </>
         )}
 
@@ -1160,9 +1160,9 @@ const PsychologistDashboard: React.FC = () => {
         {activeTab === 'agenda' && (
           <>
             <DashboardModuleHeader title="Mi Agenda" subtitle="Configura tus horarios disponibles para recibir pacientes." onMenu={() => setShowMobileMenu(!showMobileMenu)} action={<button type="button" className="psy-dash-btn-primary" onClick={() => setShowAddSlot(true)}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                Agregar horario
-              </button>} />
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+              Agregar horario
+            </button>} />
 
             <div className="psy-dash-info-box">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>
@@ -1269,9 +1269,9 @@ const PsychologistDashboard: React.FC = () => {
         {activeTab === 'bloqueos' && (
           <>
             <DashboardModuleHeader title="Bloqueos de horario" subtitle="Administra las fechas en las que no atenderás pacientes." onMenu={() => setShowMobileMenu(!showMobileMenu)} action={<button type="button" className="psy-dash-btn-primary" onClick={() => setShowBlockForm(true)}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                Bloquear fecha
-              </button>} />
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+              Bloquear fecha
+            </button>} />
 
             <p className="psy-dash-block-desc">Bloquea fechas y horas especificas cuando no puedas atender. Los sabados y domingos estan bloqueados automáticamente, asi como todos los meses excepto el actual y el siguiente. Tambien puedes bloquear desde el calendario haciendo clic derecho en cualquier celda.</p>
 
@@ -1370,8 +1370,8 @@ const PsychologistDashboard: React.FC = () => {
 
         {activeTab === 'perfil' && profile && (
           <section className="psy-profile-page">
-  <DashboardModuleHeader title="Mi perfil" subtitle="Mantén actualizada tu información profesional." onMenu={() => setShowMobileMenu(!showMobileMenu)} />
-  <div className="psy-profile-intro">
+            <DashboardModuleHeader title="Mi perfil" subtitle="Mantén actualizada tu información profesional." onMenu={() => setShowMobileMenu(!showMobileMenu)} />
+            <div className="psy-profile-intro">
               <div className="psy-profile-card-head">
                 <div className="psy-dash-avatar psy-profile-avatar">
                   {profile.avatar_url ? <img src={profile.avatar_url} alt={profile.full_name} crossOrigin="anonymous" /> : <span>{profile.full_name.charAt(0)}</span>}
@@ -1522,12 +1522,12 @@ const PsychologistDashboard: React.FC = () => {
                   </button>
                 )}
                 {selectedAppt.status === 'confirmada' && (
-<button className="psy-complete-btn" onClick={() => handleCompleteAppt(selectedAppt.id)} type="button">
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-  <circle cx="12" cy="12" r="9" />
-  <path d="M8 12l2.5 2.5L16 9" />
-  </svg>
-  Evolucionar
+                  <button className="psy-complete-btn" onClick={() => handleCompleteAppt(selectedAppt.id)} type="button">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="9" />
+                      <path d="M8 12l2.5 2.5L16 9" />
+                    </svg>
+                    Evolucionar
                   </button>
                 )}
                 {selectedAppt.patient && (
