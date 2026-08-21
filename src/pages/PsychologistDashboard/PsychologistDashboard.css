@@ -3766,6 +3766,7 @@ body:has(.psy-dash) {
   border-radius: 8px;
   background: transparent;
   border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(0.35rem);
   }
   .psy-calendar-page .psy-module-copy h1 { font-size: 1rem; }
   .psy-calendar-page .psy-module-copy p { font-size: 0.75rem; }
