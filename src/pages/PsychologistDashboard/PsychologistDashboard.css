@@ -3843,4 +3843,36 @@ body:has(.psy-dash) {
     margin: 0 !important;
     padding-top: 0 !important;
   }
+
+  /* Todos los módulos usan el mismo encabezado móvil: menú a la izquierda,
+     logo al lado y título debajo. */
+  html body #root .psy-module-header {
+    grid-template-columns: 2rem auto 1fr !important;
+    align-items: center;
+    padding: 0.35rem 0.35rem 0.55rem !important;
+  }
+  html body #root .psy-module-header > .psy-mobile-menu-toggle {
+    position: static !important;
+    display: flex !important;
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    justify-self: start !important;
+    width: 32px;
+    height: 32px;
+    margin: 0 !important;
+  }
+  html body #root .psy-module-header > .psy-module-brand {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    justify-self: start !important;
+  }
+  html body #root .psy-module-header > .psy-module-copy {
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
+  }
+  html body #root .psy-module-header > .psy-dash-btn-primary {
+    grid-column: 3 !important;
+    grid-row: 1 !important;
+    justify-self: end !important;
+  }
 }
