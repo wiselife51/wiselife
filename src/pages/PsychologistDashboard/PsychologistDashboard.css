@@ -3432,7 +3432,7 @@ body:has(.psy-dash) {
   .psy-dash-main {
   width: 100%;
   height: 100dvh;
-  padding: 1.25rem 0.75rem 1rem;
+  padding: 0 0.75rem 1rem;
   overflow-x: hidden;
   overflow-y: auto;
   }
@@ -3445,6 +3445,10 @@ body:has(.psy-dash) {
   .psy-dash-main:has(.psy-calendar-page) .psy-calendar-page,
   .psy-dash-main:has(.psy-alert-page) .psy-alert-page {
   margin-top: 0;
+  }
+  .psy-calendar-page,
+  .psy-alert-page {
+  padding-top: 0 !important;
   }
   .psy-dash-main--flush .psy-alert-page {
   margin-top: 0.5rem;
