@@ -4,3 +4,11 @@
   padding: 2rem;
   text-align: center;
 }
+
+/* El dashboard del psicólogo ocupa toda la pantalla móvil; no debe heredar
+   el padding de la plantilla Vite que crea una franja superior vacía. */
+body:has(.psy-dash) #root {
+  max-width: none;
+  padding: 0;
+  text-align: initial;
+}
