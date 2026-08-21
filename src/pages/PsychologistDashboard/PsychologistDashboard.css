@@ -3437,11 +3437,15 @@ body:has(.psy-dash) {
   overflow-y: auto;
   }
   .psy-dash-main--flush,
-  .psy-dash-main:has(.psy-calendar-page) {
+  .psy-dash-main:has(.psy-calendar-page),
+  .psy-dash-main:has(.psy-alert-page) {
   padding-top: 0 !important;
   margin-top: 0;
   }
-  .psy-dash-main:has(.psy-calendar-page) .psy-calendar-page { margin-top: 0; }
+  .psy-dash-main:has(.psy-calendar-page) .psy-calendar-page,
+  .psy-dash-main:has(.psy-alert-page) .psy-alert-page {
+  margin-top: 0;
+  }
   .psy-dash-main--flush .psy-alert-page {
   margin-top: 0.5rem;
   transform: none;
@@ -3745,7 +3749,7 @@ body:has(.psy-dash) {
 .psy-cal-title { min-width: 0; text-align: center; overflow-wrap: anywhere; }
 
 @media (max-width: 768px) {
-  .psy-module-header { grid-template-columns: 1fr auto 1fr; padding: 0.75rem 0.35rem 0.9rem; margin-bottom: 0.75rem; }
+  .psy-module-header { grid-template-columns: 1fr auto 1fr; padding: 0.35rem 0.35rem 0.55rem; margin-bottom: 0.5rem; }
   .psy-calendar-page .psy-module-header { padding-inline: 0.25rem; }
   .psy-calendar-page .psy-module-header > .psy-mobile-menu-toggle {
   position: static;
@@ -3780,7 +3784,8 @@ body:has(.psy-dash) {
   .psy-module-copy h1 { font-size: 1rem; }
   .psy-module-copy p { font-size: 0.75rem; }
   .psy-module-header > .psy-dash-btn-primary { grid-column: 1 / -1; justify-self: stretch; }
-  .psy-patients-page, .psy-income-page, .psy-calendar-page { padding: 0.5rem; }
+  .psy-patients-page, .psy-income-page, .psy-calendar-page { padding: 0.25rem 0.5rem 0.5rem; }
+  .psy-alert-page { padding-top: 0.5rem; }
   .psy-calendar-page .cal__bar { width: 100%; max-width: 100%; }
   .psy-calendar-page .cal__nav { flex-wrap: wrap; }
   .psy-calendar-page .cal__filters { flex-basis: 100%; }
