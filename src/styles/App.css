@@ -1,14 +1,29 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-/* El dashboard del psicólogo ocupa toda la pantalla móvil; no debe heredar
-   el padding de la plantilla Vite que crea una franja superior vacía. */
-body:has(.psy-dash) #root {
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 0;
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+#root {
   max-width: none;
   padding: 0;
   text-align: initial;
+}
+
+.app-container {
+  width: 100%;
+  min-width: 0;
 }
