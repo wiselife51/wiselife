@@ -571,7 +571,7 @@ body:has(.psy-dash) {
 }
 
 .psy-dash-nav-item--active {
-  background: rgba(126, 87, 194, 0.15);
+  background: var(--psy-surface);
   color: #b388ff;
   border: 1px solid rgba(126, 87, 194, 0.2);
 }
@@ -1247,16 +1247,8 @@ body:has(.psy-dash) {
 .psy-alert-card-text strong { color: #f4f1ff; }
 .psy-alert-card-text small { color: rgba(255, 255, 255, 0.58); }
 .psy-alert-card--warning { border-color: rgba(255, 193, 7, 0.28); }
-  .psy-dash-nav-item--priority { border-color: var(--psy-border); background: var(--psy-surface); }
-  .psy-dash-nav-item--priority:not(.psy-dash-nav-item--active) { color: rgba(255, 255, 255, 0.65); }
+  .psy-dash-nav-item--priority:not(.psy-dash-nav-item--active) { border-color: var(--psy-border); background: var(--psy-surface); color: rgba(255, 255, 255, 0.65); }
   .psy-dash-nav-item--priority:not(.psy-dash-nav-item--active) svg { color: inherit; }
-  .psy-dash-nav-item--priority.psy-dash-nav-item--active,
-  .psy-dash-nav-item--priority.psy-dash-nav-item--active:focus,
-  .psy-dash-nav-item--priority.psy-dash-nav-item--active:focus-visible {
-    outline: none;
-    box-shadow: none;
-    border-color: rgba(126, 87, 194, 0.2);
-  }
 .psy-alert-card--warning { border-color: rgba(255, 193, 7, 0.25); }
 .psy-alert-card-text { display: flex; flex-direction: row; align-items: baseline; gap: 0.65rem; min-width: 0; }
 .psy-alert-card-text strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: white; font-size: 0.85rem; font-weight: 600; }
