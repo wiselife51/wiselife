@@ -352,31 +352,33 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
             </button>
           </header>
 
-          {renderDayActions && <div className="cal-panel__dayactions">{renderDayActions(panelDay)}</div>}
+          <div className="cal-panel__body">
+            {renderDayActions && <div className="cal-panel__dayactions">{renderDayActions(panelDay)}</div>}
 
-          {panelAppts.length === 0 ? (
-            <p className="cal-panel__empty">{emptyLabel}</p>
-          ) : (
-            <ul className="cal-panel__list">
-              {panelAppts.map((a) => (
-                <li key={a.id} className={`cal-panel__item cal-panel__item--${STATUS_META[a.status]?.key || 'other'}`}>
-                  <div className="cal-panel__item-head">
-                    <div>
-                      <p className="cal-panel__name">{a.title}</p>
-                      <p className="cal-panel__time">
-                        {fmtTime(a.start_time)} - {fmtTime(a.end_time)}
-                      </p>
-                      {a.subtitle && <p className="cal-panel__sub">{a.subtitle}</p>}
+            {panelAppts.length === 0 ? (
+              <p className="cal-panel__empty">{emptyLabel}</p>
+            ) : (
+              <ul className="cal-panel__list">
+                {panelAppts.map((a) => (
+                  <li key={a.id} className={`cal-panel__item cal-panel__item--${STATUS_META[a.status]?.key || 'other'}`}>
+                    <div className="cal-panel__item-head">
+                      <div>
+                        <p className="cal-panel__name">{a.title}</p>
+                        <p className="cal-panel__time">
+                          {fmtTime(a.start_time)} - {fmtTime(a.end_time)}
+                        </p>
+                        {a.subtitle && <p className="cal-panel__sub">{a.subtitle}</p>}
+                      </div>
+                      <span className={`cal-panel__badge cal-panel__badge--${STATUS_META[a.status]?.key || 'other'}`}>
+                        {STATUS_META[a.status]?.label || a.status}
+                      </span>
                     </div>
-                    <span className={`cal-panel__badge cal-panel__badge--${STATUS_META[a.status]?.key || 'other'}`}>
-                      {STATUS_META[a.status]?.label || a.status}
-                    </span>
-                  </div>
-                  {renderActions && <div className="cal-panel__actions">{renderActions(a)}</div>}
-                </li>
-              ))}
-            </ul>
-          )}
+                    {renderActions && <div className="cal-panel__actions">{renderActions(a)}</div>}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </aside>
       )}
 
