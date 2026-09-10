@@ -1232,6 +1232,20 @@ body:has(.psy-dash) {
 
 .psy-alert-page .psy-dash-header h1 { margin: 0; color: #f4f1ff; font-size: 1rem; font-weight: 600; letter-spacing: 0; }
 .psy-alert-page .psy-dash-header p { margin: 0.25rem 0 0; color: rgba(255, 255, 255, 0.58); font-size: 0.78rem; }
+
+/* Próximas citas / Pendientes ahora usan el DashboardModuleHeader compartido:
+   se quita el estilo de tarjeta propio para que se integre en .psy-alert-page. */
+.psy-alert-page .psy-module-header {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0 0 1.15rem;
+  margin-bottom: 1.15rem;
+  border-bottom: 1px solid rgba(126, 87, 194, 0.2);
+}
+.psy-alert-page .psy-module-copy h1 { font-size: 1rem; font-weight: 600; color: #f4f1ff; letter-spacing: 0; }
+.psy-alert-page .psy-module-copy p { margin-top: 0.25rem; color: rgba(255, 255, 255, 0.58); font-size: 0.78rem; }
 .psy-alert-count { display: grid; min-width: 1.75rem; height: 1.75rem; place-items: center; border: 1px solid rgba(126, 87, 194, 0.32); border-radius: 999px; background: rgba(126, 87, 194, 0.12); color: #b388ff; font-size: 0.78rem; font-weight: 600; }
 .psy-alert-count--warning { border-color: rgba(255, 193, 7, 0.4); background: rgba(255, 193, 7, 0.1); color: #ffd54f; }
 .psy-alert-list { display: flex; flex-direction: column; gap: 0.8rem; padding-top: 1.15rem; }

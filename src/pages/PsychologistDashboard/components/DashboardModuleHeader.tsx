@@ -4,6 +4,7 @@ type DashboardModuleHeaderProps = {
   title: string
   subtitle?: string
   count?: number
+  countVariant?: 'default' | 'warning'
   action?: ReactNode
   onMenu: () => void
   menuOpen?: boolean
@@ -13,6 +14,7 @@ export function DashboardModuleHeader({
   title,
   subtitle,
   count,
+  countVariant = 'default',
   action,
   onMenu,
   menuOpen = false,
@@ -41,7 +43,9 @@ export function DashboardModuleHeader({
         </svg>
         <span>Vida Sabia</span>
       </div>
-      {count !== undefined ? <span className="psy-alert-count">{count}</span> : null}
+      {count !== undefined ? (
+        <span className={`psy-alert-count${countVariant === 'warning' ? ' psy-alert-count--warning' : ''}`}>{count}</span>
+      ) : null}
       <div className="psy-module-copy"><h1>{title}</h1>{subtitle && <p>{subtitle}</p>}</div>
       {action}
     </header>
