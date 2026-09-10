@@ -3024,7 +3024,7 @@ body:has(.psy-dash) {
   .psy-dash-main {
     position: relative;
     z-index: 0;
-    padding: 0.75rem 0.75rem 1.25rem;
+    padding: 0.75rem;
     margin-top: 0;
   }
 
@@ -3213,10 +3213,7 @@ body:has(.psy-dash) {
 
 @media (max-width: 480px) {
   .psy-dash-main {
-    padding: 1rem 0.75rem;
-  }
-  .psy-dash-main--flush {
-    padding-top: 0;
+    padding: 0.75rem;
   }
 
   .psy-month-cell {
@@ -3444,23 +3441,18 @@ body:has(.psy-dash) {
   .psy-dash-main {
   width: 100%;
   height: 100dvh;
-  padding: 0 0.75rem 1rem;
+  padding: 0.75rem;
   overflow-x: hidden;
   overflow-y: auto;
   }
   .psy-dash-main--flush,
   .psy-dash-main:has(.psy-calendar-page),
   .psy-dash-main:has(.psy-alert-page) {
-  padding-top: 0 !important;
   margin-top: 0;
   }
   .psy-dash-main:has(.psy-calendar-page) .psy-calendar-page,
   .psy-dash-main:has(.psy-alert-page) .psy-alert-page {
   margin-top: 0;
-  }
-  .psy-calendar-page,
-  .psy-alert-page {
-  padding-top: 0 !important;
   }
   .psy-dash-main--flush .psy-alert-page {
   margin-top: 0.5rem;
@@ -3651,7 +3643,7 @@ body:has(.psy-dash) {
 /* Responsive order for dates, filters and calendar actions. */
 .psy-dash, .psy-dash-main, .psy-dash-header, .psy-cal-controls,
 .psy-cal-nav, .psy-cal-views { min-width: 0; }
-.psy-dash-main { min-height: 100dvh; box-sizing: border-box; padding-bottom: 3rem; }
+.psy-dash-main { min-height: 100dvh; box-sizing: border-box; }
 
 /* Compact sizing shared by the appointment panel at every viewport. */
 .psy-appt-modal-layer .psy-dash-modal--wide {
