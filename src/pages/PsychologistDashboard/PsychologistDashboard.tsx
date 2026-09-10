@@ -6,6 +6,7 @@ import ClinicalRecordModal from '../../components/ClinicalRecordModal/ClinicalRe
 import SessionNoteModal from '../../components/SessionNoteModal/SessionNoteModal';
 import ClinicalHistoryView from '../../components/ClinicalHistoryView/ClinicalHistoryView';
 import './PsychologistDashboard.css';
+import { DashboardModuleHeader } from './components/DashboardModuleHeader';
 import { toDateStr } from '../../lib/date';
 import AppointmentCalendar from '../../components/AppointmentCalendar/AppointmentCalendar';
 import type { CalendarAppointment } from '../../components/AppointmentCalendar/status';
@@ -159,43 +160,6 @@ function formatTime(t: string): string {
   const h12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
   return `${h12}:${m} ${ap}`;
 }
-
-const DashboardModuleHeader: React.FC<{
-  title: string;
-  subtitle?: string;
-  count?: number;
-  action?: React.ReactNode;
-  onMenu: () => void;
-  menuOpen?: boolean;
-  }> = ({ title, subtitle, count, action, onMenu, menuOpen = false }) => (
-  <div className="psy-module-header">
-  <button
-  type="button"
-  className="psy-mobile-menu-toggle"
-  aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú de Perfil'}
-  title="Perfil"
-  onClick={onMenu}
-  >
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-  {menuOpen ? (
-  <><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></>
-  ) : (
-  <><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="18" x2="21" y2="18" /></>
-  )}
-  </svg>
-  </button>
-    <div className="psy-module-brand" aria-label="Vida Sabia">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" strokeWidth="2" aria-hidden="true">
-        <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="url(#module-logo-grad)" />
-        <defs><linearGradient id="module-logo-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#4dd0e1" /><stop offset="50%" stopColor="#42a5f5" /><stop offset="100%" stopColor="#7e57c2" /></linearGradient></defs>
-      </svg>
-      <span>Vida Sabia</span>
-    </div>
-    {count !== undefined ? <span className="psy-alert-count">{count}</span> : null}
-    <div className="psy-module-copy"><h1>{title}</h1>{subtitle && <p>{subtitle}</p>}</div>
-    {action}
-  </div>
-);
 
 const PsychologistDashboard: React.FC = () => {
   const { user, loading: authLoading, signOut } = useAuth();
@@ -1034,38 +998,26 @@ const PsychologistDashboard: React.FC = () => {
       <main className={`psy-dash-main ${activeTab === 'proximas' || activeTab === 'pendientes' ? 'psy-dash-main--flush' : ''}`}>
         {activeTab === 'proximas' && (
           <section className="psy-alert-page">
-            <div className="psy-alert-brand" aria-label="Vida Sabia">
-              <button
-                aria-label={showMobileMenu ? 'Cerrar menú' : 'Abrir menú de Perfil'}
-                title="Perfil"
-                className="psy-mobile-menu-toggle"
-                onClick={() => setShowMobileMenu(!showMobileMenu)}
-                type="button"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  {showMobileMenu ? (
-                    <><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></>
-                  ) : (
-                    <><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="18" x2="21" y2="18" /></>
-                  )}
-                </svg>
-              </button>
-              <div className="psy-alert-brand-center psy-dash-logo">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" strokeWidth="2" aria-hidden="true">
-                  <defs><linearGradient id="upcoming-logo-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#4dd0e1" /><stop offset="50%" stopColor="#42a5f5" /><stop offset="100%" stopColor="#7e57c2" /></linearGradient></defs>
-                  <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="url(#upcoming-logo-grad)" />
-                </svg>
-                <span>Vida Sabia</span>
-              </div>
-              <span className="psy-alert-count">{upcomingAppts.length}</span>
-            </div>
-            <div className="psy-dash-header"><div><h1>Próximas citas</h1><p>Consulta tus próximas sesiones y abre sus detalles.</p></div></div>
+            <DashboardModuleHeader
+              title="Próximas citas"
+              subtitle="Consulta tus próximas sesiones y abre sus detalles."
+              count={upcomingAppts.length}
+              onMenu={() => setShowMobileMenu(!showMobileMenu)}
+              menuOpen={showMobileMenu}
+            />
             {upcomingAppts.length === 0 ? <div className="psy-dash-empty"><p>No tienes próximas citas.</p></div> : <div className="psy-alert-list">{upcomingAppts.map((a) => <button key={a.id} type="button" className="psy-alert-card" onClick={() => openAppointmentDetails(a)}><span className="psy-dash-upcoming-avatar-sm">{a.patient?.avatar_url ? <img src={a.patient.avatar_url} alt="" crossOrigin="anonymous" /> : <span>{(a.patient?.full_name || 'P').charAt(0)}</span>}</span><span className="psy-alert-card-text"><strong>{a.patient?.full_name || 'Paciente'}</strong><small>{a.appointment_date.split('-').reverse().join('/')} · {formatTime(a.start_time)}</small></span><span className={`psy-dash-mini-status psy-dash-mini-status--${a.status}`}>{a.status === 'confirmada' ? 'OK' : '$'}</span></button>)}</div>}
           </section>
         )}
         {activeTab === 'pendientes' && (
           <section className="psy-alert-page">
-            <div className="psy-dash-header"><div><h1>Pendientes importantes</h1><p>Acciones clínicas que requieren tu atención.</p></div><span className="psy-alert-count psy-alert-count--warning">{warnings.length}</span></div>
+            <DashboardModuleHeader
+              title="Pendientes importantes"
+              subtitle="Acciones clínicas que requieren tu atención."
+              count={warnings.length}
+              countVariant="warning"
+              onMenu={() => setShowMobileMenu(!showMobileMenu)}
+              menuOpen={showMobileMenu}
+            />
             {warnings.length === 0 ? <div className="psy-dash-empty"><p>No tienes pendientes importantes.</p></div> : <div className="psy-alert-list">{warnings.map((warning) => { const appt = appointments.find((a) => a.id === warning.appointmentId); return <button key={warning.appointmentId} type="button" className="psy-alert-card psy-alert-card--warning" onClick={() => { if (appt) { setPendingAppointmentToComplete(appt); setShowClinicalRecordModal(true); } }}><span className="psy-dash-pending-avatar" aria-hidden="true">!</span><span className="psy-alert-card-text"><strong>{warning.message.split(' - ')[0]}</strong><small>{warning.message.split(' - ').slice(1).join(' - ')}</small></span><span className="psy-dash-pending-status">HC</span></button>; })}</div>}
           </section>
         )}
@@ -1158,7 +1110,7 @@ const PsychologistDashboard: React.FC = () => {
 
         {/* AGENDA TAB - availability config */}
         {activeTab === 'agenda' && (
-          <>
+          <section className="psy-agenda-page">
             <DashboardModuleHeader title="Mi Agenda" subtitle="Configura tus horarios disponibles para recibir pacientes." onMenu={() => setShowMobileMenu(!showMobileMenu)} action={<button type="button" className="psy-dash-btn-primary" onClick={() => setShowAddSlot(true)}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
                 Agregar horario
@@ -1262,12 +1214,12 @@ const PsychologistDashboard: React.FC = () => {
                 </div>
               </div>
             )}
-          </>
+          </section>
         )}
 
         {/* BLOQUEOS TAB */}
         {activeTab === 'bloqueos' && (
-          <>
+          <section className="psy-bloqueos-page">
             <DashboardModuleHeader title="Bloqueos de horario" subtitle="Administra las fechas en las que no atenderás pacientes." onMenu={() => setShowMobileMenu(!showMobileMenu)} action={<button type="button" className="psy-dash-btn-primary" onClick={() => setShowBlockForm(true)}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
                 Bloquear fecha
@@ -1334,7 +1286,7 @@ const PsychologistDashboard: React.FC = () => {
                 </div>
               </div>
             )}
-          </>
+          </section>
         )}
 
         {activeTab === 'pacientes' && (

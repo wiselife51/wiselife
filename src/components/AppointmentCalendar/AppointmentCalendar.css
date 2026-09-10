@@ -624,9 +624,8 @@
   width: min(380px, 92vw);
   display: flex;
   flex-direction: column;
-  gap: 0.875rem;
-  padding: 1.25rem;
-  overflow-y: auto;
+  min-height: 0;
+  overflow: hidden;
   background: rgba(16, 24, 37, 0.72);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -641,10 +640,43 @@
 }
 
 .cal-panel__head {
+  flex: 0 0 auto;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 0.75rem;
+  padding: 1.25rem 1.25rem 0.875rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.cal-panel__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1.125rem 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(126, 87, 194, 0.55) transparent;
+}
+
+.cal-panel__body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.cal-panel__body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cal-panel__body::-webkit-scrollbar-thumb {
+  background: rgba(126, 87, 194, 0.55);
+  border-radius: 999px;
+}
+
+.cal-panel__body::-webkit-scrollbar-thumb:hover {
+  background: rgba(126, 87, 194, 0.75);
 }
 
 .cal-panel__date {
