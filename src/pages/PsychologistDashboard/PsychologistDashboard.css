@@ -3747,10 +3747,11 @@ body:has(.psy-dash) {
   .psy-profile-actions .psy-dash-btn-primary { width: 100%; }
   .psy-profile-message { text-align: center; }
   .psy-alert-count { width: 1.5rem; min-width: 1.5rem; height: 1.5rem; font-size: 0.7rem; }
+  .psy-alert-list { padding-top: 0.7rem; }
   .psy-alert-card { min-height: 2.75rem; padding: 0.7rem 0.875rem; }
   .psy-alert-card-text { gap: 0.45rem; }
-  .psy-alert-card-text strong { font-size: 0.95rem; }
-  .psy-alert-card-text small { font-size: 0.7rem; }
+  .psy-alert-card-text strong { font-size: 0.82rem; }
+  .psy-alert-card-text small { font-size: 0.68rem; }
   .psy-patients-grid { grid-template-columns: 1fr; gap: 0.7rem; }
   .psy-patient-card { padding: 0.85rem; }
   .psy-patient-meta { flex-direction: column; gap: 0.2rem; }
