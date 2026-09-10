@@ -2890,7 +2890,7 @@ body:has(.psy-dash) {
   }
 
   .psy-dash > .psy-dash-sidebar {
-  position: fixed;
+  position: fixed !important;
   top: 0;
   right: auto;
   bottom: 0;
@@ -2899,7 +2899,7 @@ body:has(.psy-dash) {
   flex-direction: column;
   width: min(86vw, 320px);
   max-width: 320px;
-  height: 100dvh;
+  height: 100dvh !important;
   z-index: 210 !important;
   background: rgba(17, 24, 39, 0.68);
   backdrop-filter: blur(12px);
