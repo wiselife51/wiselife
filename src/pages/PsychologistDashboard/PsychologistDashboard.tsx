@@ -1110,7 +1110,7 @@ const PsychologistDashboard: React.FC = () => {
 
         {/* AGENDA TAB - availability config */}
         {activeTab === 'agenda' && (
-          <>
+          <section className="psy-agenda-page">
             <DashboardModuleHeader title="Mi Agenda" subtitle="Configura tus horarios disponibles para recibir pacientes." onMenu={() => setShowMobileMenu(!showMobileMenu)} action={<button type="button" className="psy-dash-btn-primary" onClick={() => setShowAddSlot(true)}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
                 Agregar horario
@@ -1214,12 +1214,12 @@ const PsychologistDashboard: React.FC = () => {
                 </div>
               </div>
             )}
-          </>
+          </section>
         )}
 
         {/* BLOQUEOS TAB */}
         {activeTab === 'bloqueos' && (
-          <>
+          <section className="psy-bloqueos-page">
             <DashboardModuleHeader title="Bloqueos de horario" subtitle="Administra las fechas en las que no atenderás pacientes." onMenu={() => setShowMobileMenu(!showMobileMenu)} action={<button type="button" className="psy-dash-btn-primary" onClick={() => setShowBlockForm(true)}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
                 Bloquear fecha
@@ -1286,7 +1286,7 @@ const PsychologistDashboard: React.FC = () => {
                 </div>
               </div>
             )}
-          </>
+          </section>
         )}
 
         {activeTab === 'pacientes' && (
