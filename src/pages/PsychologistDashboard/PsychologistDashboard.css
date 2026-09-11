@@ -3865,3 +3865,94 @@ body:has(.psy-dash) {
     max-width: 320px !important;
   }
 }
+
+/* ==========================================================================
+   Uniformidad total del detalle de la cita:
+   - Las filas de datos (Estado, Verificar, Fecha, Hora, Ref, Valor) deben
+     verse exactamente igual a un item del menu: planas, sin fondo, sin
+     brillo ni animacion, mismo padding/tipografia/color que .psy-dash-nav-item.
+   - Los botones de accion deben tener exactamente el mismo alto, tipografia
+     y layout que "Cerrar sesion" (.psy-dash-signout); solo cambia el color.
+   Se fuerza al final del archivo, con !important donde haga falta, para
+   ganarle a las reglas de "pill" de estado/pago definidas mas arriba.
+   ========================================================================== */
+
+.psy-appt-modal-layer .psy-appt-status--confirmada,
+.psy-appt-modal-layer .psy-appt-status--pendiente_pago,
+.psy-appt-modal-layer .psy-appt-status--cancelada,
+.psy-appt-modal-layer .psy-appt-payment--pagado,
+.psy-appt-modal-layer .psy-appt-payment--procesando,
+.psy-appt-modal-layer .psy-appt-payment--pendiente {
+  background: transparent !important;
+  border: 0 !important;
+  width: auto !important;
+  min-height: 0 !important;
+  box-shadow: none !important;
+  padding: 0.5rem 0.875rem !important;
+}
+
+.psy-appt-modal-layer .psy-appt-status--confirmada:hover,
+.psy-appt-modal-layer .psy-appt-status--pendiente_pago:hover,
+.psy-appt-modal-layer .psy-appt-status--cancelada:hover,
+.psy-appt-modal-layer .psy-appt-payment--pagado:hover,
+.psy-appt-modal-layer .psy-appt-payment--procesando:hover,
+.psy-appt-modal-layer .psy-appt-payment--pendiente:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.psy-appt-modal-layer .psy-appt-status--confirmada > span:last-child,
+.psy-appt-modal-layer .psy-appt-status--pendiente_pago > span:last-child,
+.psy-appt-modal-layer .psy-appt-status--cancelada > span:last-child,
+.psy-appt-modal-layer .psy-appt-payment--pagado > span:last-child,
+.psy-appt-modal-layer .psy-appt-payment--procesando > span:last-child,
+.psy-appt-modal-layer .psy-appt-payment--pendiente > span:last-child,
+.psy-appt-modal-layer .psy-appt-status-label,
+.psy-appt-modal-layer .psy-appt-status-value {
+  color: inherit !important;
+  font-weight: 500 !important;
+  text-shadow: none !important;
+}
+
+.psy-appt-modal-layer .psy-appt-detail-row .psy-appt-state-icon,
+.psy-appt-modal-layer .psy-appt-detail-row svg {
+  color: rgba(255, 255, 255, 0.6) !important;
+  animation: none !important;
+}
+
+.psy-appt-modal-layer .psy-appt-detail-row:hover .psy-appt-state-icon,
+.psy-appt-modal-layer .psy-appt-detail-row:hover svg {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.psy-appt-modal-layer .psy-appt-actions {
+  gap: 0.5rem;
+}
+
+.psy-appt-modal-layer .psy-appt-actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 0.625rem;
+  margin: 0;
+  padding: 0.7rem 0.875rem;
+  border-radius: 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: center;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: background 0.2s var(--psy-smooth), border-color 0.2s var(--psy-smooth), color 0.2s var(--psy-smooth);
+}
+
+.psy-appt-modal-layer .psy-appt-actions button svg {
+  position: static;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+}
