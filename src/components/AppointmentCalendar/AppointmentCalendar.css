@@ -721,6 +721,7 @@
 .cal-panel__item--pending { border-left-color: #ffb74d; }
 .cal-panel__item--done { border-left-color: #9575cd; }
 .cal-panel__item--cancelled { border-left-color: #ef5350; }
+.cal-panel__item--noshow { border-left-color: #ef5350; }
 
 .cal-panel__item-head {
   display: flex;
@@ -761,6 +762,7 @@
 .cal-panel__badge--pending { background: rgba(255, 183, 77, 0.16); color: #ffb74d; }
 .cal-panel__badge--done { background: rgba(149, 117, 205, 0.16); color: #b39ddb; }
 .cal-panel__badge--cancelled { background: rgba(239, 83, 80, 0.16); color: #ef9a9a; }
+.cal-panel__badge--noshow { background: rgba(239, 83, 80, 0.16); color: #ef9a9a; }
 
 .cal-panel__actions {
   display: flex;
@@ -1619,6 +1621,11 @@ height: auto;
 .cal-day-new__head {
   flex-direction: column;
   gap: 0;
+  /* El nombre del paciente vive en la columna que empieza despues de la
+     hora (ver .cal-day-new .cal__day-row: 2.5rem + 1fr). Este padding
+     iguala ese hueco para que "Jue" quede centrado sobre esa columna
+     y no sobre el ancho completo de la fila. */
+  padding-left: 2.5rem;
 }
 
 /* Evita que el separador del encabezado se superponga con la primera fila. */
@@ -1661,4 +1668,266 @@ height: auto;
     margin-left: 0;
     font-size: 0.5rem;
   }
+}
+
+/* ==========================================================================
+   Normalizacion final: las celdas del calendario (mes, semana y dia) y sus
+   controles (flechas, Hoy, Mes/Semana/Dia, acciones del panel lateral y el
+   dialogo de reprogramar) comparten exactamente la misma familia visual que
+   el resto de "botones" del panel del psicologo (Cerrar sesion, items del
+   menu, acciones del detalle de la cita): mismo fondo plano, mismo radio de
+   12px, mismo hover y el mismo color de texto en reposo/hover.
+   ========================================================================== */
+
+.cal__icon-btn,
+.cal__today,
+.cal__view {
+  border-radius: 12px;
+  background: var(--psy-surface);
+  border: 1px solid var(--psy-border);
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 600;
+  transition: background 0.2s var(--psy-smooth), border-color 0.2s var(--psy-smooth), color 0.2s var(--psy-smooth);
+}
+
+.cal__icon-btn:hover,
+.cal__today:hover,
+.cal__view:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--psy-border);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.cal__views {
+  background: transparent;
+  border: none;
+  gap: 0.375rem;
+  padding: 0;
+}
+
+.cal__view--active,
+.cal__view--active:hover {
+  background: var(--psy-surface);
+  border-color: rgba(126, 87, 194, 0.2);
+  color: #b388ff;
+}
+
+/* --- Acciones del panel lateral y dialogo de reprogramar --- */
+.cal-action,
+.cal-confirm__cancel,
+.cal-confirm__ok {
+  background: var(--psy-surface);
+  border: 1px solid var(--psy-border);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 600;
+  transition: background 0.2s var(--psy-smooth), border-color 0.2s var(--psy-smooth), color 0.2s var(--psy-smooth);
+}
+
+.cal-action:hover,
+.cal-confirm__cancel:hover,
+.cal-confirm__ok:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--psy-border);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.cal-action--primary,
+.cal-action--primary:hover,
+.cal-confirm__ok {
+  border-color: rgba(126, 87, 194, 0.2);
+  color: #b388ff;
+}
+
+.cal-confirm__ok:disabled,
+.cal-confirm__cancel:disabled {
+  opacity: 0.5;
+}
+
+/* --- Celdas de mes, semana y dia: mismo fondo, radio y hover --- */
+.cal-month-new__grid > .psy-dash-upcoming-item,
+.cal-week-new .cal__slot,
+.cal-day-new .cal__day-slot {
+  border-radius: 12px !important;
+  background: var(--psy-surface) !important;
+  border: 1px solid var(--psy-border) !important;
+}
+
+.cal-month-new__grid > .psy-dash-upcoming-item:hover,
+.cal-week-new .cal__slot:hover,
+.cal-day-new .cal__day-slot:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: var(--psy-border) !important;
+}
+
+.cal-month-new__day--blocked,
+.cal-month-new__day--confirmed,
+.cal-month-new__day--completed {
+  background: var(--psy-surface) !important;
+  border-color: var(--psy-border) !important;
+}
+
+.cal-month-new__day--blocked:hover,
+.cal-month-new__day--confirmed:hover,
+.cal-month-new__day--completed:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: var(--psy-border) !important;
+}
+
+/* --- Contenido de las celdas: misma tipografia que el texto de los botones --- */
+.cal-month-new__number,
+.cal-month-new__name {
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 600;
+}
+
+.cal-month-new__grid > .psy-dash-upcoming-item:hover .cal-month-new__number,
+.cal-week-new .cal__slot:hover .cal-month-new__name,
+.cal-day-new .cal__day-slot:hover .cal-month-new__name {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* ==========================================================================
+   Ritmo vertical unificado, tomando como referencia el espacio entre el
+   parrafo "Consulta y administra tus citas programadas." y la linea
+   divisoria debajo de el (padding-bottom/margin-bottom de .psy-module-header:
+   1.15rem en escritorio, 0.9rem en responsive). Ese mismo espacio se aplica
+   entre: la barra de navegacion (mes/flechas/Hoy/Mes-Semana-Dia) y su propia
+   linea divisoria, y entre esa linea y la fila de dias de la semana, tanto
+   en la vista mensual como en la semanal y la diaria.
+   ========================================================================== */
+
+.cal {
+  gap: 0 !important;
+}
+
+.cal__bar {
+  padding-bottom: 1.15rem !important;
+  margin-top: 0 !important;
+  margin-bottom: 1.15rem !important;
+}
+
+.cal-month-new,
+.cal-week-new,
+.cal-day-new {
+  margin-top: 0 !important;
+}
+
+@media (max-width: 720px) {
+  .cal__bar {
+    padding-bottom: 0.9rem !important;
+    margin-top: 0 !important;
+    margin-bottom: 0.9rem !important;
+  }
+
+  .cal__heading {
+    font-size: 0.8125rem !important;
+  }
+
+  /* En movil .cal-day-new .cal__day-row usa un gutter de 2rem (no 2.5rem),
+     asi que el encabezado del dia debe centrarse sobre ese mismo hueco. */
+  .cal-day-new__head {
+    padding-left: 2rem;
+  }
+}
+
+/* ==========================================================================
+   El calendario llena el mismo alto que la tarjeta de "Proximas citas" /
+   "Pendientes" (.psy-alert-page + .psy-alert-list), en vez de quedarse con
+   su alto minimo de contenido. Las filas de semana y dia se reparten ese
+   alto extra, por lo que se ven mas espaciadas y menos agrupadas.
+   ========================================================================== */
+@media (min-width: 721px) {
+  .cal {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: 100%;
+  }
+
+  .cal-month-new,
+  .cal-week-new,
+  .cal-day-new {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
+    max-height: none;
+    align-self: stretch;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(126, 87, 194, 0.45) transparent;
+  }
+
+  .cal-month-new__grid {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .cal__week-head {
+    flex: 0 0 auto;
+  }
+
+  .cal__week-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    grid-template-rows: repeat(15, minmax(2.25rem, 1fr));
+  }
+
+  .cal-day-new__head {
+    flex: 0 0 auto;
+  }
+
+  .cal-day-new .cal__day-row {
+    flex: 1 1 0;
+    min-height: 1.25rem;
+    height: auto;
+  }
+}
+
+/* ==========================================================================
+   Estados de la celda (mes/semana/dia), reutilizando exactamente la misma
+   paleta que ya usan los botones de accion del panel: bloqueada = rojizo de
+   "No asistio", agendada (con cita confirmada) = verde del boton de Chat de
+   WhatsApp, disponible sin agenda = morado de "Cerrar sesion". Se repiten
+   los selectores combinados para ganarle en especificidad a la regla que
+   iguala el fondo de todas las celdas.
+   ========================================================================== */
+.cal-month-new__grid > .psy-dash-upcoming-item.cal-month-new__day--blocked,
+.cal-week-new .cal__slot.cal-month-new__day--blocked,
+.cal-day-new .cal__day-slot.cal-month-new__day--blocked {
+  background: rgba(239, 83, 80, 0.1) !important;
+  border-color: rgba(239, 83, 80, 0.32) !important;
+}
+.cal-month-new__grid > .psy-dash-upcoming-item.cal-month-new__day--blocked:hover,
+.cal-week-new .cal__slot.cal-month-new__day--blocked:hover,
+.cal-day-new .cal__day-slot.cal-month-new__day--blocked:hover {
+  background: rgba(239, 83, 80, 0.18) !important;
+  border-color: rgba(239, 83, 80, 0.45) !important;
+}
+
+.cal-month-new__grid > .psy-dash-upcoming-item.cal-month-new__day--confirmed,
+.cal-week-new .cal__slot.cal-month-new__day--confirmed,
+.cal-day-new .cal__day-slot.cal-month-new__day--confirmed {
+  background: rgba(37, 211, 102, 0.12) !important;
+  border-color: rgba(37, 211, 102, 0.32) !important;
+}
+.cal-month-new__grid > .psy-dash-upcoming-item.cal-month-new__day--confirmed:hover,
+.cal-week-new .cal__slot.cal-month-new__day--confirmed:hover,
+.cal-day-new .cal__day-slot.cal-month-new__day--confirmed:hover {
+  background: rgba(37, 211, 102, 0.2) !important;
+  border-color: rgba(37, 211, 102, 0.45) !important;
+}
+
+.cal-month-new__grid > .psy-dash-upcoming-item.cal-month-new__day--available,
+.cal-week-new .cal__slot.cal-month-new__day--available,
+.cal-day-new .cal__day-slot.cal-month-new__day--available {
+  background: var(--psy-surface) !important;
+  border-color: rgba(126, 87, 194, 0.3) !important;
+}
+.cal-month-new__grid > .psy-dash-upcoming-item.cal-month-new__day--available:hover,
+.cal-week-new .cal__slot.cal-month-new__day--available:hover,
+.cal-day-new .cal__day-slot.cal-month-new__day--available:hover {
+  background: rgba(126, 87, 194, 0.12) !important;
+  border-color: rgba(126, 87, 194, 0.45) !important;
 }

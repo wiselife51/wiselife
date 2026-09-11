@@ -201,7 +201,7 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
                 <button
                   key={dateKey}
                   type="button"
-                  className={`psy-dash-upcoming-item ${isBlockedDay ? 'cal-month-new__day--blocked' : ''} ${hasConfirmedAppointments ? 'cal-month-new__day--confirmed' : ''} ${hasCompletedAppointments ? 'cal-month-new__day--completed' : ''}`}
+                  className={`psy-dash-upcoming-item ${isBlockedDay ? 'cal-month-new__day--blocked' : ''} ${hasConfirmedAppointments ? 'cal-month-new__day--confirmed' : ''} ${hasCompletedAppointments ? 'cal-month-new__day--completed' : ''} ${!isBlockedDay && total === 0 ? 'cal-month-new__day--available' : ''}`}
                   onClick={() => { setCursor(date); setPanelDay(dateKey); }}
                 >
                   <span className="cal-month-new__number">{date.getDate()}</span>
@@ -282,7 +282,7 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
                   return (
                     <div
                       key={`${key}-${h}`}
-                      className={`cal__slot psy-dash-upcoming-item ${dragOver === key ? 'cal__slot--dragover' : ''} ${blocked.has(key) ? 'cal-month-new__day--blocked' : ''} ${list.some((a) => a.status === 'confirmada') ? 'cal-month-new__day--confirmed' : ''} ${list.length > 0 && list.every((a) => a.status === 'completada') ? 'cal-month-new__day--completed' : ''}`}
+                      className={`cal__slot psy-dash-upcoming-item ${dragOver === key ? 'cal__slot--dragover' : ''} ${blocked.has(key) ? 'cal-month-new__day--blocked' : ''} ${list.some((a) => a.status === 'confirmada') ? 'cal-month-new__day--confirmed' : ''} ${list.length > 0 && list.every((a) => a.status === 'completada') ? 'cal-month-new__day--completed' : ''} ${!blocked.has(key) && list.length === 0 ? 'cal-month-new__day--available' : ''}`}
                       onClick={() => {
                         setPanelDay(key);
                         if (list[0]) onSelect?.(list[0]);
@@ -317,7 +317,7 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
               <div key={h} className="cal__day-row">
                 <div className="cal__hour">{`${h}:00`}</div>
                 <div
-                  className={`cal__day-slot psy-dash-upcoming-item ${dragOver === key ? 'cal__slot--dragover' : ''} ${blocked.has(key) ? 'cal-month-new__day--blocked' : ''} ${list.some((a) => a.status === 'confirmada') ? 'cal-month-new__day--confirmed' : ''} ${list.length > 0 && list.every((a) => a.status === 'completada') ? 'cal-month-new__day--completed' : ''}`}
+                  className={`cal__day-slot psy-dash-upcoming-item ${dragOver === key ? 'cal__slot--dragover' : ''} ${blocked.has(key) ? 'cal-month-new__day--blocked' : ''} ${list.some((a) => a.status === 'confirmada') ? 'cal-month-new__day--confirmed' : ''} ${list.length > 0 && list.every((a) => a.status === 'completada') ? 'cal-month-new__day--completed' : ''} ${!blocked.has(key) && list.length === 0 ? 'cal-month-new__day--available' : ''}`}
                   onClick={() => {
                     if (list[0]) onSelect?.(list[0]);
                   }}

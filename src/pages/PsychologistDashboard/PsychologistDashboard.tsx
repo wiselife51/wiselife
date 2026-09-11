@@ -10,6 +10,7 @@ import { DashboardModuleHeader } from './components/DashboardModuleHeader';
 import { toDateStr } from '../../lib/date';
 import AppointmentCalendar from '../../components/AppointmentCalendar/AppointmentCalendar';
 import type { CalendarAppointment } from '../../components/AppointmentCalendar/status';
+import { getAppointmentStage, STAGE_META } from '../../lib/appointmentStage';
 
 interface PsychologistProfile {
   id: string;
@@ -91,6 +92,7 @@ interface Appointment {
   start_time: string;
   end_time: string;
   status: string;
+  attended_at: string | null;
   payment_status: string;
   payment_method: string | null;
   payment_reference: string | null;
@@ -626,6 +628,22 @@ const PsychologistDashboard: React.FC = () => {
       }
     }
 
+    // Citas confirmadas cuya hora ya paso y nadie marco si el paciente asistio
+    // o no (ni "atendida" ni "no asistio"): quedan como pendientes por verificar.
+    const now = new Date();
+    const unverifiedAppts = appointments.filter(
+      (a) => getAppointmentStage(a, now) === 'verificar'
+    );
+
+    for (const appt of unverifiedAppts) {
+      newWarnings.push({
+        type: 'verify_attendance',
+        appointmentId: appt.id,
+        patientName: appt.patient?.full_name || 'Paciente',
+        message: `Cita con ${appt.patient?.full_name || 'paciente'} el ${appt.appointment_date.split('-').reverse().join('/')} - Verifica si el paciente asistio`,
+      });
+    }
+
     setWarnings(newWarnings);
   };
 
@@ -730,7 +748,11 @@ const PsychologistDashboard: React.FC = () => {
       if (existingNote && !existingNote.is_draft) {
         await supabase
           .from('appointments')
-          .update({ status: 'completada', updated_at: new Date().toISOString() })
+          .update({
+            status: 'completada',
+            attended_at: appt.attended_at || new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
           .eq('id', apptId);
         setSelectedAppt(null);
         fetchData();
@@ -757,6 +779,28 @@ const PsychologistDashboard: React.FC = () => {
     } catch (err) {
       console.error('Error in handleCompleteAppt:', err);
     }
+  };
+
+  // Marca que el paciente asistio, sin exigir de inmediato la nota de
+  // evolucion. Deja la cita en 'confirmada' pero con attended_at seteado,
+  // por lo que su etapa real pasa a "atendida sin evolucion".
+  const handleMarkAttended = async (apptId: string) => {
+    await supabase
+      .from('appointments')
+      .update({ attended_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+      .eq('id', apptId);
+    setSelectedAppt(null);
+    fetchData();
+  };
+
+  // Marca que el paciente no llego a la cita.
+  const handleMarkNoShow = async (apptId: string) => {
+    await supabase
+      .from('appointments')
+      .update({ status: 'no_asistio', attended_at: null, updated_at: new Date().toISOString() })
+      .eq('id', apptId);
+    setSelectedAppt(null);
+    fetchData();
   };
 
   const handleOpenWhatsApp = (phone: string | null | undefined, patientName: string) => {
@@ -787,17 +831,25 @@ const PsychologistDashboard: React.FC = () => {
   const formatCurrency = (value: number) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(value);
 
   // Adaptacion al contrato del calendario compartido. En el panel del
-  // psicologo la contraparte visible es el paciente.
-  const calendarAppointments: CalendarAppointment[] = appointments.map((a) => ({
-    id: a.id,
-    appointment_date: a.appointment_date,
-    start_time: a.start_time,
-    end_time: a.end_time,
-    status: a.status,
-    title: a.patient?.full_name || 'Paciente',
-    subtitle: a.payment_status === 'pagado' ? 'Pagada' : null,
-    avatarUrl: a.patient?.avatar_url ?? null,
-  }));
+  // psicologo la contraparte visible es el paciente. El subtitulo se
+  // aprovecha para mostrar la etapa real (atendida sin evolucion, por
+  // verificar, etc.) sin tocar el badge de status del componente
+  // compartido, que tambien usa la vista del paciente.
+  const calendarAppointments: CalendarAppointment[] = appointments.map((a) => {
+    const stage = getAppointmentStage(a);
+    const stageNote = stage === 'verificar' || stage === 'atendida_sin_evolucion' ? STAGE_META[stage].label : null;
+    const subtitle = stageNote || (a.payment_status === 'pagado' ? 'Pagada' : null);
+    return {
+      id: a.id,
+      appointment_date: a.appointment_date,
+      start_time: a.start_time,
+      end_time: a.end_time,
+      status: a.status,
+      title: a.patient?.full_name || 'Paciente',
+      subtitle,
+      avatarUrl: a.patient?.avatar_url ?? null,
+    };
+  });
 
   const blockedDates = blocks.map((b) => b.block_date);
 
@@ -1005,7 +1057,7 @@ const PsychologistDashboard: React.FC = () => {
               onMenu={() => setShowMobileMenu(!showMobileMenu)}
               menuOpen={showMobileMenu}
             />
-            {upcomingAppts.length === 0 ? <div className="psy-dash-empty"><p>No tienes próximas citas.</p></div> : <div className="psy-alert-list">{upcomingAppts.map((a) => <button key={a.id} type="button" className="psy-alert-card" onClick={() => openAppointmentDetails(a)}><span className="psy-dash-upcoming-avatar-sm">{a.patient?.avatar_url ? <img src={a.patient.avatar_url} alt="" crossOrigin="anonymous" /> : <span>{(a.patient?.full_name || 'P').charAt(0)}</span>}</span><span className="psy-alert-card-text"><strong>{a.patient?.full_name || 'Paciente'}</strong><small>{a.appointment_date.split('-').reverse().join('/')} · {formatTime(a.start_time)}</small></span><span className={`psy-dash-mini-status psy-dash-mini-status--${a.status}`}>{a.status === 'confirmada' ? 'OK' : '$'}</span></button>)}</div>}
+            {upcomingAppts.length === 0 ? <div className="psy-dash-empty"><p>No tienes próximas citas.</p></div> : <div className="psy-alert-list">{upcomingAppts.map((a) => { const stage = getAppointmentStage(a); const meta = STAGE_META[stage]; return <button key={a.id} type="button" className="psy-alert-card" onClick={() => openAppointmentDetails(a)}><span className="psy-dash-upcoming-avatar-sm">{a.patient?.avatar_url ? <img src={a.patient.avatar_url} alt="" crossOrigin="anonymous" /> : <span>{(a.patient?.full_name || 'P').charAt(0)}</span>}</span><span className="psy-alert-card-text"><strong>{a.patient?.full_name || 'Paciente'}</strong><small>{a.appointment_date.split('-').reverse().join('/')} · {formatTime(a.start_time)}</small></span><span className={`psy-dash-mini-status psy-dash-mini-status--${meta.badgeClass}`}>{meta.shortLabel}</span></button>; })}</div>}
           </section>
         )}
         {activeTab === 'pendientes' && (
@@ -1018,7 +1070,7 @@ const PsychologistDashboard: React.FC = () => {
               onMenu={() => setShowMobileMenu(!showMobileMenu)}
               menuOpen={showMobileMenu}
             />
-            {warnings.length === 0 ? <div className="psy-dash-empty"><p>No tienes pendientes importantes.</p></div> : <div className="psy-alert-list">{warnings.map((warning) => { const appt = appointments.find((a) => a.id === warning.appointmentId); return <button key={warning.appointmentId} type="button" className="psy-alert-card psy-alert-card--warning" onClick={() => { if (appt) { setPendingAppointmentToComplete(appt); setShowClinicalRecordModal(true); } }}><span className="psy-dash-pending-avatar" aria-hidden="true">!</span><span className="psy-alert-card-text"><strong>{warning.message.split(' - ')[0]}</strong><small>{warning.message.split(' - ').slice(1).join(' - ')}</small></span><span className="psy-dash-pending-status">HC</span></button>; })}</div>}
+            {warnings.length === 0 ? <div className="psy-dash-empty"><p>No tienes pendientes importantes.</p></div> : <div className="psy-alert-list">{warnings.map((warning) => { const appt = appointments.find((a) => a.id === warning.appointmentId); const isVerify = warning.type === 'verify_attendance'; return <button key={`${warning.type}-${warning.appointmentId}`} type="button" className="psy-alert-card psy-alert-card--warning" onClick={() => { if (!appt) return; if (isVerify) { setSelectedAppt(appt); } else { setPendingAppointmentToComplete(appt); setShowClinicalRecordModal(true); } }}><span className="psy-dash-pending-avatar" aria-hidden="true">!</span><span className="psy-alert-card-text"><strong>{warning.message.split(' - ')[0]}</strong><small>{warning.message.split(' - ').slice(1).join(' - ')}</small></span><span className="psy-dash-pending-status">{isVerify ? '?' : 'HC'}</span></button>; })}</div>}
           </section>
         )}
 
@@ -1082,13 +1134,31 @@ const PsychologistDashboard: React.FC = () => {
                       WhatsApp
                     </button>
                   )}
+                  {original.status === 'confirmada' && !original.attended_at && (
+                    <>
+                      <button
+                        type="button"
+                        className="cal-action"
+                        onClick={() => handleMarkAttended(original.id)}
+                      >
+                        Marcar atendida
+                      </button>
+                      <button
+                        type="button"
+                        className="cal-action"
+                        onClick={() => handleMarkNoShow(original.id)}
+                      >
+                        No asistió
+                      </button>
+                    </>
+                  )}
                   {original.status === 'confirmada' && (
                     <button
                       type="button"
                       className="cal-action cal-action--primary"
                       onClick={() => handleCompleteAppt(original.id)}
                     >
-                      Marcar completada
+                      {original.attended_at ? 'Registrar evolución' : 'Evolucionar y completar'}
                     </button>
                   )}
                   {original.status === 'pendiente_pago' && (
@@ -1439,6 +1509,17 @@ const PsychologistDashboard: React.FC = () => {
                     {selectedAppt.status === 'confirmada' ? 'Confirmada' : selectedAppt.status === 'pendiente_pago' ? 'Pendiente de pago' : selectedAppt.status === 'completada' ? 'Completada' : selectedAppt.status}
                   </span>
                 </div>
+                {(() => {
+                  const stage = getAppointmentStage(selectedAppt);
+                  if (stage === 'proxima' || stage === 'pago_pendiente' || stage === 'completada') return null;
+                  const meta = STAGE_META[stage];
+                  return (
+                    <div className={`psy-dash-nav-item psy-appt-detail-row psy-appt-stage-chip psy-appt-stage-chip--${meta.badgeClass}`}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
+                      <span>{stage === 'verificar' ? 'Verificar atención' : meta.shortLabel}</span>
+                    </div>
+                  );
+                })()}
                 <div className="psy-dash-nav-item psy-appt-detail-row psy-appt-date-row">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
                   <span>{selectedAppt.appointment_date.split('-').reverse().join('/')}</span>
@@ -1450,7 +1531,7 @@ const PsychologistDashboard: React.FC = () => {
                 {selectedAppt.payment_reference && (
                   <div className="psy-dash-nav-item psy-appt-detail-row">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 3h8l3 3v12l-3 3H8l-3-3V6z" /><path d="M9 9h6M9 13h6M9 17h4" /></svg>
-                    <span>Ref: {selectedAppt.payment_reference} ({selectedAppt.payment_method})</span>
+                    <span>Ref: {selectedAppt.payment_reference}</span>
                   </div>
                 )}
                 <div className={`psy-dash-nav-item psy-appt-detail-row psy-appt-payment--${selectedAppt.payment_status}`}>
@@ -1465,21 +1546,40 @@ const PsychologistDashboard: React.FC = () => {
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
                     </svg>
-                    Chatear por WhatsApp
+                    Chatear
                   </button>
                 )}
                 {selectedAppt.status === 'pendiente_pago' && selectedAppt.payment_status === 'procesando' && (
                   <button className="psy-confirm-pay-btn" onClick={() => handleConfirmPayment(selectedAppt.id)} type="button">
-                    Confirmar pago recibido
+                    Confirmar pago
+                  </button>
+                )}
+                {selectedAppt.status === 'confirmada' && !selectedAppt.attended_at && (
+                  <button className="psy-attended-btn" onClick={() => handleMarkAttended(selectedAppt.id)} type="button">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="9" />
+                      <path d="M8 12l2.5 2.5L16 9" />
+                    </svg>
+                    Atendida
+                  </button>
+                )}
+                {selectedAppt.status === 'confirmada' && !selectedAppt.attended_at && (
+                  <button className="psy-noshow-btn" onClick={() => handleMarkNoShow(selectedAppt.id)} type="button">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="9" />
+                      <line x1="15" y1="9" x2="9" y2="15" />
+                      <line x1="9" y1="9" x2="15" y2="15" />
+                    </svg>
+                    No asistió
                   </button>
                 )}
                 {selectedAppt.status === 'confirmada' && (
-<button className="psy-complete-btn" onClick={() => handleCompleteAppt(selectedAppt.id)} type="button">
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-  <circle cx="12" cy="12" r="9" />
-  <path d="M8 12l2.5 2.5L16 9" />
-  </svg>
-  Evolucionar
+                  <button className="psy-complete-btn" onClick={() => handleCompleteAppt(selectedAppt.id)} type="button">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="9" />
+                      <path d="M8 12l2.5 2.5L16 9" />
+                    </svg>
+                    Evolucionar
                   </button>
                 )}
                 {selectedAppt.patient && (
@@ -1501,7 +1601,7 @@ const PsychologistDashboard: React.FC = () => {
                       <line x1="16" y1="17" x2="8" y2="17" />
                       <polyline points="10 9 9 9 8 9" />
                     </svg>
-                    Ver Historia Clínica
+                    Historia Clínica
                   </button>
                 )}
               </div>

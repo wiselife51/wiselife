@@ -571,12 +571,13 @@ body:has(.psy-dash) {
 }
 
 .psy-dash-nav-item--active {
-  background: rgba(126, 87, 194, 0.15);
+  background: var(--psy-surface);
   color: #b388ff;
   border: 1px solid rgba(126, 87, 194, 0.2);
 }
 
 .psy-dash-signout {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -584,9 +585,9 @@ body:has(.psy-dash) {
   margin-top: auto;
   gap: 0.625rem;
   padding: 0.7rem 0.875rem;
-  border: 1px solid rgba(126, 87, 194, 0.28);
+  border: 1px solid rgba(126, 87, 194, 0.2);
   border-radius: 12px;
-  background: rgba(126, 87, 194, 0.12);
+  background: var(--psy-surface);
   color: #b388ff;
   font-family: 'Inter', sans-serif;
   font-size: 0.8125rem;
@@ -596,10 +597,15 @@ body:has(.psy-dash) {
   transition: background 0.2s var(--psy-smooth), border-color 0.2s var(--psy-smooth), color 0.2s var(--psy-smooth);
 }
 
+.psy-dash-signout svg {
+  position: absolute;
+  left: 0.875rem;
+}
+
 .psy-dash-signout:hover {
-  background: rgba(126, 87, 194, 0.2);
-  color: #c7a7ff;
-  border-color: rgba(126, 87, 194, 0.48);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(126, 87, 194, 0.2);
   box-shadow: none;
 }
 
@@ -1221,6 +1227,14 @@ body:has(.psy-dash) {
   min-width: 0;
   overflow: hidden;
 }
+/* El calendario ocupa todo el alto disponible, igual que .psy-alert-page
+   (Próximas citas / Pendientes), para que la tarjeta llegue hasta abajo. */
+.psy-calendar-page {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
 /* Próximas citas / Pendientes usan el DashboardModuleHeader compartido:
    el estilo general del header vive en la regla única .psy-module-header
    más abajo, que ahora se reutiliza igual en todos los módulos. */
@@ -1247,16 +1261,8 @@ body:has(.psy-dash) {
 .psy-alert-card-text strong { color: #f4f1ff; }
 .psy-alert-card-text small { color: rgba(255, 255, 255, 0.58); }
 .psy-alert-card--warning { border-color: rgba(255, 193, 7, 0.28); }
-  .psy-dash-nav-item--priority { border-color: var(--psy-border); background: var(--psy-surface); }
-  .psy-dash-nav-item--priority:not(.psy-dash-nav-item--active) { color: rgba(255, 255, 255, 0.65); }
+  .psy-dash-nav-item--priority:not(.psy-dash-nav-item--active) { border-color: var(--psy-border); background: var(--psy-surface); color: rgba(255, 255, 255, 0.65); }
   .psy-dash-nav-item--priority:not(.psy-dash-nav-item--active) svg { color: inherit; }
-  .psy-dash-nav-item--priority.psy-dash-nav-item--active,
-  .psy-dash-nav-item--priority.psy-dash-nav-item--active:focus,
-  .psy-dash-nav-item--priority.psy-dash-nav-item--active:focus-visible {
-    outline: none;
-    box-shadow: none;
-    border-color: rgba(126, 87, 194, 0.2);
-  }
 .psy-alert-card--warning { border-color: rgba(255, 193, 7, 0.25); }
 .psy-alert-card-text { display: flex; flex-direction: row; align-items: baseline; gap: 0.65rem; min-width: 0; }
 .psy-alert-card-text strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: white; font-size: 0.85rem; font-weight: 600; }
@@ -1490,21 +1496,47 @@ body:has(.psy-dash) {
 }
 
 .psy-dash-mini-status {
-  font-size: 0.5625rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 0.75rem;
   font-weight: 700;
-  padding: 0.15rem 0.4rem;
+  padding: 0.25rem 0.6rem;
   border-radius: 100px;
-  text-transform: uppercase;
-}
+  white-space: nowrap;
+  line-height: 1.3;
+  }
 
-.psy-dash-mini-status--confirmada {
+.psy-dash-mini-status--confirmed {
   background: rgba(76, 175, 80, 0.15);
   color: #66bb6a;
 }
 
-.psy-dash-mini-status--pendiente_pago {
+.psy-dash-mini-status--pending {
   background: rgba(255, 193, 7, 0.15);
   color: #ffc107;
+}
+
+.psy-dash-mini-status--verify {
+  background: rgba(255, 152, 0, 0.16);
+  color: #ffa14a;
+}
+
+.psy-dash-mini-status--attended {
+  background: rgba(66, 165, 245, 0.16);
+  color: #64b5f6;
+}
+
+.psy-dash-mini-status--done {
+  background: rgba(76, 175, 80, 0.15);
+  color: #66bb6a;
+}
+
+.psy-dash-mini-status--noshow,
+.psy-dash-mini-status--cancelled {
+  background: rgba(239, 83, 80, 0.16);
+  color: #ef5350;
 }
 
 /* ===== Calendar Controls ===== */
@@ -2526,6 +2558,46 @@ body:has(.psy-dash) {
   background: rgba(126, 87, 194, 0.2);
 }
 
+.psy-attended-btn,
+.psy-noshow-btn {
+  padding: 0.875rem;
+  border-radius: 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.psy-attended-btn {
+  background: rgba(66, 165, 245, 0.12);
+  border: 1px solid rgba(66, 165, 245, 0.32);
+  color: #64b5f6;
+}
+.psy-attended-btn:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+.psy-noshow-btn {
+  background: rgba(239, 83, 80, 0.1);
+  border: 1px solid rgba(239, 83, 80, 0.3);
+  color: #ef5350;
+}
+.psy-noshow-btn:hover {
+  background: rgba(239, 83, 80, 0.18);
+}
+
+.psy-appt-stage-chip {
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.psy-appt-stage-chip--verify { color: #ffa14a; }
+.psy-appt-stage-chip--verify svg { color: #ffa14a; }
+.psy-appt-stage-chip--attended { color: #64b5f6; }
+.psy-appt-stage-chip--attended svg { color: #64b5f6; }
+.psy-appt-stage-chip--noshow { color: #ef5350; }
+.psy-appt-stage-chip--noshow svg { color: #ef5350; }
+
 /* ===== Appointment detail: login-inspired surface ===== */
 .psy-dash-modal--wide {
   width: 260px;
@@ -2546,7 +2618,7 @@ body:has(.psy-dash) {
 .psy-appt-detail-row { gap: 0.6rem; color: rgba(255,255,255,0.68); }
 .psy-appt-detail-row svg { color: rgba(255,255,255,0.42); }
 .psy-appt-actions { gap: 0.55rem; }
-.psy-complete-btn, .psy-history-btn, .psy-confirm-pay-btn, .psy-wa-btn { border-radius: 12px; min-height: 0; padding: 0.7rem 0.875rem; }
+  .psy-complete-btn, .psy-history-btn, .psy-confirm-pay-btn, .psy-wa-btn, .psy-attended-btn, .psy-noshow-btn { border-radius: 12px; min-height: 0; padding: 0.7rem 0.875rem; }
   .psy-complete-btn, .psy-history-btn { background: rgba(126,87,194,0.13); border-color: rgba(138,92,246,0.48); color: #c49bff; }
   .psy-dash-modal--wide .psy-appt-pay-badge,
   .psy-dash-modal--wide .psy-appt-status-badge { display: inline-flex; align-items: center; min-height: 22px; padding: 0.18rem 0.6rem; border: 1px solid rgba(126,87,194,0.3); border-radius: 999px; font-size: 0.68rem; font-weight: 700; line-height: 1; }
@@ -3452,11 +3524,15 @@ body:has(.psy-dash) {
   .psy-profile-actions button { width: 100%; justify-content: center; }
   .psy-profile-field-wide { grid-column: 1 / -1; }
 
-  .psy-dash-sidebar {
+  /* Escopado al hijo directo de .psy-dash: la nav real del menu.
+     El modal de detalle de cita tambien tiene la clase .psy-dash-sidebar
+     (para heredar exactamente su estilo) pero vive dentro del backdrop del
+     modal, no como hijo directo, asi que esta regla no debe ocultarlo. */
+  .psy-dash > .psy-dash-sidebar {
     visibility: hidden;
   }
 
-  .psy-dash-sidebar--open {
+  .psy-dash > .psy-dash-sidebar.psy-dash-sidebar--open {
     visibility: visible;
   }
 
@@ -3756,4 +3832,191 @@ body:has(.psy-dash) {
   .psy-income-row { grid-template-columns: 72px 1fr auto; gap: 0.5rem; }
   .psy-income-row-date, .psy-income-row-patient small { font-size: 0.68rem; }
   .psy-income-row-amount { font-size: 0.78rem; }
+}
+
+/* ==========================================================================
+   Detalle de la cita = mismo panel exacto que el menu de psicologos.
+   Se fuerza al final del archivo (con !important en lo geometrico) para que
+   gane sobre las reglas de "tarjeta centrada" definidas mas arriba: mismo
+   ancho, mismo fondo/blur, mismo padding, sin bordes redondeados, anclado
+   al borde izquierdo igual que .psy-dash-sidebar. Solo cambia el contenido
+   (los datos de la cita), no el contenedor.
+   ========================================================================== */
+.psy-appt-modal-layer {
+  background: rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: blur(2px) !important;
+  justify-content: flex-start !important;
+  align-items: stretch !important;
+  padding: 0 !important;
+}
+
+.psy-appt-modal-layer .psy-dash-appointment-detail {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: auto !important;
+  bottom: 0 !important;
+  width: 260px !important;
+  max-width: 260px !important;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  max-height: 100dvh !important;
+  margin: 0 !important;
+  padding: 1.5rem !important;
+  gap: 0 !important;
+  background: rgba(17, 24, 39, 0.68) !important;
+  border: none !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 0 !important;
+  backdrop-filter: blur(12px) !important;
+  box-shadow: none !important;
+  overflow-y: auto !important;
+}
+
+@media (max-width: 768px) {
+  .psy-appt-modal-layer .psy-dash-appointment-detail {
+    width: min(86vw, 320px) !important;
+    max-width: 320px !important;
+  }
+}
+
+/* ==========================================================================
+   Uniformidad total del detalle de la cita:
+   - Las filas de datos (Estado, Verificar, Fecha, Hora, Ref, Valor) deben
+     verse exactamente igual a un item del menu: planas, sin fondo, sin
+     brillo ni animacion, mismo padding/tipografia/color que .psy-dash-nav-item.
+   - Los botones de accion deben tener exactamente el mismo alto, tipografia
+     y layout que "Cerrar sesion" (.psy-dash-signout); solo cambia el color.
+   Se fuerza al final del archivo, con !important donde haga falta, para
+   ganarle a las reglas de "pill" de estado/pago definidas mas arriba.
+   ========================================================================== */
+
+.psy-appt-modal-layer .psy-appt-status--confirmada,
+.psy-appt-modal-layer .psy-appt-status--pendiente_pago,
+.psy-appt-modal-layer .psy-appt-status--cancelada,
+.psy-appt-modal-layer .psy-appt-payment--pagado,
+.psy-appt-modal-layer .psy-appt-payment--procesando,
+.psy-appt-modal-layer .psy-appt-payment--pendiente {
+  background: transparent !important;
+  border: 0 !important;
+  width: auto !important;
+  min-height: 0 !important;
+  box-shadow: none !important;
+  padding: 0.5rem 0.875rem !important;
+}
+
+.psy-appt-modal-layer .psy-appt-status--confirmada:hover,
+.psy-appt-modal-layer .psy-appt-status--pendiente_pago:hover,
+.psy-appt-modal-layer .psy-appt-status--cancelada:hover,
+.psy-appt-modal-layer .psy-appt-payment--pagado:hover,
+.psy-appt-modal-layer .psy-appt-payment--procesando:hover,
+.psy-appt-modal-layer .psy-appt-payment--pendiente:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.psy-appt-modal-layer .psy-appt-status--confirmada > span:last-child,
+.psy-appt-modal-layer .psy-appt-status--pendiente_pago > span:last-child,
+.psy-appt-modal-layer .psy-appt-status--cancelada > span:last-child,
+.psy-appt-modal-layer .psy-appt-payment--pagado > span:last-child,
+.psy-appt-modal-layer .psy-appt-payment--procesando > span:last-child,
+.psy-appt-modal-layer .psy-appt-payment--pendiente > span:last-child,
+.psy-appt-modal-layer .psy-appt-status-label,
+.psy-appt-modal-layer .psy-appt-status-value {
+  color: inherit !important;
+  font-weight: 500 !important;
+  text-shadow: none !important;
+}
+
+.psy-appt-modal-layer .psy-appt-detail-row .psy-appt-state-icon,
+.psy-appt-modal-layer .psy-appt-detail-row svg {
+  color: rgba(255, 255, 255, 0.6) !important;
+  animation: none !important;
+}
+
+.psy-appt-modal-layer .psy-appt-detail-row:hover .psy-appt-state-icon,
+.psy-appt-modal-layer .psy-appt-detail-row:hover svg {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.psy-appt-modal-layer .psy-appt-actions {
+  gap: 0.5rem;
+}
+
+.psy-appt-modal-layer .psy-appt-actions button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 0.625rem;
+  margin: 0;
+  padding: 0.55rem 0.875rem;
+  border-radius: 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: center;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: background 0.2s var(--psy-smooth), border-color 0.2s var(--psy-smooth), color 0.2s var(--psy-smooth);
+}
+
+.psy-appt-modal-layer .psy-appt-actions button svg {
+  position: absolute;
+  left: 0.875rem;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+}
+
+/* Agrupar todo mas compacto (foto+nombre, filas de datos, botones) para que
+   el panel completo quepa sin necesidad de scroll, tanto en escritorio como
+   en responsive. */
+.psy-appt-modal-layer .psy-appt-modal-body {
+  gap: 0.75rem !important;
+}
+
+.psy-appt-modal-layer .psy-dash-profile {
+  padding: 0.75rem 0 !important;
+  margin-bottom: 0 !important;
+  gap: 0.35rem !important;
+}
+
+.psy-appt-modal-layer .psy-appt-details {
+  gap: 0.125rem !important;
+}
+
+.psy-appt-modal-layer .psy-appt-detail-row {
+  padding: 0.4rem 0.875rem !important;
+}
+
+.psy-appt-modal-layer .psy-appt-actions {
+  margin-top: auto !important;
+  padding-top: 1.25rem !important;
+}
+
+/* Mismo tono/intensidad de fondo que "Cerrar sesion" (--psy-surface) en
+   todos los botones de accion; solo su color de texto/borde/icono
+   (su "color caracteristico") los diferencia entre si. */
+.psy-appt-modal-layer .psy-wa-btn,
+.psy-appt-modal-layer .psy-confirm-pay-btn,
+.psy-appt-modal-layer .psy-complete-btn,
+.psy-appt-modal-layer .psy-attended-btn,
+.psy-appt-modal-layer .psy-noshow-btn,
+.psy-appt-modal-layer .psy-history-btn {
+  background: var(--psy-surface) !important;
+}
+
+.psy-appt-modal-layer .psy-wa-btn:hover,
+.psy-appt-modal-layer .psy-confirm-pay-btn:hover,
+.psy-appt-modal-layer .psy-complete-btn:hover,
+.psy-appt-modal-layer .psy-attended-btn:hover,
+.psy-appt-modal-layer .psy-noshow-btn:hover,
+.psy-appt-modal-layer .psy-history-btn:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  box-shadow: none !important;
 }

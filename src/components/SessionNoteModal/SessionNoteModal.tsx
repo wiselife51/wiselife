@@ -222,12 +222,21 @@ const SessionNoteModal: React.FC<SessionNoteModalProps> = ({
         return;
       }
 
-      // Si no es borrador, marcar cita como completada
+      // Si no es borrador, marcar cita como completada. attended_at puede
+      // ya estar seteado si el psicologo la marco "atendida" antes; si no,
+      // se marca ahora para que la cita siempre quede con fecha de asistencia.
       if (!isDraft) {
+        const { data: apptRow } = await supabase
+          .from('appointments')
+          .select('attended_at')
+          .eq('id', appointmentId)
+          .maybeSingle();
+
         await supabase
           .from('appointments')
           .update({
             status: 'completada',
+            attended_at: apptRow?.attended_at || new Date().toISOString(),
             updated_at: new Date().toISOString(),
           })
           .eq('id', appointmentId);
