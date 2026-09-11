@@ -18,13 +18,13 @@ export type AppointmentStage =
   | 'cancelada';
 
 export const STAGE_META: Record<AppointmentStage, { label: string; shortLabel: string; badgeClass: string }> = {
-  proxima: { label: 'Proxima', shortLabel: 'proxima', badgeClass: 'confirmed' },
-  pago_pendiente: { label: 'Pago pendiente', shortLabel: 'pago', badgeClass: 'pending' },
-  verificar: { label: 'Verificar si fue atendida', shortLabel: 'verificar', badgeClass: 'verify' },
-  atendida_sin_evolucion: { label: 'Atendida - falta evolucion', shortLabel: 'falta nota', badgeClass: 'attended' },
-  completada: { label: 'Completada', shortLabel: 'completada', badgeClass: 'done' },
-  no_asistio: { label: 'No asistio', shortLabel: 'no asistio', badgeClass: 'noshow' },
-  cancelada: { label: 'Cancelada', shortLabel: 'cancelada', badgeClass: 'cancelled' },
+  proxima: { label: 'Proxima', shortLabel: 'Proxima', badgeClass: 'confirmed' },
+  pago_pendiente: { label: 'Pago pendiente', shortLabel: 'Pago', badgeClass: 'pending' },
+  verificar: { label: 'Verificar si fue atendida', shortLabel: 'Verificar', badgeClass: 'verify' },
+  atendida_sin_evolucion: { label: 'Atendida - falta evolucion', shortLabel: 'Falta nota', badgeClass: 'attended' },
+  completada: { label: 'Completada', shortLabel: 'Completada', badgeClass: 'done' },
+  no_asistio: { label: 'No asistio', shortLabel: 'No asistio', badgeClass: 'noshow' },
+  cancelada: { label: 'Cancelada', shortLabel: 'Cancelada', badgeClass: 'cancelled' },
 };
 
 interface StageInput {

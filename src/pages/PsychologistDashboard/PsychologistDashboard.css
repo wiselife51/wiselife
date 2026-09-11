@@ -1486,9 +1486,9 @@ body:has(.psy-dash) {
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-size: 0.5625rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  padding: 0.15rem 0.5rem;
+  padding: 0.25rem 0.6rem;
   border-radius: 100px;
   white-space: nowrap;
   line-height: 1.3;
