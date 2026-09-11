@@ -3510,11 +3510,15 @@ body:has(.psy-dash) {
   .psy-profile-actions button { width: 100%; justify-content: center; }
   .psy-profile-field-wide { grid-column: 1 / -1; }
 
-  .psy-dash-sidebar {
+  /* Escopado al hijo directo de .psy-dash: la nav real del menu.
+     El modal de detalle de cita tambien tiene la clase .psy-dash-sidebar
+     (para heredar exactamente su estilo) pero vive dentro del backdrop del
+     modal, no como hijo directo, asi que esta regla no debe ocultarlo. */
+  .psy-dash > .psy-dash-sidebar {
     visibility: hidden;
   }
 
-  .psy-dash-sidebar--open {
+  .psy-dash > .psy-dash-sidebar.psy-dash-sidebar--open {
     visibility: visible;
   }
 
@@ -3814,4 +3818,50 @@ body:has(.psy-dash) {
   .psy-income-row { grid-template-columns: 72px 1fr auto; gap: 0.5rem; }
   .psy-income-row-date, .psy-income-row-patient small { font-size: 0.68rem; }
   .psy-income-row-amount { font-size: 0.78rem; }
+}
+
+/* ==========================================================================
+   Detalle de la cita = mismo panel exacto que el menu de psicologos.
+   Se fuerza al final del archivo (con !important en lo geometrico) para que
+   gane sobre las reglas de "tarjeta centrada" definidas mas arriba: mismo
+   ancho, mismo fondo/blur, mismo padding, sin bordes redondeados, anclado
+   al borde izquierdo igual que .psy-dash-sidebar. Solo cambia el contenido
+   (los datos de la cita), no el contenedor.
+   ========================================================================== */
+.psy-appt-modal-layer {
+  background: rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: blur(2px) !important;
+  justify-content: flex-start !important;
+  align-items: stretch !important;
+  padding: 0 !important;
+}
+
+.psy-appt-modal-layer .psy-dash-appointment-detail {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: auto !important;
+  bottom: 0 !important;
+  width: 260px !important;
+  max-width: 260px !important;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  max-height: 100dvh !important;
+  margin: 0 !important;
+  padding: 1.5rem !important;
+  gap: 0 !important;
+  background: rgba(17, 24, 39, 0.68) !important;
+  border: none !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 0 !important;
+  backdrop-filter: blur(12px) !important;
+  box-shadow: none !important;
+  overflow-y: auto !important;
+}
+
+@media (max-width: 768px) {
+  .psy-appt-modal-layer .psy-dash-appointment-detail {
+    width: min(86vw, 320px) !important;
+    max-width: 320px !important;
+  }
 }
