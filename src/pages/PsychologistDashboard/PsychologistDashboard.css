@@ -1489,14 +1489,35 @@ body:has(.psy-dash) {
   text-transform: uppercase;
 }
 
-.psy-dash-mini-status--confirmada {
+.psy-dash-mini-status--confirmed {
   background: rgba(76, 175, 80, 0.15);
   color: #66bb6a;
 }
 
-.psy-dash-mini-status--pendiente_pago {
+.psy-dash-mini-status--pending {
   background: rgba(255, 193, 7, 0.15);
   color: #ffc107;
+}
+
+.psy-dash-mini-status--verify {
+  background: rgba(255, 152, 0, 0.16);
+  color: #ffa14a;
+}
+
+.psy-dash-mini-status--attended {
+  background: rgba(66, 165, 245, 0.16);
+  color: #64b5f6;
+}
+
+.psy-dash-mini-status--done {
+  background: rgba(76, 175, 80, 0.15);
+  color: #66bb6a;
+}
+
+.psy-dash-mini-status--noshow,
+.psy-dash-mini-status--cancelled {
+  background: rgba(239, 83, 80, 0.16);
+  color: #ef5350;
 }
 
 /* ===== Calendar Controls ===== */
@@ -2518,6 +2539,46 @@ body:has(.psy-dash) {
   background: rgba(126, 87, 194, 0.2);
 }
 
+.psy-attended-btn,
+.psy-noshow-btn {
+  padding: 0.875rem;
+  border-radius: 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.psy-attended-btn {
+  background: rgba(66, 165, 245, 0.12);
+  border: 1px solid rgba(66, 165, 245, 0.32);
+  color: #64b5f6;
+}
+.psy-attended-btn:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+.psy-noshow-btn {
+  background: rgba(239, 83, 80, 0.1);
+  border: 1px solid rgba(239, 83, 80, 0.3);
+  color: #ef5350;
+}
+.psy-noshow-btn:hover {
+  background: rgba(239, 83, 80, 0.18);
+}
+
+.psy-appt-stage-chip {
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.psy-appt-stage-chip--verify { color: #ffa14a; }
+.psy-appt-stage-chip--verify svg { color: #ffa14a; }
+.psy-appt-stage-chip--attended { color: #64b5f6; }
+.psy-appt-stage-chip--attended svg { color: #64b5f6; }
+.psy-appt-stage-chip--noshow { color: #ef5350; }
+.psy-appt-stage-chip--noshow svg { color: #ef5350; }
+
 /* ===== Appointment detail: login-inspired surface ===== */
 .psy-dash-modal--wide {
   width: 260px;
@@ -2538,7 +2599,7 @@ body:has(.psy-dash) {
 .psy-appt-detail-row { gap: 0.6rem; color: rgba(255,255,255,0.68); }
 .psy-appt-detail-row svg { color: rgba(255,255,255,0.42); }
 .psy-appt-actions { gap: 0.55rem; }
-.psy-complete-btn, .psy-history-btn, .psy-confirm-pay-btn, .psy-wa-btn { border-radius: 12px; min-height: 0; padding: 0.7rem 0.875rem; }
+  .psy-complete-btn, .psy-history-btn, .psy-confirm-pay-btn, .psy-wa-btn, .psy-attended-btn, .psy-noshow-btn { border-radius: 12px; min-height: 0; padding: 0.7rem 0.875rem; }
   .psy-complete-btn, .psy-history-btn { background: rgba(126,87,194,0.13); border-color: rgba(138,92,246,0.48); color: #c49bff; }
   .psy-dash-modal--wide .psy-appt-pay-badge,
   .psy-dash-modal--wide .psy-appt-status-badge { display: inline-flex; align-items: center; min-height: 22px; padding: 0.18rem 0.6rem; border: 1px solid rgba(126,87,194,0.3); border-radius: 999px; font-size: 0.68rem; font-weight: 700; line-height: 1; }

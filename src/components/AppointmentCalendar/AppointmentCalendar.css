@@ -721,6 +721,7 @@
 .cal-panel__item--pending { border-left-color: #ffb74d; }
 .cal-panel__item--done { border-left-color: #9575cd; }
 .cal-panel__item--cancelled { border-left-color: #ef5350; }
+.cal-panel__item--noshow { border-left-color: #ef5350; }
 
 .cal-panel__item-head {
   display: flex;
@@ -761,6 +762,7 @@
 .cal-panel__badge--pending { background: rgba(255, 183, 77, 0.16); color: #ffb74d; }
 .cal-panel__badge--done { background: rgba(149, 117, 205, 0.16); color: #b39ddb; }
 .cal-panel__badge--cancelled { background: rgba(239, 83, 80, 0.16); color: #ef9a9a; }
+.cal-panel__badge--noshow { background: rgba(239, 83, 80, 0.16); color: #ef9a9a; }
 
 .cal-panel__actions {
   display: flex;

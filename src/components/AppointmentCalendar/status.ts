@@ -7,6 +7,7 @@ export const STATUS_META: Record<string, { label: string; key: string }> = {
   pendiente_pago: { label: 'Pago pendiente', key: 'pending' },
   completada: { label: 'Completada', key: 'done' },
   cancelada: { label: 'Cancelada', key: 'cancelled' },
+  no_asistio: { label: 'No asistió', key: 'noshow' },
 };
 
 export type CalendarView = 'month' | 'week' | 'day';
