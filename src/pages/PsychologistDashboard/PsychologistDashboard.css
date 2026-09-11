@@ -584,9 +584,9 @@ body:has(.psy-dash) {
   margin-top: auto;
   gap: 0.625rem;
   padding: 0.7rem 0.875rem;
-  border: 1px solid rgba(126, 87, 194, 0.28);
+  border: 1px solid rgba(126, 87, 194, 0.2);
   border-radius: 12px;
-  background: rgba(126, 87, 194, 0.12);
+  background: var(--psy-surface);
   color: #b388ff;
   font-family: 'Inter', sans-serif;
   font-size: 0.8125rem;
@@ -597,9 +597,9 @@ body:has(.psy-dash) {
 }
 
 .psy-dash-signout:hover {
-  background: rgba(126, 87, 194, 0.2);
-  color: #c7a7ff;
-  border-color: rgba(126, 87, 194, 0.48);
+  background: var(--psy-surface);
+  color: #b388ff;
+  border-color: rgba(126, 87, 194, 0.2);
   box-shadow: none;
 }
 
