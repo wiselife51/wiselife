@@ -1781,3 +1781,41 @@ height: auto;
 .cal-day-new .cal__day-slot:hover .cal-month-new__name {
   color: rgba(255, 255, 255, 0.9);
 }
+
+/* ==========================================================================
+   Ritmo vertical unificado, tomando como referencia el espacio entre el
+   parrafo "Consulta y administra tus citas programadas." y la linea
+   divisoria debajo de el (padding-bottom/margin-bottom de .psy-module-header:
+   1.15rem en escritorio, 0.9rem en responsive). Ese mismo espacio se aplica
+   entre: la barra de navegacion (mes/flechas/Hoy/Mes-Semana-Dia) y su propia
+   linea divisoria, y entre esa linea y la fila de dias de la semana, tanto
+   en la vista mensual como en la semanal y la diaria.
+   ========================================================================== */
+
+.cal {
+  gap: 0 !important;
+}
+
+.cal__bar {
+  padding-bottom: 1.15rem !important;
+  margin-top: 0 !important;
+  margin-bottom: 1.15rem !important;
+}
+
+.cal-month-new,
+.cal-week-new,
+.cal-day-new {
+  margin-top: 0 !important;
+}
+
+@media (max-width: 720px) {
+  .cal__bar {
+    padding-bottom: 0.9rem !important;
+    margin-top: 0 !important;
+    margin-bottom: 0.9rem !important;
+  }
+
+  .cal__heading {
+    font-size: 0.8125rem !important;
+  }
+}
