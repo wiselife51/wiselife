@@ -597,8 +597,8 @@ body:has(.psy-dash) {
 }
 
 .psy-dash-signout:hover {
-  background: var(--psy-surface);
-  color: #b388ff;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.9);
   border-color: rgba(126, 87, 194, 0.2);
   box-shadow: none;
 }
