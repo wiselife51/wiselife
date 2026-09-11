@@ -3937,10 +3937,10 @@ body:has(.psy-dash) {
   width: 100%;
   gap: 0.625rem;
   margin: 0;
-  padding: 0.7rem 0.875rem;
+  padding: 0.55rem 0.875rem;
   border-radius: 12px;
   font-family: 'Inter', sans-serif;
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   font-weight: 600;
   line-height: normal;
   letter-spacing: normal;
@@ -3952,9 +3952,9 @@ body:has(.psy-dash) {
 
 .psy-appt-modal-layer .psy-appt-actions button svg {
   position: static;
-  width: 18px;
-  height: 18px;
-  flex: 0 0 18px;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
 }
 
 /* Agrupar todo mas compacto (foto+nombre, filas de datos, botones) para que
