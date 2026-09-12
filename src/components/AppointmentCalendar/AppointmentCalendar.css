@@ -1431,6 +1431,7 @@ height: auto;
 .cal-week-new .cal__week-head {
   display: grid;
   grid-template-columns: 2.5rem repeat(7, minmax(0, 1fr));
+  column-gap: 0.35rem;
   overflow-x: hidden;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   background: transparent;
@@ -1460,6 +1461,7 @@ height: auto;
   grid-template-columns: 2.5rem repeat(7, minmax(0, 1fr));
   grid-template-rows: repeat(15, 1.25rem);
   grid-auto-rows: 1.25rem;
+  column-gap: 0.35rem;
   row-gap: 0.3rem;
   height: fit-content;
   min-height: 0;
@@ -1474,9 +1476,13 @@ height: auto;
 
 .cal-week-new .cal__hour,
 .cal-day-new .cal__hour {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   box-sizing: border-box;
   width: 100%;
-  padding: 0.05rem 0;
+  height: 100%;
+  padding: 0;
   color: rgba(255, 255, 255, 0.4);
   font-size: 0.5rem;
   line-height: 1;
@@ -1560,10 +1566,15 @@ height: auto;
   .cal-week-new .cal__week-head,
   .cal-week-new .cal__week-body {
     grid-template-columns: 2.5rem repeat(7, minmax(0, 1fr));
+    column-gap: 0.2rem;
   }
   .cal-week-new .cal__hour,
   .cal-day-new .cal__hour {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
+    height: 100%;
     padding: 0;
     font-size: 0.5rem;
     line-height: 1;
@@ -1692,15 +1703,17 @@ height: auto;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 1.1rem;
-    height: 1.1rem;
-    padding: 0 0.25rem;
+    min-width: 1rem;
+    height: 1rem;
+    padding: 0 0.2rem;
     /* Sin pastilla propia: el contador se ve sobre el mismo fondo que ya
        tiene la celda (disponible/agendada/bloqueada), en vez de un fondo
        morado fijo que no combina con los demas estados. */
     background: transparent;
     color: rgba(255, 255, 255, 0.85);
-    font-size: 0.65rem;
+    /* Mismo tamaño que el numero de dia del calendario de mes en responsive
+       (.cal-month-new__count), para que ambos contadores luzcan igual. */
+    font-size: 0.5rem;
     font-weight: 600;
     line-height: 1;
   }
