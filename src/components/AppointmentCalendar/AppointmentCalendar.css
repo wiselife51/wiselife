@@ -1662,21 +1662,21 @@ height: auto;
   .cal-month-new__grid {
     grid-auto-rows: 2.5rem;
   }
+  /* El numero del dia queda arriba a la izquierda y el contador de citas
+     arriba a la derecha (mismo layout en flujo que en escritorio, solo mas
+     compacto), en vez de centrar el numero y superponer el contador encima
+     con position:absolute: asi nunca se pisan entre si. */
   .cal-month-new__grid > .psy-dash-upcoming-item {
-    position: relative;
-    justify-content: center;
-    align-items: center;
+    justify-content: space-between;
+    align-items: flex-start;
     min-height: 2.5rem;
     height: 2.5rem;
-    padding: 0.35rem 0.5rem;
+    padding: 0.3rem 0.4rem;
   }
   .cal-month-new__grid > .psy-dash-upcoming-item .cal-month-new__number {
     margin: 0;
   }
   .cal-month-new__grid > .psy-dash-upcoming-item .cal-month-new__count {
-    position: absolute;
-    top: 0.15rem;
-    right: 0.2rem;
     min-width: 1rem;
     width: 1rem;
     height: 1rem;
@@ -1695,8 +1695,10 @@ height: auto;
     min-width: 1.1rem;
     height: 1.1rem;
     padding: 0 0.25rem;
-    border-radius: 999px;
-    background: rgba(126, 87, 194, 0.25);
+    /* Sin pastilla propia: el contador se ve sobre el mismo fondo que ya
+       tiene la celda (disponible/agendada/bloqueada), en vez de un fondo
+       morado fijo que no combina con los demas estados. */
+    background: transparent;
     color: rgba(255, 255, 255, 0.85);
     font-size: 0.65rem;
     font-weight: 600;
@@ -1784,7 +1786,7 @@ height: auto;
   .cal-day-new .cal__day-slot {
   border-radius: 12px !important;
   background: var(--psy-surface) !important;
-  border: 1px solid rgba(126, 87, 194, 0.2) !important;
+  border: 1px solid rgba(126, 87, 194, 0.12) !important;
   }
 
 .cal-month-new__grid > .psy-dash-upcoming-item:hover,
@@ -1932,40 +1934,40 @@ height: auto;
 .cal-month-new__grid > .psy-dash-upcoming-item.cal-month-new__day--blocked,
 .cal-week-new .cal__slot.cal-month-new__day--blocked,
 .cal-day-new .cal__day-slot.cal-month-new__day--blocked {
-  background: rgba(239, 83, 80, 0.1) !important;
-  border: 1px solid rgba(239, 83, 80, 0.3) !important;
+  background: rgba(239, 83, 80, 0.05) !important;
+  border: 1px solid rgba(239, 83, 80, 0.16) !important;
 }
 .cal-month-new__grid > .psy-dash-upcoming-item.cal-month-new__day--blocked:hover,
 .cal-week-new .cal__slot.cal-month-new__day--blocked:hover,
 .cal-day-new .cal__day-slot.cal-month-new__day--blocked:hover {
-  background: rgba(239, 83, 80, 0.18) !important;
-  border-color: rgba(239, 83, 80, 0.3) !important;
+  background: rgba(239, 83, 80, 0.1) !important;
+  border-color: rgba(239, 83, 80, 0.22) !important;
 }
 
 .cal-month-new__grid > .psy-dash-upcoming-item.cal-month-new__day--confirmed,
 .cal-week-new .cal__slot.cal-month-new__day--confirmed,
 .cal-day-new .cal__day-slot.cal-month-new__day--confirmed {
-  background: rgba(37, 211, 102, 0.12) !important;
-  border: 1px solid rgba(37, 211, 102, 0.3) !important;
+  background: rgba(37, 211, 102, 0.06) !important;
+  border: 1px solid rgba(37, 211, 102, 0.16) !important;
 }
 .cal-month-new__grid > .psy-dash-upcoming-item.cal-month-new__day--confirmed:hover,
 .cal-week-new .cal__slot.cal-month-new__day--confirmed:hover,
 .cal-day-new .cal__day-slot.cal-month-new__day--confirmed:hover {
-  background: rgba(37, 211, 102, 0.2) !important;
-  border-color: rgba(37, 211, 102, 0.3) !important;
+  background: rgba(37, 211, 102, 0.11) !important;
+  border-color: rgba(37, 211, 102, 0.22) !important;
 }
 
 .cal-month-new__grid > .psy-dash-upcoming-item.cal-month-new__day--available,
 .cal-week-new .cal__slot.cal-month-new__day--available,
 .cal-day-new .cal__day-slot.cal-month-new__day--available {
   background: var(--psy-surface) !important;
-  border: 1px solid rgba(126, 87, 194, 0.2) !important;
+  border: 1px solid rgba(126, 87, 194, 0.12) !important;
 }
 .cal-month-new__grid > .psy-dash-upcoming-item.cal-month-new__day--available:hover,
 .cal-week-new .cal__slot.cal-month-new__day--available:hover,
 .cal-day-new .cal__day-slot.cal-month-new__day--available:hover {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border-color: rgba(126, 87, 194, 0.2) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: rgba(126, 87, 194, 0.18) !important;
 }
 
 /* La linea debajo de la barra Mes/Semana/Dia usa el mismo color y grosor
