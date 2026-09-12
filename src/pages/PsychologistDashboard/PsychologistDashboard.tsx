@@ -116,6 +116,9 @@ interface PatientSummary {
   appointmentCount: number;
   lastAppointment: string;
   lastStatus: string;
+  emergencyContactName: string | null;
+  emergencyContactRelationship: string | null;
+  emergencyContactPhone: string | null;
 }
 
 interface AvailabilitySlot {
@@ -607,6 +610,9 @@ const PsychologistDashboard: React.FC = () => {
           appointmentCount: (current?.appointmentCount || 0) + 1,
           lastAppointment: appointment.appointment_date,
           lastStatus: appointment.status,
+          emergencyContactName: current?.emergencyContactName || null,
+          emergencyContactRelationship: current?.emergencyContactRelationship || null,
+          emergencyContactPhone: current?.emergencyContactPhone || null,
         });
       } else {
         patientById.set(appointment.patient.id, { ...current, appointmentCount: current.appointmentCount + 1 });
@@ -618,6 +624,24 @@ const PsychologistDashboard: React.FC = () => {
       for (const contact of patientContactData || []) {
         const current = patientById.get(contact.id);
         if (current) patientById.set(contact.id, { ...current, email: contact.email || null });
+      }
+      // Red de apoyo: contacto de emergencia registrado en la historia clinica,
+      // para que el psicologo pueda comunicarse con un familiar o amigo si es necesario.
+      const { data: emergencyContactsData } = await supabase
+        .from('clinical_records')
+        .select('patient_id, emergency_contact_name, emergency_contact_relationship, emergency_contact_phone')
+        .eq('psychologist_id', psyData.id)
+        .in('patient_id', patientIdsForEmail);
+      for (const record of emergencyContactsData || []) {
+        const current = patientById.get(record.patient_id);
+        if (current) {
+          patientById.set(record.patient_id, {
+            ...current,
+            emergencyContactName: record.emergency_contact_name || null,
+            emergencyContactRelationship: record.emergency_contact_relationship || null,
+            emergencyContactPhone: record.emergency_contact_phone || null,
+          });
+        }
       }
     }
     setPatients([...patientById.values()].sort((a, b) => b.lastAppointment.localeCompare(a.lastAppointment)));
@@ -1396,11 +1420,16 @@ const PsychologistDashboard: React.FC = () => {
         {activeTab === 'pacientes' && (
           <section className="psy-patients-page">
             <DashboardModuleHeader title="Mis Pacientes" subtitle="Consulta la información de tus pacientes." onMenu={() => setShowMobileMenu(!showMobileMenu)} />
-            <label className="psy-patients-search">
-              <span className="sr-only">Buscar pacientes</span>
+            <div className="psy-patients-search">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
-              <input type="search" value={patientSearch} onChange={(event) => setPatientSearch(event.target.value)} placeholder="Buscar por nombre o teléfono" />
-            </label>
+              <input
+                type="search"
+                value={patientSearch}
+                onChange={(event) => setPatientSearch(event.target.value)}
+                placeholder="Buscar por nombre o teléfono"
+                aria-label="Buscar pacientes"
+              />
+            </div>
             {patientsLoading ? <div className="psy-dash-empty"><p>Cargando pacientes...</p></div> : (() => {
               const query = patientSearch.trim().toLowerCase();
               const visiblePatients = patients.filter((patient) => `${patient.full_name || ''} ${patient.phone || ''}`.toLowerCase().includes(query));
@@ -1408,6 +1437,19 @@ const PsychologistDashboard: React.FC = () => {
                 <article key={patient.id} className="psy-patient-card">
                   <div className="psy-patient-card-top"><div className="psy-patient-avatar">{patient.avatar_url ? <img src={patient.avatar_url} alt="" crossOrigin="anonymous" /> : <span>{(patient.full_name || 'P').charAt(0).toUpperCase()}</span>}</div><div><h2>{patient.full_name || 'Paciente sin nombre'}</h2><p>{patient.phone || 'Sin teléfono registrado'}</p></div></div>
                   <div className="psy-patient-meta"><span>{patient.appointmentCount} {patient.appointmentCount === 1 ? 'cita' : 'citas'}</span><span>Última: {patient.lastAppointment.split('-').reverse().join('/')}</span></div>
+                  {(patient.emergencyContactName || patient.emergencyContactPhone) && (
+                    <div className="psy-patient-support">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" /><circle cx="10" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+                      <div>
+                        <p className="psy-patient-support-label">Red de apoyo</p>
+                        <p className="psy-patient-support-value">
+                          {patient.emergencyContactName || 'Sin nombre registrado'}
+                          {patient.emergencyContactRelationship ? ` · ${patient.emergencyContactRelationship}` : ''}
+                          {patient.emergencyContactPhone ? ` · ${patient.emergencyContactPhone}` : ''}
+                        </p>
+                      </div>
+                    </div>
+                  )}
                   <button type="button" className="psy-patient-history-btn" onClick={() => { setSelectedPatientForHistory({ id: patient.id, name: patient.full_name || 'Paciente' }); setShowClinicalHistoryView(true); }}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 19.5V6a2 2 0 0 1 2-2h11a1 1 0 0 1 1 1v13" /><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H19" /><path d="M8 7h6M8 10.5h6" /></svg>
                     Ver historia clínica

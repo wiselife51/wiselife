@@ -1183,10 +1183,14 @@ body:has(.psy-dash) {
   flex-wrap: wrap;
 }
 
-/* Buscador ordenado: icono a la izquierda, texto e input con el mismo
-   tamano de letra que los botones del menu (.psy-dash-nav-item, 0.78rem). */
+/* Buscador ordenado: icono centrado verticalmente a la izquierda, texto e
+   input con el mismo tamano de letra que los botones del menu
+   (.psy-dash-nav-item, 0.78rem). El label visible se reemplazo por un
+   aria-label en el input (no existia una clase .sr-only en el proyecto,
+   por lo que el span anterior se renderizaba visible y quedaba debajo del
+   icono). */
 .psy-patients-search { position: relative; display: flex; align-items: center; margin-bottom: 1rem; }
-.psy-patients-search svg { position: absolute; left: 1rem; color: rgba(255, 255, 255, 0.4); pointer-events: none; }
+.psy-patients-search svg { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: rgba(255, 255, 255, 0.4); pointer-events: none; }
 .psy-patients-search input { width: 100%; padding: 0.85rem 1rem 0.85rem 2.5rem; border: 1px solid var(--psy-border); border-radius: 12px; background: var(--psy-surface); color: white; font-family: 'Inter', sans-serif; font-size: 0.78rem; outline: none; }
 .psy-patients-search input::placeholder { color: rgba(255, 255, 255, 0.4); }
 .psy-patients-search input:focus { border-color: rgba(171, 127, 255, 0.75); box-shadow: 0 0 0 3px rgba(171, 127, 255, 0.12); }
@@ -1200,9 +1204,16 @@ body:has(.psy-dash) {
 .psy-patient-card h2 { margin: 0; color: white; font-size: 0.8125rem; font-weight: 600; }
 .psy-patient-card p { margin: 0.2rem 0 0; color: rgba(255,255,255,0.55); font-size: 0.75rem; }
 .psy-patient-meta { display: flex; justify-content: space-between; gap: 0.5rem; color: rgba(255,255,255,0.55); font-size: 0.75rem; }
-/* Mismo diseno exacto que "Cerrar sesion" (.psy-dash-signout): posicion,
-   padding, tamano de letra, radio de borde e icono a la izquierda; solo
-   cambia el color caracteristico de esta accion (morado). */
+/* Linea de referencia de la red de apoyo del paciente (contacto de
+   emergencia registrado en la historia clinica): a quien debe llamar el
+   psicologo si necesita comunicarse con un familiar o amigo. */
+.psy-patient-support { display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.625rem 0.625rem; border: 1px solid var(--psy-border); border-radius: 10px; background: rgba(255, 255, 255, 0.03); color: rgba(255, 255, 255, 0.5); }
+.psy-patient-support svg { flex: 0 0 14px; margin-top: 0.125rem; color: rgba(255, 255, 255, 0.4); }
+.psy-patient-support-label { margin: 0; font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em; color: rgba(255, 255, 255, 0.4); }
+.psy-patient-support-value { margin: 0.125rem 0 0; font-size: 0.75rem; color: rgba(255, 255, 255, 0.75); overflow-wrap: anywhere; }
+/* Mismo diseno exacto que "Cerrar sesion" (.psy-dash-signout): mismo
+   fondo, borde y color caracteristico (morado), mismo padding, tamano de
+   letra, radio de borde e icono a la izquierda. */
 .psy-patient-history-btn {
   position: relative;
   display: flex;
@@ -1211,18 +1222,18 @@ body:has(.psy-dash) {
   justify-content: center;
   gap: 0.625rem;
   padding: 0.7rem 0.875rem;
-  border: 1px solid rgba(171, 127, 255, 0.35);
+  border: 1px solid rgba(126, 87, 194, 0.2);
   border-radius: 12px;
-  background: rgba(171, 127, 255, 0.1);
-  color: #c9b2ff;
+  background: var(--psy-surface);
+  color: #b388ff;
   font-family: 'Inter', sans-serif;
   font-size: 0.8125rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.2s var(--psy-smooth), border-color 0.2s var(--psy-smooth), color 0.2s var(--psy-smooth);
 }
 .psy-patient-history-btn svg { position: absolute; left: 0.875rem; }
-.psy-patient-history-btn:hover { background: rgba(171, 127, 255, 0.18); }
+.psy-patient-history-btn:hover { background: rgba(126, 87, 194, 0.12); border-color: rgba(126, 87, 194, 0.35); }
 
 /* Contenedor único y compartido por TODOS los módulos del psicólogo:
    mismo padding, borde, radio y sombra que Próximas citas. Cada módulo
