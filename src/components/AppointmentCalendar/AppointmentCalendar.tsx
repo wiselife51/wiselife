@@ -368,18 +368,28 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
       {panelDay && (
         <aside className="cal-panel" aria-label="Detalle del dia">
           <header className="cal-panel__head">
-            <div className="cal-panel__head-row">
-              <div className="cal-panel__titles">
-                <p className="cal-panel__date">{panelDay.split('-').reverse().join('/')}</p>
-                <p className="cal-panel__count">
-                  {panelAppts.length === 0 ? 'Sin citas' : `${panelAppts.length} cita${panelAppts.length > 1 ? 's' : ''}`}
-                </p>
+            <div className="psy-dash-sidebar-header cal-panel__brand-header">
+              <div className="psy-dash-brand">
+                <div className="psy-dash-logo">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" strokeWidth="2" aria-hidden="true">
+                    <defs><linearGradient id="cal-panel-logo-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#4dd0e1" /><stop offset="50%" stopColor="#42a5f5" /><stop offset="100%" stopColor="#7e57c2" /></linearGradient></defs>
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="url(#cal-panel-logo-grad)" />
+                  </svg>
+                  <span>Vida Sabia</span>
+                </div>
+                <div className="psy-dash-badge">Agenda del dia</div>
               </div>
-              <button type="button" className="cal__icon-btn" onClick={() => setPanelDay(null)} aria-label="Cerrar">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <button type="button" className="psy-appt-modal-close" onClick={() => setPanelDay(null)} aria-label="Cerrar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
               </button>
+            </div>
+            <div className="psy-dash-profile cal-panel__day-profile">
+              <p className="psy-dash-name">{panelDay.split('-').reverse().join('/')}</p>
+              <p className="psy-dash-email">
+                {panelAppts.length === 0 ? 'Sin citas' : `${panelAppts.length} cita${panelAppts.length > 1 ? 's' : ''}`}
+              </p>
             </div>
             {renderDayActions && <div className="cal-panel__dayactions">{renderDayActions(panelDay)}</div>}
           </header>
