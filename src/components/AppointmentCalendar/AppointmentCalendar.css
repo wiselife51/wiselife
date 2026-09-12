@@ -1678,11 +1678,12 @@ height: auto;
      compacto), en vez de centrar el numero y superponer el contador encima
      con position:absolute: asi nunca se pisan entre si. */
   .cal-month-new__grid > .psy-dash-upcoming-item {
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: flex-start;
+    gap: 0.2rem;
     min-height: 2.5rem;
     height: 2.5rem;
-    padding: 0.3rem 0.4rem;
+    padding: 0.3rem 0.35rem;
   }
   .cal-month-new__grid > .psy-dash-upcoming-item .cal-month-new__number {
     margin: 0;
