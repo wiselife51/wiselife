@@ -688,6 +688,12 @@
   color: #b388ff;
 }
 
+/* La fecha reemplaza el nombre del psicologo en este encabezado: letra mas
+   pequena que la base de .psy-dash-name para no competir con el logo. */
+.cal-panel__day-profile .psy-dash-name {
+  font-size: 0.8125rem;
+}
+
 .cal-panel__body {
   flex: 1 1 auto;
   min-height: 0;
@@ -946,7 +952,16 @@ height: auto;
 
 .cal-panel__dayactions .cal-action {
   flex: 1 1 auto;
-}
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  }
+
+.cal-panel__dayactions .cal-action svg {
+  left: 0.75rem;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  }
 
 /* Exactamente el mismo alto, tipografia y layout que el boton "Cerrar
    sesion" (.psy-dash-signout): mismo padding/font-size/font-weight/radio, e
