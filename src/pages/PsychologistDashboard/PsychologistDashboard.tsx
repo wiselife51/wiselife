@@ -267,7 +267,33 @@ const PsychologistDashboard: React.FC = () => {
       (b) => b.block_date === dateKey && parseInt(b.start_time.slice(0, 2), 10) <= hour && parseInt(b.end_time.slice(0, 2), 10) > hour
     );
     if (overlapping.length > 0) {
+      // Habilitar: se abre unicamente la hora seleccionada. Los bloqueos que
+      // se superponen pueden cubrir mas de una hora (por ejemplo, el dia
+      // completo bloqueado automaticamente para fines de semana u otros
+      // meses), asi que en vez de borrarlos enteros -lo que abriria TODO el
+      // dia en vez de solo la hora elegida- se dividen: se elimina el
+      // bloqueo original y se reinserta lo que quede antes y despues de la
+      // hora habilitada, preservando el bloqueo del resto del rango.
+      const remainingRanges = overlapping.flatMap((block) => {
+        const startHour = parseInt(block.start_time.slice(0, 2), 10);
+        const endHour = parseInt(block.end_time.slice(0, 2), 10);
+        const ranges: { start_time: string; end_time: string }[] = [];
+        if (startHour < hour) ranges.push({ start_time: block.start_time, end_time: `${hour.toString().padStart(2, '0')}:00` });
+        if (endHour > hour + 1) ranges.push({ start_time: `${(hour + 1).toString().padStart(2, '0')}:00`, end_time: block.end_time });
+        return ranges.map((range) => ({ ...range, reason: block.reason }));
+      });
       await supabase.from('schedule_blocks').delete().in('id', overlapping.map((b) => b.id));
+      if (remainingRanges.length > 0) {
+        await supabase.from('schedule_blocks').insert(
+          remainingRanges.map((range) => ({
+            psychologist_id: profile.id,
+            block_date: dateKey,
+            start_time: range.start_time,
+            end_time: range.end_time,
+            reason: range.reason,
+          }))
+        );
+      }
     } else {
       await supabase.from('schedule_blocks').insert({
         psychologist_id: profile.id,
@@ -882,15 +908,35 @@ const PsychologistDashboard: React.FC = () => {
 
   const blockedDates = blocks.map((b) => b.block_date);
 
-  const handleCalendarReschedule = async (appt: CalendarAppointment, newDate: string) => {
-    const { error } = await supabase
-      .from('appointments')
-      .update({ appointment_date: newDate, updated_at: new Date().toISOString() })
-      .eq('id', appt.id);
+  // En semana/dia el arrastre tambien puede cambiar la hora (newStartTime):
+  // se conserva la duracion original de la cita y se recalcula la hora de
+  // fin a partir de la nueva hora de inicio.
+  const timeToMinutes = (t: string) => {
+    const [h, m] = t.split(':').map((n) => parseInt(n, 10));
+    return h * 60 + (m || 0);
+  };
+  const minutesToTime = (mins: number) => {
+    const h = Math.floor(mins / 60) % 24;
+    const m = mins % 60;
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+  };
+
+  const handleCalendarReschedule = async (appt: CalendarAppointment, newDate: string, newStartTime?: string) => {
+    const updates: { appointment_date: string; updated_at: string; start_time?: string; end_time?: string } = {
+      appointment_date: newDate,
+      updated_at: new Date().toISOString(),
+    };
+    if (newStartTime) {
+      const durationMinutes = timeToMinutes(appt.end_time) - timeToMinutes(appt.start_time);
+      updates.start_time = newStartTime;
+      updates.end_time = minutesToTime(timeToMinutes(newStartTime) + durationMinutes);
+    }
+
+    const { error } = await supabase.from('appointments').update(updates).eq('id', appt.id);
 
     if (!error) {
       setAppointments((prev) =>
-        prev.map((a) => (a.id === appt.id ? { ...a, appointment_date: newDate } : a))
+        prev.map((a) => (a.id === appt.id ? { ...a, appointment_date: newDate, ...(updates.start_time ? { start_time: updates.start_time, end_time: updates.end_time! } : {}) } : a))
       );
     }
   };
