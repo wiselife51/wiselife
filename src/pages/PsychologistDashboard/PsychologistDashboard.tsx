@@ -145,7 +145,6 @@ const DAYS_CONFIG = [
 ];
 
 const DAY_NAMES_FULL = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
-const MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
 const HOUR_OPTIONS = Array.from({ length: 15 }, (_, i) => {
   const h = i + 7;
@@ -229,22 +228,55 @@ const PsychologistDashboard: React.FC = () => {
   } | null>(null);
 
   // Bloquea/abre el dia completo desde el panel del calendario (una sola
-  // accion, sin modal): cubre toda la jornada habilitada (7:00 - 20:00).
+  // accion, sin modal). Se inserta un bloqueo por cada hora habilitada (en
+  // vez de un unico rango 07:00-20:00) para que despues, desde semana/dia,
+  // se pueda abrir una hora puntual sin perder el bloqueo del resto del dia.
   const handleBlockFullDay = async (dateKey: string) => {
     if (!profile) return;
-    await supabase.from('schedule_blocks').insert({
-      psychologist_id: profile.id,
-      block_date: dateKey,
-      start_time: '07:00',
-      end_time: '20:00',
-      reason: 'Dia bloqueado desde el calendario',
-    });
+    await supabase.from('schedule_blocks').insert(
+      HOUR_OPTIONS.map((startTime) => {
+        const hour = parseInt(startTime.slice(0, 2), 10);
+        return {
+          psychologist_id: profile.id,
+          block_date: dateKey,
+          start_time: startTime,
+          end_time: `${(hour + 1).toString().padStart(2, '0')}:00`,
+          reason: 'Dia bloqueado desde el calendario',
+        };
+      })
+    );
     fetchData();
   };
 
   const handleUnblockDay = async (dateKey: string) => {
     if (!profile) return;
     await supabase.from('schedule_blocks').delete().eq('psychologist_id', profile.id).eq('block_date', dateKey);
+    fetchData();
+  };
+
+  // Bloquea/abre una sola hora desde las vistas de semana y dia. Si ya hay
+  // bloqueos que cubren esa hora (uno puntual o el rango de un dia completo
+  // bloqueado antes de este cambio) los elimina; si no hay ninguno, inserta
+  // el bloqueo de esa hora exacta.
+  const isHourBlocked = (dateKey: string, hour: number) =>
+    blocks.some((b) => b.block_date === dateKey && parseInt(b.start_time.slice(0, 2), 10) <= hour && parseInt(b.end_time.slice(0, 2), 10) > hour);
+
+  const handleToggleHourBlock = async (dateKey: string, hour: number) => {
+    if (!profile) return;
+    const overlapping = blocks.filter(
+      (b) => b.block_date === dateKey && parseInt(b.start_time.slice(0, 2), 10) <= hour && parseInt(b.end_time.slice(0, 2), 10) > hour
+    );
+    if (overlapping.length > 0) {
+      await supabase.from('schedule_blocks').delete().in('id', overlapping.map((b) => b.id));
+    } else {
+      await supabase.from('schedule_blocks').insert({
+        psychologist_id: profile.id,
+        block_date: dateKey,
+        start_time: `${hour.toString().padStart(2, '0')}:00`,
+        end_time: `${(hour + 1).toString().padStart(2, '0')}:00`,
+        reason: 'Hora bloqueada desde el calendario',
+      });
+    }
     fetchData();
   };
 
@@ -1084,6 +1116,8 @@ const PsychologistDashboard: React.FC = () => {
           <AppointmentCalendar
             appointments={calendarAppointments}
             blockedDates={blockedDates}
+            isHourBlocked={isHourBlocked}
+            onToggleHourBlock={handleToggleHourBlock}
             onReschedule={handleCalendarReschedule}
             onSelect={(a) => {
               const original = appointments.find((x) => x.id === a.id);

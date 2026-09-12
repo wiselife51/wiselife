@@ -39,13 +39,17 @@ function fmtTime(t: string): string {
 
 interface AppointmentCalendarProps {
   appointments: CalendarAppointment[];
-  /** Fechas YYYY-MM-DD bloqueadas por el profesional. */
+  /** Fechas YYYY-MM-DD bloqueadas por el profesional (vista mes). */
   blockedDates?: string[];
+  /** Indica si una hora puntual de un dia esta bloqueada (vistas semana/dia). */
+  isHourBlocked?: (dateKey: string, hour: number) => boolean;
+  /** Alterna el bloqueo de una hora puntual al hacer click en una celda vacia (vistas semana/dia). */
+  onToggleHourBlock?: (dateKey: string, hour: number) => void;
   /** Si se pasa, se habilita arrastrar una cita a otro dia. */
   onReschedule?: (appointment: CalendarAppointment, newDate: string) => Promise<void> | void;
   /** Acciones rapidas del panel lateral, propias de cada panel. */
   renderActions?: (appointment: CalendarAppointment) => React.ReactNode;
-  /** Acciones sobre la jornada completa (bloquear el dia, anadir hueco...). */
+  /** Acciones sobre la jornada completa (bloquear el dia, anadir hueco...). Solo se usan en la vista mes. */
   renderDayActions?: (dateKey: string) => React.ReactNode;
   onSelect?: (appointment: CalendarAppointment) => void;
   emptyLabel?: string;
@@ -55,6 +59,8 @@ interface AppointmentCalendarProps {
 const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
   appointments,
   blockedDates = [],
+  isHourBlocked,
+  onToggleHourBlock,
   onReschedule,
   renderActions,
   renderDayActions,
@@ -64,7 +70,14 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
 }) => {
   const [view, setView] = useState<CalendarView>('month');
   const [cursor, setCursor] = useState(new Date());
+  // El panel lateral (lista de citas + bloquear/abrir el dia) solo aplica a
+  // la vista mes: en semana y dia, el bloqueo se hace celda por hora.
   const [panelDay, setPanelDay] = useState<string | null>(null);
+
+  const changeView = (v: CalendarView) => {
+    setView(v);
+    if (v !== 'month') setPanelDay(null);
+  };
 
   const [dragging, setDragging] = useState<CalendarAppointment | null>(null);
   const [dragOver, setDragOver] = useState<string | null>(null);
@@ -177,7 +190,7 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
               key={v}
               type="button"
               className={`cal__view ${view === v ? 'cal__view--active' : ''}`}
-              onClick={() => setView(v)}
+              onClick={() => changeView(v)}
             >
               {v === 'month' ? 'Mes' : v === 'week' ? 'Semana' : 'Dia'}
             </button>
@@ -261,11 +274,7 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
             {weekGrid(cursor).map((d) => {
               const key = toDateStr(d);
               return (
-                <div
-                  key={key}
-                  className={`cal__week-day ${key === todayKey ? 'cal__week-day--today' : ''}`}
-                  onClick={() => setPanelDay(key)}
-                >
+                <div key={key} className={`cal__week-day ${key === todayKey ? 'cal__week-day--today' : ''}`}>
                   <span>{DAY_SHORT[d.getDay()]}</span>
                   <strong>{d.getDate()}</strong>
                 </div>
@@ -279,13 +288,17 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
                 {weekGrid(cursor).map((d) => {
                   const key = toDateStr(d);
                   const list = (byDate.get(key) || []).filter((a) => parseInt(a.start_time.slice(0, 2), 10) === h);
+                  const hourBlocked = isHourBlocked ? isHourBlocked(key, h) : blocked.has(key);
                   return (
                     <div
                       key={`${key}-${h}`}
-                      className={`cal__slot psy-dash-upcoming-item ${dragOver === key ? 'cal__slot--dragover' : ''} ${blocked.has(key) ? 'cal-month-new__day--blocked' : ''} ${list.some((a) => a.status === 'confirmada') ? 'cal-month-new__day--confirmed' : ''} ${list.length > 0 && list.every((a) => a.status === 'completada') ? 'cal-month-new__day--completed' : ''} ${!blocked.has(key) && list.length === 0 ? 'cal-month-new__day--available' : ''}`}
+                      className={`cal__slot psy-dash-upcoming-item ${dragOver === key ? 'cal__slot--dragover' : ''} ${hourBlocked ? 'cal-month-new__day--blocked' : ''} ${list.some((a) => a.status === 'confirmada') ? 'cal-month-new__day--confirmed' : ''} ${list.length > 0 && list.every((a) => a.status === 'completada') ? 'cal-month-new__day--completed' : ''} ${!hourBlocked && list.length === 0 ? 'cal-month-new__day--available' : ''}`}
                       onClick={() => {
-                        setPanelDay(key);
-                        if (list[0]) onSelect?.(list[0]);
+                        if (list[0]) {
+                          onSelect?.(list[0]);
+                          return;
+                        }
+                        onToggleHourBlock?.(key, h);
                       }}
                       {...dayCellProps(key)}
                     >
@@ -311,20 +324,25 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
       {/* ===== Vista dia ===== */}
       {view === 'day' && (
         <div className="cal-day-new">
-          <div className="cal-day-new__head" onClick={() => setPanelDay(toDateStr(cursor))}>
+          <div className="cal-day-new__head">
             <span>{DAY_SHORT[cursor.getDay()]}</span>
             <strong>{cursor.getDate()}</strong>
           </div>
           {HOURS.map((h) => {
             const key = toDateStr(cursor);
             const list = (byDate.get(key) || []).filter((a) => parseInt(a.start_time.slice(0, 2), 10) === h);
+            const hourBlocked = isHourBlocked ? isHourBlocked(key, h) : blocked.has(key);
             return (
               <div key={h} className="cal__day-row">
                 <div className="cal__hour">{`${h}:00`}</div>
                 <div
-                  className={`cal__day-slot psy-dash-upcoming-item ${dragOver === key ? 'cal__slot--dragover' : ''} ${blocked.has(key) ? 'cal-month-new__day--blocked' : ''} ${list.some((a) => a.status === 'confirmada') ? 'cal-month-new__day--confirmed' : ''} ${list.length > 0 && list.every((a) => a.status === 'completada') ? 'cal-month-new__day--completed' : ''} ${!blocked.has(key) && list.length === 0 ? 'cal-month-new__day--available' : ''}`}
+                  className={`cal__day-slot psy-dash-upcoming-item ${dragOver === key ? 'cal__slot--dragover' : ''} ${hourBlocked ? 'cal-month-new__day--blocked' : ''} ${list.some((a) => a.status === 'confirmada') ? 'cal-month-new__day--confirmed' : ''} ${list.length > 0 && list.every((a) => a.status === 'completada') ? 'cal-month-new__day--completed' : ''} ${!hourBlocked && list.length === 0 ? 'cal-month-new__day--available' : ''}`}
                   onClick={() => {
-                    if (list[0]) onSelect?.(list[0]);
+                    if (list[0]) {
+                      onSelect?.(list[0]);
+                      return;
+                    }
+                    onToggleHourBlock?.(key, h);
                   }}
                   {...dayCellProps(key)}
                 >
@@ -340,55 +358,50 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
         </div>
       )}
 
-      {/* ===== Panel lateral del dia ===== */}
+      {/* ===== Panel lateral del dia (solo vista mes: en semana/dia el
+          bloqueo se hace celda por hora, sin este panel) ===== */}
       {panelDay && (
         <aside className="cal-panel" aria-label="Detalle del dia">
           <header className="cal-panel__head">
-            <div>
-              <p className="cal-panel__date">{panelDay.split('-').reverse().join('/')}</p>
-              <p className="cal-panel__count">
-                {view === 'day'
-                  ? 'Gestiona la disponibilidad de este dia'
-                  : panelAppts.length === 0 ? 'Sin citas' : `${panelAppts.length} cita${panelAppts.length > 1 ? 's' : ''}`}
-              </p>
+            <div className="cal-panel__head-row">
+              <div className="cal-panel__titles">
+                <p className="cal-panel__date">{panelDay.split('-').reverse().join('/')}</p>
+                <p className="cal-panel__count">
+                  {panelAppts.length === 0 ? 'Sin citas' : `${panelAppts.length} cita${panelAppts.length > 1 ? 's' : ''}`}
+                </p>
+              </div>
+              <button type="button" className="cal__icon-btn" onClick={() => setPanelDay(null)} aria-label="Cerrar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
             </div>
-            <button type="button" className="cal__icon-btn" onClick={() => setPanelDay(null)} aria-label="Cerrar">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
+            {renderDayActions && <div className="cal-panel__dayactions">{renderDayActions(panelDay)}</div>}
           </header>
 
           <div className="cal-panel__body">
-            {renderDayActions && <div className="cal-panel__dayactions">{renderDayActions(panelDay)}</div>}
-
-            {/* En la vista dia, la grilla por horas ya muestra el detalle de
-                cada cita: el panel solo aporta la accion de bloquear/abrir el
-                dia (arriba), sin repetir la lista. */}
-            {view !== 'day' && (
-              panelAppts.length === 0 ? (
-                <p className="cal-panel__empty">{emptyLabel}</p>
-              ) : (
-                <ul className="cal-panel__list">
-                  {panelAppts.map((a) => (
-                    <li key={a.id} className={`cal-panel__item cal-panel__item--${STATUS_META[a.status]?.key || 'other'}`}>
-                      <div className="cal-panel__item-head">
-                        <div>
-                          <p className="cal-panel__name">{a.title}</p>
-                          <p className="cal-panel__time">
-                            {fmtTime(a.start_time)} - {fmtTime(a.end_time)}
-                          </p>
-                          {a.subtitle && <p className="cal-panel__sub">{a.subtitle}</p>}
-                        </div>
-                        <span className={`cal-panel__badge cal-panel__badge--${STATUS_META[a.status]?.key || 'other'}`}>
-                          {STATUS_META[a.status]?.label || a.status}
-                        </span>
+            {panelAppts.length === 0 ? (
+              <p className="cal-panel__empty">{emptyLabel}</p>
+            ) : (
+              <ul className="cal-panel__list">
+                {panelAppts.map((a) => (
+                  <li key={a.id} className={`cal-panel__item cal-panel__item--${STATUS_META[a.status]?.key || 'other'}`}>
+                    <div className="cal-panel__item-head">
+                      <div>
+                        <p className="cal-panel__name">{a.title}</p>
+                        <p className="cal-panel__time">
+                          {fmtTime(a.start_time)} - {fmtTime(a.end_time)}
+                        </p>
+                        {a.subtitle && <p className="cal-panel__sub">{a.subtitle}</p>}
                       </div>
-                      {renderActions && <div className="cal-panel__actions">{renderActions(a)}</div>}
-                    </li>
-                  ))}
-                </ul>
-              )
+                      <span className={`cal-panel__badge cal-panel__badge--${STATUS_META[a.status]?.key || 'other'}`}>
+                        {STATUS_META[a.status]?.label || a.status}
+                      </span>
+                    </div>
+                    {renderActions && <div className="cal-panel__actions">{renderActions(a)}</div>}
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
         </aside>
