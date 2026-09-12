@@ -193,10 +193,6 @@ const PsychologistDashboard: React.FC = () => {
   const [blockReason, setBlockReason] = useState('');
   const [savingBlock, setSavingBlock] = useState(false);
 
-  // Quick block from calendar
-  const [showQuickBlock, setShowQuickBlock] = useState(false);
-  const [quickBlockDate, setQuickBlockDate] = useState<Date | null>(null);
-
   // Add availability
   const [showAddSlot, setShowAddSlot] = useState(false);
   const [newSlotDay, setNewSlotDay] = useState(1);
@@ -232,22 +228,23 @@ const PsychologistDashboard: React.FC = () => {
     name: string;
   } | null>(null);
 
-  // Quick add from calendar - adds directly without modal
-  // Quick block from calendar
-  const handleQuickBlock = async () => {
-    if (!profile || !blockDate) return;
-    setSavingBlock(true);
+  // Bloquea/abre el dia completo desde el panel del calendario (una sola
+  // accion, sin modal): cubre toda la jornada habilitada (7:00 - 20:00).
+  const handleBlockFullDay = async (dateKey: string) => {
+    if (!profile) return;
     await supabase.from('schedule_blocks').insert({
       psychologist_id: profile.id,
-      block_date: blockDate,
-      start_time: blockStart,
-      end_time: blockEnd,
-      reason: blockReason || null,
+      block_date: dateKey,
+      start_time: '07:00',
+      end_time: '20:00',
+      reason: 'Dia bloqueado desde el calendario',
     });
-    setShowQuickBlock(false);
-    setBlockDate('');
-    setBlockReason('');
-    setSavingBlock(false);
+    fetchData();
+  };
+
+  const handleUnblockDay = async (dateKey: string) => {
+    if (!profile) return;
+    await supabase.from('schedule_blocks').delete().eq('psychologist_id', profile.id).eq('block_date', dateKey);
     fetchData();
   };
 
@@ -1095,20 +1092,18 @@ const PsychologistDashboard: React.FC = () => {
                 setShowMobileMenu(false);
               }
             }}
-            renderDayActions={(dateKey) => (
-              <button
-                type="button"
-                className="cal-action"
-                onClick={() => {
-                  const [y, m, d] = dateKey.split('-').map(Number);
-                  setQuickBlockDate(new Date(y, m - 1, d));
-                  setBlockDate(dateKey);
-                  setShowQuickBlock(true);
-                }}
-              >
-                Bloquear horario
-              </button>
-            )}
+            renderDayActions={(dateKey) => {
+              const isBlocked = blockedDates.includes(dateKey);
+              return (
+                <button
+                  type="button"
+                  className={`cal-action ${isBlocked ? 'cal-action--unblock' : 'cal-action--block'}`}
+                  onClick={() => (isBlocked ? handleUnblockDay(dateKey) : handleBlockFullDay(dateKey))}
+                >
+                  {isBlocked ? 'Abrir dia' : 'Bloquear dia completo'}
+                </button>
+              );
+            }}
             renderActions={(a) => {
               const original = appointments.find((x) => x.id === a.id);
               if (!original) return null;
@@ -1429,44 +1424,6 @@ const PsychologistDashboard: React.FC = () => {
           </section>
         )}
       </main>
-
-      {/* Quick Block Modal */}
-      {showQuickBlock && (
-        <div className="psy-dash-modal-backdrop" onClick={() => setShowQuickBlock(false)}>
-          <div className="psy-dash-modal" onClick={(e) => e.stopPropagation()}>
-            <h3>Bloquear horario</h3>
-            <p className="psy-modal-subtitle">
-              {quickBlockDate && `${DAY_NAMES_FULL[quickBlockDate.getDay()]} ${quickBlockDate.getDate()} de ${MONTH_NAMES[quickBlockDate.getMonth()]}`}
-            </p>
-            <div className="psy-dash-modal-fields">
-              <div className="psy-dash-modal-row">
-                <div className="psy-dash-modal-field">
-                  <label>Desde</label>
-                  <select value={blockStart} onChange={(e) => setBlockStart(e.target.value)}>
-                    {HOUR_OPTIONS.map((h) => <option key={h} value={h}>{h}</option>)}
-                  </select>
-                </div>
-                <div className="psy-dash-modal-field">
-                  <label>Hasta</label>
-                  <select value={blockEnd} onChange={(e) => setBlockEnd(e.target.value)}>
-                    {HOUR_OPTIONS.map((h) => <option key={h} value={h}>{h}</option>)}
-                  </select>
-                </div>
-              </div>
-              <div className="psy-dash-modal-field">
-                <label>Razon (opcional)</label>
-                <input type="text" value={blockReason} onChange={(e) => setBlockReason(e.target.value)} placeholder="Vacaciones, cita personal..." />
-              </div>
-            </div>
-            <div className="psy-dash-modal-actions">
-              <button type="button" className="psy-dash-btn-ghost" onClick={() => setShowQuickBlock(false)}>Cancelar</button>
-              <button type="button" className="psy-dash-btn-primary" onClick={handleQuickBlock} disabled={savingBlock}>
-                {savingBlock ? 'Guardando...' : 'Bloquear'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Appointment Detail Modal */}
       {selectedAppt && (

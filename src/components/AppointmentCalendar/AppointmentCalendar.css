@@ -909,12 +909,16 @@ height: auto;
   border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
+/* Mismo lenguaje visual que el resto del dashboard: fondo/bordes del tema
+   base (var(--psy-surface)/var(--psy-border)) y acentos morado/verde/rojo
+   segun la accion, igual que .psy-dash-btn-primary, .psy-wa-btn y
+   .psy-noshow-btn. */
 .cal-action {
   padding: 0.4375rem 0.75rem;
   border-radius: 9px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.82);
+  background: var(--psy-surface);
+  border: 1px solid var(--psy-border);
+  color: rgba(255, 255, 255, 0.72);
   font-family: inherit;
   font-size: 0.75rem;
   font-weight: 600;
@@ -923,20 +927,48 @@ height: auto;
 }
 
 .cal-action:hover {
-  background: rgba(255, 255, 255, 0.11);
-  border-color: rgba(255, 255, 255, 0.25);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .cal-action--primary {
-  background: rgba(66, 165, 245, 0.14);
-  border-color: rgba(66, 165, 245, 0.4);
-  color: #4dd0e1;
+  background: var(--psy-gradient);
+  border-color: transparent;
+  color: #fff;
 }
 
 .cal-action--primary:hover {
-  background: rgba(66, 165, 245, 0.24);
-  color: #80deea;
+  background: var(--psy-gradient);
+  filter: brightness(1.08);
+  color: #fff;
+}
+
+/* Bloquear el dia: mismo rojo que las celdas bloqueadas y el boton
+   "No asistio". */
+.cal-action--block {
+  background: rgba(239, 83, 80, 0.1);
+  border-color: rgba(239, 83, 80, 0.32);
+  color: #ef5350;
+}
+
+.cal-action--block:hover {
+  background: rgba(239, 83, 80, 0.18);
+  border-color: rgba(239, 83, 80, 0.32);
+  color: #ef5350;
+}
+
+/* Abrir/desbloquear el dia: mismo morado que la celda "disponible". */
+.cal-action--unblock {
+  background: var(--psy-surface);
+  border-color: rgba(126, 87, 194, 0.4);
+  color: #b388ff;
+}
+
+.cal-action--unblock:hover {
+  background: rgba(126, 87, 194, 0.14);
+  border-color: rgba(126, 87, 194, 0.4);
+  color: #b388ff;
 }
 
 /* Contención del calendario: nunca invade el scrollbar ni recorta la grilla. */
@@ -1546,7 +1578,8 @@ height: auto;
   color: rgba(255, 255, 255, 0.6);
   font-size: 0.75rem;
   font-weight: 500;
-}
+  cursor: pointer;
+  }
 
 .cal-day-new__head strong {
   color: rgba(255, 255, 255, 0.6);
@@ -1762,8 +1795,8 @@ height: auto;
   color: #b388ff;
 }
 
-/* --- Acciones del panel lateral y dialogo de reprogramar --- */
-.cal-action,
+/* --- Dialogo de reprogramar (los .cal-action ya traen su estilo final
+   desde la regla base, igual en todos los anchos) --- */
 .cal-confirm__cancel,
 .cal-confirm__ok {
   background: var(--psy-surface);
@@ -1774,7 +1807,6 @@ height: auto;
   transition: background 0.2s var(--psy-smooth), border-color 0.2s var(--psy-smooth), color 0.2s var(--psy-smooth);
 }
 
-.cal-action:hover,
 .cal-confirm__cancel:hover,
 .cal-confirm__ok:hover {
   background: rgba(255, 255, 255, 0.05);
@@ -1782,8 +1814,6 @@ height: auto;
   color: rgba(255, 255, 255, 0.9);
 }
 
-.cal-action--primary,
-.cal-action--primary:hover,
 .cal-confirm__ok {
   border-color: rgba(126, 87, 194, 0.2);
   color: #b388ff;

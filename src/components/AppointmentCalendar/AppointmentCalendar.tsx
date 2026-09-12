@@ -311,7 +311,7 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
       {/* ===== Vista dia ===== */}
       {view === 'day' && (
         <div className="cal-day-new">
-          <div className="cal-day-new__head">
+          <div className="cal-day-new__head" onClick={() => setPanelDay(toDateStr(cursor))}>
             <span>{DAY_SHORT[cursor.getDay()]}</span>
             <strong>{cursor.getDate()}</strong>
           </div>
@@ -347,7 +347,9 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
             <div>
               <p className="cal-panel__date">{panelDay.split('-').reverse().join('/')}</p>
               <p className="cal-panel__count">
-                {panelAppts.length === 0 ? 'Sin citas' : `${panelAppts.length} cita${panelAppts.length > 1 ? 's' : ''}`}
+                {view === 'day'
+                  ? 'Gestiona la disponibilidad de este dia'
+                  : panelAppts.length === 0 ? 'Sin citas' : `${panelAppts.length} cita${panelAppts.length > 1 ? 's' : ''}`}
               </p>
             </div>
             <button type="button" className="cal__icon-btn" onClick={() => setPanelDay(null)} aria-label="Cerrar">
@@ -360,28 +362,33 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
           <div className="cal-panel__body">
             {renderDayActions && <div className="cal-panel__dayactions">{renderDayActions(panelDay)}</div>}
 
-            {panelAppts.length === 0 ? (
-              <p className="cal-panel__empty">{emptyLabel}</p>
-            ) : (
-              <ul className="cal-panel__list">
-                {panelAppts.map((a) => (
-                  <li key={a.id} className={`cal-panel__item cal-panel__item--${STATUS_META[a.status]?.key || 'other'}`}>
-                    <div className="cal-panel__item-head">
-                      <div>
-                        <p className="cal-panel__name">{a.title}</p>
-                        <p className="cal-panel__time">
-                          {fmtTime(a.start_time)} - {fmtTime(a.end_time)}
-                        </p>
-                        {a.subtitle && <p className="cal-panel__sub">{a.subtitle}</p>}
+            {/* En la vista dia, la grilla por horas ya muestra el detalle de
+                cada cita: el panel solo aporta la accion de bloquear/abrir el
+                dia (arriba), sin repetir la lista. */}
+            {view !== 'day' && (
+              panelAppts.length === 0 ? (
+                <p className="cal-panel__empty">{emptyLabel}</p>
+              ) : (
+                <ul className="cal-panel__list">
+                  {panelAppts.map((a) => (
+                    <li key={a.id} className={`cal-panel__item cal-panel__item--${STATUS_META[a.status]?.key || 'other'}`}>
+                      <div className="cal-panel__item-head">
+                        <div>
+                          <p className="cal-panel__name">{a.title}</p>
+                          <p className="cal-panel__time">
+                            {fmtTime(a.start_time)} - {fmtTime(a.end_time)}
+                          </p>
+                          {a.subtitle && <p className="cal-panel__sub">{a.subtitle}</p>}
+                        </div>
+                        <span className={`cal-panel__badge cal-panel__badge--${STATUS_META[a.status]?.key || 'other'}`}>
+                          {STATUS_META[a.status]?.label || a.status}
+                        </span>
                       </div>
-                      <span className={`cal-panel__badge cal-panel__badge--${STATUS_META[a.status]?.key || 'other'}`}>
-                        {STATUS_META[a.status]?.label || a.status}
-                      </span>
-                    </div>
-                    {renderActions && <div className="cal-panel__actions">{renderActions(a)}</div>}
-                  </li>
-                ))}
-              </ul>
+                      {renderActions && <div className="cal-panel__actions">{renderActions(a)}</div>}
+                    </li>
+                  ))}
+                </ul>
+              )
             )}
           </div>
         </aside>
