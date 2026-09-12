@@ -643,13 +643,18 @@
 
 /* El header es una columna: primero la fila titulo+cerrar, despues (si
    aplica) el boton de bloquear/abrir el dia. Asi el titulo nunca queda
-   detras de otro elemento sin importar el largo del texto. */
+   detras de otro elemento sin importar el largo del texto. Se marca con
+   borde + sombra bien visibles para que la lista de citas nunca se sienta
+   "pegada" o escondida detras del encabezado. */
 .cal-panel__head {
+  position: relative;
+  z-index: 1;
   flex: 0 0 auto;
   display: flex;
   flex-direction: column;
   padding: 1.5rem 1.5rem 1rem;
-  border-bottom: 1px solid var(--psy-border);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 12px 20px -14px rgba(0, 0, 0, 0.65);
 }
 
 /* Mismo encabezado (logo + badge) que el menu del psicologo; el boton de
@@ -666,12 +671,21 @@
 }
 
 /* En vez de la info del psicologo (avatar/nombre/correo) va la fecha y el
-   numero de citas del dia, con la misma jerarquia tipografica. */
-.cal-panel__day-profile {
-  padding: 0.75rem 0 0;
-  margin-bottom: 0;
-  border-bottom: none;
-  gap: 0.25rem;
+   numero de citas del dia: misma estructura y alto que .psy-dash-profile
+   (padding/gap/borde heredados de la clase base) para que el encabezado del
+   panel quede exactamente a la misma altura que el del menu del psicologo.
+   En vez de la foto del psicologo, un icono de calendario ocupa el mismo
+   espacio que el avatar. */
+.cal-panel__day-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(126, 87, 194, 0.2);
+  border: 2px solid rgba(126, 87, 194, 0.4);
+  color: #b388ff;
 }
 
 .cal-panel__body {
@@ -679,7 +693,7 @@
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 1.125rem 1.5rem 1.5rem;
+  padding: 1.25rem 1.5rem 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.875rem;
@@ -934,28 +948,36 @@ height: auto;
   flex: 1 1 auto;
 }
 
-/* Mismo lenguaje visual que el resto del dashboard: mismo fondo/borde/color
-   que el boton "Cerrar sesion" (.psy-dash-signout), y el mismo tamano de
-   boton agrupado que las acciones del modal de detalle de la cita
-   (.psy-appt-actions): ancho completo, mismo padding y tipografia. Los
-   acentos morado/verde/rojo quedan solo para las acciones semanticas
-   (primaria, bloquear, abrir). */
+/* Exactamente el mismo alto, tipografia y layout que el boton "Cerrar
+   sesion" (.psy-dash-signout): mismo padding/font-size/font-weight/radio, e
+   icono absoluto a la izquierda igual que ese boton. Solo cambia el color,
+   segun la accion (neutra, bloquear, abrir, primaria). */
 .cal-action {
+  position: relative;
   display: flex;
   width: 100%;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.875rem;
+  gap: 0.625rem;
+  padding: 0.7rem 0.875rem;
   border-radius: 12px;
   background: var(--psy-surface);
   border: 1px solid rgba(126, 87, 194, 0.2);
   color: #b388ff;
   font-family: inherit;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 600;
+  text-align: center;
   cursor: pointer;
   transition: all 0.2s ease;
+}
+
+.cal-action svg {
+  position: absolute;
+  left: 0.875rem;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
 }
 
 .cal-action:hover {

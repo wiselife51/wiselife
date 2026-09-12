@@ -386,6 +386,12 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
               </button>
             </div>
             <div className="psy-dash-profile cal-panel__day-profile">
+              <div className="cal-panel__day-icon" aria-hidden="true">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="5" width="18" height="16" rx="2" />
+                  <path d="M3 9h18M8 3v4M16 3v4" />
+                </svg>
+              </div>
               <p className="psy-dash-name">{panelDay.split('-').reverse().join('/')}</p>
               <p className="psy-dash-email">
                 {panelAppts.length === 0 ? 'Sin citas' : `${panelAppts.length} cita${panelAppts.length > 1 ? 's' : ''}`}

@@ -1134,6 +1134,11 @@ const PsychologistDashboard: React.FC = () => {
                   className={`cal-action ${isBlocked ? 'cal-action--unblock' : 'cal-action--block'}`}
                   onClick={() => (isBlocked ? handleUnblockDay(dateKey) : handleBlockFullDay(dateKey))}
                 >
+                  {isBlocked ? (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V7a4 4 0 0 1 7.4-2" /></svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>
+                  )}
                   {isBlocked ? 'Abrir dia' : 'Bloquear dia completo'}
                 </button>
               );
@@ -1142,64 +1147,18 @@ const PsychologistDashboard: React.FC = () => {
               const original = appointments.find((x) => x.id === a.id);
               if (!original) return null;
               return (
-                <>
-                  <button
-                    type="button"
-                    className="cal-action"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      setSelectedAppt(original);
-                      setShowMobileMenu(false);
-                    }}
-                  >
-                    Ver detalle
-                  </button>
-                  {original.patient?.phone && (
-                    <button
-                      type="button"
-                      className="cal-action"
-                      onClick={() => handleOpenWhatsApp(original.patient?.phone, original.patient?.full_name || 'Paciente')}
-                    >
-                      WhatsApp
-                    </button>
-                  )}
-                  {original.status === 'confirmada' && !original.attended_at && (
-                    <>
-                      <button
-                        type="button"
-                        className="cal-action"
-                        onClick={() => handleMarkAttended(original.id)}
-                      >
-                        Marcar atendida
-                      </button>
-                      <button
-                        type="button"
-                        className="cal-action"
-                        onClick={() => handleMarkNoShow(original.id)}
-                      >
-                        No asistió
-                      </button>
-                    </>
-                  )}
-                  {original.status === 'confirmada' && (
-                    <button
-                      type="button"
-                      className="cal-action cal-action--primary"
-                      onClick={() => handleCompleteAppt(original.id)}
-                    >
-                      {original.attended_at ? 'Registrar evolución' : 'Evolucionar y completar'}
-                    </button>
-                  )}
-                  {original.status === 'pendiente_pago' && (
-                    <button
-                      type="button"
-                      className="cal-action cal-action--primary"
-                      onClick={() => handleConfirmPayment(original.id)}
-                    >
-                      Confirmar pago
-                    </button>
-                  )}
-                </>
+                <button
+                  type="button"
+                  className="cal-action"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setSelectedAppt(original);
+                    setShowMobileMenu(false);
+                  }}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" /><circle cx="12" cy="12" r="3" /></svg>
+                  Ver detalle
+                </button>
               );
             }}
           />
