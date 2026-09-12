@@ -1183,18 +1183,45 @@ body:has(.psy-dash) {
   flex-wrap: wrap;
 }
 
-.psy-patients-search { display: block; margin-bottom: 1rem; }
-.psy-patients-search input { width: 100%; padding: 0.85rem 1rem; border: 1px solid var(--psy-border); border-radius: 12px; background: var(--psy-surface); color: white; font: inherit; outline: none; }
+/* Buscador ordenado: icono a la izquierda, texto e input con el mismo
+   tamano de letra que los botones del menu (.psy-dash-nav-item, 0.78rem). */
+.psy-patients-search { position: relative; display: flex; align-items: center; margin-bottom: 1rem; }
+.psy-patients-search svg { position: absolute; left: 1rem; color: rgba(255, 255, 255, 0.4); pointer-events: none; }
+.psy-patients-search input { width: 100%; padding: 0.85rem 1rem 0.85rem 2.5rem; border: 1px solid var(--psy-border); border-radius: 12px; background: var(--psy-surface); color: white; font-family: 'Inter', sans-serif; font-size: 0.78rem; outline: none; }
+.psy-patients-search input::placeholder { color: rgba(255, 255, 255, 0.4); }
 .psy-patients-search input:focus { border-color: rgba(171, 127, 255, 0.75); box-shadow: 0 0 0 3px rgba(171, 127, 255, 0.12); }
 .psy-patients-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 .psy-patient-card { display: flex; flex-direction: column; gap: 0.9rem; padding: 1rem; border: 1px solid var(--psy-border); border-radius: 16px; background: var(--psy-surface); }
 .psy-patient-card-top { display: flex; align-items: center; gap: 0.75rem; }
 .psy-patient-avatar { display: grid; width: 48px; height: 48px; flex: 0 0 48px; place-items: center; overflow: hidden; border: 1px solid rgba(171, 127, 255, 0.35); border-radius: 50%; background: rgba(171, 127, 255, 0.12); color: #b998ff; font-weight: 700; }
 .psy-patient-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.psy-patient-card h2 { margin: 0; color: white; font-size: 1rem; }
-.psy-patient-card p { margin: 0.2rem 0 0; color: rgba(255,255,255,0.55); font-size: 0.78rem; }
+/* Mismo tamano de letra que el buscador y el menu del psicologo, para que
+   todo el modulo comparta una unica escala tipografica ordenada. */
+.psy-patient-card h2 { margin: 0; color: white; font-size: 0.8125rem; font-weight: 600; }
+.psy-patient-card p { margin: 0.2rem 0 0; color: rgba(255,255,255,0.55); font-size: 0.75rem; }
 .psy-patient-meta { display: flex; justify-content: space-between; gap: 0.5rem; color: rgba(255,255,255,0.55); font-size: 0.75rem; }
-.psy-patient-history-btn { width: 100%; padding: 0.65rem; border: 1px solid rgba(171, 127, 255, 0.35); border-radius: 10px; background: rgba(171, 127, 255, 0.1); color: #c9b2ff; font: inherit; font-weight: 650; cursor: pointer; }
+/* Mismo diseno exacto que "Cerrar sesion" (.psy-dash-signout): posicion,
+   padding, tamano de letra, radio de borde e icono a la izquierda; solo
+   cambia el color caracteristico de esta accion (morado). */
+.psy-patient-history-btn {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  padding: 0.7rem 0.875rem;
+  border: 1px solid rgba(171, 127, 255, 0.35);
+  border-radius: 12px;
+  background: rgba(171, 127, 255, 0.1);
+  color: #c9b2ff;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.psy-patient-history-btn svg { position: absolute; left: 0.875rem; }
 .psy-patient-history-btn:hover { background: rgba(171, 127, 255, 0.18); }
 
 /* Contenedor único y compartido por TODOS los módulos del psicólogo:

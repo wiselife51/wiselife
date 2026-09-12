@@ -1395,8 +1395,12 @@ const PsychologistDashboard: React.FC = () => {
 
         {activeTab === 'pacientes' && (
           <section className="psy-patients-page">
-            <DashboardModuleHeader title="Mis Pacientes" subtitle="Consulta el historial y la información de las personas que has atendido." onMenu={() => setShowMobileMenu(!showMobileMenu)} />
-            <label className="psy-patients-search"><span className="sr-only">Buscar pacientes</span><input type="search" value={patientSearch} onChange={(event) => setPatientSearch(event.target.value)} placeholder="Buscar por nombre o teléfono" /></label>
+            <DashboardModuleHeader title="Mis Pacientes" subtitle="Consulta la información de tus pacientes." onMenu={() => setShowMobileMenu(!showMobileMenu)} />
+            <label className="psy-patients-search">
+              <span className="sr-only">Buscar pacientes</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+              <input type="search" value={patientSearch} onChange={(event) => setPatientSearch(event.target.value)} placeholder="Buscar por nombre o teléfono" />
+            </label>
             {patientsLoading ? <div className="psy-dash-empty"><p>Cargando pacientes...</p></div> : (() => {
               const query = patientSearch.trim().toLowerCase();
               const visiblePatients = patients.filter((patient) => `${patient.full_name || ''} ${patient.phone || ''}`.toLowerCase().includes(query));
@@ -1404,7 +1408,10 @@ const PsychologistDashboard: React.FC = () => {
                 <article key={patient.id} className="psy-patient-card">
                   <div className="psy-patient-card-top"><div className="psy-patient-avatar">{patient.avatar_url ? <img src={patient.avatar_url} alt="" crossOrigin="anonymous" /> : <span>{(patient.full_name || 'P').charAt(0).toUpperCase()}</span>}</div><div><h2>{patient.full_name || 'Paciente sin nombre'}</h2><p>{patient.phone || 'Sin teléfono registrado'}</p></div></div>
                   <div className="psy-patient-meta"><span>{patient.appointmentCount} {patient.appointmentCount === 1 ? 'cita' : 'citas'}</span><span>Última: {patient.lastAppointment.split('-').reverse().join('/')}</span></div>
-                  <button type="button" className="psy-patient-history-btn" onClick={() => { setSelectedPatientForHistory({ id: patient.id, name: patient.full_name || 'Paciente' }); setShowClinicalHistoryView(true); }}>Ver historia clínica</button>
+                  <button type="button" className="psy-patient-history-btn" onClick={() => { setSelectedPatientForHistory({ id: patient.id, name: patient.full_name || 'Paciente' }); setShowClinicalHistoryView(true); }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 19.5V6a2 2 0 0 1 2-2h11a1 1 0 0 1 1 1v13" /><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H19" /><path d="M8 7h6M8 10.5h6" /></svg>
+                    Ver historia clínica
+                  </button>
                 </article>
               ))}</div>;
             })()}
