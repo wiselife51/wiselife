@@ -290,9 +290,14 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
                       {...dayCellProps(key)}
                     >
                       {list.length > 0 && (
-                        <span className="cal-month-new__name" title={list.map((a) => a.title).join(', ')}>
-                          {list.map((a) => a.title.trim().split(/\s+/)[0]).join(', ')}
-                        </span>
+                        <>
+                          <span className="cal-month-new__name cal-week-new__name" title={list.map((a) => a.title).join(', ')}>
+                            {list.map((a) => a.title.trim().split(/\s+/)[0]).join(', ')}
+                          </span>
+                          <span className="cal-week-new__count" aria-hidden="true">
+                            {list.length}
+                          </span>
+                        </>
                       )}
                     </div>
                   );

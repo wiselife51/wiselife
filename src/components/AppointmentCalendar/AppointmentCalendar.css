@@ -1650,23 +1650,57 @@ height: auto;
   font-weight: inherit;
 }
 
+/* Vista semana: en escritorio se muestra el nombre del paciente; en
+   responsive se reemplaza por el numero de citas de esa hora/dia para que
+   no se desborde la celda. */
+.cal-week-new__count {
+  display: none;
+}
+
 @media (max-width: 720px) {
   .cal-month-new__grid { gap: 0.25rem; }
   .cal-month-new__grid {
     grid-auto-rows: 2.5rem;
   }
   .cal-month-new__grid > .psy-dash-upcoming-item {
+    position: relative;
+    justify-content: center;
+    align-items: center;
     min-height: 2.5rem;
     height: 2.5rem;
     padding: 0.35rem 0.5rem;
   }
+  .cal-month-new__grid > .psy-dash-upcoming-item .cal-month-new__number {
+    margin: 0;
+  }
   .cal-month-new__grid > .psy-dash-upcoming-item .cal-month-new__count {
+    position: absolute;
+    top: 0.15rem;
+    right: 0.2rem;
     min-width: 1rem;
     width: 1rem;
     height: 1rem;
     margin-right: 0;
     margin-left: 0;
     font-size: 0.5rem;
+  }
+
+  .cal-week-new .cal__slot .cal-week-new__name {
+    display: none;
+  }
+  .cal-week-new .cal__slot .cal-week-new__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.1rem;
+    height: 1.1rem;
+    padding: 0 0.25rem;
+    border-radius: 999px;
+    background: rgba(126, 87, 194, 0.25);
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.65rem;
+    font-weight: 600;
+    line-height: 1;
   }
 }
 
@@ -1745,13 +1779,13 @@ height: auto;
 }
 
 /* --- Celdas de mes, semana y dia: mismo fondo, radio y hover --- */
-.cal-month-new__grid > .psy-dash-upcoming-item,
-.cal-week-new .cal__slot,
-.cal-day-new .cal__day-slot {
+  .cal-month-new__grid > .psy-dash-upcoming-item,
+  .cal-week-new .cal__slot,
+  .cal-day-new .cal__day-slot {
   border-radius: 12px !important;
   background: var(--psy-surface) !important;
-  border: 1px solid var(--psy-border) !important;
-}
+  border: 1px solid rgba(126, 87, 194, 0.2) !important;
+  }
 
 .cal-month-new__grid > .psy-dash-upcoming-item:hover,
 .cal-week-new .cal__slot:hover,
@@ -1886,48 +1920,57 @@ height: auto;
 }
 
 /* ==========================================================================
-   Estados de la celda (mes/semana/dia), reutilizando exactamente la misma
-   paleta que ya usan los botones de accion del panel: bloqueada = rojizo de
-   "No asistio", agendada (con cita confirmada) = verde del boton de Chat de
-   WhatsApp, disponible sin agenda = morado de "Cerrar sesion". Se repiten
-   los selectores combinados para ganarle en especificidad a la regla que
+   Estados de la celda (mes/semana/dia), reutilizando EXACTAMENTE los mismos
+   valores (grosor de borde 1px, color y opacidad de borde/fondo) que ya
+   usan los botones de referencia del panel: bloqueada = rojizo de
+   "No asistio" (.psy-noshow-btn), agendada (con cita confirmada) = verde
+   del boton de Chat de WhatsApp (.psy-wa-btn), disponible sin ninguna cita
+   = morado de "Cerrar sesion" (.psy-dash-signout). Se repiten los
+   selectores combinados para ganarle en especificidad a la regla que
    iguala el fondo de todas las celdas.
    ========================================================================== */
 .cal-month-new__grid > .psy-dash-upcoming-item.cal-month-new__day--blocked,
 .cal-week-new .cal__slot.cal-month-new__day--blocked,
 .cal-day-new .cal__day-slot.cal-month-new__day--blocked {
   background: rgba(239, 83, 80, 0.1) !important;
-  border-color: rgba(239, 83, 80, 0.32) !important;
+  border: 1px solid rgba(239, 83, 80, 0.3) !important;
 }
 .cal-month-new__grid > .psy-dash-upcoming-item.cal-month-new__day--blocked:hover,
 .cal-week-new .cal__slot.cal-month-new__day--blocked:hover,
 .cal-day-new .cal__day-slot.cal-month-new__day--blocked:hover {
   background: rgba(239, 83, 80, 0.18) !important;
-  border-color: rgba(239, 83, 80, 0.45) !important;
+  border-color: rgba(239, 83, 80, 0.3) !important;
 }
 
 .cal-month-new__grid > .psy-dash-upcoming-item.cal-month-new__day--confirmed,
 .cal-week-new .cal__slot.cal-month-new__day--confirmed,
 .cal-day-new .cal__day-slot.cal-month-new__day--confirmed {
   background: rgba(37, 211, 102, 0.12) !important;
-  border-color: rgba(37, 211, 102, 0.32) !important;
+  border: 1px solid rgba(37, 211, 102, 0.3) !important;
 }
 .cal-month-new__grid > .psy-dash-upcoming-item.cal-month-new__day--confirmed:hover,
 .cal-week-new .cal__slot.cal-month-new__day--confirmed:hover,
 .cal-day-new .cal__day-slot.cal-month-new__day--confirmed:hover {
   background: rgba(37, 211, 102, 0.2) !important;
-  border-color: rgba(37, 211, 102, 0.45) !important;
+  border-color: rgba(37, 211, 102, 0.3) !important;
 }
 
 .cal-month-new__grid > .psy-dash-upcoming-item.cal-month-new__day--available,
 .cal-week-new .cal__slot.cal-month-new__day--available,
 .cal-day-new .cal__day-slot.cal-month-new__day--available {
   background: var(--psy-surface) !important;
-  border-color: rgba(126, 87, 194, 0.3) !important;
+  border: 1px solid rgba(126, 87, 194, 0.2) !important;
 }
 .cal-month-new__grid > .psy-dash-upcoming-item.cal-month-new__day--available:hover,
 .cal-week-new .cal__slot.cal-month-new__day--available:hover,
 .cal-day-new .cal__day-slot.cal-month-new__day--available:hover {
-  background: rgba(126, 87, 194, 0.12) !important;
-  border-color: rgba(126, 87, 194, 0.45) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(126, 87, 194, 0.2) !important;
+}
+
+/* La linea debajo de la barra Mes/Semana/Dia usa el mismo color y grosor
+   que la linea debajo de "Consulta y administra tus citas programadas."
+   (.psy-module-header). */
+.cal__bar {
+  border-bottom: 1px solid rgba(126, 87, 194, 0.2) !important;
 }
