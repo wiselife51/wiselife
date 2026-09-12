@@ -83,6 +83,11 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
   const [dragOver, setDragOver] = useState<string | null>(null);
   const [pending, setPending] = useState<{ appt: CalendarAppointment; date: string } | null>(null);
   const [saving, setSaving] = useState(false);
+  // Al hacer click en una celda vacia (semana/dia) no se alterna el bloqueo
+  // de inmediato: se pide confirmacion con el mismo lenguaje visual que el
+  // resto de acciones de agenda (bloquear/abrir), para evitar bloqueos por
+  // error con un solo click.
+  const [hourDialog, setHourDialog] = useState<{ dateKey: string; hour: number } | null>(null);
 
   const todayKey = toDateStr(new Date());
 
@@ -298,7 +303,7 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
                           onSelect?.(list[0]);
                           return;
                         }
-                        onToggleHourBlock?.(key, h);
+                        if (onToggleHourBlock) setHourDialog({ dateKey: key, hour: h });
                       }}
                       {...dayCellProps(key)}
                     >
@@ -342,7 +347,7 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
                       onSelect?.(list[0]);
                       return;
                     }
-                    onToggleHourBlock?.(key, h);
+                    if (onToggleHourBlock) setHourDialog({ dateKey: key, hour: h });
                   }}
                   {...dayCellProps(key)}
                 >
@@ -430,6 +435,40 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
           </div>
         </div>
       )}
+
+      {/* ===== Confirmacion de bloqueo/habilitacion de una hora (semana/dia) ===== */}
+      {hourDialog && (() => {
+        const alreadyBlocked = isHourBlocked ? isHourBlocked(hourDialog.dateKey, hourDialog.hour) : false;
+        return (
+          <div className="cal-confirm" role="dialog" aria-modal="true">
+            <div className="cal-confirm__backdrop" onClick={() => setHourDialog(null)} />
+            <div className="cal-confirm__box">
+              <h3>{alreadyBlocked ? 'Habilitar esta hora' : 'Bloquear esta hora'}</h3>
+              <p>
+                {alreadyBlocked ? 'Los pacientes podran reservar' : 'Los pacientes no podran reservar'} el{' '}
+                <strong>{hourDialog.dateKey.split('-').reverse().join('/')}</strong> de las{' '}
+                <strong>{fmtTime(`${hourDialog.hour.toString().padStart(2, '0')}:00`)}</strong> a las{' '}
+                {fmtTime(`${(hourDialog.hour + 1).toString().padStart(2, '0')}:00`)}.
+              </p>
+              <div className="cal-confirm__actions">
+                <button type="button" className="cal-confirm__cancel" onClick={() => setHourDialog(null)}>
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  className={`cal-confirm__ok ${alreadyBlocked ? 'cal-confirm__ok--unblock' : 'cal-confirm__ok--block'}`}
+                  onClick={() => {
+                    onToggleHourBlock?.(hourDialog.dateKey, hourDialog.hour);
+                    setHourDialog(null);
+                  }}
+                >
+                  {alreadyBlocked ? 'Habilitar hora' : 'Bloquear hora'}
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };

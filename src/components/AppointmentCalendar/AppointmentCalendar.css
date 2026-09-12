@@ -613,7 +613,10 @@
   color: rgba(255, 255, 255, 0.18);
 }
 
-/* ===== Panel lateral ===== */
+/* ===== Panel lateral =====
+   Mismo fondo/blur/borde que .psy-dash-sidebar (el menu del psicologo), para
+   que el panel se sienta como una extension de ese mismo lenguaje visual en
+   vez de un elemento aparte. */
 .cal-panel {
   position: fixed;
   top: 0;
@@ -625,10 +628,10 @@
   flex-direction: column;
   min-height: 0;
   overflow: hidden;
-  background: rgba(16, 24, 37, 0.72);
+  background: rgba(17, 24, 39, 0.68);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-left: 1px solid rgba(255, 255, 255, 0.09);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: -16px 0 48px rgba(0, 0, 0, 0.45);
   animation: cal-slide 0.25s ease;
 }
@@ -646,8 +649,8 @@
   display: flex;
   flex-direction: column;
   gap: 0.875rem;
-  padding: 1.25rem 1.25rem 0.875rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 1.5rem 1.5rem 1rem;
+  border-bottom: 1px solid var(--psy-border);
 }
 
 .cal-panel__head-row {
@@ -666,7 +669,7 @@
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 1.125rem 1.25rem 1.5rem;
+  padding: 1.125rem 1.5rem 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.875rem;
@@ -1828,6 +1831,34 @@ height: auto;
 
 .cal-confirm__ok {
   border-color: rgba(126, 87, 194, 0.2);
+  color: #b388ff;
+}
+
+/* Mismos acentos que .cal-action--block/--unblock del panel de mes, para
+   que el popup de bloquear/habilitar una hora (semana/dia) hable el mismo
+   idioma visual. Van despues del reset generico para ganarle en el orden
+   de cascada (misma especificidad). */
+.cal-confirm__ok--block {
+  background: rgba(239, 83, 80, 0.1);
+  border-color: rgba(239, 83, 80, 0.32);
+  color: #ef5350;
+}
+
+.cal-confirm__ok--block:hover {
+  background: rgba(239, 83, 80, 0.18);
+  border-color: rgba(239, 83, 80, 0.32);
+  color: #ef5350;
+}
+
+.cal-confirm__ok--unblock {
+  background: var(--psy-surface);
+  border-color: rgba(126, 87, 194, 0.4);
+  color: #b388ff;
+}
+
+.cal-confirm__ok--unblock:hover {
+  background: rgba(126, 87, 194, 0.14);
+  border-color: rgba(126, 87, 194, 0.4);
   color: #b388ff;
 }
 
