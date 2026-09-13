@@ -517,6 +517,60 @@
   line-height: 1.5;
 }
 
+/* Selector de modalidad y tipo de consulta */
+.sp-pricing-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.85rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+}
+
+.sp-pricing-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.sp-pricing-label {
+  min-width: 108px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.sp-pricing-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.sp-pricing-chip {
+  padding: 0.4rem 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.sp-pricing-chip:hover {
+  border-color: rgba(126, 87, 194, 0.3);
+  background: rgba(126, 87, 194, 0.1);
+}
+
+.sp-pricing-chip--active {
+  background: rgba(126, 87, 194, 0.25);
+  border-color: rgba(126, 87, 194, 0.5);
+  color: #ffffff;
+}
+
 /* Price banner */
 .sp-price-banner {
   display: flex;
@@ -1008,5 +1062,14 @@
 
   .sp-slots-grid {
     grid-template-columns: 1fr;
+  }
+
+  .sp-pricing-group {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .sp-pricing-label {
+    min-width: 0;
   }
 }

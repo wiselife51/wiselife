@@ -300,7 +300,10 @@ body:has(.psy-dash) {
 
 .psy-profile-page {
   width: min(100%, 980px);
+  height: 100%;
   margin: 0 auto;
+  overflow-y: auto;
+  padding-right: 0.35rem;
   color: #f7f8ff;
 }
 
@@ -360,7 +363,140 @@ body:has(.psy-dash) {
 }
 
 .psy-profile-row-four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.psy-profile-row-three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .psy-profile-row-three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .psy-profile-row-two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  /* Matriz de tarifas por modalidad y tipo de consulta */
+  .psy-profile-prices {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.03);
+  }
+  .psy-profile-prices-head h3 {
+    margin: 0 0 0.2rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+  }
+  .psy-profile-prices-head p {
+    margin: 0;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.46);
+  }
+  /* Tabla: filas = tipo de paciente, columnas = modalidad. Mas facil de
+     escanear que dos tarjetas separadas repitiendo las mismas 4 etiquetas. */
+  .psy-profile-prices-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .psy-profile-prices-table-row {
+    display: grid;
+    grid-template-columns: minmax(120px, 1fr) repeat(2, minmax(0, 1fr));
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .psy-profile-prices-table-row--head {
+    padding-bottom: 0.35rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .psy-profile-prices-col-head {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: #b388ff;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+  .psy-profile-prices-row-label {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+  .psy-profile-price-input {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 0 0.6rem;
+    background: rgba(255, 255, 255, 0.06);
+  }
+  .psy-profile-price-input-tag { display: none; }
+  .psy-profile-price-input-currency {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  .psy-profile-price-input input {
+    width: 100%;
+    border: none;
+    background: none;
+    padding: 0.58rem 0;
+    color: #f7f8ff;
+    font: inherit;
+    outline: none;
+  }
+  .psy-profile-price-input:focus-within {
+    border-color: #8a5cf6;
+    box-shadow: 0 0 0 3px rgba(138, 92, 246, 0.16);
+  }
+
+  /* Boton "Guardar cambios" con el mismo estilo que "Cerrar sesion" */
+  .psy-profile-save-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 170px;
+    gap: 0.625rem;
+    padding: 0.7rem 0.875rem 0.7rem 2.5rem;
+    border: 1px solid rgba(126, 87, 194, 0.2);
+    border-radius: 12px;
+    background: var(--psy-surface);
+    color: #b388ff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s var(--psy-smooth), border-color 0.2s var(--psy-smooth), color 0.2s var(--psy-smooth);
+  }
+  .psy-profile-save-btn svg {
+    position: absolute;
+    left: 0.875rem;
+  }
+  .psy-profile-save-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.9);
+    border-color: rgba(126, 87, 194, 0.2);
+    box-shadow: none;
+  }
+  .psy-profile-save-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 640px) {
+    .psy-profile-prices-table-row--head { display: none; }
+    .psy-profile-prices-table-row {
+      grid-template-columns: 1fr;
+      row-gap: 0.4rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .psy-profile-price-input-tag {
+      display: inline-block;
+      margin-right: 0.3rem;
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 0.65rem;
+      font-weight: 600;
+    }
+  }
 
 .psy-profile-row select[multiple] {
   min-height: 66px;
@@ -498,7 +634,95 @@ body:has(.psy-dash) {
   display: grid;
   grid-template-columns: 92px minmax(0, 1fr);
   gap: 0.35rem;
-}
+  }
+
+  /* Selector de indicativo propio: sustituye al <select> nativo con
+     bandera emoji (se veia como texto plano "co" sin fuente de emoji
+     a color). La insignia con el codigo ISO se ve igual en cualquier
+     sistema. */
+  .psy-profile-phone-select {
+  position: relative;
+  }
+
+  .psy-profile-phone-summary {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.3rem;
+  height: 100%;
+  padding: 0.5rem 0.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  background: #111827;
+  color: rgba(255, 255, 255, 0.86);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.75rem;
+  }
+
+  .psy-profile-phone-summary svg { margin-left: auto; flex: 0 0 auto; color: rgba(255, 255, 255, 0.45); }
+
+  .psy-profile-phone-select.is-open .psy-profile-phone-summary {
+  border-color: rgba(138, 92, 246, 0.7);
+  border-radius: 8px 8px 0 0;
+  }
+
+  .psy-profile-phone-flag {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  min-width: 1.7em;
+  padding: 0.1em 0.3em;
+  border-radius: 4px;
+  background: linear-gradient(135deg, rgba(126, 87, 194, 0.55), rgba(156, 39, 176, 0.4));
+  color: #f1e8ff;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  }
+
+  .psy-profile-phone-options {
+  position: absolute;
+  z-index: 20;
+  top: 100%;
+  left: 0;
+  min-width: 100%;
+  width: max-content;
+  display: flex;
+  flex-direction: column;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 0.25rem;
+  border: 1px solid rgba(138, 92, 246, 0.55);
+  border-top: 0;
+  border-radius: 0 0 8px 8px;
+  background: #0d1420;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.52) transparent;
+  }
+
+  .psy-profile-phone-option {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.4rem;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.86);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.72rem;
+  text-align: left;
+  }
+
+  .psy-profile-phone-option:hover { background: rgba(255, 255, 255, 0.06); }
+
+  .psy-profile-phone-option.is-selected {
+  background: rgba(126, 87, 194, 0.22);
+  color: #ffffff;
+  }
 
 .psy-profile-grid select[multiple] {
   min-height: 76px;
@@ -521,7 +745,33 @@ body:has(.psy-dash) {
   color: rgba(255,255,255,0.72);
   font-size: 0.78rem;
   font-weight: 600;
-}
+  }
+
+  /* Etiqueta con icono: el icono se dibuja a 1em, asi que escala solo
+     con el font-size de la etiqueta en cada breakpoint (nunca queda
+     desproporcionado en mobile). */
+  .psy-profile-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  }
+
+  .psy-profile-field-icon {
+  width: 1em;
+  height: 1em;
+  flex: 0 0 auto;
+  color: #b388ff;
+  }
+
+  .psy-profile-prices-head h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  }
+
+  .psy-profile-prices-head h3 .psy-profile-field-icon {
+  color: #70d7ff;
+  }
 
 .psy-profile-grid input,
 .psy-profile-grid select,
@@ -1183,19 +1433,57 @@ body:has(.psy-dash) {
   flex-wrap: wrap;
 }
 
-.psy-patients-search { display: block; margin-bottom: 1rem; }
-.psy-patients-search input { width: 100%; padding: 0.85rem 1rem; border: 1px solid var(--psy-border); border-radius: 12px; background: var(--psy-surface); color: white; font: inherit; outline: none; }
+/* Buscador ordenado: icono centrado verticalmente a la izquierda, texto e
+   input con el mismo tamano de letra que los botones del menu
+   (.psy-dash-nav-item, 0.78rem). El label visible se reemplazo por un
+   aria-label en el input (no existia una clase .sr-only en el proyecto,
+   por lo que el span anterior se renderizaba visible y quedaba debajo del
+   icono). */
+.psy-patients-search { position: relative; display: flex; align-items: center; margin-bottom: 1rem; }
+.psy-patients-search svg { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: rgba(255, 255, 255, 0.4); pointer-events: none; }
+.psy-patients-search input { width: 100%; padding: 0.85rem 1rem 0.85rem 2.5rem; border: 1px solid var(--psy-border); border-radius: 12px; background: var(--psy-surface); color: white; font-family: 'Inter', sans-serif; font-size: 0.78rem; outline: none; }
+.psy-patients-search input::placeholder { color: rgba(255, 255, 255, 0.4); }
 .psy-patients-search input:focus { border-color: rgba(171, 127, 255, 0.75); box-shadow: 0 0 0 3px rgba(171, 127, 255, 0.12); }
 .psy-patients-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 .psy-patient-card { display: flex; flex-direction: column; gap: 0.9rem; padding: 1rem; border: 1px solid var(--psy-border); border-radius: 16px; background: var(--psy-surface); }
 .psy-patient-card-top { display: flex; align-items: center; gap: 0.75rem; }
 .psy-patient-avatar { display: grid; width: 48px; height: 48px; flex: 0 0 48px; place-items: center; overflow: hidden; border: 1px solid rgba(171, 127, 255, 0.35); border-radius: 50%; background: rgba(171, 127, 255, 0.12); color: #b998ff; font-weight: 700; }
 .psy-patient-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.psy-patient-card h2 { margin: 0; color: white; font-size: 1rem; }
-.psy-patient-card p { margin: 0.2rem 0 0; color: rgba(255,255,255,0.55); font-size: 0.78rem; }
+/* Mismo tamano de letra que el buscador y el menu del psicologo, para que
+   todo el modulo comparta una unica escala tipografica ordenada. */
+.psy-patient-card h2 { margin: 0; color: white; font-size: 0.8125rem; font-weight: 600; }
+.psy-patient-card p { margin: 0.2rem 0 0; color: rgba(255,255,255,0.55); font-size: 0.75rem; }
 .psy-patient-meta { display: flex; justify-content: space-between; gap: 0.5rem; color: rgba(255,255,255,0.55); font-size: 0.75rem; }
-.psy-patient-history-btn { width: 100%; padding: 0.65rem; border: 1px solid rgba(171, 127, 255, 0.35); border-radius: 10px; background: rgba(171, 127, 255, 0.1); color: #c9b2ff; font: inherit; font-weight: 650; cursor: pointer; }
-.psy-patient-history-btn:hover { background: rgba(171, 127, 255, 0.18); }
+/* Linea de referencia de la red de apoyo del paciente (contacto de
+   emergencia registrado en la historia clinica): a quien debe llamar el
+   psicologo si necesita comunicarse con un familiar o amigo. */
+.psy-patient-support { display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.625rem 0.625rem; border: 1px solid var(--psy-border); border-radius: 10px; background: rgba(255, 255, 255, 0.03); color: rgba(255, 255, 255, 0.5); }
+.psy-patient-support svg { flex: 0 0 14px; margin-top: 0.125rem; color: rgba(255, 255, 255, 0.4); }
+.psy-patient-support-label { margin: 0; font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em; color: rgba(255, 255, 255, 0.4); }
+.psy-patient-support-value { margin: 0.125rem 0 0; font-size: 0.75rem; color: rgba(255, 255, 255, 0.75); overflow-wrap: anywhere; }
+/* Mismo diseno exacto que "Cerrar sesion" (.psy-dash-signout): mismo
+   fondo, borde y color caracteristico (morado), mismo padding, tamano de
+   letra, radio de borde e icono a la izquierda. */
+.psy-patient-history-btn {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  padding: 0.7rem 0.875rem;
+  border: 1px solid rgba(126, 87, 194, 0.2);
+  border-radius: 12px;
+  background: var(--psy-surface);
+  color: #b388ff;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s var(--psy-smooth), border-color 0.2s var(--psy-smooth), color 0.2s var(--psy-smooth);
+}
+.psy-patient-history-btn svg { position: absolute; left: 0.875rem; }
+.psy-patient-history-btn:hover { background: rgba(126, 87, 194, 0.12); border-color: rgba(126, 87, 194, 0.35); }
 
 /* Contenedor único y compartido por TODOS los módulos del psicólogo:
    mismo padding, borde, radio y sombra que Próximas citas. Cada módulo
@@ -3500,7 +3788,19 @@ body:has(.psy-dash) {
   transform: none;
   }
 
-  .psy-profile-page { width: 100%; }
+  /* En mobile .psy-dash-main ya es el unico contenedor con scroll
+     (height: 100dvh + overflow-y: auto, arriba). Si .psy-profile-page
+     mantiene su propio height: 100% + overflow-y: auto (regla base para
+     desktop) queda un segundo contenedor de scroll del mismo alto anidado
+     dentro del primero: el navegador no deja arrastrar mas alla de esa
+     caja interna y el contenido de abajo (tarifas, biografia, guardar)
+     queda inalcanzable. Se anula aqui para que el main sea el unico que
+     scrollea. */
+  .psy-profile-page {
+  width: 100%;
+  height: auto;
+  overflow-y: visible;
+  }
   .psy-profile-intro { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 0.65rem; margin-bottom: 0.45rem; }
   .psy-profile-intro .psy-profile-card-head { justify-content: flex-start; gap: 0.5rem; padding: 0; }
   .psy-profile-intro .psy-profile-avatar { width: 42px; height: 42px; }
@@ -3809,14 +4109,19 @@ body:has(.psy-dash) {
   .psy-cal-view-btn { flex: 1 1 auto; min-width: 0; }
   .psy-profile-grid { gap: 0.5rem; }
   .psy-profile-row-four,
-  .psy-profile-row-three { grid-template-columns: 1fr; gap: 0.5rem; }
+  .psy-profile-row-three,
+  .psy-profile-row-two { grid-template-columns: 1fr; gap: 0.5rem; }
   .psy-profile-phone-field { grid-template-columns: 82px minmax(0, 1fr); }
   .psy-profile-row select[multiple] { min-height: 64px; height: 64px; }
   .psy-profile-field-wide { grid-column: auto; }
   .psy-profile-card { padding: 1rem; border-radius: 16px; }
   .psy-profile-card-head { align-items: flex-start; }
   .psy-profile-actions { align-items: stretch; flex-direction: column; }
-  .psy-profile-actions .psy-dash-btn-primary { width: 100%; }
+  .psy-profile-actions .psy-dash-btn-primary,
+  .psy-profile-actions .psy-profile-save-btn { width: 100%; }
+  .psy-profile-prices-table-row--head { display: none; }
+  .psy-profile-prices-table-row { grid-template-columns: 1fr; row-gap: 0.4rem; padding-bottom: 0.6rem; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+  .psy-profile-price-input-tag { display: inline-block; margin-right: 0.3rem; color: rgba(255, 255, 255, 0.4); font-size: 0.65rem; font-weight: 600; }
   .psy-profile-message { text-align: center; }
   .psy-alert-count { width: 1.5rem; min-width: 1.5rem; height: 1.5rem; font-size: 0.7rem; }
 

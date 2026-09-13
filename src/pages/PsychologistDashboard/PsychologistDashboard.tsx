@@ -26,6 +26,9 @@ interface PsychologistProfile {
   languages?: string[];
   session_duration: number;
   session_price: number;
+  // Tarifas desglosadas por modalidad y tipo de paciente, ej:
+  // { virtual: { individual: 80000, pareja: 120000 }, presencial: { individual: 90000 } }
+  session_prices?: Record<string, Record<string, number>> | null;
   onboarding_completed: boolean;
   // Opcional a proposito: si el codigo llega a produccion antes que la
   // migracion 20260807210000, la columna no existe y el campo viene undefined.
@@ -36,18 +39,100 @@ interface PsychologistProfile {
 const PROFILE_SPECIALTIES = ['Ansiedad', 'Depresión', 'Pareja', 'Duelo', 'Adolescentes', 'Autoestima'];
 const PROFILE_MODALITIES = ['Virtual', 'Presencial', 'Mixta'];
 const PROFILE_LANGUAGES = ['Español', 'Inglés', 'Francés', 'Portugués'];
+const PRICE_MODALITIES: { key: string; label: string }[] = [
+  { key: 'virtual', label: 'Virtual' },
+  { key: 'presencial', label: 'Presencial' },
+];
+const PRICE_PATIENT_TYPES: { key: string; label: string }[] = [
+  { key: 'individual', label: 'Individual (adulto)' },
+  { key: 'nino_adolescente', label: 'Niño / adolescente' },
+  { key: 'pareja', label: 'Pareja' },
+  { key: 'familia', label: 'Familia' },
+];
+
+const PHONE_COUNTRIES: { iso: string; dial: string }[] = [
+  { iso: 'CO', dial: '+57' },
+  { iso: 'US', dial: '+1' },
+  { iso: 'MX', dial: '+52' },
+  { iso: 'ES', dial: '+34' },
+  { iso: 'AR', dial: '+54' },
+  { iso: 'CL', dial: '+56' },
+  { iso: 'PE', dial: '+51' },
+  { iso: 'BR', dial: '+55' },
+  { iso: 'GB', dial: '+44' },
+  { iso: 'DE', dial: '+49' },
+  { iso: 'FR', dial: '+33' },
+  { iso: 'IT', dial: '+39' },
+  { iso: 'JP', dial: '+81' },
+  { iso: 'CN', dial: '+86' },
+  { iso: 'IN', dial: '+91' },
+  { iso: 'AU', dial: '+61' },
+  { iso: 'PT', dial: '+351' },
+  { iso: 'RU', dial: '+7' },
+];
+
+// Icono de campo: se dibuja a 1em para escalar exactamente igual que el
+// texto de la etiqueta en cada breakpoint (ver .psy-profile-field-icon).
+function FieldIcon({ children }: { children: React.ReactNode }) {
+  return (
+    <svg className="psy-profile-field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      {children}
+    </svg>
+  );
+}
+
+// Selector de indicativo de pais como control propio en vez de <select>
+// nativo: los emojis de bandera dependian de que el sistema tuviera fuente
+// de emoji a color instalada y se veian como texto plano ("co") cuando no.
+// Con un boton + lista propios mostramos el codigo ISO en una insignia que
+// siempre se ve igual, sin depender de fuentes del sistema.
+function ProfilePhoneCountrySelect({ defaultDial }: { defaultDial: string }) {
+  const [value, setValue] = useState(defaultDial);
+  const [open, setOpen] = useState(false);
+  const current = PHONE_COUNTRIES.find((country) => country.dial === value) || PHONE_COUNTRIES[0];
+
+  return (
+    <div className={`psy-profile-phone-select${open ? ' is-open' : ''}`}>
+      <input type="hidden" name="phone_country" value={value} />
+      <button type="button" className="psy-profile-phone-summary" aria-expanded={open} aria-label="Indicativo de país" onClick={() => setOpen((isOpen) => !isOpen)}>
+        <span className="psy-profile-phone-flag">{current.iso}</span>
+        <span>{current.dial}</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9" /></svg>
+      </button>
+      {open && (
+        <div className="psy-profile-phone-options" role="listbox">
+          {PHONE_COUNTRIES.map((country) => (
+            <button
+              key={country.iso}
+              type="button"
+              role="option"
+              aria-selected={country.dial === value}
+              className={`psy-profile-phone-option${country.dial === value ? ' is-selected' : ''}`}
+              onClick={() => { setValue(country.dial); setOpen(false); }}
+            >
+              <span className="psy-profile-phone-flag">{country.iso}</span>
+              <span>{country.dial}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function ProfileMultiSelect({
   name,
   label,
+  icon,
   options,
   value,
-}: {
+  }: {
   name: string;
   label: string;
+  icon?: React.ReactNode;
   options: string[];
   value: string[];
-}) {
+  }) {
   const [selected, setSelected] = useState<string[]>(value);
   const [open, setOpen] = useState(false);
 
@@ -56,9 +141,9 @@ function ProfileMultiSelect({
   };
 
   return (
-    <label className="psy-profile-multi-label">
-      {label}
-      <div className={`psy-profile-multi-select${open ? ' is-open' : ''}`} role="group" aria-label={label}>
+  <label className="psy-profile-multi-label">
+  <span className="psy-profile-label">{icon}{label}</span>
+  <div className={`psy-profile-multi-select${open ? ' is-open' : ''}`} role="group" aria-label={label}>
         <button type="button" className="psy-profile-multi-summary" aria-expanded={open} onClick={() => setOpen((current) => !current)}>
           <span>{selected.length ? selected.join(', ') : `Selecciona ${label.toLowerCase()}`}</span>
           <span aria-hidden="true">{open ? '⌃' : '⌄'}</span>
@@ -116,6 +201,9 @@ interface PatientSummary {
   appointmentCount: number;
   lastAppointment: string;
   lastStatus: string;
+  emergencyContactName: string | null;
+  emergencyContactRelationship: string | null;
+  emergencyContactPhone: string | null;
 }
 
 interface AvailabilitySlot {
@@ -145,7 +233,6 @@ const DAYS_CONFIG = [
 ];
 
 const DAY_NAMES_FULL = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
-const MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
 const HOUR_OPTIONS = Array.from({ length: 15 }, (_, i) => {
   const h = i + 7;
@@ -193,10 +280,6 @@ const PsychologistDashboard: React.FC = () => {
   const [blockReason, setBlockReason] = useState('');
   const [savingBlock, setSavingBlock] = useState(false);
 
-  // Quick block from calendar
-  const [showQuickBlock, setShowQuickBlock] = useState(false);
-  const [quickBlockDate, setQuickBlockDate] = useState<Date | null>(null);
-
   // Add availability
   const [showAddSlot, setShowAddSlot] = useState(false);
   const [newSlotDay, setNewSlotDay] = useState(1);
@@ -232,22 +315,82 @@ const PsychologistDashboard: React.FC = () => {
     name: string;
   } | null>(null);
 
-  // Quick add from calendar - adds directly without modal
-  // Quick block from calendar
-  const handleQuickBlock = async () => {
-    if (!profile || !blockDate) return;
-    setSavingBlock(true);
-    await supabase.from('schedule_blocks').insert({
-      psychologist_id: profile.id,
-      block_date: blockDate,
-      start_time: blockStart,
-      end_time: blockEnd,
-      reason: blockReason || null,
-    });
-    setShowQuickBlock(false);
-    setBlockDate('');
-    setBlockReason('');
-    setSavingBlock(false);
+  // Bloquea/abre el dia completo desde el panel del calendario (una sola
+  // accion, sin modal). Se inserta un bloqueo por cada hora habilitada (en
+  // vez de un unico rango 07:00-20:00) para que despues, desde semana/dia,
+  // se pueda abrir una hora puntual sin perder el bloqueo del resto del dia.
+  const handleBlockFullDay = async (dateKey: string) => {
+    if (!profile) return;
+    await supabase.from('schedule_blocks').insert(
+      HOUR_OPTIONS.map((startTime) => {
+        const hour = parseInt(startTime.slice(0, 2), 10);
+        return {
+          psychologist_id: profile.id,
+          block_date: dateKey,
+          start_time: startTime,
+          end_time: `${(hour + 1).toString().padStart(2, '0')}:00`,
+          reason: 'Dia bloqueado desde el calendario',
+        };
+      })
+    );
+    fetchData();
+  };
+
+  const handleUnblockDay = async (dateKey: string) => {
+    if (!profile) return;
+    await supabase.from('schedule_blocks').delete().eq('psychologist_id', profile.id).eq('block_date', dateKey);
+    fetchData();
+  };
+
+  // Bloquea/abre una sola hora desde las vistas de semana y dia. Si ya hay
+  // bloqueos que cubren esa hora (uno puntual o el rango de un dia completo
+  // bloqueado antes de este cambio) los elimina; si no hay ninguno, inserta
+  // el bloqueo de esa hora exacta.
+  const isHourBlocked = (dateKey: string, hour: number) =>
+    blocks.some((b) => b.block_date === dateKey && parseInt(b.start_time.slice(0, 2), 10) <= hour && parseInt(b.end_time.slice(0, 2), 10) > hour);
+
+  const handleToggleHourBlock = async (dateKey: string, hour: number) => {
+    if (!profile) return;
+    const overlapping = blocks.filter(
+      (b) => b.block_date === dateKey && parseInt(b.start_time.slice(0, 2), 10) <= hour && parseInt(b.end_time.slice(0, 2), 10) > hour
+    );
+    if (overlapping.length > 0) {
+      // Habilitar: se abre unicamente la hora seleccionada. Los bloqueos que
+      // se superponen pueden cubrir mas de una hora (por ejemplo, el dia
+      // completo bloqueado automaticamente para fines de semana u otros
+      // meses), asi que en vez de borrarlos enteros -lo que abriria TODO el
+      // dia en vez de solo la hora elegida- se dividen: se elimina el
+      // bloqueo original y se reinserta lo que quede antes y despues de la
+      // hora habilitada, preservando el bloqueo del resto del rango.
+      const remainingRanges = overlapping.flatMap((block) => {
+        const startHour = parseInt(block.start_time.slice(0, 2), 10);
+        const endHour = parseInt(block.end_time.slice(0, 2), 10);
+        const ranges: { start_time: string; end_time: string }[] = [];
+        if (startHour < hour) ranges.push({ start_time: block.start_time, end_time: `${hour.toString().padStart(2, '0')}:00` });
+        if (endHour > hour + 1) ranges.push({ start_time: `${(hour + 1).toString().padStart(2, '0')}:00`, end_time: block.end_time });
+        return ranges.map((range) => ({ ...range, reason: block.reason }));
+      });
+      await supabase.from('schedule_blocks').delete().in('id', overlapping.map((b) => b.id));
+      if (remainingRanges.length > 0) {
+        await supabase.from('schedule_blocks').insert(
+          remainingRanges.map((range) => ({
+            psychologist_id: profile.id,
+            block_date: dateKey,
+            start_time: range.start_time,
+            end_time: range.end_time,
+            reason: range.reason,
+          }))
+        );
+      }
+    } else {
+      await supabase.from('schedule_blocks').insert({
+        psychologist_id: profile.id,
+        block_date: dateKey,
+        start_time: `${hour.toString().padStart(2, '0')}:00`,
+        end_time: `${(hour + 1).toString().padStart(2, '0')}:00`,
+        reason: 'Hora bloqueada desde el calendario',
+      });
+    }
     fetchData();
   };
 
@@ -302,6 +445,23 @@ const PsychologistDashboard: React.FC = () => {
     setSavingProfile(true);
     setProfileMessage('');
     const form = new FormData(event.currentTarget);
+
+    // Construye la matriz { modalidad: { tipo_paciente: precio } } solo con
+    // las combinaciones que el psicologo realmente diligencio (precio > 0).
+    const session_prices: Record<string, Record<string, number>> = {};
+    for (const { key: modalityKey } of PRICE_MODALITIES) {
+      const pricesForModality: Record<string, number> = {};
+      for (const { key: patientTypeKey } of PRICE_PATIENT_TYPES) {
+        const raw = Number(form.get(`price_${modalityKey}_${patientTypeKey}`) || 0);
+        if (raw > 0) pricesForModality[patientTypeKey] = raw;
+      }
+      if (Object.keys(pricesForModality).length > 0) session_prices[modalityKey] = pricesForModality;
+    }
+    const allPrices = Object.values(session_prices).flatMap((byType) => Object.values(byType));
+    // session_price se mantiene como precio "desde" para mostrarlo en tarjetas
+    // y para compatibilidad con citas antiguas que no tienen tarifa desglosada.
+    const session_price = allPrices.length > 0 ? Math.min(...allPrices) : Number(form.get('session_price') || 0);
+
     const payload = {
       full_name: String(form.get('full_name') || '').trim(),
       phone: `${String(form.get('phone_country') || '+57')} ${String(form.get('phone') || '').trim()}`.trim() || null,
@@ -312,7 +472,8 @@ const PsychologistDashboard: React.FC = () => {
       years_experience: Number(form.get('years_experience') || 0),
       languages: form.getAll('languages').map(String).filter(Boolean),
       session_duration: Number(form.get('session_duration') || 50),
-      session_price: Number(form.get('session_price') || 0),
+      session_price,
+      session_prices,
     };
     const { data, error } = await supabase.from('psychologists').update(payload).eq('id', profile.id).select('*').single();
     if (error || !data) {
@@ -552,6 +713,9 @@ const PsychologistDashboard: React.FC = () => {
           appointmentCount: (current?.appointmentCount || 0) + 1,
           lastAppointment: appointment.appointment_date,
           lastStatus: appointment.status,
+          emergencyContactName: current?.emergencyContactName || null,
+          emergencyContactRelationship: current?.emergencyContactRelationship || null,
+          emergencyContactPhone: current?.emergencyContactPhone || null,
         });
       } else {
         patientById.set(appointment.patient.id, { ...current, appointmentCount: current.appointmentCount + 1 });
@@ -563,6 +727,24 @@ const PsychologistDashboard: React.FC = () => {
       for (const contact of patientContactData || []) {
         const current = patientById.get(contact.id);
         if (current) patientById.set(contact.id, { ...current, email: contact.email || null });
+      }
+      // Red de apoyo: contacto de emergencia registrado en la historia clinica,
+      // para que el psicologo pueda comunicarse con un familiar o amigo si es necesario.
+      const { data: emergencyContactsData } = await supabase
+        .from('clinical_records')
+        .select('patient_id, emergency_contact_name, emergency_contact_relationship, emergency_contact_phone')
+        .eq('psychologist_id', psyData.id)
+        .in('patient_id', patientIdsForEmail);
+      for (const record of emergencyContactsData || []) {
+        const current = patientById.get(record.patient_id);
+        if (current) {
+          patientById.set(record.patient_id, {
+            ...current,
+            emergencyContactName: record.emergency_contact_name || null,
+            emergencyContactRelationship: record.emergency_contact_relationship || null,
+            emergencyContactPhone: record.emergency_contact_phone || null,
+          });
+        }
       }
     }
     setPatients([...patientById.values()].sort((a, b) => b.lastAppointment.localeCompare(a.lastAppointment)));
@@ -853,15 +1035,35 @@ const PsychologistDashboard: React.FC = () => {
 
   const blockedDates = blocks.map((b) => b.block_date);
 
-  const handleCalendarReschedule = async (appt: CalendarAppointment, newDate: string) => {
-    const { error } = await supabase
-      .from('appointments')
-      .update({ appointment_date: newDate, updated_at: new Date().toISOString() })
-      .eq('id', appt.id);
+  // En semana/dia el arrastre tambien puede cambiar la hora (newStartTime):
+  // se conserva la duracion original de la cita y se recalcula la hora de
+  // fin a partir de la nueva hora de inicio.
+  const timeToMinutes = (t: string) => {
+    const [h, m] = t.split(':').map((n) => parseInt(n, 10));
+    return h * 60 + (m || 0);
+  };
+  const minutesToTime = (mins: number) => {
+    const h = Math.floor(mins / 60) % 24;
+    const m = mins % 60;
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+  };
+
+  const handleCalendarReschedule = async (appt: CalendarAppointment, newDate: string, newStartTime?: string) => {
+    const updates: { appointment_date: string; updated_at: string; start_time?: string; end_time?: string } = {
+      appointment_date: newDate,
+      updated_at: new Date().toISOString(),
+    };
+    if (newStartTime) {
+      const durationMinutes = timeToMinutes(appt.end_time) - timeToMinutes(appt.start_time);
+      updates.start_time = newStartTime;
+      updates.end_time = minutesToTime(timeToMinutes(newStartTime) + durationMinutes);
+    }
+
+    const { error } = await supabase.from('appointments').update(updates).eq('id', appt.id);
 
     if (!error) {
       setAppointments((prev) =>
-        prev.map((a) => (a.id === appt.id ? { ...a, appointment_date: newDate } : a))
+        prev.map((a) => (a.id === appt.id ? { ...a, appointment_date: newDate, ...(updates.start_time ? { start_time: updates.start_time, end_time: updates.end_time! } : {}) } : a))
       );
     }
   };
@@ -1087,6 +1289,8 @@ const PsychologistDashboard: React.FC = () => {
           <AppointmentCalendar
             appointments={calendarAppointments}
             blockedDates={blockedDates}
+            isHourBlocked={isHourBlocked}
+            onToggleHourBlock={handleToggleHourBlock}
             onReschedule={handleCalendarReschedule}
             onSelect={(a) => {
               const original = appointments.find((x) => x.id === a.id);
@@ -1095,82 +1299,39 @@ const PsychologistDashboard: React.FC = () => {
                 setShowMobileMenu(false);
               }
             }}
-            renderDayActions={(dateKey) => (
-              <button
-                type="button"
-                className="cal-action"
-                onClick={() => {
-                  const [y, m, d] = dateKey.split('-').map(Number);
-                  setQuickBlockDate(new Date(y, m - 1, d));
-                  setBlockDate(dateKey);
-                  setShowQuickBlock(true);
-                }}
-              >
-                Bloquear horario
-              </button>
-            )}
+            renderDayActions={(dateKey) => {
+              const isBlocked = blockedDates.includes(dateKey);
+              return (
+                <button
+                  type="button"
+                  className={`cal-action ${isBlocked ? 'cal-action--unblock' : 'cal-action--block'}`}
+                  onClick={() => (isBlocked ? handleUnblockDay(dateKey) : handleBlockFullDay(dateKey))}
+                >
+                  {isBlocked ? (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V7a4 4 0 0 1 7.4-2" /></svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>
+                  )}
+                  {isBlocked ? 'Abrir dia' : 'Bloquear dia completo'}
+                </button>
+              );
+            }}
             renderActions={(a) => {
               const original = appointments.find((x) => x.id === a.id);
               if (!original) return null;
               return (
-                <>
-                  <button
-                    type="button"
-                    className="cal-action"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      setSelectedAppt(original);
-                      setShowMobileMenu(false);
-                    }}
-                  >
-                    Ver detalle
-                  </button>
-                  {original.patient?.phone && (
-                    <button
-                      type="button"
-                      className="cal-action"
-                      onClick={() => handleOpenWhatsApp(original.patient?.phone, original.patient?.full_name || 'Paciente')}
-                    >
-                      WhatsApp
-                    </button>
-                  )}
-                  {original.status === 'confirmada' && !original.attended_at && (
-                    <>
-                      <button
-                        type="button"
-                        className="cal-action"
-                        onClick={() => handleMarkAttended(original.id)}
-                      >
-                        Marcar atendida
-                      </button>
-                      <button
-                        type="button"
-                        className="cal-action"
-                        onClick={() => handleMarkNoShow(original.id)}
-                      >
-                        No asistió
-                      </button>
-                    </>
-                  )}
-                  {original.status === 'confirmada' && (
-                    <button
-                      type="button"
-                      className="cal-action cal-action--primary"
-                      onClick={() => handleCompleteAppt(original.id)}
-                    >
-                      {original.attended_at ? 'Registrar evolución' : 'Evolucionar y completar'}
-                    </button>
-                  )}
-                  {original.status === 'pendiente_pago' && (
-                    <button
-                      type="button"
-                      className="cal-action cal-action--primary"
-                      onClick={() => handleConfirmPayment(original.id)}
-                    >
-                      Confirmar pago
-                    </button>
-                  )}
-                </>
+                <button
+                  type="button"
+                  className="cal-action"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setSelectedAppt(original);
+                    setShowMobileMenu(false);
+                  }}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" /><circle cx="12" cy="12" r="3" /></svg>
+                  Ver detalle
+                </button>
               );
             }}
           />
@@ -1361,8 +1522,17 @@ const PsychologistDashboard: React.FC = () => {
 
         {activeTab === 'pacientes' && (
           <section className="psy-patients-page">
-            <DashboardModuleHeader title="Mis Pacientes" subtitle="Consulta el historial y la información de las personas que has atendido." onMenu={() => setShowMobileMenu(!showMobileMenu)} />
-            <label className="psy-patients-search"><span className="sr-only">Buscar pacientes</span><input type="search" value={patientSearch} onChange={(event) => setPatientSearch(event.target.value)} placeholder="Buscar por nombre o teléfono" /></label>
+            <DashboardModuleHeader title="Mis Pacientes" subtitle="Consulta la información de tus pacientes." onMenu={() => setShowMobileMenu(!showMobileMenu)} />
+            <div className="psy-patients-search">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+              <input
+                type="search"
+                value={patientSearch}
+                onChange={(event) => setPatientSearch(event.target.value)}
+                placeholder="Buscar por nombre o teléfono"
+                aria-label="Buscar pacientes"
+              />
+            </div>
             {patientsLoading ? <div className="psy-dash-empty"><p>Cargando pacientes...</p></div> : (() => {
               const query = patientSearch.trim().toLowerCase();
               const visiblePatients = patients.filter((patient) => `${patient.full_name || ''} ${patient.phone || ''}`.toLowerCase().includes(query));
@@ -1370,7 +1540,23 @@ const PsychologistDashboard: React.FC = () => {
                 <article key={patient.id} className="psy-patient-card">
                   <div className="psy-patient-card-top"><div className="psy-patient-avatar">{patient.avatar_url ? <img src={patient.avatar_url} alt="" crossOrigin="anonymous" /> : <span>{(patient.full_name || 'P').charAt(0).toUpperCase()}</span>}</div><div><h2>{patient.full_name || 'Paciente sin nombre'}</h2><p>{patient.phone || 'Sin teléfono registrado'}</p></div></div>
                   <div className="psy-patient-meta"><span>{patient.appointmentCount} {patient.appointmentCount === 1 ? 'cita' : 'citas'}</span><span>Última: {patient.lastAppointment.split('-').reverse().join('/')}</span></div>
-                  <button type="button" className="psy-patient-history-btn" onClick={() => { setSelectedPatientForHistory({ id: patient.id, name: patient.full_name || 'Paciente' }); setShowClinicalHistoryView(true); }}>Ver historia clínica</button>
+                  {(patient.emergencyContactName || patient.emergencyContactPhone) && (
+                    <div className="psy-patient-support">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" /><circle cx="10" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+                      <div>
+                        <p className="psy-patient-support-label">Red de apoyo</p>
+                        <p className="psy-patient-support-value">
+                          {patient.emergencyContactName || 'Sin nombre registrado'}
+                          {patient.emergencyContactRelationship ? ` · ${patient.emergencyContactRelationship}` : ''}
+                          {patient.emergencyContactPhone ? ` · ${patient.emergencyContactPhone}` : ''}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  <button type="button" className="psy-patient-history-btn" onClick={() => { setSelectedPatientForHistory({ id: patient.id, name: patient.full_name || 'Paciente' }); setShowClinicalHistoryView(true); }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 19.5V6a2 2 0 0 1 2-2h11a1 1 0 0 1 1 1v13" /><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H19" /><path d="M8 7h6M8 10.5h6" /></svg>
+                    Ver historia clínica
+                  </button>
                 </article>
               ))}</div>;
             })()}
@@ -1404,69 +1590,119 @@ const PsychologistDashboard: React.FC = () => {
             <form className="psy-profile-card" onSubmit={handleProfileSave}>
               <div className="psy-profile-grid">
                 <div className="psy-profile-row psy-profile-row-four">
-                  <label>Nombre completo<input name="full_name" defaultValue={profile.full_name} required /></label>
-                  <label>Teléfono<div className="psy-profile-phone-field"><select name="phone_country" defaultValue={profile.phone?.match(/^\+\d+/)?.[0] || '+57'} aria-label="Indicativo de país"><option value="+57">��🇴 +57</option><option value="+1">🇺🇸 +1</option><option value="+52">🇲🇽 +52</option><option value="+34">🇪🇸 +34</option><option value="+54">🇦🇷 +54</option><option value="+56">🇨🇱 +56</option><option value="+51">🇵🇪 +51</option><option value="+55">🇧🇷 +55</option><option value="+44">🇬🇧 +44</option><option value="+49">🇩🇪 +49</option><option value="+33">🇫🇷 +33</option><option value="+39">🇮🇹 +39</option><option value="+81">🇯🇵 +81</option><option value="+86">🇨🇳 +86</option><option value="+91">🇮🇳 +91</option><option value="+61">🇦🇺 +61</option><option value="+351">🇵🇹 +351</option><option value="+7">🇷🇺 +7</option></select><input name="phone" defaultValue={profile.phone?.replace(/^\+\d+\s*/, '') || ''} placeholder="Número" inputMode="tel" /></div></label>
-                  <label>Ciudad<input name="city" defaultValue={profile.city || ''} placeholder="Bogotá" /></label>
-                  <label>Años de experiencia<input name="years_experience" type="number" min="0" defaultValue={profile.years_experience || 0} /></label>
+                  <label>
+                    <span className="psy-profile-label"><FieldIcon><path d="M20 21a8 8 0 0 0-16 0" /><circle cx="12" cy="7" r="4" /></FieldIcon>Nombre completo</span>
+                    <input name="full_name" defaultValue={profile.full_name} required />
+                  </label>
+                  <label>
+                    <span className="psy-profile-label"><FieldIcon><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7a2 2 0 0 1 1.72 2.03z" /></FieldIcon>Teléfono</span>
+                    <div className="psy-profile-phone-field">
+                      <ProfilePhoneCountrySelect defaultDial={profile.phone?.match(/^\+\d+/)?.[0] || '+57'} />
+                      <input name="phone" defaultValue={profile.phone?.replace(/^\+\d+\s*/, '') || ''} placeholder="Número" inputMode="tel" />
+                    </div>
+                  </label>
+                  <label>
+                    <span className="psy-profile-label"><FieldIcon><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></FieldIcon>Ciudad</span>
+                    <input name="city" defaultValue={profile.city || ''} placeholder="Bogotá" />
+                  </label>
+                  <label>
+                    <span className="psy-profile-label"><FieldIcon><rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></FieldIcon>Años de experiencia</span>
+                    <input name="years_experience" type="number" min="0" defaultValue={profile.years_experience || 0} />
+                  </label>
                 </div>
                 <div className="psy-profile-row psy-profile-row-three">
-                  <ProfileMultiSelect name="specialties" label="Especialidades" options={PROFILE_SPECIALTIES} value={profile.specialties || []} />
-                  <ProfileMultiSelect name="modality" label="Modalidad" options={PROFILE_MODALITIES} value={profile.modality || []} />
-                  <ProfileMultiSelect name="languages" label="Idiomas" options={PROFILE_LANGUAGES} value={profile.languages || []} />
+                  <ProfileMultiSelect
+                    name="specialties"
+                    label="Especialidades"
+                    icon={<FieldIcon><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></FieldIcon>}
+                    options={PROFILE_SPECIALTIES}
+                    value={profile.specialties || []}
+                  />
+                  <ProfileMultiSelect
+                    name="modality"
+                    label="Modalidad"
+                    icon={<FieldIcon><polygon points="12 2 2 7 12 12 22 7 12 2" /><polyline points="2 17 12 22 22 17" /><polyline points="2 12 12 17 22 12" /></FieldIcon>}
+                    options={PROFILE_MODALITIES}
+                    value={profile.modality || []}
+                  />
+                  <ProfileMultiSelect
+                    name="languages"
+                    label="Idiomas"
+                    icon={<FieldIcon><circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></FieldIcon>}
+                    options={PROFILE_LANGUAGES}
+                    value={profile.languages || []}
+                  />
                 </div>
-                <div className="psy-profile-row psy-profile-row-four">
-                  <label>Duración de sesión<input name="session_duration" type="number" min="15" step="5" defaultValue={profile.session_duration || 50} /></label>
-                  <label>Tarifa por sesión<input name="session_price" type="number" min="0" defaultValue={profile.session_price || 0} /></label>
-                  <label>Enfoque terapéutico<select name="therapy_approach" defaultValue={(profile as any).therapy_approach || ''}><option value="">Selecciona</option><option value="Cognitivo-conductual">Cognitivo-conductual</option><option value="Humanista">Humanista</option><option value="Sistémico">Sistémico</option><option value="Integrativo">Integrativo</option></select></label>
-                  <label>Atención a<select name="patient_type" defaultValue={(profile as any).patient_type || ''}><option value="">Selecciona</option><option value="Adultos">Adultos</option><option value="Adolescentes">Adolescentes</option><option value="Parejas">Parejas</option><option value="Familias">Familias</option></select></label>
+                <div className="psy-profile-row psy-profile-row-two">
+                  <label>
+                    <span className="psy-profile-label"><FieldIcon><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></FieldIcon>Duración de sesión</span>
+                    <input name="session_duration" type="number" min="15" step="5" defaultValue={profile.session_duration || 50} />
+                  </label>
+                  <label>
+                    <span className="psy-profile-label"><FieldIcon><circle cx="12" cy="12" r="10" /><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" /></FieldIcon>Enfoque terapéutico</span>
+                    <select name="therapy_approach" defaultValue={(profile as any).therapy_approach || ''}><option value="">Selecciona</option><option value="Cognitivo-conductual">Cognitivo-conductual</option><option value="Humanista">Humanista</option><option value="Sistémico">Sistémico</option><option value="Integrativo">Integrativo</option></select>
+                  </label>
                 </div>
-                <label className="psy-profile-field-wide">Biografía<textarea name="bio" defaultValue={profile.bio || ''} rows={3} placeholder="Cuéntales a tus pacientes sobre tu enfoque profesional..." /></label>
+                <div className="psy-profile-field-wide psy-profile-prices">
+                  <div className="psy-profile-prices-head">
+                    <h3><FieldIcon><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></FieldIcon>Tarifas por modalidad y tipo de consulta</h3>
+                    <p>Define un valor para cada combinación que ofrezcas. Deja en blanco las que no apliquen.</p>
+                  </div>
+                  <div className="psy-profile-prices-table">
+                    <div className="psy-profile-prices-table-row psy-profile-prices-table-row--head">
+                      <span />
+                      {PRICE_MODALITIES.map(({ key: modalityKey, label: modalityLabel }) => (
+                        <span key={modalityKey} className="psy-profile-prices-col-head">
+                          {modalityKey === 'virtual' ? (
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M23 7l-7 5 7 5V7z" /><rect x="1" y="5" width="15" height="14" rx="2" /></svg>
+                          ) : (
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
+                          )}
+                          {modalityLabel}
+                        </span>
+                      ))}
+                    </div>
+                    {PRICE_PATIENT_TYPES.map(({ key: patientTypeKey, label: patientTypeLabel }) => (
+                      <div key={patientTypeKey} className="psy-profile-prices-table-row">
+                        <span className="psy-profile-prices-row-label">{patientTypeLabel}</span>
+                        {PRICE_MODALITIES.map(({ key: modalityKey, label: modalityLabel }) => (
+                          <div key={modalityKey} className="psy-profile-price-input">
+                            <span className="psy-profile-price-input-tag">{modalityLabel}</span>
+                            <span className="psy-profile-price-input-currency">$</span>
+                            <input
+                              name={`price_${modalityKey}_${patientTypeKey}`}
+                              type="number"
+                              min="0"
+                              step="1000"
+                              defaultValue={profile.session_prices?.[modalityKey]?.[patientTypeKey] || ''}
+                              placeholder="0"
+                              aria-label={`${modalityLabel} · ${patientTypeLabel}`}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <label className="psy-profile-field-wide">
+                  <span className="psy-profile-label"><FieldIcon><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="8" y1="13" x2="16" y2="13" /><line x1="8" y1="17" x2="16" y2="17" /></FieldIcon>Biografía</span>
+                  <textarea name="bio" defaultValue={profile.bio || ''} rows={3} placeholder="Cuéntales a tus pacientes sobre tu enfoque profesional..." />
+                </label>
               </div>
               <div className="psy-profile-actions">
-                <button type="submit" className="psy-dash-btn-primary" disabled={savingProfile}>{savingProfile ? 'Guardando...' : 'Guardar cambios'}</button>
+                <button type="submit" className="psy-profile-save-btn" disabled={savingProfile}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                    <polyline points="17 21 17 13 7 13 7 21" />
+                    <polyline points="7 3 7 8 15 8" />
+                  </svg>
+                  {savingProfile ? 'Guardando...' : 'Guardar cambios'}
+                </button>
               </div>
             </form>
           </section>
         )}
       </main>
-
-      {/* Quick Block Modal */}
-      {showQuickBlock && (
-        <div className="psy-dash-modal-backdrop" onClick={() => setShowQuickBlock(false)}>
-          <div className="psy-dash-modal" onClick={(e) => e.stopPropagation()}>
-            <h3>Bloquear horario</h3>
-            <p className="psy-modal-subtitle">
-              {quickBlockDate && `${DAY_NAMES_FULL[quickBlockDate.getDay()]} ${quickBlockDate.getDate()} de ${MONTH_NAMES[quickBlockDate.getMonth()]}`}
-            </p>
-            <div className="psy-dash-modal-fields">
-              <div className="psy-dash-modal-row">
-                <div className="psy-dash-modal-field">
-                  <label>Desde</label>
-                  <select value={blockStart} onChange={(e) => setBlockStart(e.target.value)}>
-                    {HOUR_OPTIONS.map((h) => <option key={h} value={h}>{h}</option>)}
-                  </select>
-                </div>
-                <div className="psy-dash-modal-field">
-                  <label>Hasta</label>
-                  <select value={blockEnd} onChange={(e) => setBlockEnd(e.target.value)}>
-                    {HOUR_OPTIONS.map((h) => <option key={h} value={h}>{h}</option>)}
-                  </select>
-                </div>
-              </div>
-              <div className="psy-dash-modal-field">
-                <label>Razon (opcional)</label>
-                <input type="text" value={blockReason} onChange={(e) => setBlockReason(e.target.value)} placeholder="Vacaciones, cita personal..." />
-              </div>
-            </div>
-            <div className="psy-dash-modal-actions">
-              <button type="button" className="psy-dash-btn-ghost" onClick={() => setShowQuickBlock(false)}>Cancelar</button>
-              <button type="button" className="psy-dash-btn-primary" onClick={handleQuickBlock} disabled={savingBlock}>
-                {savingBlock ? 'Guardando...' : 'Bloquear'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Appointment Detail Modal */}
       {selectedAppt && (

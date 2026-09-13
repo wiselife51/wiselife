@@ -267,7 +267,7 @@ const Specialists: React.FC = () => {
                     ))}
                   </div>
                   <div className="spec-card-price">
-                    <span className="spec-card-price-amount">${psy.session_price?.toLocaleString()}</span>
+                    <span className="spec-card-price-amount">Desde ${psy.session_price?.toLocaleString()}</span>
                     <span className="spec-card-price-duration">/ {psy.session_duration} min</span>
                   </div>
                 </div>

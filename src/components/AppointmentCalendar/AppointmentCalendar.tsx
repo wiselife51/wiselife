@@ -39,13 +39,18 @@ function fmtTime(t: string): string {
 
 interface AppointmentCalendarProps {
   appointments: CalendarAppointment[];
-  /** Fechas YYYY-MM-DD bloqueadas por el profesional. */
+  /** Fechas YYYY-MM-DD bloqueadas por el profesional (vista mes). */
   blockedDates?: string[];
-  /** Si se pasa, se habilita arrastrar una cita a otro dia. */
-  onReschedule?: (appointment: CalendarAppointment, newDate: string) => Promise<void> | void;
+  /** Indica si una hora puntual de un dia esta bloqueada (vistas semana/dia). */
+  isHourBlocked?: (dateKey: string, hour: number) => boolean;
+  /** Alterna el bloqueo de una hora puntual al hacer click en una celda vacia (vistas semana/dia). */
+  onToggleHourBlock?: (dateKey: string, hour: number) => void;
+  /** Si se pasa, se habilita arrastrar una cita a otro dia (y, en semana/dia,
+   * tambien a otra hora, en cuyo caso se recibe newStartTime). */
+  onReschedule?: (appointment: CalendarAppointment, newDate: string, newStartTime?: string) => Promise<void> | void;
   /** Acciones rapidas del panel lateral, propias de cada panel. */
   renderActions?: (appointment: CalendarAppointment) => React.ReactNode;
-  /** Acciones sobre la jornada completa (bloquear el dia, anadir hueco...). */
+  /** Acciones sobre la jornada completa (bloquear el dia, anadir hueco...). Solo se usan en la vista mes. */
   renderDayActions?: (dateKey: string) => React.ReactNode;
   onSelect?: (appointment: CalendarAppointment) => void;
   emptyLabel?: string;
@@ -55,6 +60,8 @@ interface AppointmentCalendarProps {
 const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
   appointments,
   blockedDates = [],
+  isHourBlocked,
+  onToggleHourBlock,
   onReschedule,
   renderActions,
   renderDayActions,
@@ -64,12 +71,25 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
 }) => {
   const [view, setView] = useState<CalendarView>('month');
   const [cursor, setCursor] = useState(new Date());
+  // El panel lateral (lista de citas + bloquear/abrir el dia) solo aplica a
+  // la vista mes: en semana y dia, el bloqueo se hace celda por hora.
   const [panelDay, setPanelDay] = useState<string | null>(null);
+
+  const changeView = (v: CalendarView) => {
+    setView(v);
+    if (v !== 'month') setPanelDay(null);
+  };
 
   const [dragging, setDragging] = useState<CalendarAppointment | null>(null);
   const [dragOver, setDragOver] = useState<string | null>(null);
-  const [pending, setPending] = useState<{ appt: CalendarAppointment; date: string } | null>(null);
+  // hour presente => el arrastre viene de semana/dia y tambien cambia la hora.
+  const [pending, setPending] = useState<{ appt: CalendarAppointment; date: string; hour?: number } | null>(null);
   const [saving, setSaving] = useState(false);
+  // Al hacer click en una celda vacia (semana/dia) no se alterna el bloqueo
+  // de inmediato: se pide confirmacion con el mismo lenguaje visual que el
+  // resto de acciones de agenda (bloquear/abrir), para evitar bloqueos por
+  // error con un solo click.
+  const [hourDialog, setHourDialog] = useState<{ dateKey: string; hour: number } | null>(null);
 
   const todayKey = toDateStr(new Date());
 
@@ -126,25 +146,30 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
     return `${DAY_FULL[cursor.getDay()]} ${cursor.getDate()} de ${MONTHS[cursor.getMonth()]}`;
   };
 
-  const handleDrop = (dateKey: string) => {
+  const handleDrop = (dateKey: string, hour?: number) => {
     setDragOver(null);
     if (!dragging || !onReschedule) return;
-    if (dragging.appointment_date === dateKey) {
+    const sameDate = dragging.appointment_date === dateKey;
+    const draggedHour = parseInt(dragging.start_time.slice(0, 2), 10);
+    const sameHour = hour === undefined || hour === draggedHour;
+    if (sameDate && sameHour) {
       setDragging(null);
       return;
     }
-    setPending({ appt: dragging, date: dateKey });
+    setPending({ appt: dragging, date: dateKey, hour });
     setDragging(null);
   };
 
   const confirmMove = async () => {
     if (!pending || !onReschedule) return;
     setSaving(true);
-    await onReschedule(pending.appt, pending.date);
+    const newStartTime = pending.hour !== undefined ? `${pending.hour.toString().padStart(2, '0')}:00` : undefined;
+    await onReschedule(pending.appt, pending.date, newStartTime);
     setSaving(false);
     setPending(null);
   };
 
+  // Vista mes: solo cambia el dia, sin hora.
   const dayCellProps = (key: string) => ({
     onDragOver: (e: React.DragEvent) => {
       if (!onReschedule || !dragging) return;
@@ -153,6 +178,21 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
     },
     onDragLeave: () => setDragOver((prev) => (prev === key ? null : prev)),
     onDrop: () => handleDrop(key),
+  });
+
+  // Vistas semana/dia: la celda es una hora concreta. No se permite soltar
+  // sobre una hora que ya tiene otra cita (occupied), para no pisarla.
+  const slotCellProps = (key: string, hour: number, occupied: boolean) => ({
+    onDragOver: (e: React.DragEvent) => {
+      if (!onReschedule || !dragging || occupied) return;
+      e.preventDefault();
+      setDragOver(`${key}-${hour}`);
+    },
+    onDragLeave: () => setDragOver((prev) => (prev === `${key}-${hour}` ? null : prev)),
+    onDrop: () => {
+      if (occupied) return;
+      handleDrop(key, hour);
+    },
   });
 
   const panelAppts = panelDay ? byDate.get(panelDay) || [] : [];
@@ -177,7 +217,7 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
               key={v}
               type="button"
               className={`cal__view ${view === v ? 'cal__view--active' : ''}`}
-              onClick={() => setView(v)}
+              onClick={() => changeView(v)}
             >
               {v === 'month' ? 'Mes' : v === 'week' ? 'Semana' : 'Dia'}
             </button>
@@ -261,11 +301,7 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
             {weekGrid(cursor).map((d) => {
               const key = toDateStr(d);
               return (
-                <div
-                  key={key}
-                  className={`cal__week-day ${key === todayKey ? 'cal__week-day--today' : ''}`}
-                  onClick={() => setPanelDay(key)}
-                >
+                <div key={key} className={`cal__week-day ${key === todayKey ? 'cal__week-day--today' : ''}`}>
                   <span>{DAY_SHORT[d.getDay()]}</span>
                   <strong>{d.getDate()}</strong>
                 </div>
@@ -279,20 +315,33 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
                 {weekGrid(cursor).map((d) => {
                   const key = toDateStr(d);
                   const list = (byDate.get(key) || []).filter((a) => parseInt(a.start_time.slice(0, 2), 10) === h);
+                  const hourBlocked = isHourBlocked ? isHourBlocked(key, h) : blocked.has(key);
+                  const draggableAppt = list.length === 1 ? list[0] : null;
                   return (
                     <div
                       key={`${key}-${h}`}
-                      className={`cal__slot psy-dash-upcoming-item ${dragOver === key ? 'cal__slot--dragover' : ''} ${blocked.has(key) ? 'cal-month-new__day--blocked' : ''} ${list.some((a) => a.status === 'confirmada') ? 'cal-month-new__day--confirmed' : ''} ${list.length > 0 && list.every((a) => a.status === 'completada') ? 'cal-month-new__day--completed' : ''} ${!blocked.has(key) && list.length === 0 ? 'cal-month-new__day--available' : ''}`}
+                      className={`cal__slot psy-dash-upcoming-item ${dragOver === `${key}-${h}` ? 'cal__slot--dragover' : ''} ${hourBlocked ? 'cal-month-new__day--blocked' : ''} ${list.some((a) => a.status === 'confirmada') ? 'cal-month-new__day--confirmed' : ''} ${list.length > 0 && list.every((a) => a.status === 'completada') ? 'cal-month-new__day--completed' : ''} ${!hourBlocked && list.length === 0 ? 'cal-month-new__day--available' : ''}`}
+                      draggable={!!draggableAppt && !!onReschedule}
+                      onDragStart={() => draggableAppt && setDragging(draggableAppt)}
+                      onDragEnd={() => setDragging(null)}
                       onClick={() => {
-                        setPanelDay(key);
-                        if (list[0]) onSelect?.(list[0]);
+                        if (list[0]) {
+                          onSelect?.(list[0]);
+                          return;
+                        }
+                        if (onToggleHourBlock) setHourDialog({ dateKey: key, hour: h });
                       }}
-                      {...dayCellProps(key)}
+                      {...slotCellProps(key, h, list.length > 0)}
                     >
                       {list.length > 0 && (
-                        <span className="cal-month-new__name" title={list.map((a) => a.title).join(', ')}>
-                          {list.map((a) => a.title.trim().split(/\s+/)[0]).join(', ')}
-                        </span>
+                        <>
+                          <span className="cal-month-new__name cal-week-new__name" title={list.map((a) => a.title).join(', ')}>
+                            {list.map((a) => a.title.trim().split(/\s+/)[0]).join(', ')}
+                          </span>
+                          <span className="cal-week-new__count" aria-hidden="true">
+                            {list.length}
+                          </span>
+                        </>
                       )}
                     </div>
                   );
@@ -313,15 +362,24 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
           {HOURS.map((h) => {
             const key = toDateStr(cursor);
             const list = (byDate.get(key) || []).filter((a) => parseInt(a.start_time.slice(0, 2), 10) === h);
+            const hourBlocked = isHourBlocked ? isHourBlocked(key, h) : blocked.has(key);
+            const draggableAppt = list.length === 1 ? list[0] : null;
             return (
               <div key={h} className="cal__day-row">
                 <div className="cal__hour">{`${h}:00`}</div>
                 <div
-                  className={`cal__day-slot psy-dash-upcoming-item ${dragOver === key ? 'cal__slot--dragover' : ''} ${blocked.has(key) ? 'cal-month-new__day--blocked' : ''} ${list.some((a) => a.status === 'confirmada') ? 'cal-month-new__day--confirmed' : ''} ${list.length > 0 && list.every((a) => a.status === 'completada') ? 'cal-month-new__day--completed' : ''} ${!blocked.has(key) && list.length === 0 ? 'cal-month-new__day--available' : ''}`}
+                  className={`cal__day-slot psy-dash-upcoming-item ${dragOver === `${key}-${h}` ? 'cal__slot--dragover' : ''} ${hourBlocked ? 'cal-month-new__day--blocked' : ''} ${list.some((a) => a.status === 'confirmada') ? 'cal-month-new__day--confirmed' : ''} ${list.length > 0 && list.every((a) => a.status === 'completada') ? 'cal-month-new__day--completed' : ''} ${!hourBlocked && list.length === 0 ? 'cal-month-new__day--available' : ''}`}
+                  draggable={!!draggableAppt && !!onReschedule}
+                  onDragStart={() => draggableAppt && setDragging(draggableAppt)}
+                  onDragEnd={() => setDragging(null)}
                   onClick={() => {
-                    if (list[0]) onSelect?.(list[0]);
+                    if (list[0]) {
+                      onSelect?.(list[0]);
+                      return;
+                    }
+                    if (onToggleHourBlock) setHourDialog({ dateKey: key, hour: h });
                   }}
-                  {...dayCellProps(key)}
+                  {...slotCellProps(key, h, list.length > 0)}
                 >
                   {list.length > 0 && (
                     <span className="cal-month-new__name" title={list.map((a) => a.title).join(', ')}>
@@ -335,26 +393,44 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
         </div>
       )}
 
-      {/* ===== Panel lateral del dia ===== */}
+      {/* ===== Panel lateral del dia (solo vista mes: en semana/dia el
+          bloqueo se hace celda por hora, sin este panel) ===== */}
       {panelDay && (
         <aside className="cal-panel" aria-label="Detalle del dia">
           <header className="cal-panel__head">
-            <div>
-              <p className="cal-panel__date">{panelDay.split('-').reverse().join('/')}</p>
-              <p className="cal-panel__count">
+            <div className="psy-dash-sidebar-header cal-panel__brand-header">
+              <div className="psy-dash-brand">
+                <div className="psy-dash-logo">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" strokeWidth="2" aria-hidden="true">
+                    <defs><linearGradient id="cal-panel-logo-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#4dd0e1" /><stop offset="50%" stopColor="#42a5f5" /><stop offset="100%" stopColor="#7e57c2" /></linearGradient></defs>
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="url(#cal-panel-logo-grad)" />
+                  </svg>
+                  <span>Vida Sabia</span>
+                </div>
+                <div className="psy-dash-badge">Agenda del dia</div>
+              </div>
+              <button type="button" className="psy-appt-modal-close" onClick={() => setPanelDay(null)} aria-label="Cerrar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+            <div className="psy-dash-profile cal-panel__day-profile">
+              <div className="cal-panel__day-icon" aria-hidden="true">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="5" width="18" height="16" rx="2" />
+                  <path d="M3 9h18M8 3v4M16 3v4" />
+                </svg>
+              </div>
+              <p className="psy-dash-name">{panelDay.split('-').reverse().join('/')}</p>
+              <p className="psy-dash-email">
                 {panelAppts.length === 0 ? 'Sin citas' : `${panelAppts.length} cita${panelAppts.length > 1 ? 's' : ''}`}
               </p>
             </div>
-            <button type="button" className="cal__icon-btn" onClick={() => setPanelDay(null)} aria-label="Cerrar">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
+            {renderDayActions && <div className="cal-panel__dayactions">{renderDayActions(panelDay)}</div>}
           </header>
 
           <div className="cal-panel__body">
-            {renderDayActions && <div className="cal-panel__dayactions">{renderDayActions(panelDay)}</div>}
-
             {panelAppts.length === 0 ? (
               <p className="cal-panel__empty">{emptyLabel}</p>
             ) : (
@@ -391,8 +467,14 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
             <p>
               Mover la cita de <strong>{pending.appt.title}</strong> del{' '}
               {pending.appt.appointment_date.split('-').reverse().join('/')} al{' '}
-              <strong>{pending.date.split('-').reverse().join('/')}</strong>, manteniendo la hora{' '}
-              {fmtTime(pending.appt.start_time)}.
+              <strong>{pending.date.split('-').reverse().join('/')}</strong>
+              {pending.hour !== undefined ? (
+                <>
+                  , a las <strong>{fmtTime(`${pending.hour.toString().padStart(2, '0')}:00`)}</strong>.
+                </>
+              ) : (
+                <>, manteniendo la hora {fmtTime(pending.appt.start_time)}.</>
+              )}
             </p>
             <div className="cal-confirm__actions">
               <button type="button" className="cal-confirm__cancel" disabled={saving} onClick={() => setPending(null)}>
@@ -405,6 +487,40 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
           </div>
         </div>
       )}
+
+      {/* ===== Confirmacion de bloqueo/habilitacion de una hora (semana/dia) ===== */}
+      {hourDialog && (() => {
+        const alreadyBlocked = isHourBlocked ? isHourBlocked(hourDialog.dateKey, hourDialog.hour) : false;
+        return (
+          <div className="cal-confirm" role="dialog" aria-modal="true">
+            <div className="cal-confirm__backdrop" onClick={() => setHourDialog(null)} />
+            <div className="cal-confirm__box">
+              <h3>{alreadyBlocked ? 'Habilitar esta hora' : 'Bloquear esta hora'}</h3>
+              <p>
+                {alreadyBlocked ? 'Los pacientes podran reservar' : 'Los pacientes no podran reservar'} el{' '}
+                <strong>{hourDialog.dateKey.split('-').reverse().join('/')}</strong> de las{' '}
+                <strong>{fmtTime(`${hourDialog.hour.toString().padStart(2, '0')}:00`)}</strong> a las{' '}
+                {fmtTime(`${(hourDialog.hour + 1).toString().padStart(2, '0')}:00`)}.
+              </p>
+              <div className="cal-confirm__actions">
+                <button type="button" className="cal-confirm__cancel" onClick={() => setHourDialog(null)}>
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  className={`cal-confirm__ok ${alreadyBlocked ? 'cal-confirm__ok--unblock' : 'cal-confirm__ok--block'}`}
+                  onClick={() => {
+                    onToggleHourBlock?.(hourDialog.dateKey, hourDialog.hour);
+                    setHourDialog(null);
+                  }}
+                >
+                  {alreadyBlocked ? 'Habilitar hora' : 'Bloquear hora'}
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };

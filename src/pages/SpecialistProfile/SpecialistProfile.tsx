@@ -15,6 +15,7 @@ interface Psychologist {
   bio: string | null;
   education: string | null;
   session_price: number;
+  session_prices?: Record<string, Record<string, number>> | null;
   session_duration: number;
   modality: string[];
   city: string | null;
@@ -89,6 +90,31 @@ function formatDateLong(date: Date): string {
 
 type BookingStep = 'select' | 'confirm' | 'payment' | 'success';
 
+const MODALITY_LABELS: Record<string, string> = { virtual: 'Virtual', presencial: 'Presencial' };
+const PATIENT_TYPE_LABELS: Record<string, string> = {
+  individual: 'Individual (adulto)',
+  nino_adolescente: 'Niño / adolescente',
+  pareja: 'Pareja',
+  familia: 'Familia',
+};
+
+function getAvailableModalities(psy: Psychologist): string[] {
+  const raw = (psy.modality || []).map((m) => m.toLowerCase());
+  if (raw.includes('mixta')) return ['virtual', 'presencial'];
+  const known = raw.filter((m) => m === 'virtual' || m === 'presencial');
+  return known.length > 0 ? known : ['virtual'];
+}
+
+function getPatientTypesForModality(psy: Psychologist, modality: string): string[] {
+  const prices = psy.session_prices?.[modality] || {};
+  const keys = Object.keys(prices).filter((key) => prices[key] > 0);
+  return keys.length > 0 ? keys : ['individual'];
+}
+
+function getPriceFor(psy: Psychologist, modality: string, patientType: string): number {
+  return psy.session_prices?.[modality]?.[patientType] || psy.session_price || 0;
+}
+
 const SpecialistProfile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { user, loading: authLoading } = useAuth();
@@ -107,6 +133,15 @@ const SpecialistProfile: React.FC = () => {
   const [bookingLoading, setBookingLoading] = useState(false);
   const [createdApptId, setCreatedApptId] = useState<string | null>(null);
   const [paymentRef, setPaymentRef] = useState('');
+
+  // Tipo de consulta: modalidad + tipo de paciente elegidos, y el precio/valores
+  // que quedan "congelados" en el momento de crear la cita (para que un cambio
+  // de seleccion mientras el modal esta abierto no desincronice el cobro).
+  const [selectedModality, setSelectedModality] = useState('');
+  const [selectedPatientType, setSelectedPatientType] = useState('');
+  const [bookingAmount, setBookingAmount] = useState(0);
+  const [bookingModality, setBookingModality] = useState('');
+  const [bookingPatientType, setBookingPatientType] = useState('');
 
   // Schedule view state
   const [scheduleView, setScheduleView] = useState<'list' | 'month'>('list');
@@ -152,6 +187,9 @@ const SpecialistProfile: React.FC = () => {
         return;
       }
       setPsy(psyData);
+      const defaultModality = getAvailableModalities(psyData)[0];
+      setSelectedModality(defaultModality);
+      setSelectedPatientType(getPatientTypesForModality(psyData, defaultModality)[0]);
 
       const { data: availData } = await supabase
         .from('psychologist_availability')
@@ -218,7 +256,11 @@ const SpecialistProfile: React.FC = () => {
   };
 
   const handleSlotClick = (slot: AvailabilitySlot) => {
+    if (!psy) return;
     setSelectedSlot(slot);
+    setBookingAmount(getPriceFor(psy, selectedModality, selectedPatientType));
+    setBookingModality(selectedModality);
+    setBookingPatientType(selectedPatientType);
     setBookingStep('confirm');
   };
 
@@ -235,8 +277,10 @@ const SpecialistProfile: React.FC = () => {
         start_time: selectedSlot.start_time,
         end_time: selectedSlot.end_time,
         status: 'pendiente_pago',
-        payment_amount: psy.session_price,
+        payment_amount: bookingAmount,
         payment_status: 'pendiente',
+        modality: bookingModality || null,
+        patient_type: bookingPatientType || null,
       })
       .select('id')
       .single();
@@ -266,7 +310,7 @@ const SpecialistProfile: React.FC = () => {
   };
 
   const handleNequiPayment = () => {
-    const amount = psy?.session_price || 0;
+    const amount = bookingAmount || psy?.session_price || 0;
     // Usar el numero configurado del negocio (variable de entorno) o el del psicologo
     const nequiPhone = import.meta.env.VITE_NEQUI_PHONE || psy?.phone || '';
     const ref = createdApptId || 'cita';
@@ -320,6 +364,9 @@ const SpecialistProfile: React.FC = () => {
     setSelectedSlot(null);
     setCreatedApptId(null);
     setPaymentRef('');
+    setBookingAmount(0);
+    setBookingModality('');
+    setBookingPatientType('');
   };
 
   const availableSlots = getSlotsForDay(selectedDay);
@@ -405,7 +452,7 @@ const SpecialistProfile: React.FC = () => {
                       <line x1="12" y1="1" x2="12" y2="23" />
                       <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                     </svg>
-                    <span>${psy.session_price?.toLocaleString()} COP por sesion</span>
+                    <span>Desde ${psy.session_price?.toLocaleString()} COP por sesion</span>
                   </div>
                   <div className="sp-detail">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -453,12 +500,48 @@ const SpecialistProfile: React.FC = () => {
                 </div>
               </div>
 
+              <div className="sp-pricing-selector">
+                <div className="sp-pricing-group">
+                  <span className="sp-pricing-label">Modalidad</span>
+                  <div className="sp-pricing-options">
+                    {getAvailableModalities(psy).map((modalityKey) => (
+                      <button
+                        key={modalityKey}
+                        type="button"
+                        className={`sp-pricing-chip ${selectedModality === modalityKey ? 'sp-pricing-chip--active' : ''}`}
+                        onClick={() => {
+                          setSelectedModality(modalityKey);
+                          setSelectedPatientType(getPatientTypesForModality(psy, modalityKey)[0]);
+                        }}
+                      >
+                        {MODALITY_LABELS[modalityKey] || modalityKey}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="sp-pricing-group">
+                  <span className="sp-pricing-label">Tipo de consulta</span>
+                  <div className="sp-pricing-options">
+                    {getPatientTypesForModality(psy, selectedModality).map((patientTypeKey) => (
+                      <button
+                        key={patientTypeKey}
+                        type="button"
+                        className={`sp-pricing-chip ${selectedPatientType === patientTypeKey ? 'sp-pricing-chip--active' : ''}`}
+                        onClick={() => setSelectedPatientType(patientTypeKey)}
+                      >
+                        {PATIENT_TYPE_LABELS[patientTypeKey] || patientTypeKey}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
               <div className="sp-price-banner">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="12" y1="1" x2="12" y2="23" />
                   <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                 </svg>
-                <span>Valor de la sesion: <strong>${psy.session_price?.toLocaleString()} COP</strong></span>
+                <span>Valor de la sesion: <strong>${getPriceFor(psy, selectedModality, selectedPatientType).toLocaleString()} COP</strong></span>
               </div>
 
               {/* MONTH VIEW */}
@@ -634,10 +717,14 @@ const SpecialistProfile: React.FC = () => {
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
                         <span>Duracion: {psy.session_duration} minutos</span>
                       </div>
+                      <div className="sp-booking-detail">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
+                        <span>{MODALITY_LABELS[bookingModality] || bookingModality} · {PATIENT_TYPE_LABELS[bookingPatientType] || bookingPatientType}</span>
+                      </div>
                     </div>
                     <div className="sp-booking-price">
                       <span>Total a pagar</span>
-                      <strong>${psy.session_price?.toLocaleString()} COP</strong>
+                      <strong>${bookingAmount.toLocaleString()} COP</strong>
                     </div>
                   </div>
                 </div>
@@ -667,7 +754,7 @@ const SpecialistProfile: React.FC = () => {
                     <div className="sp-nequi-logo">
                       <div className="sp-nequi-badge">Nequi</div>
                     </div>
-                    <p className="sp-payment-amount">${psy.session_price?.toLocaleString()} COP</p>
+                    <p className="sp-payment-amount">${bookingAmount.toLocaleString()} COP</p>
 
                     <div className="sp-nequi-dest">
                       <span className="sp-nequi-dest-label">Enviar a Nequi:</span>
@@ -686,7 +773,7 @@ const SpecialistProfile: React.FC = () => {
                         <span className="sp-step-num">2</span>
                         <div>
                           <strong>Confirma el pago en Nequi</strong>
-                          <p>Envia exactamente ${psy.session_price?.toLocaleString()} COP al numero indicado</p>
+                          <p>Envia exactamente ${bookingAmount.toLocaleString()} COP al numero indicado</p>
                         </div>
                       </div>
                       <div className="sp-payment-step">
