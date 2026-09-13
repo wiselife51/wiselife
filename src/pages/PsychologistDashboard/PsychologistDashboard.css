@@ -360,7 +360,126 @@ body:has(.psy-dash) {
 }
 
 .psy-profile-row-four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.psy-profile-row-three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .psy-profile-row-three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .psy-profile-row-two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  /* Matriz de tarifas por modalidad y tipo de consulta */
+  .psy-profile-prices {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.03);
+  }
+  .psy-profile-prices-head h3 {
+    margin: 0 0 0.2rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+  }
+  .psy-profile-prices-head p {
+    margin: 0;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.46);
+  }
+  .psy-profile-prices-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  .psy-profile-price-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 0.85rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.02);
+  }
+  .psy-profile-price-group h4 {
+    margin: 0;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #b388ff;
+  }
+  .psy-profile-price-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+  }
+  .psy-profile-price-fields label {
+    gap: 0.35rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.68rem;
+    font-weight: 500;
+  }
+  .psy-profile-price-input {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 0 0.6rem;
+    background: rgba(255, 255, 255, 0.06);
+  }
+  .psy-profile-price-input span {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  .psy-profile-price-input input {
+    border: none;
+    background: none;
+    padding: 0.58rem 0;
+    color: #f7f8ff;
+    font: inherit;
+    outline: none;
+  }
+  .psy-profile-price-input:focus-within {
+    border-color: #8a5cf6;
+    box-shadow: 0 0 0 3px rgba(138, 92, 246, 0.16);
+  }
+
+  /* Boton "Guardar cambios" con el mismo estilo que "Cerrar sesion" */
+  .psy-profile-save-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 170px;
+    gap: 0.625rem;
+    padding: 0.7rem 0.875rem 0.7rem 2.5rem;
+    border: 1px solid rgba(126, 87, 194, 0.2);
+    border-radius: 12px;
+    background: var(--psy-surface);
+    color: #b388ff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s var(--psy-smooth), border-color 0.2s var(--psy-smooth), color 0.2s var(--psy-smooth);
+  }
+  .psy-profile-save-btn svg {
+    position: absolute;
+    left: 0.875rem;
+  }
+  .psy-profile-save-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.9);
+    border-color: rgba(126, 87, 194, 0.2);
+    box-shadow: none;
+  }
+  .psy-profile-save-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 900px) {
+    .psy-profile-prices-grid { grid-template-columns: 1fr; }
+  }
 
 .psy-profile-row select[multiple] {
   min-height: 66px;
@@ -3847,14 +3966,17 @@ body:has(.psy-dash) {
   .psy-cal-view-btn { flex: 1 1 auto; min-width: 0; }
   .psy-profile-grid { gap: 0.5rem; }
   .psy-profile-row-four,
-  .psy-profile-row-three { grid-template-columns: 1fr; gap: 0.5rem; }
+  .psy-profile-row-three,
+  .psy-profile-row-two { grid-template-columns: 1fr; gap: 0.5rem; }
   .psy-profile-phone-field { grid-template-columns: 82px minmax(0, 1fr); }
   .psy-profile-row select[multiple] { min-height: 64px; height: 64px; }
   .psy-profile-field-wide { grid-column: auto; }
   .psy-profile-card { padding: 1rem; border-radius: 16px; }
   .psy-profile-card-head { align-items: flex-start; }
   .psy-profile-actions { align-items: stretch; flex-direction: column; }
-  .psy-profile-actions .psy-dash-btn-primary { width: 100%; }
+  .psy-profile-actions .psy-dash-btn-primary,
+  .psy-profile-actions .psy-profile-save-btn { width: 100%; }
+  .psy-profile-price-fields { grid-template-columns: 1fr; }
   .psy-profile-message { text-align: center; }
   .psy-alert-count { width: 1.5rem; min-width: 1.5rem; height: 1.5rem; font-size: 0.7rem; }
 

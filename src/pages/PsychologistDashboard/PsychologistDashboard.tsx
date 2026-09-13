@@ -26,6 +26,9 @@ interface PsychologistProfile {
   languages?: string[];
   session_duration: number;
   session_price: number;
+  // Tarifas desglosadas por modalidad y tipo de paciente, ej:
+  // { virtual: { individual: 80000, pareja: 120000 }, presencial: { individual: 90000 } }
+  session_prices?: Record<string, Record<string, number>> | null;
   onboarding_completed: boolean;
   // Opcional a proposito: si el codigo llega a produccion antes que la
   // migracion 20260807210000, la columna no existe y el campo viene undefined.
@@ -36,6 +39,16 @@ interface PsychologistProfile {
 const PROFILE_SPECIALTIES = ['Ansiedad', 'Depresión', 'Pareja', 'Duelo', 'Adolescentes', 'Autoestima'];
 const PROFILE_MODALITIES = ['Virtual', 'Presencial', 'Mixta'];
 const PROFILE_LANGUAGES = ['Español', 'Inglés', 'Francés', 'Portugués'];
+const PRICE_MODALITIES: { key: string; label: string }[] = [
+  { key: 'virtual', label: 'Virtual' },
+  { key: 'presencial', label: 'Presencial' },
+];
+const PRICE_PATIENT_TYPES: { key: string; label: string }[] = [
+  { key: 'individual', label: 'Individual (adulto)' },
+  { key: 'nino_adolescente', label: 'Niño / adolescente' },
+  { key: 'pareja', label: 'Pareja' },
+  { key: 'familia', label: 'Familia' },
+];
 
 function ProfileMultiSelect({
   name,
@@ -360,6 +373,23 @@ const PsychologistDashboard: React.FC = () => {
     setSavingProfile(true);
     setProfileMessage('');
     const form = new FormData(event.currentTarget);
+
+    // Construye la matriz { modalidad: { tipo_paciente: precio } } solo con
+    // las combinaciones que el psicologo realmente diligencio (precio > 0).
+    const session_prices: Record<string, Record<string, number>> = {};
+    for (const { key: modalityKey } of PRICE_MODALITIES) {
+      const pricesForModality: Record<string, number> = {};
+      for (const { key: patientTypeKey } of PRICE_PATIENT_TYPES) {
+        const raw = Number(form.get(`price_${modalityKey}_${patientTypeKey}`) || 0);
+        if (raw > 0) pricesForModality[patientTypeKey] = raw;
+      }
+      if (Object.keys(pricesForModality).length > 0) session_prices[modalityKey] = pricesForModality;
+    }
+    const allPrices = Object.values(session_prices).flatMap((byType) => Object.values(byType));
+    // session_price se mantiene como precio "desde" para mostrarlo en tarjetas
+    // y para compatibilidad con citas antiguas que no tienen tarifa desglosada.
+    const session_price = allPrices.length > 0 ? Math.min(...allPrices) : Number(form.get('session_price') || 0);
+
     const payload = {
       full_name: String(form.get('full_name') || '').trim(),
       phone: `${String(form.get('phone_country') || '+57')} ${String(form.get('phone') || '').trim()}`.trim() || null,
@@ -370,7 +400,8 @@ const PsychologistDashboard: React.FC = () => {
       years_experience: Number(form.get('years_experience') || 0),
       languages: form.getAll('languages').map(String).filter(Boolean),
       session_duration: Number(form.get('session_duration') || 50),
-      session_price: Number(form.get('session_price') || 0),
+      session_price,
+      session_prices,
     };
     const { data, error } = await supabase.from('psychologists').update(payload).eq('id', profile.id).select('*').single();
     if (error || !data) {
@@ -1488,7 +1519,7 @@ const PsychologistDashboard: React.FC = () => {
               <div className="psy-profile-grid">
                 <div className="psy-profile-row psy-profile-row-four">
                   <label>Nombre completo<input name="full_name" defaultValue={profile.full_name} required /></label>
-                  <label>Teléfono<div className="psy-profile-phone-field"><select name="phone_country" defaultValue={profile.phone?.match(/^\+\d+/)?.[0] || '+57'} aria-label="Indicativo de país"><option value="+57">��🇴 +57</option><option value="+1">🇺🇸 +1</option><option value="+52">🇲🇽 +52</option><option value="+34">🇪🇸 +34</option><option value="+54">🇦🇷 +54</option><option value="+56">🇨🇱 +56</option><option value="+51">🇵🇪 +51</option><option value="+55">🇧🇷 +55</option><option value="+44">🇬🇧 +44</option><option value="+49">🇩🇪 +49</option><option value="+33">🇫🇷 +33</option><option value="+39">🇮🇹 +39</option><option value="+81">🇯🇵 +81</option><option value="+86">🇨🇳 +86</option><option value="+91">🇮🇳 +91</option><option value="+61">🇦🇺 +61</option><option value="+351">🇵🇹 +351</option><option value="+7">🇷🇺 +7</option></select><input name="phone" defaultValue={profile.phone?.replace(/^\+\d+\s*/, '') || ''} placeholder="Número" inputMode="tel" /></div></label>
+                  <label>Teléfono<div className="psy-profile-phone-field"><select name="phone_country" defaultValue={profile.phone?.match(/^\+\d+/)?.[0] || '+57'} aria-label="Indicativo de país"><option value="+57">��🇴 +57</option><option value="+1">🇺🇸 +1</option><option value="+52">🇲🇽 +52</option><option value="+34">🇪🇸 +34</option><option value="+54">🇦🇷 +54</option><option value="+56">🇨🇱 +56</option><option value="+51">🇵🇪 +51</option><option value="+55">🇧🇷 +55</option><option value="+44">🇬🇧 +44</option><option value="+49">🇩🇪 +49</option><option value="+33">🇫🇷 +33</option><option value="+39">🇮🇹 +39</option><option value="+81">🇯🇵 +81</option><option value="+86">🇨🇳 +86</option><option value="+91">🇮🇳 +91</option><option value="+61">🇦🇺 +61</option><option value="+351">��🇹 +351</option><option value="+7">🇷🇺 +7</option></select><input name="phone" defaultValue={profile.phone?.replace(/^\+\d+\s*/, '') || ''} placeholder="Número" inputMode="tel" /></div></label>
                   <label>Ciudad<input name="city" defaultValue={profile.city || ''} placeholder="Bogotá" /></label>
                   <label>Años de experiencia<input name="years_experience" type="number" min="0" defaultValue={profile.years_experience || 0} /></label>
                 </div>
@@ -1497,16 +1528,52 @@ const PsychologistDashboard: React.FC = () => {
                   <ProfileMultiSelect name="modality" label="Modalidad" options={PROFILE_MODALITIES} value={profile.modality || []} />
                   <ProfileMultiSelect name="languages" label="Idiomas" options={PROFILE_LANGUAGES} value={profile.languages || []} />
                 </div>
-                <div className="psy-profile-row psy-profile-row-four">
+                <div className="psy-profile-row psy-profile-row-two">
                   <label>Duración de sesión<input name="session_duration" type="number" min="15" step="5" defaultValue={profile.session_duration || 50} /></label>
-                  <label>Tarifa por sesión<input name="session_price" type="number" min="0" defaultValue={profile.session_price || 0} /></label>
                   <label>Enfoque terapéutico<select name="therapy_approach" defaultValue={(profile as any).therapy_approach || ''}><option value="">Selecciona</option><option value="Cognitivo-conductual">Cognitivo-conductual</option><option value="Humanista">Humanista</option><option value="Sistémico">Sistémico</option><option value="Integrativo">Integrativo</option></select></label>
-                  <label>Atención a<select name="patient_type" defaultValue={(profile as any).patient_type || ''}><option value="">Selecciona</option><option value="Adultos">Adultos</option><option value="Adolescentes">Adolescentes</option><option value="Parejas">Parejas</option><option value="Familias">Familias</option></select></label>
+                </div>
+                <div className="psy-profile-field-wide psy-profile-prices">
+                  <div className="psy-profile-prices-head">
+                    <h3>Tarifas por modalidad y tipo de consulta</h3>
+                    <p>Define un valor para cada combinación que ofrezcas. Deja en 0 las que no apliquen.</p>
+                  </div>
+                  <div className="psy-profile-prices-grid">
+                    {PRICE_MODALITIES.map(({ key: modalityKey, label: modalityLabel }) => (
+                      <div key={modalityKey} className="psy-profile-price-group">
+                        <h4>{modalityLabel}</h4>
+                        <div className="psy-profile-price-fields">
+                          {PRICE_PATIENT_TYPES.map(({ key: patientTypeKey, label: patientTypeLabel }) => (
+                            <label key={patientTypeKey}>
+                              {patientTypeLabel}
+                              <div className="psy-profile-price-input">
+                                <span>$</span>
+                                <input
+                                  name={`price_${modalityKey}_${patientTypeKey}`}
+                                  type="number"
+                                  min="0"
+                                  step="1000"
+                                  defaultValue={profile.session_prices?.[modalityKey]?.[patientTypeKey] || ''}
+                                  placeholder="0"
+                                />
+                              </div>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
                 <label className="psy-profile-field-wide">Biografía<textarea name="bio" defaultValue={profile.bio || ''} rows={3} placeholder="Cuéntales a tus pacientes sobre tu enfoque profesional..." /></label>
               </div>
               <div className="psy-profile-actions">
-                <button type="submit" className="psy-dash-btn-primary" disabled={savingProfile}>{savingProfile ? 'Guardando...' : 'Guardar cambios'}</button>
+                <button type="submit" className="psy-profile-save-btn" disabled={savingProfile}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                    <polyline points="17 21 17 13 7 13 7 21" />
+                    <polyline points="7 3 7 8 15 8" />
+                  </svg>
+                  {savingProfile ? 'Guardando...' : 'Guardar cambios'}
+                </button>
               </div>
             </form>
           </section>
