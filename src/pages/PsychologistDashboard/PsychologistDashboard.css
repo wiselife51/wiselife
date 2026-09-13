@@ -300,7 +300,10 @@ body:has(.psy-dash) {
 
 .psy-profile-page {
   width: min(100%, 980px);
+  height: 100%;
   margin: 0 auto;
+  overflow-y: auto;
+  padding-right: 0.35rem;
   color: #f7f8ff;
 }
 
@@ -384,35 +387,34 @@ body:has(.psy-dash) {
     font-size: 0.7rem;
     color: rgba(255, 255, 255, 0.46);
   }
-  .psy-profile-prices-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-  }
-  .psy-profile-price-group {
+  /* Tabla: filas = tipo de paciente, columnas = modalidad. Mas facil de
+     escanear que dos tarjetas separadas repitiendo las mismas 4 etiquetas. */
+  .psy-profile-prices-table {
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
-    padding: 0.85rem;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.02);
+    gap: 0.4rem;
   }
-  .psy-profile-price-group h4 {
-    margin: 0;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: #b388ff;
-  }
-  .psy-profile-price-fields {
+  .psy-profile-prices-table-row {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(120px, 1fr) repeat(2, minmax(0, 1fr));
+    align-items: center;
     gap: 0.6rem;
   }
-  .psy-profile-price-fields label {
+  .psy-profile-prices-table-row--head {
+    padding-bottom: 0.35rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .psy-profile-prices-col-head {
+    display: flex;
+    align-items: center;
     gap: 0.35rem;
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.68rem;
+    color: #b388ff;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+  .psy-profile-prices-row-label {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.75rem;
     font-weight: 500;
   }
   .psy-profile-price-input {
@@ -424,12 +426,14 @@ body:has(.psy-dash) {
     padding: 0 0.6rem;
     background: rgba(255, 255, 255, 0.06);
   }
-  .psy-profile-price-input span {
+  .psy-profile-price-input-tag { display: none; }
+  .psy-profile-price-input-currency {
     color: rgba(255, 255, 255, 0.4);
     font-size: 0.78rem;
     font-weight: 600;
   }
   .psy-profile-price-input input {
+    width: 100%;
     border: none;
     background: none;
     padding: 0.58rem 0;
@@ -477,8 +481,21 @@ body:has(.psy-dash) {
     cursor: not-allowed;
   }
 
-  @media (max-width: 900px) {
-    .psy-profile-prices-grid { grid-template-columns: 1fr; }
+  @media (max-width: 640px) {
+    .psy-profile-prices-table-row--head { display: none; }
+    .psy-profile-prices-table-row {
+      grid-template-columns: 1fr;
+      row-gap: 0.4rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .psy-profile-price-input-tag {
+      display: inline-block;
+      margin-right: 0.3rem;
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 0.65rem;
+      font-weight: 600;
+    }
   }
 
 .psy-profile-row select[multiple] {
@@ -3976,7 +3993,9 @@ body:has(.psy-dash) {
   .psy-profile-actions { align-items: stretch; flex-direction: column; }
   .psy-profile-actions .psy-dash-btn-primary,
   .psy-profile-actions .psy-profile-save-btn { width: 100%; }
-  .psy-profile-price-fields { grid-template-columns: 1fr; }
+  .psy-profile-prices-table-row--head { display: none; }
+  .psy-profile-prices-table-row { grid-template-columns: 1fr; row-gap: 0.4rem; padding-bottom: 0.6rem; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+  .psy-profile-price-input-tag { display: inline-block; margin-right: 0.3rem; color: rgba(255, 255, 255, 0.4); font-size: 0.65rem; font-weight: 600; }
   .psy-profile-message { text-align: center; }
   .psy-alert-count { width: 1.5rem; min-width: 1.5rem; height: 1.5rem; font-size: 0.7rem; }
 

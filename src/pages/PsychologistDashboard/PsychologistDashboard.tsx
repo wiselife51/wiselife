@@ -50,6 +50,34 @@ const PRICE_PATIENT_TYPES: { key: string; label: string }[] = [
   { key: 'familia', label: 'Familia' },
 ];
 
+// La bandera se calcula a partir del codigo ISO (letras ASCII) en vez de
+// pegar el emoji literal en el archivo: asi no depende de que el editor o el
+// terminal preserven bytes multi-byte, que es lo que corrompia las banderas.
+function flagEmoji(isoCode: string): string {
+  return String.fromCodePoint(...isoCode.split('').map((char) => 127397 + char.charCodeAt(0)));
+}
+
+const PHONE_COUNTRIES: { iso: string; dial: string }[] = [
+  { iso: 'CO', dial: '+57' },
+  { iso: 'US', dial: '+1' },
+  { iso: 'MX', dial: '+52' },
+  { iso: 'ES', dial: '+34' },
+  { iso: 'AR', dial: '+54' },
+  { iso: 'CL', dial: '+56' },
+  { iso: 'PE', dial: '+51' },
+  { iso: 'BR', dial: '+55' },
+  { iso: 'GB', dial: '+44' },
+  { iso: 'DE', dial: '+49' },
+  { iso: 'FR', dial: '+33' },
+  { iso: 'IT', dial: '+39' },
+  { iso: 'JP', dial: '+81' },
+  { iso: 'CN', dial: '+86' },
+  { iso: 'IN', dial: '+91' },
+  { iso: 'AU', dial: '+61' },
+  { iso: 'PT', dial: '+351' },
+  { iso: 'RU', dial: '+7' },
+];
+
 function ProfileMultiSelect({
   name,
   label,
@@ -1519,7 +1547,7 @@ const PsychologistDashboard: React.FC = () => {
               <div className="psy-profile-grid">
                 <div className="psy-profile-row psy-profile-row-four">
                   <label>Nombre completo<input name="full_name" defaultValue={profile.full_name} required /></label>
-                  <label>Teléfono<div className="psy-profile-phone-field"><select name="phone_country" defaultValue={profile.phone?.match(/^\+\d+/)?.[0] || '+57'} aria-label="Indicativo de país"><option value="+57">��🇴 +57</option><option value="+1">🇺🇸 +1</option><option value="+52">🇲🇽 +52</option><option value="+34">🇪🇸 +34</option><option value="+54">🇦🇷 +54</option><option value="+56">🇨🇱 +56</option><option value="+51">🇵🇪 +51</option><option value="+55">🇧🇷 +55</option><option value="+44">🇬🇧 +44</option><option value="+49">🇩🇪 +49</option><option value="+33">🇫🇷 +33</option><option value="+39">🇮🇹 +39</option><option value="+81">🇯🇵 +81</option><option value="+86">🇨🇳 +86</option><option value="+91">🇮🇳 +91</option><option value="+61">🇦🇺 +61</option><option value="+351">��🇹 +351</option><option value="+7">🇷🇺 +7</option></select><input name="phone" defaultValue={profile.phone?.replace(/^\+\d+\s*/, '') || ''} placeholder="Número" inputMode="tel" /></div></label>
+                  <label>Teléfono<div className="psy-profile-phone-field"><select name="phone_country" defaultValue={profile.phone?.match(/^\+\d+/)?.[0] || '+57'} aria-label="Indicativo de país">{PHONE_COUNTRIES.map(({ iso, dial }) => <option key={iso} value={dial}>{flagEmoji(iso)} {dial}</option>)}</select><input name="phone" defaultValue={profile.phone?.replace(/^\+\d+\s*/, '') || ''} placeholder="Número" inputMode="tel" /></div></label>
                   <label>Ciudad<input name="city" defaultValue={profile.city || ''} placeholder="Bogotá" /></label>
                   <label>Años de experiencia<input name="years_experience" type="number" min="0" defaultValue={profile.years_experience || 0} /></label>
                 </div>
@@ -1535,30 +1563,40 @@ const PsychologistDashboard: React.FC = () => {
                 <div className="psy-profile-field-wide psy-profile-prices">
                   <div className="psy-profile-prices-head">
                     <h3>Tarifas por modalidad y tipo de consulta</h3>
-                    <p>Define un valor para cada combinación que ofrezcas. Deja en 0 las que no apliquen.</p>
+                    <p>Define un valor para cada combinación que ofrezcas. Deja en blanco las que no apliquen.</p>
                   </div>
-                  <div className="psy-profile-prices-grid">
-                    {PRICE_MODALITIES.map(({ key: modalityKey, label: modalityLabel }) => (
-                      <div key={modalityKey} className="psy-profile-price-group">
-                        <h4>{modalityLabel}</h4>
-                        <div className="psy-profile-price-fields">
-                          {PRICE_PATIENT_TYPES.map(({ key: patientTypeKey, label: patientTypeLabel }) => (
-                            <label key={patientTypeKey}>
-                              {patientTypeLabel}
-                              <div className="psy-profile-price-input">
-                                <span>$</span>
-                                <input
-                                  name={`price_${modalityKey}_${patientTypeKey}`}
-                                  type="number"
-                                  min="0"
-                                  step="1000"
-                                  defaultValue={profile.session_prices?.[modalityKey]?.[patientTypeKey] || ''}
-                                  placeholder="0"
-                                />
-                              </div>
-                            </label>
-                          ))}
-                        </div>
+                  <div className="psy-profile-prices-table">
+                    <div className="psy-profile-prices-table-row psy-profile-prices-table-row--head">
+                      <span />
+                      {PRICE_MODALITIES.map(({ key: modalityKey, label: modalityLabel }) => (
+                        <span key={modalityKey} className="psy-profile-prices-col-head">
+                          {modalityKey === 'virtual' ? (
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M23 7l-7 5 7 5V7z" /><rect x="1" y="5" width="15" height="14" rx="2" /></svg>
+                          ) : (
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
+                          )}
+                          {modalityLabel}
+                        </span>
+                      ))}
+                    </div>
+                    {PRICE_PATIENT_TYPES.map(({ key: patientTypeKey, label: patientTypeLabel }) => (
+                      <div key={patientTypeKey} className="psy-profile-prices-table-row">
+                        <span className="psy-profile-prices-row-label">{patientTypeLabel}</span>
+                        {PRICE_MODALITIES.map(({ key: modalityKey, label: modalityLabel }) => (
+                          <div key={modalityKey} className="psy-profile-price-input">
+                            <span className="psy-profile-price-input-tag">{modalityLabel}</span>
+                            <span className="psy-profile-price-input-currency">$</span>
+                            <input
+                              name={`price_${modalityKey}_${patientTypeKey}`}
+                              type="number"
+                              min="0"
+                              step="1000"
+                              defaultValue={profile.session_prices?.[modalityKey]?.[patientTypeKey] || ''}
+                              placeholder="0"
+                              aria-label={`${modalityLabel} · ${patientTypeLabel}`}
+                            />
+                          </div>
+                        ))}
                       </div>
                     ))}
                   </div>
