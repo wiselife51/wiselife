@@ -50,13 +50,6 @@ const PRICE_PATIENT_TYPES: { key: string; label: string }[] = [
   { key: 'familia', label: 'Familia' },
 ];
 
-// La bandera se calcula a partir del codigo ISO (letras ASCII) en vez de
-// pegar el emoji literal en el archivo: asi no depende de que el editor o el
-// terminal preserven bytes multi-byte, que es lo que corrompia las banderas.
-function flagEmoji(isoCode: string): string {
-  return String.fromCodePoint(...isoCode.split('').map((char) => 127397 + char.charCodeAt(0)));
-}
-
 const PHONE_COUNTRIES: { iso: string; dial: string }[] = [
   { iso: 'CO', dial: '+57' },
   { iso: 'US', dial: '+1' },
@@ -78,17 +71,68 @@ const PHONE_COUNTRIES: { iso: string; dial: string }[] = [
   { iso: 'RU', dial: '+7' },
 ];
 
+// Icono de campo: se dibuja a 1em para escalar exactamente igual que el
+// texto de la etiqueta en cada breakpoint (ver .psy-profile-field-icon).
+function FieldIcon({ children }: { children: React.ReactNode }) {
+  return (
+    <svg className="psy-profile-field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      {children}
+    </svg>
+  );
+}
+
+// Selector de indicativo de pais como control propio en vez de <select>
+// nativo: los emojis de bandera dependian de que el sistema tuviera fuente
+// de emoji a color instalada y se veian como texto plano ("co") cuando no.
+// Con un boton + lista propios mostramos el codigo ISO en una insignia que
+// siempre se ve igual, sin depender de fuentes del sistema.
+function ProfilePhoneCountrySelect({ defaultDial }: { defaultDial: string }) {
+  const [value, setValue] = useState(defaultDial);
+  const [open, setOpen] = useState(false);
+  const current = PHONE_COUNTRIES.find((country) => country.dial === value) || PHONE_COUNTRIES[0];
+
+  return (
+    <div className={`psy-profile-phone-select${open ? ' is-open' : ''}`}>
+      <input type="hidden" name="phone_country" value={value} />
+      <button type="button" className="psy-profile-phone-summary" aria-expanded={open} aria-label="Indicativo de país" onClick={() => setOpen((isOpen) => !isOpen)}>
+        <span className="psy-profile-phone-flag">{current.iso}</span>
+        <span>{current.dial}</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9" /></svg>
+      </button>
+      {open && (
+        <div className="psy-profile-phone-options" role="listbox">
+          {PHONE_COUNTRIES.map((country) => (
+            <button
+              key={country.iso}
+              type="button"
+              role="option"
+              aria-selected={country.dial === value}
+              className={`psy-profile-phone-option${country.dial === value ? ' is-selected' : ''}`}
+              onClick={() => { setValue(country.dial); setOpen(false); }}
+            >
+              <span className="psy-profile-phone-flag">{country.iso}</span>
+              <span>{country.dial}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ProfileMultiSelect({
   name,
   label,
+  icon,
   options,
   value,
-}: {
+  }: {
   name: string;
   label: string;
+  icon?: React.ReactNode;
   options: string[];
   value: string[];
-}) {
+  }) {
   const [selected, setSelected] = useState<string[]>(value);
   const [open, setOpen] = useState(false);
 
@@ -97,9 +141,9 @@ function ProfileMultiSelect({
   };
 
   return (
-    <label className="psy-profile-multi-label">
-      {label}
-      <div className={`psy-profile-multi-select${open ? ' is-open' : ''}`} role="group" aria-label={label}>
+  <label className="psy-profile-multi-label">
+  <span className="psy-profile-label">{icon}{label}</span>
+  <div className={`psy-profile-multi-select${open ? ' is-open' : ''}`} role="group" aria-label={label}>
         <button type="button" className="psy-profile-multi-summary" aria-expanded={open} onClick={() => setOpen((current) => !current)}>
           <span>{selected.length ? selected.join(', ') : `Selecciona ${label.toLowerCase()}`}</span>
           <span aria-hidden="true">{open ? '⌃' : '⌄'}</span>
@@ -1546,23 +1590,62 @@ const PsychologistDashboard: React.FC = () => {
             <form className="psy-profile-card" onSubmit={handleProfileSave}>
               <div className="psy-profile-grid">
                 <div className="psy-profile-row psy-profile-row-four">
-                  <label>Nombre completo<input name="full_name" defaultValue={profile.full_name} required /></label>
-                  <label>Teléfono<div className="psy-profile-phone-field"><select name="phone_country" defaultValue={profile.phone?.match(/^\+\d+/)?.[0] || '+57'} aria-label="Indicativo de país">{PHONE_COUNTRIES.map(({ iso, dial }) => <option key={iso} value={dial}>{flagEmoji(iso)} {dial}</option>)}</select><input name="phone" defaultValue={profile.phone?.replace(/^\+\d+\s*/, '') || ''} placeholder="Número" inputMode="tel" /></div></label>
-                  <label>Ciudad<input name="city" defaultValue={profile.city || ''} placeholder="Bogotá" /></label>
-                  <label>Años de experiencia<input name="years_experience" type="number" min="0" defaultValue={profile.years_experience || 0} /></label>
+                  <label>
+                    <span className="psy-profile-label"><FieldIcon><path d="M20 21a8 8 0 0 0-16 0" /><circle cx="12" cy="7" r="4" /></FieldIcon>Nombre completo</span>
+                    <input name="full_name" defaultValue={profile.full_name} required />
+                  </label>
+                  <label>
+                    <span className="psy-profile-label"><FieldIcon><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7a2 2 0 0 1 1.72 2.03z" /></FieldIcon>Teléfono</span>
+                    <div className="psy-profile-phone-field">
+                      <ProfilePhoneCountrySelect defaultDial={profile.phone?.match(/^\+\d+/)?.[0] || '+57'} />
+                      <input name="phone" defaultValue={profile.phone?.replace(/^\+\d+\s*/, '') || ''} placeholder="Número" inputMode="tel" />
+                    </div>
+                  </label>
+                  <label>
+                    <span className="psy-profile-label"><FieldIcon><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></FieldIcon>Ciudad</span>
+                    <input name="city" defaultValue={profile.city || ''} placeholder="Bogotá" />
+                  </label>
+                  <label>
+                    <span className="psy-profile-label"><FieldIcon><rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></FieldIcon>Años de experiencia</span>
+                    <input name="years_experience" type="number" min="0" defaultValue={profile.years_experience || 0} />
+                  </label>
                 </div>
                 <div className="psy-profile-row psy-profile-row-three">
-                  <ProfileMultiSelect name="specialties" label="Especialidades" options={PROFILE_SPECIALTIES} value={profile.specialties || []} />
-                  <ProfileMultiSelect name="modality" label="Modalidad" options={PROFILE_MODALITIES} value={profile.modality || []} />
-                  <ProfileMultiSelect name="languages" label="Idiomas" options={PROFILE_LANGUAGES} value={profile.languages || []} />
+                  <ProfileMultiSelect
+                    name="specialties"
+                    label="Especialidades"
+                    icon={<FieldIcon><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></FieldIcon>}
+                    options={PROFILE_SPECIALTIES}
+                    value={profile.specialties || []}
+                  />
+                  <ProfileMultiSelect
+                    name="modality"
+                    label="Modalidad"
+                    icon={<FieldIcon><polygon points="12 2 2 7 12 12 22 7 12 2" /><polyline points="2 17 12 22 22 17" /><polyline points="2 12 12 17 22 12" /></FieldIcon>}
+                    options={PROFILE_MODALITIES}
+                    value={profile.modality || []}
+                  />
+                  <ProfileMultiSelect
+                    name="languages"
+                    label="Idiomas"
+                    icon={<FieldIcon><circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></FieldIcon>}
+                    options={PROFILE_LANGUAGES}
+                    value={profile.languages || []}
+                  />
                 </div>
                 <div className="psy-profile-row psy-profile-row-two">
-                  <label>Duración de sesión<input name="session_duration" type="number" min="15" step="5" defaultValue={profile.session_duration || 50} /></label>
-                  <label>Enfoque terapéutico<select name="therapy_approach" defaultValue={(profile as any).therapy_approach || ''}><option value="">Selecciona</option><option value="Cognitivo-conductual">Cognitivo-conductual</option><option value="Humanista">Humanista</option><option value="Sistémico">Sistémico</option><option value="Integrativo">Integrativo</option></select></label>
+                  <label>
+                    <span className="psy-profile-label"><FieldIcon><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></FieldIcon>Duración de sesión</span>
+                    <input name="session_duration" type="number" min="15" step="5" defaultValue={profile.session_duration || 50} />
+                  </label>
+                  <label>
+                    <span className="psy-profile-label"><FieldIcon><circle cx="12" cy="12" r="10" /><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" /></FieldIcon>Enfoque terapéutico</span>
+                    <select name="therapy_approach" defaultValue={(profile as any).therapy_approach || ''}><option value="">Selecciona</option><option value="Cognitivo-conductual">Cognitivo-conductual</option><option value="Humanista">Humanista</option><option value="Sistémico">Sistémico</option><option value="Integrativo">Integrativo</option></select>
+                  </label>
                 </div>
                 <div className="psy-profile-field-wide psy-profile-prices">
                   <div className="psy-profile-prices-head">
-                    <h3>Tarifas por modalidad y tipo de consulta</h3>
+                    <h3><FieldIcon><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></FieldIcon>Tarifas por modalidad y tipo de consulta</h3>
                     <p>Define un valor para cada combinación que ofrezcas. Deja en blanco las que no apliquen.</p>
                   </div>
                   <div className="psy-profile-prices-table">
@@ -1601,7 +1684,10 @@ const PsychologistDashboard: React.FC = () => {
                     ))}
                   </div>
                 </div>
-                <label className="psy-profile-field-wide">Biografía<textarea name="bio" defaultValue={profile.bio || ''} rows={3} placeholder="Cuéntales a tus pacientes sobre tu enfoque profesional..." /></label>
+                <label className="psy-profile-field-wide">
+                  <span className="psy-profile-label"><FieldIcon><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="8" y1="13" x2="16" y2="13" /><line x1="8" y1="17" x2="16" y2="17" /></FieldIcon>Biografía</span>
+                  <textarea name="bio" defaultValue={profile.bio || ''} rows={3} placeholder="Cuéntales a tus pacientes sobre tu enfoque profesional..." />
+                </label>
               </div>
               <div className="psy-profile-actions">
                 <button type="submit" className="psy-profile-save-btn" disabled={savingProfile}>
