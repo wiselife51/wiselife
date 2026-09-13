@@ -448,9 +448,93 @@ body:has(.psy-dash) {
     outline: none;
   }
   .psy-price-input:focus-within {
+  border-color: #8a5cf6;
+  box-shadow: 0 0 0 3px rgba(138, 92, 246, 0.16);
+  }
+
+  /* Botones +/- propios en vez de las flechas nativas del navegador (feas,
+     minusculas e inconsistentes entre Chrome/Firefox/Safari). El input
+     conserva type="number" para el teclado numerico en mobile y la
+     validacion, pero se le oculta el spinner nativo en ambos motores. */
+  .psy-number-stepper-input::-webkit-outer-spin-button,
+  .psy-number-stepper-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .psy-number-stepper-input {
+    -moz-appearance: textfield;
+  }
+  .psy-price-input-stepper {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto;
+    gap: 2px;
+    margin-left: 0.3rem;
+  }
+  .psy-price-input-stepper button {
+    display: grid;
+    width: 1.3rem;
+    height: 0.85rem;
+    place-items: center;
+    border: 1px solid rgba(138, 92, 246, 0.35);
+    border-radius: 4px;
+    background: rgba(138, 92, 246, 0.12);
+    color: #d1b5ff;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .psy-price-input-stepper button:hover {
+    background: rgba(138, 92, 246, 0.28);
+    border-color: rgba(138, 92, 246, 0.6);
+  }
+
+  .psy-number-stepper {
+    display: flex;
+    align-items: stretch;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+  }
+  .psy-number-stepper:focus-within {
     border-color: #8a5cf6;
     box-shadow: 0 0 0 3px rgba(138, 92, 246, 0.16);
   }
+  .psy-number-stepper-input {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+    border: none;
+    background: none;
+    padding: 0.58rem 0.4rem;
+    color: #f7f8ff;
+    font: inherit;
+    text-align: center;
+    outline: none;
+  }
+  .psy-number-stepper-btn {
+    display: grid;
+    flex: 0 0 auto;
+    width: 2.1rem;
+    place-items: center;
+    border: none;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(138, 92, 246, 0.1);
+    color: #d1b5ff;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .psy-number-stepper-btn:first-child {
+    border-left: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .psy-number-stepper-btn:hover {
+    background: rgba(138, 92, 246, 0.28);
+  }
+  .psy-number-stepper-btn:active {
+    background: rgba(138, 92, 246, 0.4);
+  }
+
   .psy-price-form-actions {
     display: flex;
     gap: 0.4rem;
@@ -533,11 +617,11 @@ body:has(.psy-dash) {
     font-size: 0.8rem;
     font-weight: 500;
   }
-  .psy-price-item-value {
-    color: #8ee7c2;
-    font-size: 0.85rem;
-    font-weight: 700;
-    white-space: nowrap;
+.psy-price-item-value {
+  color: #8ee7c2;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
   }
 
   /* Boton "Guardar cambios" con el mismo estilo que "Cerrar sesion" */
@@ -624,9 +708,15 @@ body:has(.psy-dash) {
 
 .psy-profile-multi-summary span:first-child {
   overflow: hidden;
+  flex: 1 1 auto;
+  /* Sin min-width:0 un flex-item nunca se encoge por debajo de su contenido:
+     con muchas opciones seleccionadas el texto empujaba el boton mas alla de
+     su columna y se montaba sobre "Modalidad" en desktop, o se salia de la
+     pantalla en mobile. Con min-width:0 el ellipsis si puede recortar. */
+  min-width: 0;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
+  }
 
 .psy-profile-multi-select.is-open .psy-profile-multi-summary {
   border-color: rgba(138, 92, 246, 0.7);
@@ -1608,6 +1698,30 @@ body:has(.psy-dash) {
   min-width: 0;
   overflow: hidden;
 }
+/* Mismo patron que .psy-alert-page: el header queda fijo arriba y solo
+   .psy-patients-scroll se desplaza. Antes toda la pagina (header + buscador
+   + grilla) quedaba con height:100% sin contenedor interno con scroll, asi
+   que con muchos pacientes (o en mobile, con menos alto disponible) el
+   listado quedaba bloqueado y no se podia ver todo. */
+.psy-patients-page {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.psy-patients-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 0.35rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(126, 87, 194, 0.55) transparent;
+}
+.psy-patients-scroll::-webkit-scrollbar { width: 8px; }
+.psy-patients-scroll::-webkit-scrollbar-track { background: transparent; }
+.psy-patients-scroll::-webkit-scrollbar-thumb { background: rgba(126, 87, 194, 0.55); border-radius: 999px; }
+.psy-patients-scroll::-webkit-scrollbar-thumb:hover { background: rgba(126, 87, 194, 0.75); }
+
 /* El calendario ocupa todo el alto disponible, igual que .psy-alert-page
    (Próximas citas / Pendientes), para que la tarjeta llegue hasta abajo. */
 .psy-calendar-page {
@@ -3889,12 +4003,14 @@ body:has(.psy-dash) {
   el navegador no deja arrastrar mas alla de esa caja interna y el
   contenido de abajo (tarifas, biografia, guardar) queda inalcanzable.
   Se anula aqui para que el main sea el unico que scrollea. */
-  .psy-profile-page {
+  .psy-profile-page,
+  .psy-patients-page {
   width: 100%;
   height: auto;
   overflow: visible;
   }
-  .psy-profile-scroll {
+  .psy-profile-scroll,
+  .psy-patients-scroll {
   overflow-y: visible;
   padding-right: 0;
   }
