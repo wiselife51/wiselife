@@ -81,6 +81,61 @@ function FieldIcon({ children }: { children: React.ReactNode }) {
   );
 }
 
+// Reemplaza las flechitas nativas del navegador (feas e inconsistentes entre
+// Chrome/Firefox/Safari) por botones +/- propios con el mismo morado de marca
+// que el resto del dashboard. El input sigue siendo type="number" con su
+// `name`, asi que el formulario lo lee igual que antes via FormData.
+function NumberStepperField({
+  name,
+  label,
+  icon,
+  min,
+  max,
+  step = 1,
+  defaultValue,
+}: {
+  name: string;
+  label: string;
+  icon: React.ReactNode;
+  min?: number;
+  max?: number;
+  step?: number;
+  defaultValue: number;
+}) {
+  const [value, setValue] = useState(defaultValue);
+
+  const clamp = (next: number) => {
+    let result = next;
+    if (typeof min === 'number') result = Math.max(min, result);
+    if (typeof max === 'number') result = Math.min(max, result);
+    return result;
+  };
+
+  return (
+    <label>
+      <span className="psy-profile-label"><FieldIcon>{icon}</FieldIcon>{label}</span>
+      <div className="psy-number-stepper">
+        <button type="button" className="psy-number-stepper-btn" onClick={() => setValue((current) => clamp(current - step))} aria-label={`Disminuir ${label.toLowerCase()}`}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12" /></svg>
+        </button>
+        <input
+          className="psy-number-stepper-input"
+          name={name}
+          type="number"
+          min={min}
+          max={max}
+          step={step}
+          value={value}
+          onChange={(event) => setValue(event.target.value === '' ? 0 : Number(event.target.value))}
+        />
+        <button type="button" className="psy-number-stepper-btn" onClick={() => setValue((current) => clamp(current + step))} aria-label={`Aumentar ${label.toLowerCase()}`}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+        </button>
+      </div>
+    </label>
+  );
+}
+
 // Selector de indicativo de pais como control propio en vez de <select>
 // nativo: los emojis de bandera dependian de que el sistema tuviera fuente
 // de emoji a color instalada y se veian como texto plano ("co") cuando no.
@@ -168,6 +223,147 @@ function ProfileMultiSelect({
       </div>
       {selected.map((option) => <input key={option} type="hidden" name={name} value={option} />)}
     </label>
+  );
+}
+
+type PriceEntry = { modality: string; patientType: string; price: number };
+
+function priceComboKey(modality: string, patientType: string) {
+  return `${modality}_${patientType}`;
+}
+
+function buildPriceEntries(sessionPrices?: Record<string, Record<string, number>> | null): PriceEntry[] {
+  const entries: PriceEntry[] = [];
+  if (!sessionPrices) return entries;
+  for (const { key: modalityKey } of PRICE_MODALITIES) {
+    const byType = sessionPrices[modalityKey];
+    if (!byType) continue;
+    for (const { key: patientTypeKey } of PRICE_PATIENT_TYPES) {
+      const price = Number(byType[patientTypeKey] || 0);
+      if (price > 0) entries.push({ modality: modalityKey, patientType: patientTypeKey, price });
+    }
+  }
+  return entries;
+}
+
+const PRICE_MODALITY_ICON: Record<string, React.ReactNode> = {
+  virtual: <><path d="M23 7l-7 5 7 5V7z" /><rect x="1" y="5" width="15" height="14" rx="2" /></>,
+  presencial: <><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></>,
+};
+
+// Reemplaza la matriz fija de 8 celdas: el psicologo busca la combinacion
+// modalidad + tipo de consulta en dos listas desplegables, define el valor y
+// la guarda como una tarjeta en la lista de abajo (agrupada por modalidad),
+// que despues puede actualizar o eliminar. Los inputs ocultos mantienen el
+// mismo contrato `price_<modalidad>_<tipo>` que ya lee handleProfileSave.
+function PriceRatesManager({ initialPrices }: { initialPrices?: Record<string, Record<string, number>> | null }) {
+  const [entries, setEntries] = useState<PriceEntry[]>(() => buildPriceEntries(initialPrices));
+  const [modality, setModality] = useState(PRICE_MODALITIES[0].key);
+  const [patientType, setPatientType] = useState(PRICE_PATIENT_TYPES[0].key);
+  const [price, setPrice] = useState('');
+  const [editingKey, setEditingKey] = useState<string | null>(null);
+
+  const numericPrice = Number(price);
+  const canSave = price.trim() !== '' && numericPrice > 0;
+
+  const handleSaveEntry = () => {
+    if (!canSave) return;
+    const key = priceComboKey(modality, patientType);
+    setEntries((prev) => [...prev.filter((entry) => priceComboKey(entry.modality, entry.patientType) !== key), { modality, patientType, price: numericPrice }]);
+    setPrice('');
+    setEditingKey(null);
+  };
+
+  const handleEdit = (entry: PriceEntry) => {
+    setModality(entry.modality);
+    setPatientType(entry.patientType);
+    setPrice(String(entry.price));
+    setEditingKey(priceComboKey(entry.modality, entry.patientType));
+  };
+
+  const handleDelete = (entry: PriceEntry) => {
+    const key = priceComboKey(entry.modality, entry.patientType);
+    setEntries((prev) => prev.filter((item) => priceComboKey(item.modality, item.patientType) !== key));
+    if (editingKey === key) { setEditingKey(null); setPrice(''); }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingKey(null);
+    setPrice('');
+  };
+
+  return (
+    <div className="psy-price-manager">
+      {entries.map((entry) => (
+        <input key={priceComboKey(entry.modality, entry.patientType)} type="hidden" name={`price_${entry.modality}_${entry.patientType}`} value={entry.price} />
+      ))}
+
+      <div className="psy-price-form">
+        <label>
+          <span className="psy-profile-label"><FieldIcon>{PRICE_MODALITY_ICON[modality]}</FieldIcon>Modalidad</span>
+          <select value={modality} onChange={(event) => setModality(event.target.value)}>
+            {PRICE_MODALITIES.map(({ key, label }) => <option key={key} value={key}>{label}</option>)}
+          </select>
+        </label>
+        <label>
+          <span className="psy-profile-label"><FieldIcon><path d="M20 21a8 8 0 0 0-16 0" /><circle cx="12" cy="7" r="4" /></FieldIcon>Tipo de consulta</span>
+          <select value={patientType} onChange={(event) => setPatientType(event.target.value)}>
+            {PRICE_PATIENT_TYPES.map(({ key, label }) => <option key={key} value={key}>{label}</option>)}
+          </select>
+        </label>
+        <label>
+          <span className="psy-profile-label"><FieldIcon><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></FieldIcon>Valor</span>
+          <div className="psy-price-input">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
+  <input className="psy-number-stepper-input" type="number" min="0" step="1000" value={price} onChange={(event) => setPrice(event.target.value)} placeholder="0" />
+  <div className="psy-price-input-stepper">
+    <button type="button" onClick={() => setPrice((current) => String(Math.max(0, Number(current || 0) - 1000)))} aria-label="Disminuir valor">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12" /></svg>
+    </button>
+    <button type="button" onClick={() => setPrice((current) => String(Number(current || 0) + 1000))} aria-label="Aumentar valor">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+    </button>
+  </div>
+          </div>
+        </label>
+        <div className="psy-price-form-actions">
+          <button type="button" className="psy-price-save-btn" onClick={handleSaveEntry} disabled={!canSave}>
+            {editingKey ? 'Actualizar' : 'Guardar'}
+          </button>
+          {editingKey && <button type="button" className="psy-price-cancel-btn" onClick={handleCancelEdit}>Cancelar</button>}
+        </div>
+      </div>
+
+      {entries.length === 0 ? (
+        <p className="psy-price-empty">Aún no has agregado tarifas. Elige la modalidad y el tipo de consulta, define el valor y guárdalo.</p>
+      ) : (
+        PRICE_MODALITIES.map(({ key: modalityKey, label: modalityLabel }) => {
+          const modalityEntries = entries.filter((entry) => entry.modality === modalityKey);
+          if (modalityEntries.length === 0) return null;
+          return (
+            <div key={modalityKey} className="psy-price-group">
+              <h4><FieldIcon>{PRICE_MODALITY_ICON[modalityKey]}</FieldIcon>{modalityLabel}</h4>
+              <div className="psy-price-list">
+                {modalityEntries.map((entry) => (
+                  <div key={priceComboKey(entry.modality, entry.patientType)} className="psy-price-item">
+                    <span className="psy-price-item-info">{PRICE_PATIENT_TYPES.find((type) => type.key === entry.patientType)?.label}</span>
+                    <span className="psy-price-item-value">${entry.price.toLocaleString('es-CO')}</span>
+                    <div className="psy-dash-slot-actions">
+                      <button type="button" className="psy-dash-slot-toggle" onClick={() => handleEdit(entry)} aria-label={`Editar tarifa de ${modalityLabel} para ${entry.patientType}`}>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" /><path d="m15 5 4 4" /></svg>
+                      </button>
+                      <button type="button" className="psy-dash-slot-delete" onClick={() => handleDelete(entry)} aria-label={`Eliminar tarifa de ${modalityLabel} para ${entry.patientType}`}>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })
+      )}
+    </div>
   );
 }
 
@@ -1523,6 +1719,7 @@ const PsychologistDashboard: React.FC = () => {
         {activeTab === 'pacientes' && (
           <section className="psy-patients-page">
             <DashboardModuleHeader title="Mis Pacientes" subtitle="Consulta la información de tus pacientes." onMenu={() => setShowMobileMenu(!showMobileMenu)} />
+            <div className="psy-patients-scroll">
             <div className="psy-patients-search">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
               <input
@@ -1560,6 +1757,7 @@ const PsychologistDashboard: React.FC = () => {
                 </article>
               ))}</div>;
             })()}
+            </div>
           </section>
         )}
 
@@ -1579,6 +1777,7 @@ const PsychologistDashboard: React.FC = () => {
         {activeTab === 'perfil' && profile && (
           <section className="psy-profile-page">
   <DashboardModuleHeader title="Mi perfil" subtitle="Mantén actualizada tu información profesional." onMenu={() => setShowMobileMenu(!showMobileMenu)} />
+  <div className="psy-profile-scroll">
   <div className="psy-profile-intro">
               <div className="psy-profile-card-head">
                 <div className="psy-dash-avatar psy-profile-avatar">
@@ -1605,10 +1804,13 @@ const PsychologistDashboard: React.FC = () => {
                     <span className="psy-profile-label"><FieldIcon><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></FieldIcon>Ciudad</span>
                     <input name="city" defaultValue={profile.city || ''} placeholder="Bogotá" />
                   </label>
-                  <label>
-                    <span className="psy-profile-label"><FieldIcon><rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></FieldIcon>Años de experiencia</span>
-                    <input name="years_experience" type="number" min="0" defaultValue={profile.years_experience || 0} />
-                  </label>
+                  <NumberStepperField
+                    name="years_experience"
+                    label="Años de experiencia"
+                    icon={<><rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></>}
+                    min={0}
+                    defaultValue={profile.years_experience || 0}
+                  />
                 </div>
                 <div className="psy-profile-row psy-profile-row-three">
                   <ProfileMultiSelect
@@ -1634,10 +1836,14 @@ const PsychologistDashboard: React.FC = () => {
                   />
                 </div>
                 <div className="psy-profile-row psy-profile-row-two">
-                  <label>
-                    <span className="psy-profile-label"><FieldIcon><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></FieldIcon>Duración de sesión</span>
-                    <input name="session_duration" type="number" min="15" step="5" defaultValue={profile.session_duration || 50} />
-                  </label>
+                  <NumberStepperField
+                    name="session_duration"
+                    label="Duración de sesión"
+                    icon={<><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></>}
+                    min={15}
+                    step={5}
+                    defaultValue={profile.session_duration || 50}
+                  />
                   <label>
                     <span className="psy-profile-label"><FieldIcon><circle cx="12" cy="12" r="10" /><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" /></FieldIcon>Enfoque terapéutico</span>
                     <select name="therapy_approach" defaultValue={(profile as any).therapy_approach || ''}><option value="">Selecciona</option><option value="Cognitivo-conductual">Cognitivo-conductual</option><option value="Humanista">Humanista</option><option value="Sistémico">Sistémico</option><option value="Integrativo">Integrativo</option></select>
@@ -1646,43 +1852,9 @@ const PsychologistDashboard: React.FC = () => {
                 <div className="psy-profile-field-wide psy-profile-prices">
                   <div className="psy-profile-prices-head">
                     <h3><FieldIcon><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></FieldIcon>Tarifas por modalidad y tipo de consulta</h3>
-                    <p>Define un valor para cada combinación que ofrezcas. Deja en blanco las que no apliquen.</p>
+                    <p>Busca la modalidad y el tipo de consulta, define el valor y guárdalo. Puedes actualizar o eliminar cada tarifa cuando quieras.</p>
                   </div>
-                  <div className="psy-profile-prices-table">
-                    <div className="psy-profile-prices-table-row psy-profile-prices-table-row--head">
-                      <span />
-                      {PRICE_MODALITIES.map(({ key: modalityKey, label: modalityLabel }) => (
-                        <span key={modalityKey} className="psy-profile-prices-col-head">
-                          {modalityKey === 'virtual' ? (
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M23 7l-7 5 7 5V7z" /><rect x="1" y="5" width="15" height="14" rx="2" /></svg>
-                          ) : (
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
-                          )}
-                          {modalityLabel}
-                        </span>
-                      ))}
-                    </div>
-                    {PRICE_PATIENT_TYPES.map(({ key: patientTypeKey, label: patientTypeLabel }) => (
-                      <div key={patientTypeKey} className="psy-profile-prices-table-row">
-                        <span className="psy-profile-prices-row-label">{patientTypeLabel}</span>
-                        {PRICE_MODALITIES.map(({ key: modalityKey, label: modalityLabel }) => (
-                          <div key={modalityKey} className="psy-profile-price-input">
-                            <span className="psy-profile-price-input-tag">{modalityLabel}</span>
-                            <span className="psy-profile-price-input-currency">$</span>
-                            <input
-                              name={`price_${modalityKey}_${patientTypeKey}`}
-                              type="number"
-                              min="0"
-                              step="1000"
-                              defaultValue={profile.session_prices?.[modalityKey]?.[patientTypeKey] || ''}
-                              placeholder="0"
-                              aria-label={`${modalityLabel} · ${patientTypeLabel}`}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
+                  <PriceRatesManager initialPrices={profile.session_prices} />
                 </div>
                 <label className="psy-profile-field-wide">
                   <span className="psy-profile-label"><FieldIcon><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="8" y1="13" x2="16" y2="13" /><line x1="8" y1="17" x2="16" y2="17" /></FieldIcon>Biografía</span>
@@ -1700,6 +1872,7 @@ const PsychologistDashboard: React.FC = () => {
                 </button>
               </div>
             </form>
+          </div>
           </section>
         )}
       </main>

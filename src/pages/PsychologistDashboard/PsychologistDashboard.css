@@ -302,10 +302,28 @@ body:has(.psy-dash) {
   width: min(100%, 980px);
   height: 100%;
   margin: 0 auto;
-  overflow-y: auto;
-  padding-right: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
   color: #f7f8ff;
 }
+
+/* Solo este bloque hace scroll: el DashboardModuleHeader queda fijo arriba,
+   igual que en Proximas citas / Pendientes (.psy-alert-page + .psy-alert-list). */
+.psy-profile-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 0.35rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(126, 87, 194, 0.55) transparent;
+}
+.psy-profile-scroll::-webkit-scrollbar { width: 8px; }
+.psy-profile-scroll::-webkit-scrollbar-track { background: transparent; }
+.psy-profile-scroll::-webkit-scrollbar-thumb { background: rgba(126, 87, 194, 0.55); border-radius: 999px; }
+.psy-profile-scroll::-webkit-scrollbar-thumb:hover { background: rgba(126, 87, 194, 0.75); }
 
 .psy-profile-intro {
   display: grid;
@@ -387,52 +405,40 @@ body:has(.psy-dash) {
     font-size: 0.7rem;
     color: rgba(255, 255, 255, 0.46);
   }
-  /* Tabla: filas = tipo de paciente, columnas = modalidad. Mas facil de
-     escanear que dos tarjetas separadas repitiendo las mismas 4 etiquetas. */
-  .psy-profile-prices-table {
+  /* Gestor de tarifas: se busca la modalidad + el tipo de consulta en dos
+     listas desplegables, se define el valor y se guarda como una tarjeta
+     agrupada por modalidad, en vez de diligenciar una matriz fija de 8
+     celdas de una sola vez. Cada tarjeta se puede editar o eliminar. */
+  .psy-price-manager {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
+    gap: 1rem;
   }
-  .psy-profile-prices-table-row {
+  .psy-price-form {
     display: grid;
-    grid-template-columns: minmax(120px, 1fr) repeat(2, minmax(0, 1fr));
-    align-items: center;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 0.8fr) auto;
+    align-items: end;
     gap: 0.6rem;
+    padding: 0.85rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.02);
   }
-  .psy-profile-prices-table-row--head {
-    padding-bottom: 0.35rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  }
-  .psy-profile-prices-col-head {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    color: #b388ff;
-    font-size: 0.72rem;
-    font-weight: 600;
-  }
-  .psy-profile-prices-row-label {
-    color: rgba(255, 255, 255, 0.72);
-    font-size: 0.75rem;
-    font-weight: 500;
-  }
-  .psy-profile-price-input {
+  .psy-price-input {
     display: flex;
     align-items: center;
     gap: 0.3rem;
     border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 10px;
-    padding: 0 0.6rem;
+    border-radius: 11px;
+    padding: 0 0.7rem;
     background: rgba(255, 255, 255, 0.06);
   }
-  .psy-profile-price-input-tag { display: none; }
-  .psy-profile-price-input-currency {
+  .psy-price-input span {
     color: rgba(255, 255, 255, 0.4);
     font-size: 0.78rem;
     font-weight: 600;
   }
-  .psy-profile-price-input input {
+  .psy-price-input input {
     width: 100%;
     border: none;
     background: none;
@@ -441,9 +447,181 @@ body:has(.psy-dash) {
     font: inherit;
     outline: none;
   }
-  .psy-profile-price-input:focus-within {
+  .psy-price-input:focus-within {
+  border-color: #8a5cf6;
+  box-shadow: 0 0 0 3px rgba(138, 92, 246, 0.16);
+  }
+
+  /* Botones +/- propios en vez de las flechas nativas del navegador (feas,
+     minusculas e inconsistentes entre Chrome/Firefox/Safari). El input
+     conserva type="number" para el teclado numerico en mobile y la
+     validacion, pero se le oculta el spinner nativo en ambos motores. */
+  .psy-number-stepper-input::-webkit-outer-spin-button,
+  .psy-number-stepper-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .psy-number-stepper-input {
+    -moz-appearance: textfield;
+  }
+  .psy-price-input-stepper {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto;
+    gap: 2px;
+    margin-left: 0.3rem;
+  }
+  .psy-price-input-stepper button {
+    display: grid;
+    width: 1.3rem;
+    height: 0.85rem;
+    place-items: center;
+    border: 1px solid rgba(138, 92, 246, 0.35);
+    border-radius: 4px;
+    background: rgba(138, 92, 246, 0.12);
+    color: #d1b5ff;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .psy-price-input-stepper button:hover {
+    background: rgba(138, 92, 246, 0.28);
+    border-color: rgba(138, 92, 246, 0.6);
+  }
+
+  .psy-number-stepper {
+    display: flex;
+    align-items: stretch;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+  }
+  .psy-number-stepper:focus-within {
     border-color: #8a5cf6;
     box-shadow: 0 0 0 3px rgba(138, 92, 246, 0.16);
+  }
+  .psy-number-stepper-input {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+    border: none;
+    background: none;
+    padding: 0.58rem 0.4rem;
+    color: #f7f8ff;
+    font: inherit;
+    text-align: center;
+    outline: none;
+  }
+  .psy-number-stepper-btn {
+    display: grid;
+    flex: 0 0 auto;
+    width: 2.1rem;
+    place-items: center;
+    border: none;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(138, 92, 246, 0.1);
+    color: #d1b5ff;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .psy-number-stepper-btn:first-child {
+    border-left: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .psy-number-stepper-btn:hover {
+    background: rgba(138, 92, 246, 0.28);
+  }
+  .psy-number-stepper-btn:active {
+    background: rgba(138, 92, 246, 0.4);
+  }
+
+  .psy-price-form-actions {
+    display: flex;
+    gap: 0.4rem;
+  }
+  .psy-price-save-btn,
+  .psy-price-cancel-btn {
+    flex: 0 0 auto;
+    height: 2.35rem;
+    padding: 0 1rem;
+    border-radius: 10px;
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s var(--psy-smooth);
+  }
+  .psy-price-save-btn {
+    border: 1px solid rgba(126, 87, 194, 0.45);
+    background: rgba(126, 87, 194, 0.18);
+    color: #d1b5ff;
+  }
+  .psy-price-save-btn:hover:not(:disabled) {
+    background: rgba(126, 87, 194, 0.3);
+    border-color: rgba(126, 87, 194, 0.65);
+  }
+  .psy-price-save-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .psy-price-cancel-btn {
+    border: 1px solid var(--psy-border);
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.6);
+  }
+  .psy-price-cancel-btn:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.85);
+  }
+  .psy-price-empty {
+    margin: 0;
+    padding: 1rem;
+    border: 1px dashed rgba(255, 255, 255, 0.14);
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.46);
+    font-size: 0.78rem;
+    text-align: center;
+  }
+  .psy-price-group h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0 0 0.5rem;
+    color: #b388ff;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .psy-price-group + .psy-price-group { margin-top: 0.9rem; }
+  .psy-price-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .psy-price-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.7rem 0.9rem;
+    border-radius: 12px;
+    background: var(--psy-surface);
+    border: 1px solid var(--psy-border);
+    transition: all 0.2s var(--psy-smooth);
+  }
+  .psy-price-item:hover {
+    border-color: rgba(126, 87, 194, 0.2);
+  }
+  .psy-price-item-info {
+    flex: 1 1 auto;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+.psy-price-item-value {
+  color: #8ee7c2;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
   }
 
   /* Boton "Guardar cambios" con el mismo estilo que "Cerrar sesion" */
@@ -482,19 +660,18 @@ body:has(.psy-dash) {
   }
 
   @media (max-width: 640px) {
-    .psy-profile-prices-table-row--head { display: none; }
-    .psy-profile-prices-table-row {
+    .psy-price-form {
       grid-template-columns: 1fr;
-      row-gap: 0.4rem;
-      padding-bottom: 0.6rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     }
-    .psy-profile-price-input-tag {
-      display: inline-block;
-      margin-right: 0.3rem;
-      color: rgba(255, 255, 255, 0.4);
-      font-size: 0.65rem;
-      font-weight: 600;
+    .psy-price-form-actions {
+      grid-column: 1 / -1;
+    }
+    .psy-price-save-btn,
+    .psy-price-cancel-btn {
+      flex: 1 1 auto;
+    }
+    .psy-price-item {
+      flex-wrap: wrap;
     }
   }
 
@@ -531,9 +708,15 @@ body:has(.psy-dash) {
 
 .psy-profile-multi-summary span:first-child {
   overflow: hidden;
+  flex: 1 1 auto;
+  /* Sin min-width:0 un flex-item nunca se encoge por debajo de su contenido:
+     con muchas opciones seleccionadas el texto empujaba el boton mas alla de
+     su columna y se montaba sobre "Modalidad" en desktop, o se salia de la
+     pantalla en mobile. Con min-width:0 el ellipsis si puede recortar. */
+  min-width: 0;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
+  }
 
 .psy-profile-multi-select.is-open .psy-profile-multi-summary {
   border-color: rgba(138, 92, 246, 0.7);
@@ -1515,6 +1698,30 @@ body:has(.psy-dash) {
   min-width: 0;
   overflow: hidden;
 }
+/* Mismo patron que .psy-alert-page: el header queda fijo arriba y solo
+   .psy-patients-scroll se desplaza. Antes toda la pagina (header + buscador
+   + grilla) quedaba con height:100% sin contenedor interno con scroll, asi
+   que con muchos pacientes (o en mobile, con menos alto disponible) el
+   listado quedaba bloqueado y no se podia ver todo. */
+.psy-patients-page {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.psy-patients-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 0.35rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(126, 87, 194, 0.55) transparent;
+}
+.psy-patients-scroll::-webkit-scrollbar { width: 8px; }
+.psy-patients-scroll::-webkit-scrollbar-track { background: transparent; }
+.psy-patients-scroll::-webkit-scrollbar-thumb { background: rgba(126, 87, 194, 0.55); border-radius: 999px; }
+.psy-patients-scroll::-webkit-scrollbar-thumb:hover { background: rgba(126, 87, 194, 0.75); }
+
 /* El calendario ocupa todo el alto disponible, igual que .psy-alert-page
    (Próximas citas / Pendientes), para que la tarjeta llegue hasta abajo. */
 .psy-calendar-page {
@@ -3789,17 +3996,23 @@ body:has(.psy-dash) {
   }
 
   /* En mobile .psy-dash-main ya es el unico contenedor con scroll
-     (height: 100dvh + overflow-y: auto, arriba). Si .psy-profile-page
-     mantiene su propio height: 100% + overflow-y: auto (regla base para
-     desktop) queda un segundo contenedor de scroll del mismo alto anidado
-     dentro del primero: el navegador no deja arrastrar mas alla de esa
-     caja interna y el contenido de abajo (tarifas, biografia, guardar)
-     queda inalcanzable. Se anula aqui para que el main sea el unico que
-     scrollea. */
-  .psy-profile-page {
+  (height: 100dvh + overflow-y: auto, arriba). Si .psy-profile-page o
+  .psy-profile-scroll mantienen su propio height fijo + overflow-y: auto
+  (regla base para desktop, donde el header queda fijo arriba) queda un
+  segundo contenedor de scroll del mismo alto anidado dentro del primero:
+  el navegador no deja arrastrar mas alla de esa caja interna y el
+  contenido de abajo (tarifas, biografia, guardar) queda inalcanzable.
+  Se anula aqui para que el main sea el unico que scrollea. */
+  .psy-profile-page,
+  .psy-patients-page {
   width: 100%;
   height: auto;
+  overflow: visible;
+  }
+  .psy-profile-scroll,
+  .psy-patients-scroll {
   overflow-y: visible;
+  padding-right: 0;
   }
   .psy-profile-intro { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 0.65rem; margin-bottom: 0.45rem; }
   .psy-profile-intro .psy-profile-card-head { justify-content: flex-start; gap: 0.5rem; padding: 0; }
@@ -4119,9 +4332,9 @@ body:has(.psy-dash) {
   .psy-profile-actions { align-items: stretch; flex-direction: column; }
   .psy-profile-actions .psy-dash-btn-primary,
   .psy-profile-actions .psy-profile-save-btn { width: 100%; }
-  .psy-profile-prices-table-row--head { display: none; }
-  .psy-profile-prices-table-row { grid-template-columns: 1fr; row-gap: 0.4rem; padding-bottom: 0.6rem; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
-  .psy-profile-price-input-tag { display: inline-block; margin-right: 0.3rem; color: rgba(255, 255, 255, 0.4); font-size: 0.65rem; font-weight: 600; }
+  .psy-price-form { grid-template-columns: 1fr; }
+  .psy-price-form-actions { grid-column: 1 / -1; }
+  .psy-price-save-btn, .psy-price-cancel-btn { flex: 1 1 auto; }
   .psy-profile-message { text-align: center; }
   .psy-alert-count { width: 1.5rem; min-width: 1.5rem; height: 1.5rem; font-size: 0.7rem; }
 
