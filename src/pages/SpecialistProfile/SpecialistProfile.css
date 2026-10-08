@@ -987,6 +987,118 @@
   color: rgba(255, 255, 255, 0.3);
 }
 
+.sp-payment-subtitle {
+  margin: -0.75rem 0 0;
+  font-size: 0.8125rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.sp-payment-error {
+  width: 100%;
+  margin: 0;
+  padding: 0.625rem 0.875rem;
+  border-radius: 10px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+  font-size: 0.8125rem;
+}
+
+.sp-transfer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.sp-transfer-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.875rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+}
+
+.sp-transfer-head {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.sp-transfer-title {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.sp-transfer-title strong {
+  font-size: 0.875rem;
+  color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sp-transfer-title span {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.sp-transfer-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sp-transfer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(230, 0, 126, 0.08);
+  border: 1px solid rgba(230, 0, 126, 0.2);
+  border-radius: 10px;
+}
+
+.sp-transfer-label {
+  display: block;
+  font-size: 0.6875rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.sp-transfer-value {
+  display: block;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+}
+
+.sp-copy-btn {
+  flex-shrink: 0;
+  min-width: 4.5rem;
+  min-height: 2rem;
+  padding: 0 0.75rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sp-copy-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
 /* Success */
 .sp-success-body {
   display: flex;

@@ -5,6 +5,13 @@ import { supabase } from '../../lib/supabase';
 import DashboardLayout from '../../components/DashboardLayout/DashboardLayout';
 import './SpecialistProfile.css';
 import { toDateStr } from '../../lib/date';
+import {
+  PLATFORM_NAME,
+  PLATFORM_NEQUI_PHONE,
+  formatNequiPhone,
+  splitPayment,
+  toLocalNequiNumber,
+} from '../../config/payments';
 
 interface Psychologist {
   id: string;
@@ -115,6 +122,79 @@ function getPriceFor(psy: Psychologist, modality: string, patientType: string): 
   return psy.session_prices?.[modality]?.[patientType] || psy.session_price || 0;
 }
 
+interface TransferCardProps {
+  step: number;
+  title: string;
+  caption: string;
+  amount: number;
+  phone: string;
+  refValue: string;
+  onRefChange: (value: string) => void;
+  inputId: string;
+}
+
+const TransferCard: React.FC<TransferCardProps> = ({ step, title, caption, amount, phone, refValue, onRefChange, inputId }) => {
+  const [copied, setCopied] = useState<'phone' | 'amount' | null>(null);
+
+  const copy = async (kind: 'phone' | 'amount', value: string) => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(kind);
+      window.setTimeout(() => setCopied(null), 1800);
+    } catch {
+      setCopied(null);
+    }
+  };
+
+  return (
+    <div className="sp-transfer-card">
+      <div className="sp-transfer-head">
+        <span className="sp-step-num">{step}</span>
+        <div className="sp-transfer-title">
+          <strong>{title}</strong>
+          <span>{caption}</span>
+        </div>
+      </div>
+
+      <div className="sp-transfer-rows">
+        <div className="sp-transfer-row">
+          <div>
+            <span className="sp-transfer-label">Monto exacto</span>
+            <span className="sp-transfer-value">${amount.toLocaleString('es-CO')} COP</span>
+          </div>
+          <button type="button" className="sp-copy-btn" onClick={() => copy('amount', String(amount))}>
+            {copied === 'amount' ? 'Copiado' : 'Copiar'}
+          </button>
+        </div>
+        <div className="sp-transfer-row">
+          <div>
+            <span className="sp-transfer-label">Número Nequi</span>
+            <span className="sp-transfer-value">{phone ? formatNequiPhone(phone) : 'No configurado'}</span>
+          </div>
+          {phone && (
+            <button type="button" className="sp-copy-btn" onClick={() => copy('phone', toLocalNequiNumber(phone))}>
+              {copied === 'phone' ? 'Copiado' : 'Copiar'}
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="sp-payment-ref">
+        <label htmlFor={inputId}>Referencia del comprobante</label>
+        <input
+          id={inputId}
+          type="text"
+          inputMode="text"
+          autoComplete="off"
+          placeholder="Ej: M1234567"
+          value={refValue}
+          onChange={(e) => onRefChange(e.target.value)}
+        />
+      </div>
+    </div>
+  );
+};
+
 const SpecialistProfile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { user, loading: authLoading } = useAuth();
@@ -133,6 +213,8 @@ const SpecialistProfile: React.FC = () => {
   const [bookingLoading, setBookingLoading] = useState(false);
   const [createdApptId, setCreatedApptId] = useState<string | null>(null);
   const [paymentRef, setPaymentRef] = useState('');
+  const [commissionRef, setCommissionRef] = useState('');
+  const [paymentError, setPaymentError] = useState('');
 
   // Tipo de consulta: modalidad + tipo de paciente elegidos, y el precio/valores
   // que quedan "congelados" en el momento de crear la cita (para que un cambio
@@ -142,6 +224,7 @@ const SpecialistProfile: React.FC = () => {
   const [bookingAmount, setBookingAmount] = useState(0);
   const [bookingModality, setBookingModality] = useState('');
   const [bookingPatientType, setBookingPatientType] = useState('');
+  const { platformFee, psychologistAmount } = splitPayment(bookingAmount);
 
   // Schedule view state
   const [scheduleView, setScheduleView] = useState<'list' | 'month'>('list');
@@ -309,53 +392,47 @@ const SpecialistProfile: React.FC = () => {
     setBookingStep('payment');
   };
 
-  const handleNequiPayment = () => {
-    const amount = bookingAmount || psy?.session_price || 0;
-    // Usar el numero configurado del negocio (variable de entorno) o el del psicologo
-    const nequiPhone = import.meta.env.VITE_NEQUI_PHONE || psy?.phone || '';
-    const ref = createdApptId || 'cita';
-
-    // Detectar si es movil para usar deep link de la app Nequi
+  const handleOpenNequi = () => {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-    if (isMobile) {
-      // Deep link que abre directamente la app Nequi instalada
-      // Si no esta instalada, abre la pagina web de Nequi
-      const deepLink = `nequi://payments?phoneNumber=${nequiPhone}&amount=${amount}&reference=${ref}`;
-      const webFallback = `https://recarga.nequi.com.co/bdigitalpay?phone=${nequiPhone}&value=${amount}&reference=${ref}`;
-
-      // Intentar abrir la app, si falla ir al web
-      const timeout = setTimeout(() => {
-        window.open(webFallback, '_blank');
-      }, 2500);
-
-      window.location.href = deepLink;
-
-      // Si la app se abrio, cancelar el fallback
-      window.addEventListener('blur', () => clearTimeout(timeout), { once: true });
-    } else {
-      // En desktop: abrir la pagina web de Nequi
-      const webUrl = `https://recarga.nequi.com.co/bdigitalpay?phone=${nequiPhone}&value=${amount}&reference=${ref}`;
-      window.open(webUrl, '_blank');
+    if (!isMobile) {
+      window.open('https://www.nequi.com.co/', '_blank', 'noopener,noreferrer');
+      return;
     }
+    const fallback = window.setTimeout(() => {
+      window.open('https://www.nequi.com.co/', '_blank', 'noopener,noreferrer');
+    }, 1800);
+    const cancelFallback = () => window.clearTimeout(fallback);
+    window.addEventListener('blur', cancelFallback, { once: true });
+    document.addEventListener('visibilitychange', cancelFallback, { once: true });
+    window.location.href = 'nequi://';
   };
 
   const handleConfirmPayment = async () => {
-    if (!createdApptId || !paymentRef.trim()) return;
+    if (!createdApptId) return;
+    const psychologistRef = paymentRef.trim();
+    const platformRef = commissionRef.trim();
+    if (!psychologistRef || !platformRef) {
+      setPaymentError('Ingresa la referencia de las dos transferencias.');
+      return;
+    }
+    if (psychologistRef === platformRef) {
+      setPaymentError('Cada transferencia tiene su propia referencia. Revisa los comprobantes.');
+      return;
+    }
+
+    setPaymentError('');
     setBookingLoading(true);
-
-    await supabase
-      .from('appointments')
-      .update({
-        payment_method: 'nequi',
-        payment_reference: paymentRef.trim(),
-        payment_status: 'procesando',
-        status: 'confirmada',
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', createdApptId);
-
+    const { error } = await supabase.rpc('register_nequi_payment', {
+      p_appointment_id: createdApptId,
+      p_psychologist_reference: psychologistRef,
+      p_commission_reference: platformRef,
+    });
     setBookingLoading(false);
+
+    if (error) {
+      setPaymentError(error.message || 'No se pudo registrar el pago. Intenta de nuevo.');
+      return;
+    }
     setBookingStep('success');
   };
 
@@ -364,6 +441,8 @@ const SpecialistProfile: React.FC = () => {
     setSelectedSlot(null);
     setCreatedApptId(null);
     setPaymentRef('');
+    setCommissionRef('');
+    setPaymentError('');
     setBookingAmount(0);
     setBookingModality('');
     setBookingPatientType('');
@@ -754,66 +833,50 @@ const SpecialistProfile: React.FC = () => {
                     <div className="sp-nequi-logo">
                       <div className="sp-nequi-badge">Nequi</div>
                     </div>
-                    <p className="sp-payment-amount">${bookingAmount.toLocaleString()} COP</p>
+                    <p className="sp-payment-amount">${bookingAmount.toLocaleString('es-CO')} COP</p>
+                    <p className="sp-payment-subtitle">Total de la sesión, dividido en dos transferencias Nequi</p>
 
-                    <div className="sp-nequi-dest">
-                      <span className="sp-nequi-dest-label">Enviar a Nequi:</span>
-                      <span className="sp-nequi-dest-phone">{import.meta.env.VITE_NEQUI_PHONE || psy?.phone || 'No configurado'}</span>
-                    </div>
-
-                    <div className="sp-payment-steps">
-                      <div className="sp-payment-step">
-                        <span className="sp-step-num">1</span>
-                        <div>
-                          <strong>Haz click en "Pagar con Nequi"</strong>
-                          <p>Se abrira Nequi automaticamente en tu celular</p>
-                        </div>
-                      </div>
-                      <div className="sp-payment-step">
-                        <span className="sp-step-num">2</span>
-                        <div>
-                          <strong>Confirma el pago en Nequi</strong>
-                          <p>Envia exactamente ${bookingAmount.toLocaleString()} COP al numero indicado</p>
-                        </div>
-                      </div>
-                      <div className="sp-payment-step">
-                        <span className="sp-step-num">3</span>
-                        <div>
-                          <strong>Ingresa la referencia aqui</strong>
-                          <p>Copia el numero de transaccion que te da Nequi</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <button className="sp-nequi-btn" onClick={handleNequiPayment} type="button">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <button className="sp-nequi-btn" onClick={handleOpenNequi} type="button">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                         <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
                         <polyline points="15 3 21 3 21 9" />
                         <line x1="10" y1="14" x2="21" y2="3" />
                       </svg>
-                      Pagar con Nequi
+                      Abrir Nequi
                     </button>
 
-                    <div className="sp-payment-divider">
-                      <span>Despues de pagar</span>
+                    <div className="sp-transfer-list">
+                      <TransferCard
+                        step={1}
+                        title={`Para ${psy.full_name}`}
+                        caption="95% de la sesión"
+                        amount={psychologistAmount}
+                        phone={psy.phone || ''}
+                        refValue={paymentRef}
+                        onRefChange={setPaymentRef}
+                        inputId="payment-ref"
+                      />
+                      <TransferCard
+                        step={2}
+                        title={`Para ${PLATFORM_NAME}`}
+                        caption="5% de comisión de la plataforma"
+                        amount={platformFee}
+                        phone={PLATFORM_NEQUI_PHONE}
+                        refValue={commissionRef}
+                        onRefChange={setCommissionRef}
+                        inputId="commission-ref"
+                      />
                     </div>
 
-                    <div className="sp-payment-ref">
-                      <label htmlFor="payment-ref">Numero de referencia / transaccion Nequi</label>
-                      <input
-                        id="payment-ref"
-                        type="text"
-                        placeholder="Ej: NQI123456789"
-                        value={paymentRef}
-                        onChange={(e) => setPaymentRef(e.target.value)}
-                      />
-                      <span className="sp-payment-ref-help">Lo encuentras en el comprobante de Nequi despues de pagar</span>
-                    </div>
+                    <p className="sp-payment-ref-help">
+                      Haz las dos transferencias desde tu app Nequi con el monto exacto y pega aquí la referencia de cada comprobante.
+                    </p>
+                    {paymentError && <p className="sp-payment-error" role="alert">{paymentError}</p>}
                   </div>
                 </div>
                 <div className="sp-modal-footer">
                   <button className="sp-btn-secondary" onClick={handleCloseBooking} type="button">Cancelar</button>
-                  <button className="sp-btn-primary" onClick={handleConfirmPayment} disabled={bookingLoading || !paymentRef.trim()} type="button">
+                  <button className="sp-btn-primary" onClick={handleConfirmPayment} disabled={bookingLoading || !paymentRef.trim() || !commissionRef.trim()} type="button">
                     {bookingLoading ? 'Confirmando...' : 'Confirmar pago'}
                   </button>
                 </div>

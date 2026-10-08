@@ -3,6 +3,14 @@
 **Propósito:** historial de cambios documentales y del proyecto.
 **Responsable:** Documentador Técnico. **Estado:** Activo; requiere mantenerlo en cada entrega.
 
+## 2026-10-07 — Pago Nequi con comisión del 5% para Vida Sabia
+- El paso de pago de `src/pages/SpecialistProfile/SpecialistProfile.tsx` ahora divide el valor de la sesión en dos transferencias Nequi: 95% al número del psicólogo (`psychologists.phone`) y 5% a Vida Sabia (`+57 318 472 6151`). Cada una muestra monto exacto, número y botones "Copiar", y pide su propia referencia de comprobante.
+- Se eliminó el uso de `VITE_NEQUI_PHONE` como destino del pago y el deep link `nequi://payments?...`, que no es un esquema público de Nequi y dejaba el pago inoperante. El botón "Abrir Nequi" solo abre la app (o `nequi.com.co` como alternativa).
+- Nueva configuración en `src/config/payments.ts` (`PLATFORM_COMMISSION_RATE`, `PLATFORM_NEQUI_PHONE`, `splitPayment`, utilidades de formato).
+- Migración `20261007000000_nequi_commission_split`: columnas `platform_fee`, `psychologist_amount`, `platform_phone`, `commission_reference`, `commission_status` en `payment_transactions` y función `register_nequi_payment(p_appointment_id, p_psychologist_reference, p_commission_reference)` (`security definer`, `search_path = ''`, solo `authenticated`). Calcula la comisión en el servidor a partir de `appointments.payment_amount`, valida que la cita sea del paciente y siga en `pendiente_pago`, crea la transacción en estado `processing` y confirma la cita.
+- Limitación conocida: la verificación del pago es manual (referencias ingresadas por el paciente); no hay conciliación automática con Nequi. `commission_status` queda en `pending` hasta que Vida Sabia valide la referencia.
+- Validación: `tsc --noEmit` sin errores. No se probó el flujo completo en navegador (requiere sesión de paciente y un psicólogo con teléfono configurado).
+
 ## 2026-08-08 — Mantenimiento documental
 - Se actualizó este historial para registrar la sincronización documental de la rama de trabajo.
 - No se modificó código, esquema, infraestructura ni funcionalidad.
