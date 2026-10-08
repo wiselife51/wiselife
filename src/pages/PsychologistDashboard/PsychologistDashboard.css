@@ -4003,16 +4003,29 @@ body:has(.psy-dash) {
   el navegador no deja arrastrar mas alla de esa caja interna y el
   contenido de abajo (tarifas, biografia, guardar) queda inalcanzable.
   Se anula aqui para que el main sea el unico que scrollea. */
-  .psy-profile-page,
-  .psy-patients-page {
+  .psy-profile-page {
   width: 100%;
   height: auto;
   overflow: visible;
   }
-  .psy-profile-scroll,
-  .psy-patients-scroll {
+  .psy-profile-scroll {
   overflow-y: visible;
   padding-right: 0;
+  }
+  /* Mis Pacientes sigue el patron de Proximas citas: el main no scrollea,
+  la tarjeta ocupa todo el alto disponible (aunque haya pocos pacientes) y
+  solo .psy-patients-scroll se desplaza con el scrollbar morado. */
+  .psy-dash-main:has(.psy-patients-page) {
+  overflow: hidden;
+  }
+  .psy-patients-page {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  }
+  .psy-patients-scroll {
+  overflow-y: auto;
+  padding-right: 0.15rem;
   }
   .psy-profile-intro { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 0.65rem; margin-bottom: 0.45rem; }
   .psy-profile-intro .psy-profile-card-head { justify-content: flex-start; gap: 0.5rem; padding: 0; }
@@ -4537,4 +4550,137 @@ body:has(.psy-dash) {
 .psy-appt-modal-layer .psy-history-btn:hover {
   background: rgba(255, 255, 255, 0.05) !important;
   box-shadow: none !important;
+}
+
+/* ---- Mi Agenda y Bloqueos (mismo patron que Proximas citas) ---- */
+.psy-macro-page { min-width: 0; }
+.psy-macro-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.8rem; }
+.psy-segmented { display: inline-flex; gap: 0.25rem; padding: 0.25rem; border: 1px solid var(--psy-border); border-radius: 10px; background: var(--psy-surface); max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.psy-segmented::-webkit-scrollbar { display: none; }
+.psy-segmented--full { display: flex; width: 100%; }
+.psy-segmented--full .psy-segmented-btn { flex: 1 1 0; }
+.psy-segmented-btn { padding: 0.5rem 1rem; border: 0; border-radius: 8px; background: none; color: rgba(255, 255, 255, 0.5); font-family: 'Inter', sans-serif; font-size: 0.8125rem; font-weight: 500; white-space: nowrap; cursor: pointer; transition: all 0.2s; }
+.psy-segmented-btn:hover { color: rgba(255, 255, 255, 0.8); }
+.psy-segmented-btn--active, .psy-segmented-btn--active:hover { background: rgba(126, 87, 194, 0.2); color: #b388ff; }
+.psy-segmented-btn:focus-visible, .psy-macro-add:focus-visible, .psy-macro-icon-btn:focus-visible, .psy-switch:focus-visible, .psy-macro-day:focus-visible { outline: 2px solid #b39ddb; outline-offset: 2px; }
+.psy-macro-add, .psy-macro-summary-actions button { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 0.625rem; padding: 0.7rem 0.875rem; border: 1px solid rgba(126, 87, 194, 0.2); border-radius: 12px; background: var(--psy-surface); color: #b388ff; font-family: 'Inter', sans-serif; font-size: 0.8125rem; font-weight: 600; text-align: center; white-space: nowrap; cursor: pointer; transition: background 0.2s, color 0.2s, border-color 0.2s; }
+.psy-macro-add:hover, .psy-macro-summary-actions button:hover:not(:disabled) { background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.9); }
+.psy-macro-summary-actions button:disabled { opacity: 0.45; cursor: not-allowed; }
+.psy-macro-summary-actions .psy-macro-action--danger { border-color: rgba(239, 83, 80, 0.3); color: #ff8a80; }
+.psy-macro-summary-actions .psy-macro-action--danger:hover:not(:disabled) { background: rgba(239, 83, 80, 0.12); color: #ffb4ab; }
+.psy-macro-summary-actions button:focus-visible { outline: 2px solid #b39ddb; outline-offset: 2px; }
+.psy-macro-body { padding-bottom: 0.25rem; }
+.psy-macro-note { margin: 0; color: rgba(255, 255, 255, 0.55); font-size: 0.76rem; line-height: 1.45; }
+
+.psy-macro-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.25rem; padding: 0.25rem; border: 1px solid var(--psy-border); border-radius: 10px; background: var(--psy-surface); }
+.psy-macro-day { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.1rem; min-width: 0; min-height: 2.75rem; padding: 0.4rem 0.15rem; border: 0; border-radius: 8px; background: none; color: rgba(255, 255, 255, 0.5); font-family: 'Inter', sans-serif; font-size: 0.8125rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+.psy-macro-day small { color: rgba(255, 255, 255, 0.4); font-size: 0.625rem; font-weight: 500; line-height: 1; }
+.psy-macro-day:hover { color: rgba(255, 255, 255, 0.8); }
+.psy-macro-day--active, .psy-macro-day--active:hover { background: rgba(126, 87, 194, 0.2); color: #b388ff; }
+.psy-macro-day--active small { color: rgba(179, 136, 255, 0.75); }
+
+.psy-macro-summary { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; flex-wrap: wrap; padding: 0.7rem 0.875rem; border: 1px solid rgba(126, 87, 194, 0.22); border-radius: 12px; background: rgba(126, 87, 194, 0.08); }
+.psy-macro-summary strong { color: #f4f1ff; font-size: 0.85rem; }
+.psy-macro-summary-actions { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+.psy-macro-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0.6rem; width: 100%; min-height: 2.75rem; padding: 0.7rem 0.875rem; border: 1px solid rgba(126, 87, 194, 0.22); border-radius: 12px; background: rgba(18, 24, 42, 0.78); color: var(--psy-text, #fff); }
+.psy-macro-row--off { opacity: 0.6; }
+.psy-macro-row--block { border-color: rgba(239, 83, 80, 0.22); }
+.psy-macro-time { color: #f4f1ff; font-size: 0.88rem; font-weight: 600; white-space: nowrap; }
+.psy-macro-day-name { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+.psy-macro-day-name strong { color: #f4f1ff; font-size: 0.85rem; font-weight: 600; overflow-wrap: anywhere; }
+.psy-macro-day-name small { color: rgba(255, 255, 255, 0.55); font-size: 0.74rem; overflow-wrap: anywhere; }
+.psy-macro-chip { padding: 0.2rem 0.55rem; border-radius: 999px; background: rgba(77, 208, 225, 0.14); color: #8ee7c2; font-size: 0.7rem; font-weight: 600; white-space: nowrap; }
+.psy-macro-chip--off { background: rgba(239, 83, 80, 0.14); color: #ff8a80; }
+.psy-macro-icon-btn { display: inline-grid; place-items: center; width: 2.25rem; height: 2.25rem; padding: 0; border: 1px solid rgba(126, 87, 194, 0.3); border-radius: 10px; background: rgba(126, 87, 194, 0.12); color: #b39ddb; cursor: pointer; transition: background 0.2s, border-color 0.2s; }
+.psy-macro-icon-btn:hover { background: rgba(126, 87, 194, 0.25); }
+.psy-macro-icon-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.psy-macro-icon-btn--danger { border-color: rgba(239, 83, 80, 0.3); background: rgba(239, 83, 80, 0.1); color: #ff8a80; }
+.psy-macro-icon-btn--danger:hover { background: rgba(239, 83, 80, 0.22); }
+.psy-macro-icon-btn--confirm { border-color: rgba(239, 83, 80, 0.8); background: rgba(239, 83, 80, 0.85); color: #fff; }
+
+.psy-macro-hint { display: block; margin-top: 0.3rem; color: rgba(255, 255, 255, 0.55); font-size: 0.74rem; line-height: 1.4; }
+.psy-macro-hint--error { color: #ff8a80; }
+.psy-macro-toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; padding: 0.3rem 0; }
+.psy-macro-toggle-row label { color: rgba(255, 255, 255, 0.85); font-size: 0.85rem; font-weight: 500; }
+.psy-switch { position: relative; flex: 0 0 auto; width: 2.75rem; height: 1.6rem; padding: 0; border: 0; border-radius: 999px; background: rgba(255, 255, 255, 0.18); cursor: pointer; transition: background 0.2s; }
+.psy-switch--on { background: var(--psy-gradient); }
+.psy-switch-thumb { position: absolute; top: 0.2rem; left: 0.2rem; width: 1.2rem; height: 1.2rem; border-radius: 50%; background: #fff; transition: transform 0.2s; }
+.psy-switch--on .psy-switch-thumb { transform: translateX(1.15rem); }
+
+@media (max-width: 640px) {
+  .psy-macro-toolbar { flex-direction: column; align-items: stretch; }
+  .psy-macro-toolbar .psy-segmented { display: flex; width: 100%; }
+  .psy-macro-toolbar .psy-segmented-btn { flex: 1 1 0; padding: 0.5rem 0.4rem; font-size: 0.75rem; }
+  .psy-macro-add { width: 100%; }
+  .psy-macro-day { font-size: 0.75rem; min-height: 2.6rem; }
+  .psy-macro-summary-actions button { padding: 0.65rem 0.5rem; }
+  .psy-macro-row { gap: 0.5rem; padding: 0.7rem 0.75rem; }
+  .psy-macro-row-main { gap: 0.4rem; }
+  .psy-macro-row-controls { gap: 0.4rem; }
+  .psy-macro-summary { flex-direction: column; align-items: stretch; text-align: center; }
+  .psy-macro-summary-info { align-items: center; }
+  .psy-macro-summary-actions { width: 100%; }
+  .psy-macro-summary-actions > * { flex: 1 1 0; }
+}
+.psy-macro-summary-info { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+.psy-macro-summary-info small { color: rgba(255, 255, 255, 0.55); font-size: 0.74rem; line-height: 1.4; }
+.psy-macro-row-main { display: flex; align-items: center; flex-wrap: wrap; gap: 0.6rem; min-width: 0; }
+.psy-macro-row-controls { display: inline-flex; align-items: center; justify-content: flex-end; gap: 0.6rem; }
+.psy-macro-row-controls .psy-macro-icon-btn { flex: 0 0 auto; }
+.psy-macro-chip--warn { background: rgba(255, 193, 7, 0.14); color: #ffd54f; }
+
+/* Agenda: filas compactas en una sola línea (día, semana y mes) */
+.psy-macro-row { display: flex; flex-wrap: nowrap; align-items: center; justify-content: space-between; gap: 0.5rem; min-height: 2.5rem; padding: 0.5rem 0.75rem; border-radius: 10px; }
+.psy-macro-row-main { flex: 1 1 auto; flex-wrap: nowrap; justify-content: flex-start; gap: 0.5rem; min-width: 0; }
+.psy-macro-row-controls { flex: 0 0 auto; align-items: center; justify-content: center; gap: 0.4rem; margin-left: auto; }
+.psy-macro-time { font-size: 0.78rem; font-weight: 600; line-height: 1; }
+.psy-macro-chip { display: inline-flex; align-items: center; justify-content: center; padding: 0.15rem 0.5rem; font-size: 0.64rem; line-height: 1.2; }
+.psy-macro-day-label { display: flex; align-items: baseline; gap: 0.4rem; flex: 0 1 auto; min-width: 0; white-space: nowrap; }
+.psy-macro-day-label strong { flex: 0 0 auto; color: #f4f1ff; font-size: 0.78rem; font-weight: 600; line-height: 1.2; }
+.psy-macro-day-label small { min-width: 0; overflow: hidden; text-overflow: ellipsis; color: rgba(255, 255, 255, 0.55); font-size: 0.68rem; line-height: 1.2; }
+.psy-macro-row .psy-switch { width: 2rem; height: 1.15rem; }
+.psy-macro-row .psy-switch-thumb { top: 0.15rem; left: 0.15rem; width: 0.85rem; height: 0.85rem; }
+.psy-macro-row .psy-switch--on .psy-switch-thumb { transform: translateX(0.85rem); }
+.psy-macro-row .psy-macro-icon-btn { display: inline-grid; place-items: center; width: 1.75rem; height: 1.75rem; border-radius: 8px; }
+.psy-macro-row .psy-macro-icon-btn svg { display: block; }
+
+@media (max-width: 640px) {
+  .psy-macro-row { gap: 0.4rem; padding: 0.5rem 0.6rem; }
+  .psy-macro-row-main { gap: 0.4rem; }
+  .psy-macro-row-controls { gap: 0.35rem; }
+  .psy-macro-day-label { gap: 0.3rem; }
+  .psy-macro-chip { padding: 0.12rem 0.4rem; font-size: 0.6rem; }
+}
+
+/* ---- Modal "+ Horario" (Dia / Semana / Mes) ---- */
+.psy-slot-modal { max-width: 440px; gap: 0.9rem; }
+.psy-slot-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
+.psy-slot-head-text { display: flex; flex-direction: column; gap: 0.2rem; min-width: 0; }
+.psy-slot-head-text h3 { font-size: 1rem; }
+.psy-slot-head-text p { margin: 0; color: rgba(255, 255, 255, 0.55); font-size: 0.76rem; line-height: 1.4; }
+.psy-slot-head .psy-macro-icon-btn { flex: 0 0 auto; }
+.psy-slot-section { display: flex; flex-direction: column; gap: 0.45rem; min-width: 0; }
+.psy-slot-label-row { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; }
+.psy-slot-label { color: rgba(255, 255, 255, 0.7); font-size: 0.78rem; font-weight: 500; }
+.psy-slot-quick { display: inline-flex; gap: 0.25rem; }
+.psy-slot-quick button { padding: 0.2rem 0.5rem; border: 1px solid rgba(126, 87, 194, 0.25); border-radius: 999px; background: rgba(126, 87, 194, 0.1); color: #b388ff; font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+.psy-slot-quick button:hover { background: rgba(126, 87, 194, 0.22); }
+.psy-slot-hours .psy-dash-modal-field { min-width: 0; }
+.psy-slot-months { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.25rem; padding: 0.25rem; border: 1px solid var(--psy-border); border-radius: 10px; background: var(--psy-surface); }
+.psy-slot-month { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.1rem; min-width: 0; min-height: 2.6rem; padding: 0.35rem 0.1rem; border: 0; border-radius: 8px; background: none; color: rgba(255, 255, 255, 0.55); font-family: 'Inter', sans-serif; font-size: 0.78rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+.psy-slot-month small { color: rgba(255, 255, 255, 0.4); font-size: 0.6rem; line-height: 1; }
+.psy-slot-month:hover:not(:disabled) { color: rgba(255, 255, 255, 0.85); }
+.psy-slot-month:disabled { opacity: 0.4; cursor: not-allowed; }
+.psy-slot-month--active, .psy-slot-month--active:hover { background: rgba(126, 87, 194, 0.2); color: #b388ff; }
+.psy-slot-month--active small { color: rgba(179, 136, 255, 0.75); }
+.psy-slot-month:focus-visible, .psy-slot-quick button:focus-visible { outline: 2px solid #b39ddb; outline-offset: 2px; }
+.psy-slot-summary { display: flex; flex-direction: column; gap: 0.15rem; padding: 0.65rem 0.8rem; border: 1px solid rgba(126, 87, 194, 0.22); border-radius: 12px; background: rgba(126, 87, 194, 0.08); color: rgba(255, 255, 255, 0.6); font-size: 0.74rem; line-height: 1.4; }
+.psy-slot-summary strong { color: #f4f1ff; font-size: 0.82rem; font-weight: 600; }
+.psy-slot-summary--warn { border-color: rgba(239, 83, 80, 0.3); background: rgba(239, 83, 80, 0.08); color: #ff8a80; }
+@media (max-width: 640px) {
+  .psy-slot-modal { padding: 1rem; }
+  .psy-slot-modal .psy-segmented-btn { flex: 1 1 0; padding: 0.5rem 0.4rem; font-size: 0.75rem; }
+  .psy-slot-modal .psy-macro-day { font-size: 0.72rem; }
+  .psy-slot-modal .psy-dash-modal-actions { flex-direction: row-reverse; }
 }

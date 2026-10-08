@@ -2,6 +2,8 @@
 
 Este documento explica cómo configurar la integración completa con Nequi para pagos push en Vida Sabia.
 
+> **Flujo vigente (2026-10-07): transferencias manuales con comisión.** El paciente hace dos transferencias Nequi desde su app: 95% al número del psicólogo (`psychologists.phone`) y 5% a Vida Sabia (`+57 318 472 6151`, definido en `src/config/payments.ts` y en la función SQL `register_nequi_payment`). Luego ingresa la referencia de cada comprobante y la función registra el pago en `payment_transactions` (`platform_fee`, `psychologist_amount`, `commission_reference`, `commission_status = 'pending'`) y confirma la cita. Este flujo no requiere credenciales de la API de Nequi; las secciones siguientes aplican solo si se activa la integración push. Cambiar el porcentaje o el número exige actualizar `payments.ts` y la función SQL.
+
 ## 📋 Requisitos Previos
 
 1. **Cuenta de comercio en Nequi**

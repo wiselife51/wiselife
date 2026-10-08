@@ -132,7 +132,7 @@ const Specialists: React.FC = () => {
   }
 
   return (
-    <DashboardLayout pageTitle="Especialistas">
+    <DashboardLayout pageTitle="Especialistas" subtitle="Encuentra al profesional ideal para ti">
       <div className="spec-page">
         {/* Barra de busqueda */}
         <div className="spec-search-bar">
