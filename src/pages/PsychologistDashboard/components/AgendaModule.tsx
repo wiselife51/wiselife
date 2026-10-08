@@ -205,9 +205,9 @@ export function AgendaModule({
         {scope === 'semana' && (
           <>
             <div className="psy-macro-summary">
-              <div>
-                <strong>Semana tipo</strong>
-                <small>Se repite cada semana</small>
+              <div className="psy-macro-summary-info">
+                <strong>Horario semanal</strong>
+                <small>Se repite todas las semanas</small>
               </div>
               <div className="psy-macro-summary-actions">
                 <button type="button" disabled={busy || availability.length === 0 || activeCount === availability.length} onClick={() => run(() => onSetDays(allDays, true))}>Activar semana</button>
