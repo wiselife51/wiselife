@@ -7,6 +7,9 @@ import SessionNoteModal from '../../components/SessionNoteModal/SessionNoteModal
 import ClinicalHistoryView from '../../components/ClinicalHistoryView/ClinicalHistoryView';
 import './PsychologistDashboard.css';
 import { DashboardModuleHeader } from './components/DashboardModuleHeader';
+import { AgendaModule } from './components/AgendaModule';
+import { BlocksModule, type CreateBlocksInput } from './components/BlocksModule';
+import { MONTH_CLOSED_REASON, datesOfMonth, isWeekendKey } from './components/scheduleUtils';
 import { toDateStr } from '../../lib/date';
 import AppointmentCalendar from '../../components/AppointmentCalendar/AppointmentCalendar';
 import type { CalendarAppointment } from '../../components/AppointmentCalendar/status';
@@ -469,12 +472,6 @@ const PsychologistDashboard: React.FC = () => {
   const [selectedAppt, setSelectedAppt] = useState<Appointment | null>(null);
 
   // Block form
-  const [showBlockForm, setShowBlockForm] = useState(false);
-  const [blockDate, setBlockDate] = useState('');
-  const [blockStart, setBlockStart] = useState('08:00');
-  const [blockEnd, setBlockEnd] = useState('09:00');
-  const [blockReason, setBlockReason] = useState('');
-  const [savingBlock, setSavingBlock] = useState(false);
 
   // Add availability
   const [showAddSlot, setShowAddSlot] = useState(false);
@@ -1043,35 +1040,88 @@ const PsychologistDashboard: React.FC = () => {
 
   const handleDeleteSlot = async (slotId: string) => {
     await supabase.from('psychologist_availability').delete().eq('id', slotId);
-    fetchData();
+    await refreshSchedule();
   };
 
   const handleToggleSlot = async (slotId: string, currentState: boolean) => {
     await supabase.from('psychologist_availability').update({ is_available: !currentState }).eq('id', slotId);
-    fetchData();
+    await refreshSchedule();
+  };
+
+  // Recarga solo agenda y bloqueos para no desmontar el modulo con el spinner global de fetchData.
+  const refreshSchedule = async () => {
+    if (!profile) return;
+    const [{ data: availData }, { data: blocksData }] = await Promise.all([
+      supabase.from('psychologist_availability').select('*').eq('psychologist_id', profile.id),
+      supabase.from('schedule_blocks').select('*').eq('psychologist_id', profile.id).order('block_date').order('start_time'),
+    ]);
+    setAvailability((availData || []) as AvailabilitySlot[]);
+    setBlocks((blocksData || []) as ScheduleBlock[]);
+  };
+
+  const handleSetDaysAvailability = async (days: number[], available: boolean) => {
+    if (!profile) return;
+    await supabase
+      .from('psychologist_availability')
+      .update({ is_available: available })
+      .eq('psychologist_id', profile.id)
+      .in('day_of_week', days);
+    await refreshSchedule();
+  };
+
+  // Abrir un mes quita su bloqueo automatico "mes cerrado"; cerrarlo lo vuelve a crear dia por dia.
+  const handleSetMonthOpen = async (year: number, month: number, open: boolean) => {
+    if (!profile) return;
+    const todayKey = toDateStr(today);
+    const monthDates = datesOfMonth(year, month).filter((key) => key >= todayKey && !isWeekendKey(key));
+    if (monthDates.length === 0) return;
+    const first = monthDates[0];
+    const last = monthDates[monthDates.length - 1];
+
+    if (open) {
+      await supabase
+        .from('schedule_blocks')
+        .delete()
+        .eq('psychologist_id', profile.id)
+        .eq('reason', MONTH_CLOSED_REASON)
+        .gte('block_date', first)
+        .lte('block_date', last);
+    } else {
+      const alreadyClosed = new Set(
+        blocks.filter((b) => b.reason === MONTH_CLOSED_REASON).map((b) => b.block_date),
+      );
+      const rows = monthDates
+        .filter((key) => !alreadyClosed.has(key))
+        .map((key) => ({
+          psychologist_id: profile.id,
+          block_date: key,
+          start_time: '00:00',
+          end_time: '23:59',
+          reason: MONTH_CLOSED_REASON,
+        }));
+      if (rows.length > 0) await supabase.from('schedule_blocks').insert(rows);
+    }
+    await refreshSchedule();
   };
 
   // Block actions
-  const handleAddBlock = async () => {
-    if (!profile || !blockDate) return;
-    setSavingBlock(true);
-    await supabase.from('schedule_blocks').insert({
+  const handleCreateBlocks = async ({ dates, start, end, reason }: CreateBlocksInput) => {
+    if (!profile || dates.length === 0) return;
+    const rows = dates.map((key) => ({
       psychologist_id: profile.id,
-      block_date: blockDate,
-      start_time: blockStart,
-      end_time: blockEnd,
-      reason: blockReason || null,
-    });
-    setShowBlockForm(false);
-    setBlockDate('');
-    setBlockReason('');
-    setSavingBlock(false);
-    fetchData();
+      block_date: key,
+      start_time: start,
+      end_time: end,
+      reason: reason || null,
+    }));
+    await supabase.from('schedule_blocks').insert(rows);
+    await refreshSchedule();
   };
 
-  const handleDeleteBlock = async (blockId: string) => {
-    await supabase.from('schedule_blocks').delete().eq('id', blockId);
-    fetchData();
+  const handleDeleteBlocks = async (ids: string[]) => {
+    if (ids.length === 0) return;
+    await supabase.from('schedule_blocks').delete().in('id', ids);
+    await refreshSchedule();
   };
 
   // Appointment actions
@@ -1198,7 +1248,6 @@ const PsychologistDashboard: React.FC = () => {
 
   // La navegacion, las vistas y el agrupado por fecha los resuelve ahora
   // AppointmentCalendar; aqui solo queda lo propio del panel.
-  const daySlots = availability.filter((s) => s.day_of_week === selectedDay);
 
   const upcomingAppts = appointments.filter(
     (a) => a.appointment_date >= toDateStr(today) && (a.status === 'confirmada' || a.status === 'pendiente_pago')
@@ -1445,7 +1494,7 @@ const PsychologistDashboard: React.FC = () => {
       )}
 
       {/* Main content */}
-      <main className={`psy-dash-main ${activeTab === 'proximas' || activeTab === 'pendientes' ? 'psy-dash-main--flush' : ''}`}>
+      <main className={`psy-dash-main ${activeTab === 'proximas' || activeTab === 'pendientes' || activeTab === 'agenda' || activeTab === 'bloqueos' ? 'psy-dash-main--flush' : ''}`}>
         {activeTab === 'proximas' && (
           <section className="psy-alert-page">
             <DashboardModuleHeader
@@ -1537,183 +1586,70 @@ const PsychologistDashboard: React.FC = () => {
 
         {/* AGENDA TAB - availability config */}
         {activeTab === 'agenda' && (
-          <section className="psy-agenda-page">
-            <DashboardModuleHeader title="Mi Agenda" subtitle="Configura tus horarios disponibles para recibir pacientes." onMenu={() => setShowMobileMenu(!showMobileMenu)} action={<button type="button" className="psy-dash-btn-primary" onClick={() => setShowAddSlot(true)}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                Agregar horario
-              </button>} />
-
-            <div className="psy-dash-info-box">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>
-              <p>Tu agenda esta configurada por defecto de Lunes a Viernes, hora por hora desde las 7:00 AM hasta las 12:00 PM (bloqueado 12-1 PM para almuerzo) y desde la 1:00 PM hasta las 8:00 PM. Los sabados y domingos estan bloqueados. Solo el mes actual y el siguiente estan habilitados, el resto de meses estan bloqueados por defecto.</p>
-            </div>
-
-            <div className="psy-dash-availability-section">
-              <div className="psy-dash-days">
-                {DAYS_CONFIG.map((d) => {
-                  const count = availability.filter((s) => s.day_of_week === d.value).length;
-                  return (
-                    <button key={d.value} type="button" className={`psy-dash-day ${selectedDay === d.value ? 'psy-dash-day--active' : ''}`} onClick={() => setSelectedDay(d.value)}>
-                      <span className="psy-dash-day-label">{d.label}</span>
-                      {count > 0 && <span className="psy-dash-day-count">{count}</span>}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="psy-dash-slots">
-                <h3>{DAY_NAMES_FULL[selectedDay]}</h3>
-                {daySlots.length === 0 ? (
-                  <div className="psy-dash-empty">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
-                    <p>No hay horarios configurados para este dia.</p>
-                    <button type="button" className="psy-dash-btn-outline" onClick={() => { setNewSlotDay(selectedDay); setShowAddSlot(true); }}>
-                      Agregar horario
-                    </button>
+          <>
+            <AgendaModule
+              availability={availability}
+              blocks={blocks}
+              today={today}
+              selectedDay={selectedDay}
+              onSelectDay={setSelectedDay}
+              onMenu={() => setShowMobileMenu(!showMobileMenu)}
+              menuOpen={showMobileMenu}
+              onAddSlot={(day) => { setNewSlotDay(day); setShowAddSlot(true); }}
+              onToggleSlot={handleToggleSlot}
+              onDeleteSlot={handleDeleteSlot}
+              onSetDays={handleSetDaysAvailability}
+              onSetMonthOpen={handleSetMonthOpen}
+            />
+        {showAddSlot && (
+          <div className="psy-dash-modal-backdrop" onClick={() => setShowAddSlot(false)}>
+            <div className="psy-dash-modal" onClick={(e) => e.stopPropagation()}>
+              <h3>Agregar horario disponible</h3>
+              <div className="psy-dash-modal-fields">
+                <div className="psy-dash-modal-field">
+                  <label>Dia</label>
+                  <select value={newSlotDay} onChange={(e) => setNewSlotDay(parseInt(e.target.value))}>
+                    {DAYS_CONFIG.map((d) => <option key={d.value} value={d.value}>{DAY_NAMES_FULL[d.value]}</option>)}
+                  </select>
+                </div>
+                <div className="psy-dash-modal-row">
+                  <div className="psy-dash-modal-field">
+                    <label>Inicio</label>
+                    <select value={newSlotStart} onChange={(e) => setNewSlotStart(e.target.value)}>
+                      {HOUR_OPTIONS.map((h) => <option key={h} value={h}>{h}</option>)}
+                    </select>
                   </div>
-                ) : (
-                  <div className="psy-dash-slot-list">
-                    {daySlots.map((slot) => (
-                      <div key={slot.id} className={`psy-dash-slot ${!slot.is_available ? 'psy-dash-slot--disabled' : ''}`}>
-                        <div className="psy-dash-slot-time">
-                          <span className="psy-dash-slot-badge">{slot.start_time.slice(0, 5)}</span>
-                          <span className="psy-dash-slot-sep">-</span>
-                          <span className="psy-dash-slot-badge">{slot.end_time.slice(0, 5)}</span>
-                        </div>
-                        <div className="psy-dash-slot-status">
-                          {slot.is_available ? (
-                            <span className="psy-dash-status psy-dash-status--available">Disponible</span>
-                          ) : (
-                            <span className="psy-dash-status psy-dash-status--unavailable">No disponible</span>
-                          )}
-                        </div>
-                        <div className="psy-dash-slot-actions">
-                          <button type="button" className="psy-dash-slot-toggle" onClick={() => handleToggleSlot(slot.id, slot.is_available)} title={slot.is_available ? 'Desactivar' : 'Activar'}>
-                            {slot.is_available ? (
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0" /><line x1="12" y1="2" x2="12" y2="12" /></svg>
-                            ) : (
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polygon points="10 8 16 12 10 16 10 8" /></svg>
-                            )}
-                          </button>
-                          <button type="button" className="psy-dash-slot-delete" onClick={() => handleDeleteSlot(slot.id)} title="Eliminar">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {showAddSlot && (
-              <div className="psy-dash-modal-backdrop" onClick={() => setShowAddSlot(false)}>
-                <div className="psy-dash-modal" onClick={(e) => e.stopPropagation()}>
-                  <h3>Agregar horario disponible</h3>
-                  <div className="psy-dash-modal-fields">
-                    <div className="psy-dash-modal-field">
-                      <label>Dia</label>
-                      <select value={newSlotDay} onChange={(e) => setNewSlotDay(parseInt(e.target.value))}>
-                        {DAYS_CONFIG.map((d) => <option key={d.value} value={d.value}>{DAY_NAMES_FULL[d.value]}</option>)}
-                      </select>
-                    </div>
-                    <div className="psy-dash-modal-row">
-                      <div className="psy-dash-modal-field">
-                        <label>Inicio</label>
-                        <select value={newSlotStart} onChange={(e) => setNewSlotStart(e.target.value)}>
-                          {HOUR_OPTIONS.map((h) => <option key={h} value={h}>{h}</option>)}
-                        </select>
-                      </div>
-                      <div className="psy-dash-modal-field">
-                        <label>Fin</label>
-                        <select value={newSlotEnd} onChange={(e) => setNewSlotEnd(e.target.value)}>
-                          {HOUR_OPTIONS.map((h) => <option key={h} value={h}>{h}</option>)}
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="psy-dash-modal-actions">
-                    <button type="button" className="psy-dash-btn-ghost" onClick={() => setShowAddSlot(false)}>Cancelar</button>
-                    <button type="button" className="psy-dash-btn-primary" onClick={handleAddSlot} disabled={savingSlot}>
-                      {savingSlot ? 'Guardando...' : 'Agregar'}
-                    </button>
+                  <div className="psy-dash-modal-field">
+                    <label>Fin</label>
+                    <select value={newSlotEnd} onChange={(e) => setNewSlotEnd(e.target.value)}>
+                      {HOUR_OPTIONS.map((h) => <option key={h} value={h}>{h}</option>)}
+                    </select>
                   </div>
                 </div>
               </div>
-            )}
-          </section>
+              <div className="psy-dash-modal-actions">
+                <button type="button" className="psy-dash-btn-ghost" onClick={() => setShowAddSlot(false)}>Cancelar</button>
+                <button type="button" className="psy-dash-btn-primary" onClick={handleAddSlot} disabled={savingSlot}>
+                  {savingSlot ? 'Guardando...' : 'Agregar'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+          </>
         )}
 
         {/* BLOQUEOS TAB */}
         {activeTab === 'bloqueos' && (
-          <section className="psy-bloqueos-page">
-            <DashboardModuleHeader title="Bloqueos de horario" subtitle="Administra las fechas en las que no atenderás pacientes." onMenu={() => setShowMobileMenu(!showMobileMenu)} action={<button type="button" className="psy-dash-btn-primary" onClick={() => setShowBlockForm(true)}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                Bloquear fecha
-              </button>} />
-
-            <p className="psy-dash-block-desc">Bloquea fechas y horas especificas cuando no puedas atender. Los sabados y domingos estan bloqueados automáticamente, asi como todos los meses excepto el actual y el siguiente. Tambien puedes bloquear desde el calendario haciendo clic derecho en cualquier celda.</p>
-
-            {blocks.filter((b) => b.block_date >= toDateStr(today)).length === 0 ? (
-              <div className="psy-dash-empty">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5"><circle cx="12" cy="12" r="10" /><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" /></svg>
-                <p>No tienes bloqueos configurados.</p>
-              </div>
-            ) : (
-              <div className="psy-dash-block-list">
-                {blocks.filter((b) => b.block_date >= toDateStr(today)).map((block) => (
-                  <div key={block.id} className="psy-dash-block-item">
-                    <div className="psy-dash-block-info">
-                      <span className="psy-dash-block-date">{new Date(block.block_date + 'T12:00:00').toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' })}</span>
-                      <span className="psy-dash-block-time">{block.start_time.slice(0, 5)} - {block.end_time.slice(0, 5)}</span>
-                      {block.reason && <span className="psy-dash-block-reason">{block.reason}</span>}
-                    </div>
-                    <button type="button" className="psy-dash-slot-delete" onClick={() => handleDeleteBlock(block.id)} title="Eliminar bloqueo">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {showBlockForm && (
-              <div className="psy-dash-modal-backdrop" onClick={() => setShowBlockForm(false)}>
-                <div className="psy-dash-modal" onClick={(e) => e.stopPropagation()}>
-                  <h3>Bloquear horario</h3>
-                  <div className="psy-dash-modal-fields">
-                    <div className="psy-dash-modal-field">
-                      <label>Fecha</label>
-                      <input type="date" value={blockDate} onChange={(e) => setBlockDate(e.target.value)} min={toDateStr(today)} />
-                    </div>
-                    <div className="psy-dash-modal-row">
-                      <div className="psy-dash-modal-field">
-                        <label>Desde</label>
-                        <select value={blockStart} onChange={(e) => setBlockStart(e.target.value)}>
-                          {HOUR_OPTIONS.map((h) => <option key={h} value={h}>{h}</option>)}
-                        </select>
-                      </div>
-                      <div className="psy-dash-modal-field">
-                        <label>Hasta</label>
-                        <select value={blockEnd} onChange={(e) => setBlockEnd(e.target.value)}>
-                          {HOUR_OPTIONS.map((h) => <option key={h} value={h}>{h}</option>)}
-                        </select>
-                      </div>
-                    </div>
-                    <div className="psy-dash-modal-field">
-                      <label>Razon (opcional)</label>
-                      <input type="text" value={blockReason} onChange={(e) => setBlockReason(e.target.value)} placeholder="Vacaciones, cita personal..." />
-                    </div>
-                  </div>
-                  <div className="psy-dash-modal-actions">
-                    <button type="button" className="psy-dash-btn-ghost" onClick={() => setShowBlockForm(false)}>Cancelar</button>
-                    <button type="button" className="psy-dash-btn-primary" onClick={handleAddBlock} disabled={savingBlock || !blockDate}>
-                      {savingBlock ? 'Guardando...' : 'Bloquear'}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </section>
+          <BlocksModule
+            blocks={blocks}
+            today={today}
+            hourOptions={HOUR_OPTIONS}
+            onMenu={() => setShowMobileMenu(!showMobileMenu)}
+            menuOpen={showMobileMenu}
+            onCreate={handleCreateBlocks}
+            onDelete={handleDeleteBlocks}
+          />
         )}
 
         {activeTab === 'pacientes' && (
