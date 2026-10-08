@@ -4629,3 +4629,26 @@ body:has(.psy-dash) {
 .psy-macro-row-controls { display: inline-flex; align-items: center; justify-content: flex-end; gap: 0.6rem; }
 .psy-macro-row-controls .psy-macro-icon-btn { flex: 0 0 auto; }
 .psy-macro-chip--warn { background: rgba(255, 193, 7, 0.14); color: #ffd54f; }
+
+/* Agenda: filas compactas en una sola línea (día, semana y mes) */
+.psy-macro-row { display: flex; flex-wrap: nowrap; align-items: center; justify-content: space-between; gap: 0.5rem; min-height: 2.5rem; padding: 0.5rem 0.75rem; border-radius: 10px; }
+.psy-macro-row-main { flex: 1 1 auto; flex-wrap: nowrap; justify-content: flex-start; gap: 0.5rem; min-width: 0; }
+.psy-macro-row-controls { flex: 0 0 auto; align-items: center; justify-content: center; gap: 0.4rem; margin-left: auto; }
+.psy-macro-time { font-size: 0.78rem; font-weight: 600; line-height: 1; }
+.psy-macro-chip { display: inline-flex; align-items: center; justify-content: center; padding: 0.15rem 0.5rem; font-size: 0.64rem; line-height: 1.2; }
+.psy-macro-day-label { display: flex; align-items: baseline; gap: 0.4rem; flex: 0 1 auto; min-width: 0; white-space: nowrap; }
+.psy-macro-day-label strong { flex: 0 0 auto; color: #f4f1ff; font-size: 0.78rem; font-weight: 600; line-height: 1.2; }
+.psy-macro-day-label small { min-width: 0; overflow: hidden; text-overflow: ellipsis; color: rgba(255, 255, 255, 0.55); font-size: 0.68rem; line-height: 1.2; }
+.psy-macro-row .psy-switch { width: 2rem; height: 1.15rem; }
+.psy-macro-row .psy-switch-thumb { top: 0.15rem; left: 0.15rem; width: 0.85rem; height: 0.85rem; }
+.psy-macro-row .psy-switch--on .psy-switch-thumb { transform: translateX(0.85rem); }
+.psy-macro-row .psy-macro-icon-btn { display: inline-grid; place-items: center; width: 1.75rem; height: 1.75rem; border-radius: 8px; }
+.psy-macro-row .psy-macro-icon-btn svg { display: block; }
+
+@media (max-width: 640px) {
+  .psy-macro-row { gap: 0.4rem; padding: 0.5rem 0.6rem; }
+  .psy-macro-row-main { gap: 0.4rem; }
+  .psy-macro-row-controls { gap: 0.35rem; }
+  .psy-macro-day-label { gap: 0.3rem; }
+  .psy-macro-chip { padding: 0.12rem 0.4rem; font-size: 0.6rem; }
+}

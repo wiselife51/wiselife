@@ -193,7 +193,7 @@ export function AgendaModule({
                       onChange={() => run(() => onToggleSlot(slot.id, slot.is_available))}
                     />
                     <button type="button" className="psy-macro-icon-btn psy-macro-icon-btn--danger" aria-label="Eliminar horario" title="Eliminar" disabled={busy} onClick={() => run(() => onDeleteSlot(slot.id))}>
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
                     </button>
                   </span>
                 </div>
@@ -218,9 +218,17 @@ export function AgendaModule({
               const { total, active } = statsOf(d.value)
               return (
                 <div key={d.value} className={`psy-macro-row${total > 0 && active === 0 ? ' psy-macro-row--off' : ''}`}>
-                  <span className="psy-macro-day-name">
-                    <strong>{d.full}</strong>
-                    <small>{total === 0 ? 'Sin horarios' : `${active} de ${total} activos`}</small>
+                  <span className="psy-macro-row-main">
+                    <span className="psy-macro-day-label">
+                      <strong>{d.full}</strong>
+                      <small>{formatNextDate(d.value, today)}</small>
+                    </span>
+                    <span
+                      className={`psy-macro-chip psy-macro-chip--${total === 0 || active === 0 ? 'off' : active === total ? 'ok' : 'warn'}`}
+                      title={total === 0 ? 'Sin horarios' : `${active} de ${total} horarios activos`}
+                    >
+                      {total === 0 ? 'Sin horarios' : `${active}/${total}`}
+                    </span>
                   </span>
                   <span className="psy-macro-row-controls">
                     <Switch
@@ -236,7 +244,7 @@ export function AgendaModule({
                       title="Ver horarios"
                       onClick={() => { onSelectDay(d.value); setScope('dia') }}
                     >
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
                     </button>
                   </span>
                 </div>
@@ -251,9 +259,9 @@ export function AgendaModule({
             {months.map((m) => (
               <div key={m.key} className={`psy-macro-row${m.status === 'closed' ? ' psy-macro-row--off' : ''}`}>
                 <span className="psy-macro-row-main">
-                  <span className="psy-macro-day-name">
+                  <span className="psy-macro-day-label">
                     <strong>{m.label}</strong>
-                    <small>{m.total} días hábiles</small>
+                    <small>{m.total} días</small>
                   </span>
                   <span className={`psy-macro-chip psy-macro-chip--${m.status === 'open' ? 'ok' : m.status === 'partial' ? 'warn' : 'off'}`}>{MONTH_STATUS_LABEL[m.status]}</span>
                 </span>
