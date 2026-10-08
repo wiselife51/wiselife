@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { DashboardModuleHeader } from './DashboardModuleHeader'
 import { getMonthStates, type ScheduleBlockRow } from './scheduleUtils'
+import { AddSlotModal, type CreateSlotsInput } from './AddSlotModal'
 
 interface AvailabilitySlotRow {
   id: string
@@ -46,7 +47,8 @@ interface AgendaModuleProps {
   onSelectDay: (day: number) => void
   onMenu: () => void
   menuOpen: boolean
-  onAddSlot: (day: number) => void
+  hourOptions: string[]
+  onCreateSlots: (input: CreateSlotsInput) => Promise<void>
   onToggleSlot: (id: string, current: boolean) => Promise<void>
   onDeleteSlot: (id: string) => Promise<void>
   onSetDays: (days: number[], available: boolean) => Promise<void>
@@ -78,13 +80,15 @@ export function AgendaModule({
   onSelectDay,
   onMenu,
   menuOpen,
-  onAddSlot,
+  hourOptions,
+  onCreateSlots,
   onToggleSlot,
   onDeleteSlot,
   onSetDays,
   onSetMonthOpen,
 }: AgendaModuleProps) {
   const [scope, setScope] = useState<AgendaScope>('dia')
+  const [showAdd, setShowAdd] = useState(false)
   const [busy, setBusy] = useState(false)
 
   const run = async (task: () => Promise<void>) => {
@@ -135,7 +139,7 @@ export function AgendaModule({
             </button>
           ))}
         </div>
-        <button type="button" className="psy-macro-add" onClick={() => onAddSlot(selectedDay)}>
+        <button type="button" className="psy-macro-add" onClick={() => setShowAdd(true)}>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
           <span>Horario</span>
         </button>
@@ -176,7 +180,7 @@ export function AgendaModule({
             {daySlots.length === 0 ? (
               <div className="psy-dash-empty">
                 <p>No hay horarios configurados para este día.</p>
-                <button type="button" className="psy-dash-btn-outline" onClick={() => onAddSlot(selectedDay)}>Agregar horario</button>
+                <button type="button" className="psy-dash-btn-outline" onClick={() => setShowAdd(true)}>Agregar horario</button>
               </div>
             ) : (
               daySlots.map((slot) => (
@@ -278,6 +282,18 @@ export function AgendaModule({
           </>
         )}
       </div>
+
+      {showAdd && (
+        <AddSlotModal
+          initialDay={selectedDay}
+          availability={availability}
+          blocks={blocks}
+          today={today}
+          hourOptions={hourOptions}
+          onClose={() => setShowAdd(false)}
+          onSave={onCreateSlots}
+        />
+      )}
     </section>
   )
 }

@@ -9,6 +9,7 @@ import './PsychologistDashboard.css';
 import { DashboardModuleHeader } from './components/DashboardModuleHeader';
 import { AgendaModule } from './components/AgendaModule';
 import { BlocksModule, type CreateBlocksInput } from './components/BlocksModule';
+import type { CreateSlotsInput } from './components/AddSlotModal';
 import { MONTH_CLOSED_REASON, datesOfMonth, isWeekendKey } from './components/scheduleUtils';
 import { toDateStr } from '../../lib/date';
 import AppointmentCalendar from '../../components/AppointmentCalendar/AppointmentCalendar';
@@ -421,18 +422,6 @@ interface ScheduleBlock {
   reason: string | null;
 }
 
-const DAYS_CONFIG = [
-  { value: 1, label: 'Lun' },
-  { value: 2, label: 'Mar' },
-  { value: 3, label: 'Mie' },
-  { value: 4, label: 'Jue' },
-  { value: 5, label: 'Vie' },
-  { value: 6, label: 'Sab' },
-  { value: 0, label: 'Dom' },
-];
-
-const DAY_NAMES_FULL = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
-
 const HOUR_OPTIONS = Array.from({ length: 15 }, (_, i) => {
   const h = i + 7;
   return `${h.toString().padStart(2, '0')}:00`;
@@ -474,11 +463,6 @@ const PsychologistDashboard: React.FC = () => {
   // Block form
 
   // Add availability
-  const [showAddSlot, setShowAddSlot] = useState(false);
-  const [newSlotDay, setNewSlotDay] = useState(1);
-  const [newSlotStart, setNewSlotStart] = useState('08:00');
-  const [newSlotEnd, setNewSlotEnd] = useState('09:00');
-  const [savingSlot, setSavingSlot] = useState(false);
 
   // Mobile menu
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -1023,19 +1007,23 @@ const PsychologistDashboard: React.FC = () => {
   };
 
   // Availability actions
-  const handleAddSlot = async () => {
+  const handleCreateSlots = async ({ days, start, end, months }: CreateSlotsInput) => {
     if (!profile) return;
-    setSavingSlot(true);
-    await supabase.from('psychologist_availability').insert({
-      psychologist_id: profile.id,
-      day_of_week: newSlotDay,
-      start_time: newSlotStart,
-      end_time: newSlotEnd,
-      is_available: true,
-    });
-    setShowAddSlot(false);
-    setSavingSlot(false);
-    fetchData();
+    if (days.length > 0) {
+      await supabase.from('psychologist_availability').insert(
+        days.map((day) => ({
+          psychologist_id: profile.id,
+          day_of_week: day,
+          start_time: start,
+          end_time: end,
+          is_available: true,
+        })),
+      );
+    }
+    for (const { year, month } of months) {
+      await handleSetMonthOpen(year, month, true);
+    }
+    await refreshSchedule();
   };
 
   const handleDeleteSlot = async (slotId: string) => {
@@ -1595,47 +1583,13 @@ const PsychologistDashboard: React.FC = () => {
               onSelectDay={setSelectedDay}
               onMenu={() => setShowMobileMenu(!showMobileMenu)}
               menuOpen={showMobileMenu}
-              onAddSlot={(day) => { setNewSlotDay(day); setShowAddSlot(true); }}
+              hourOptions={HOUR_OPTIONS}
+              onCreateSlots={handleCreateSlots}
               onToggleSlot={handleToggleSlot}
               onDeleteSlot={handleDeleteSlot}
               onSetDays={handleSetDaysAvailability}
               onSetMonthOpen={handleSetMonthOpen}
             />
-        {showAddSlot && (
-          <div className="psy-dash-modal-backdrop" onClick={() => setShowAddSlot(false)}>
-            <div className="psy-dash-modal" onClick={(e) => e.stopPropagation()}>
-              <h3>Agregar horario disponible</h3>
-              <div className="psy-dash-modal-fields">
-                <div className="psy-dash-modal-field">
-                  <label>Dia</label>
-                  <select value={newSlotDay} onChange={(e) => setNewSlotDay(parseInt(e.target.value))}>
-                    {DAYS_CONFIG.map((d) => <option key={d.value} value={d.value}>{DAY_NAMES_FULL[d.value]}</option>)}
-                  </select>
-                </div>
-                <div className="psy-dash-modal-row">
-                  <div className="psy-dash-modal-field">
-                    <label>Inicio</label>
-                    <select value={newSlotStart} onChange={(e) => setNewSlotStart(e.target.value)}>
-                      {HOUR_OPTIONS.map((h) => <option key={h} value={h}>{h}</option>)}
-                    </select>
-                  </div>
-                  <div className="psy-dash-modal-field">
-                    <label>Fin</label>
-                    <select value={newSlotEnd} onChange={(e) => setNewSlotEnd(e.target.value)}>
-                      {HOUR_OPTIONS.map((h) => <option key={h} value={h}>{h}</option>)}
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <div className="psy-dash-modal-actions">
-                <button type="button" className="psy-dash-btn-ghost" onClick={() => setShowAddSlot(false)}>Cancelar</button>
-                <button type="button" className="psy-dash-btn-primary" onClick={handleAddSlot} disabled={savingSlot}>
-                  {savingSlot ? 'Guardando...' : 'Agregar'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
           </>
         )}
 
