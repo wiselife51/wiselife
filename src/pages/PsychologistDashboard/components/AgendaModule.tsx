@@ -28,6 +28,14 @@ const DAYS = [
   { value: 0, short: 'Dom', full: 'Domingo' },
 ]
 
+const MONTH_NAMES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
+
+function formatNextDate(dayOfWeek: number, today: Date) {
+  const date = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+  date.setDate(date.getDate() + ((dayOfWeek - date.getDay() + 7) % 7))
+  return `${date.getDate()} de ${MONTH_NAMES[date.getMonth()]}`
+}
+
 const MONTH_STATUS_LABEL = { open: 'Abierto', closed: 'Cerrado', partial: 'Parcial' } as const
 
 interface AgendaModuleProps {
@@ -148,16 +156,16 @@ export function AgendaModule({
                     onClick={() => onSelectDay(d.value)}
                   >
                     <span>{d.short}</span>
-                    {active > 0 && <small>{active}</small>}
+                    <small>{active}</small>
                   </button>
                 )
               })}
             </div>
 
             <div className="psy-macro-summary">
-              <div>
-                <strong>{selectedDayInfo.full}</strong>
-                <small>{dayActive} de {daySlots.length} horarios activos</small>
+              <div className="psy-macro-summary-info">
+                <strong>{selectedDayInfo.full} {formatNextDate(selectedDay, today)}</strong>
+                <small>Se repite cada {selectedDayInfo.full.toLowerCase()} · {dayActive} de {daySlots.length} horarios activos</small>
               </div>
               <div className="psy-macro-summary-actions">
                 <button type="button" disabled={busy || daySlots.length === 0 || dayActive === daySlots.length} onClick={() => run(() => onSetDays([selectedDay], true))}>Activar todo</button>
@@ -173,17 +181,21 @@ export function AgendaModule({
             ) : (
               daySlots.map((slot) => (
                 <div key={slot.id} className={`psy-macro-row${slot.is_available ? '' : ' psy-macro-row--off'}`}>
-                  <span className="psy-macro-time">{slot.start_time.slice(0, 5)} - {slot.end_time.slice(0, 5)}</span>
-                  <span className={`psy-macro-chip psy-macro-chip--${slot.is_available ? 'ok' : 'off'}`}>{slot.is_available ? 'Disponible' : 'No disponible'}</span>
-                  <Switch
-                    checked={slot.is_available}
-                    disabled={busy}
-                    label={slot.is_available ? 'Desactivar horario' : 'Activar horario'}
-                    onChange={() => run(() => onToggleSlot(slot.id, slot.is_available))}
-                  />
-                  <button type="button" className="psy-macro-icon-btn psy-macro-icon-btn--danger" aria-label="Eliminar horario" title="Eliminar" disabled={busy} onClick={() => run(() => onDeleteSlot(slot.id))}>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
-                  </button>
+                  <span className="psy-macro-row-main">
+                    <span className="psy-macro-time">{slot.start_time.slice(0, 5)} - {slot.end_time.slice(0, 5)}</span>
+                    <span className={`psy-macro-chip psy-macro-chip--${slot.is_available ? 'ok' : 'off'}`}>{slot.is_available ? 'Disponible' : 'No disponible'}</span>
+                  </span>
+                  <span className="psy-macro-row-controls">
+                    <Switch
+                      checked={slot.is_available}
+                      disabled={busy}
+                      label={slot.is_available ? 'Desactivar horario' : 'Activar horario'}
+                      onChange={() => run(() => onToggleSlot(slot.id, slot.is_available))}
+                    />
+                    <button type="button" className="psy-macro-icon-btn psy-macro-icon-btn--danger" aria-label="Eliminar horario" title="Eliminar" disabled={busy} onClick={() => run(() => onDeleteSlot(slot.id))}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
+                    </button>
+                  </span>
                 </div>
               ))
             )}
@@ -210,21 +222,23 @@ export function AgendaModule({
                     <strong>{d.full}</strong>
                     <small>{total === 0 ? 'Sin horarios' : `${active} de ${total} activos`}</small>
                   </span>
-                  <button
-                    type="button"
-                    className="psy-macro-icon-btn"
-                    aria-label={`Editar horarios del ${d.full}`}
-                    title="Ver horarios"
-                    onClick={() => { onSelectDay(d.value); setScope('dia') }}
-                  >
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
-                  </button>
-                  <Switch
-                    checked={total > 0 && active === total}
-                    disabled={busy || total === 0}
-                    label={active === total && total > 0 ? `Desactivar ${d.full}` : `Activar ${d.full}`}
-                    onChange={() => run(() => onSetDays([d.value], !(total > 0 && active === total)))}
-                  />
+                  <span className="psy-macro-row-controls">
+                    <Switch
+                      checked={total > 0 && active === total}
+                      disabled={busy || total === 0}
+                      label={active === total && total > 0 ? `Desactivar ${d.full}` : `Activar ${d.full}`}
+                      onChange={() => run(() => onSetDays([d.value], !(total > 0 && active === total)))}
+                    />
+                    <button
+                      type="button"
+                      className="psy-macro-icon-btn"
+                      aria-label={`Editar horarios del ${d.full}`}
+                      title="Ver horarios"
+                      onClick={() => { onSelectDay(d.value); setScope('dia') }}
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+                    </button>
+                  </span>
                 </div>
               )
             })}
@@ -236,17 +250,21 @@ export function AgendaModule({
             <p className="psy-macro-note">Abre o cierra meses completos. Un mes cerrado no recibe reservas; los fines de semana se mantienen bloqueados.</p>
             {months.map((m) => (
               <div key={m.key} className={`psy-macro-row${m.status === 'closed' ? ' psy-macro-row--off' : ''}`}>
-                <span className="psy-macro-day-name">
-                  <strong>{m.label}</strong>
-                  <small>{m.total} días hábiles</small>
+                <span className="psy-macro-row-main">
+                  <span className="psy-macro-day-name">
+                    <strong>{m.label}</strong>
+                    <small>{m.total} días hábiles</small>
+                  </span>
+                  <span className={`psy-macro-chip psy-macro-chip--${m.status === 'open' ? 'ok' : m.status === 'partial' ? 'warn' : 'off'}`}>{MONTH_STATUS_LABEL[m.status]}</span>
                 </span>
-                <span className={`psy-macro-chip psy-macro-chip--${m.status === 'open' ? 'ok' : m.status === 'partial' ? 'warn' : 'off'}`}>{MONTH_STATUS_LABEL[m.status]}</span>
-                <Switch
-                  checked={m.status === 'open'}
-                  disabled={busy || m.total === 0}
-                  label={m.status === 'open' ? `Cerrar ${m.label}` : `Abrir ${m.label}`}
-                  onChange={() => run(() => onSetMonthOpen(m.year, m.month, m.status !== 'open'))}
-                />
+                <span className="psy-macro-row-controls">
+                  <Switch
+                    checked={m.status === 'open'}
+                    disabled={busy || m.total === 0}
+                    label={m.status === 'open' ? `Cerrar ${m.label}` : `Abrir ${m.label}`}
+                    onChange={() => run(() => onSetMonthOpen(m.year, m.month, m.status !== 'open'))}
+                  />
+                </span>
               </div>
             ))}
           </>

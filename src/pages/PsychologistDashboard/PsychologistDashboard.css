@@ -4583,7 +4583,7 @@ body:has(.psy-dash) {
 .psy-macro-summary strong { color: #f4f1ff; font-size: 0.85rem; }
 .psy-macro-summary-actions { display: flex; gap: 0.4rem; flex-wrap: wrap; }
 
-.psy-macro-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 0.6rem; width: 100%; min-height: 2.75rem; padding: 0.7rem 0.875rem; border: 1px solid rgba(126, 87, 194, 0.22); border-radius: 12px; background: rgba(18, 24, 42, 0.78); color: var(--psy-text, #fff); }
+.psy-macro-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0.6rem; width: 100%; min-height: 2.75rem; padding: 0.7rem 0.875rem; border: 1px solid rgba(126, 87, 194, 0.22); border-radius: 12px; background: rgba(18, 24, 42, 0.78); color: var(--psy-text, #fff); }
 .psy-macro-row--off { opacity: 0.6; }
 .psy-macro-row--block { border-color: rgba(239, 83, 80, 0.22); }
 .psy-macro-time { color: #f4f1ff; font-size: 0.88rem; font-weight: 600; white-space: nowrap; }
@@ -4615,10 +4615,17 @@ body:has(.psy-dash) {
   .psy-macro-add { width: 100%; }
   .psy-macro-day { font-size: 0.75rem; min-height: 2.6rem; }
   .psy-macro-summary-actions button { padding: 0.65rem 0.5rem; }
-  .psy-macro-row { grid-template-columns: minmax(0, 1fr) auto; }
-  .psy-macro-row .psy-macro-chip { grid-column: 1; grid-row: 2; justify-self: start; }
-  .psy-macro-row .psy-macro-icon-btn { grid-column: 2; grid-row: 1 / span 2; }
+  .psy-macro-row { gap: 0.5rem; padding: 0.7rem 0.75rem; }
+  .psy-macro-row-main { gap: 0.4rem; }
+  .psy-macro-row-controls { gap: 0.4rem; }
+  .psy-macro-summary { flex-direction: column; align-items: stretch; text-align: center; }
+  .psy-macro-summary-info { align-items: center; }
   .psy-macro-summary-actions { width: 100%; }
   .psy-macro-summary-actions > * { flex: 1 1 0; }
 }
+.psy-macro-summary-info { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+.psy-macro-summary-info small { color: rgba(255, 255, 255, 0.55); font-size: 0.74rem; line-height: 1.4; }
+.psy-macro-row-main { display: flex; align-items: center; flex-wrap: wrap; gap: 0.6rem; min-width: 0; }
+.psy-macro-row-controls { display: inline-flex; align-items: center; justify-content: flex-end; gap: 0.6rem; }
+.psy-macro-row-controls .psy-macro-icon-btn { flex: 0 0 auto; }
 .psy-macro-chip--warn { background: rgba(255, 193, 7, 0.14); color: #ffd54f; }
