@@ -314,7 +314,7 @@ const MisCitas: React.FC = () => {
   }
 
   return (
-    <DashboardLayout pageTitle="Mis Citas">
+    <DashboardLayout pageTitle="Mis citas" subtitle="Consulta y gestiona tus sesiones">
       <div className="mc-page">
         {/* Stats */}
         <div className="mc-stats">

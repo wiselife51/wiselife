@@ -91,7 +91,7 @@ const Profile: React.FC = () => {
   const initial = displayName.charAt(0).toUpperCase();
 
   return (
-    <DashboardLayout pageTitle="Mi perfil">
+    <DashboardLayout pageTitle="Mi perfil" subtitle="Tu información personal">
       <div className="profile-page">
         {/* User card */}
         <div className="profile-user-card">

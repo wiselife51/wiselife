@@ -1,214 +1,23 @@
-.dash-layout {
-  position: relative;
-  display: flex;
-  min-height: 100vh;
-  min-height: 100dvh;
-  font-family: 'Inter', sans-serif;
-}
+/* El shell (sidebar, header, tarjeta) reutiliza las clases psy-* del
+   dashboard del psicólogo para que ambos módulos se vean idénticos.
+   Aquí solo vive el contenedor con scroll del contenido del paciente. */
+.pt-page { min-height: 0; }
 
-/* Video de fondo */
-.dash-layout-video {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 0;
-}
-
-.dash-layout-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(10, 15, 25, 0.75);
-  z-index: 1;
-}
-
-/* Main area */
-.dash-layout-main {
-  position: relative;
-  z-index: 2;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  margin-left: 240px;
-}
-
-/* Top bar */
-.dash-layout-topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.875rem 2rem;
-  background: rgba(17, 24, 39, 0.4);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.dash-layout-menu-btn {
-  display: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: rgba(255, 255, 255, 0.7);
-  padding: 0.5rem;
-  border-radius: 8px;
-  transition: all 0.2s;
-}
-
-.dash-layout-menu-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
-}
-
-.dash-layout-page-title {
-  font-size: 1.375rem;
-  font-weight: 700;
-  color: #ffffff;
-  margin: 0;
-}
-
-.dash-layout-topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.dash-layout-help-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  padding: 0.375rem 0.875rem;
-  font-size: 0.8125rem;
-  color: rgba(255, 255, 255, 0.7);
-  cursor: pointer;
-  transition: all 0.2s;
-  font-family: 'Inter', sans-serif;
-}
-
-.dash-layout-help-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(126, 87, 194, 0.4);
-  color: #ffffff;
-}
-
-/* Avatar button */
-.dash-layout-avatar-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 2px solid rgba(126, 87, 194, 0.5);
-  background: none;
-  cursor: pointer;
-  overflow: hidden;
-  padding: 0;
-  transition: border-color 0.2s;
-}
-
-.dash-layout-avatar-btn:hover {
-  border-color: #7e57c2;
-}
-
-.dash-layout-avatar {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-}
-
-.dash-layout-avatar-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #5c6bc0, #7e57c2);
-  color: #ffffff;
-  font-weight: 700;
-  font-size: 0.875rem;
-}
-
-/* Content */
-.dash-layout-content {
-  flex: 1;
-  padding: 2rem;
+.pt-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 0.35rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(126, 87, 194, 0.55) transparent;
+  font-family: 'Inter', sans-serif;
 }
+.pt-scroll::-webkit-scrollbar { width: 8px; }
+.pt-scroll::-webkit-scrollbar-track { background: transparent; }
+.pt-scroll::-webkit-scrollbar-thumb { background: rgba(126, 87, 194, 0.55); border-radius: 999px; }
+.pt-scroll::-webkit-scrollbar-thumb:hover { background: rgba(126, 87, 194, 0.75); }
 
-/* Backdrop for mobile */
-.dash-layout-backdrop {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 19;
-}
-
-/* Mobile / Tablet */
 @media (max-width: 768px) {
-  .dash-layout-main {
-    margin-left: 0;
-  }
-
-  .dash-layout-menu-btn {
-    display: flex;
-  }
-
-  .dash-layout-backdrop {
-    display: block;
-  }
-
-  .dash-layout-topbar {
-    padding: 0.75rem 1rem;
-  }
-
-  .dash-layout-page-title {
-    font-size: 1.125rem;
-  }
-
-  .dash-layout-content {
-    padding: 1rem;
-  }
-
-  .dash-layout-help-btn span {
-    display: none;
-  }
-}
-
-/* Shared layout safety: content grows with the page and never creates a white tail. */
-html, body, #root { min-height: 100%; background: #0a0f19; }
-.dash-layout { min-height: 100dvh; width: 100%; overflow-x: clip; background: #0a0f19; }
-.dash-layout-main { min-height: 100dvh; }
-.dash-layout-topbar { flex-wrap: wrap; gap: 0.75rem 1rem; }
-.dash-layout-page-title { min-width: 0; overflow-wrap: anywhere; }
-.dash-layout-topbar-right { flex-wrap: wrap; margin-left: auto; }
-.dash-layout-content { min-width: 0; min-height: 0; overflow-x: hidden; padding-bottom: 3rem; }
-
-@media (max-width: 480px) {
-  .dash-layout-topbar {
-    align-items: center;
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    gap: 0.5rem;
-    padding-inline: 0.75rem;
-  }
-  .dash-layout-menu-btn {
-    position: static;
-    min-width: 44px;
-    min-height: 44px;
-  }
-  .dash-layout-page-title { min-width: 0; font-size: 1rem; line-height: 1.25; }
-  .dash-layout-topbar-right { min-width: 0; margin-left: 0; justify-content: flex-end; }
-  .dash-layout-content { padding-inline: 0.75rem; padding-bottom: 2rem; }
+  .pt-scroll { padding-right: 0.15rem; }
 }

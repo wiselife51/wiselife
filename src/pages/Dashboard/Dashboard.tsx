@@ -116,7 +116,7 @@ const Dashboard: React.FC = () => {
   const firstName = displayName.split(' ')[0];
 
   return (
-    <DashboardLayout pageTitle="Inicio">
+    <DashboardLayout pageTitle="Inicio" subtitle="Tu espacio de bienestar">
       <div className="dash-home">
         {/* Saludo */}
         <div className="dash-home-top">
