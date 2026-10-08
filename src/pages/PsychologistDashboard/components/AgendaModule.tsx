@@ -161,7 +161,7 @@ export function AgendaModule({
               </div>
               <div className="psy-macro-summary-actions">
                 <button type="button" disabled={busy || daySlots.length === 0 || dayActive === daySlots.length} onClick={() => run(() => onSetDays([selectedDay], true))}>Activar todo</button>
-                <button type="button" disabled={busy || dayActive === 0} onClick={() => run(() => onSetDays([selectedDay], false))}>Desactivar</button>
+                <button type="button" className="psy-macro-action--danger" disabled={busy || dayActive === 0} onClick={() => run(() => onSetDays([selectedDay], false))}>Desactivar todo</button>
               </div>
             </div>
 
@@ -199,7 +199,7 @@ export function AgendaModule({
               </div>
               <div className="psy-macro-summary-actions">
                 <button type="button" disabled={busy || availability.length === 0 || activeCount === availability.length} onClick={() => run(() => onSetDays(allDays, true))}>Activar semana</button>
-                <button type="button" disabled={busy || activeCount === 0} onClick={() => run(() => onSetDays(allDays, false))}>Desactivar</button>
+                <button type="button" className="psy-macro-action--danger" disabled={busy || activeCount === 0} onClick={() => run(() => onSetDays(allDays, false))}>Desactivar todo</button>
               </div>
             </div>
             {DAYS.map((d) => {
