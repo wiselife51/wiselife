@@ -97,7 +97,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, profile }) => {
             )}
           </div>
           <h3 className="psy-dash-name">{profile.fullName}</h3>
-          <p className="psy-dash-email">{profile.email}</p>
         </div>
 
         <nav className="psy-dash-nav">
