@@ -21,3 +21,5 @@
 @media (max-width: 768px) {
   .pt-scroll { padding-right: 0.15rem; }
 }
+
+.psy-dash-sidebar.pt-sidebar .psy-dash-profile { border-bottom: 0; }
