@@ -4003,16 +4003,29 @@ body:has(.psy-dash) {
   el navegador no deja arrastrar mas alla de esa caja interna y el
   contenido de abajo (tarifas, biografia, guardar) queda inalcanzable.
   Se anula aqui para que el main sea el unico que scrollea. */
-  .psy-profile-page,
-  .psy-patients-page {
+  .psy-profile-page {
   width: 100%;
   height: auto;
   overflow: visible;
   }
-  .psy-profile-scroll,
-  .psy-patients-scroll {
+  .psy-profile-scroll {
   overflow-y: visible;
   padding-right: 0;
+  }
+  /* Mis Pacientes sigue el patron de Proximas citas: el main no scrollea,
+  la tarjeta ocupa todo el alto disponible (aunque haya pocos pacientes) y
+  solo .psy-patients-scroll se desplaza con el scrollbar morado. */
+  .psy-dash-main:has(.psy-patients-page) {
+  overflow: hidden;
+  }
+  .psy-patients-page {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  }
+  .psy-patients-scroll {
+  overflow-y: auto;
+  padding-right: 0.15rem;
   }
   .psy-profile-intro { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 0.65rem; margin-bottom: 0.45rem; }
   .psy-profile-intro .psy-profile-card-head { justify-content: flex-start; gap: 0.5rem; padding: 0; }
