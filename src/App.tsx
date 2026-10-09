@@ -17,6 +17,7 @@ import AgendarSesion from './pages/AgendarSesion/AgendarSesion';
 import Specialists from './pages/Specialists/Specialists';
 import SpecialistProfile from './pages/SpecialistProfile/SpecialistProfile';
 import MisCitas from './pages/MisCitas/MisCitas';
+import Pendientes from './pages/Pendientes/Pendientes';
 import Admin from './pages/Admin/Admin';
 
 const App: React.FC = () => {
@@ -37,6 +38,7 @@ const App: React.FC = () => {
             <Route path="/especialistas" element={<Specialists />} />
             <Route path="/especialista/:id" element={<SpecialistProfile />} />
             <Route path="/mis-citas" element={<MisCitas />} />
+            <Route path="/pendientes" element={<Pendientes />} />
             <Route path="/psicologo/login" element={<PsychologistLogin />} />
             <Route path="/psicologo/onboarding" element={<PsychologistOnboarding />} />
             <Route path="/psicologo/dashboard" element={<PsychologistDashboard />} />

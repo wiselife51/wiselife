@@ -5,6 +5,10 @@ import { supabase } from '../../lib/supabase';
 import { toDateStr } from '../../lib/date';
 import DashboardLayout from '../../components/DashboardLayout/DashboardLayout';
 import BookingModal from './BookingModal';
+import ReviewsModal from './ReviewsModal';
+import StarRating from '../../components/StarRating/StarRating';
+import { fetchRatingSummaries } from '../../lib/reviews';
+import type { RatingSummary } from '../../lib/reviews';
 import {
   DAY_NAMES,
   MODALITY_LABELS,
@@ -38,6 +42,8 @@ const AgendarSesion: React.FC = () => {
   const [loadingList, setLoadingList] = useState(true);
   const [search, setSearch] = useState('');
   const [specialty, setSpecialty] = useState('');
+  const [ratings, setRatings] = useState<Record<string, RatingSummary>>({});
+  const [reviewsFor, setReviewsFor] = useState<BookingPsychologist | null>(null);
 
   const [selected, setSelected] = useState<BookingPsychologist | null>(null);
   const [availability, setAvailability] = useState<AvailabilitySlot[]>([]);
@@ -66,6 +72,7 @@ const AgendarSesion: React.FC = () => {
         .eq('onboarding_completed', true)
         .order('full_name');
       const list = (data || []) as BookingPsychologist[];
+      setRatings(await fetchRatingSummaries());
       setPsychologists(list);
       setLoadingList(false);
 
@@ -251,30 +258,56 @@ const AgendarSesion: React.FC = () => {
               <ul className="ag-list">
                 {filtered.map((psy) => (
                   <li key={psy.id}>
-                    <button type="button" className="ag-psy" onClick={() => chooseSpecialist(psy)}>
-                      <span className="ag-psy-avatar">
-                        {psy.avatar_url ? (
-                          <img src={psy.avatar_url} alt="" crossOrigin="anonymous" />
-                        ) : (
-                          <span>{psy.full_name.charAt(0).toUpperCase()}</span>
-                        )}
-                      </span>
-                      <span className="ag-psy-info">
-                        <strong>{psy.full_name}</strong>
-                        <span className="ag-psy-meta">
-                          {psy.years_experience} años exp.{psy.city ? ` · ${psy.city}` : ''}
+                    <article className="ag-psy">
+                      <div className="ag-psy-top">
+                        <span className="ag-psy-avatar">
+                          {psy.avatar_url ? (
+                            <img src={psy.avatar_url} alt="" crossOrigin="anonymous" />
+                          ) : (
+                            <span>{psy.full_name.charAt(0).toUpperCase()}</span>
+                          )}
                         </span>
-                        <span className="ag-psy-tags">
-                          {(psy.specialties || []).slice(0, 2).map((s) => (
-                            <span key={s} className="ag-tag">{s}</span>
-                          ))}
+                        <div className="ag-psy-info">
+                          <strong>{psy.full_name}</strong>
+                          {(psy.specialties || [])[0] && (
+                            <span className="ag-tag">{psy.specialties[0]}</span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="ag-psy-rating">
+                        <StarRating value={ratings[psy.id]?.rating_avg || 0} size={16} />
+                        <span className="ag-psy-rating-text">
+                          {ratings[psy.id]
+                            ? `${ratings[psy.id].rating_avg.toFixed(1)} (${ratings[psy.id].rating_count})`
+                            : 'Sin opiniones'}
                         </span>
-                      </span>
-                      <span className="ag-psy-price">
-                        <strong>${(psy.session_price || 0).toLocaleString('es-CO')}</strong>
-                        <span>{psy.session_duration} min</span>
-                      </span>
-                    </button>
+                      </div>
+
+                      <dl className="ag-psy-facts">
+                        <div>
+                          <dt>Experiencia</dt>
+                          <dd>{psy.years_experience} años</dd>
+                        </div>
+                        <div>
+                          <dt>Sesión</dt>
+                          <dd>{psy.session_duration} min</dd>
+                        </div>
+                        <div>
+                          <dt>Desde</dt>
+                          <dd>${(psy.session_price || 0).toLocaleString('es-CO')}</dd>
+                        </div>
+                      </dl>
+
+                      <div className="ag-psy-actions">
+                        <button type="button" className="ag-psy-btn ag-psy-btn--ghost" onClick={() => setReviewsFor(psy)}>
+                          Opiniones
+                        </button>
+                        <button type="button" className="ag-psy-btn ag-psy-btn--primary" onClick={() => chooseSpecialist(psy)}>
+                          Agendar
+                        </button>
+                      </div>
+                    </article>
                   </li>
                 ))}
               </ul>
@@ -393,6 +426,14 @@ const AgendarSesion: React.FC = () => {
           </section>
         )}
       </div>
+
+      {reviewsFor && (
+        <ReviewsModal
+          psy={reviewsFor}
+          summary={ratings[reviewsFor.id]}
+          onClose={() => setReviewsFor(null)}
+        />
+      )}
 
       {selected && day && slot && user && (
         <BookingModal

@@ -3,6 +3,14 @@
 **Propósito:** historial de cambios documentales y del proyecto.
 **Responsable:** Documentador Técnico. **Estado:** Activo; requiere mantenerlo en cada entrega.
 
+## 2026-10-08 — Calificaciones de psicólogos y módulo Pendientes
+- Nueva tabla `public.psychologist_reviews` (una reseña por cita, `rating` 1-5, comentario opcional de hasta 600 caracteres) y vista `public.psychologist_rating_summary` (promedio y conteo, `security_invoker`). Migración en `supabase/migrations/20261008000100_psychologist_reviews.sql`.
+- RLS: cualquier usuario autenticado puede leer reseñas; solo el paciente dueño de la cita puede insertar, y únicamente si la cita está `completada` o tiene `attended_at`.
+- Tarjetas de especialista en `/agendar-sesion`: una sola especialidad, estrellas con promedio, datos agrupados (experiencia, duración, precio) y botones "Opiniones" y "Agendar". "Opiniones" abre `ReviewsModal.tsx` con las reseñas de otros pacientes (nombre abreviado, fecha, estrellas y comentario).
+- Nuevo módulo `/pendientes` (`src/pages/Pendientes/Pendientes.tsx`, botón en el menú lateral): lista las citas atendidas aún sin calificar para que el paciente califique al psicólogo. Al enviar, la calificación alimenta el promedio visible en las tarjetas.
+- Nuevos archivos: `src/components/StarRating/` (estrellas de solo lectura con fracciones y modo entrada), `src/lib/reviews.ts`.
+- Validación: `tsc --noEmit` sin errores. La verificación visual en navegador no se pudo completar (el preview devolvió "sandbox not found"); revisar tarjetas, modal de opiniones y Pendientes en móvil.
+
 ## 2026-10-08 — Módulo de pacientes: Agendar sesión
 - Nuevo botón "Agendar sesión" en el menú lateral del paciente, debajo de "Inicio" (`src/components/Sidebar/Sidebar.tsx`) y nueva ruta `/agendar-sesion` en `src/App.tsx`.
 - Nueva pantalla `src/pages/AgendarSesion/AgendarSesion.tsx` con tres pasos: (1) elegir especialista con búsqueda por nombre y filtro por especialidad, (2) elegir modalidad, tipo de consulta, día (14 días) y hora, (3) confirmar cita y pagar.
