@@ -3,6 +3,16 @@
 **Propósito:** historial de cambios documentales y del proyecto.
 **Responsable:** Documentador Técnico. **Estado:** Activo; requiere mantenerlo en cada entrega.
 
+## 2026-10-08 — Módulo de pacientes: Agendar sesión
+- Nuevo botón "Agendar sesión" en el menú lateral del paciente, debajo de "Inicio" (`src/components/Sidebar/Sidebar.tsx`) y nueva ruta `/agendar-sesion` en `src/App.tsx`.
+- Nueva pantalla `src/pages/AgendarSesion/AgendarSesion.tsx` con tres pasos: (1) elegir especialista con búsqueda por nombre y filtro por especialidad, (2) elegir modalidad, tipo de consulta, día (14 días) y hora, (3) confirmar cita y pagar.
+- Los horarios se calculan con `psychologist_availability`, descontando `schedule_blocks`, citas activas (`pendiente_pago`, `confirmada`) y horas ya pasadas del día actual.
+- `src/pages/AgendarSesion/BookingModal.tsx` reutiliza el flujo existente: inserta la cita en `appointments` como `pendiente_pago`, maneja el conflicto de horario (`appointments_psychologist_slot_active_uidx`) y registra el pago Nequi dividido 95%/5% con `register_nequi_payment`. No hay cambios de base de datos.
+- `src/pages/AgendarSesion/booking.ts` concentra tipos y utilidades (fechas, modalidades, precios por modalidad y tipo de paciente). Los estilos reutilizan clases `sp-*` de `SpecialistProfile.css` y añaden `ag-*` en `AgendarSesion.css`.
+- Admite `?especialista=<id>` para abrir el módulo con un especialista preseleccionado.
+- Nota técnica: no usar la etiqueta `header` dentro de las pantallas con `DashboardLayout`; una regla global la deja con `position: fixed`.
+- Validación: `tsc --noEmit` sin errores y revisión en navegador móvil (389x791) de los pasos 1 y 2. No se probó el pago completo.
+
 ## 2026-10-07 — Pago Nequi con comisión del 5% para Vida Sabia
 - El paso de pago de `src/pages/SpecialistProfile/SpecialistProfile.tsx` ahora divide el valor de la sesión en dos transferencias Nequi: 95% al número del psicólogo (`psychologists.phone`) y 5% a Vida Sabia (`+57 318 472 6151`). Cada una muestra monto exacto, número y botones "Copiar", y pide su propia referencia de comprobante.
 - Se eliminó el uso de `VITE_NEQUI_PHONE` como destino del pago y el deep link `nequi://payments?...`, que no es un esquema público de Nequi y dejaba el pago inoperante. El botón "Abrir Nequi" solo abre la app (o `nequi.com.co` como alternativa).

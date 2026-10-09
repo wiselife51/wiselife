@@ -13,6 +13,7 @@ import Profile from './pages/Profile/Profile';
 import PsychologistLogin from './pages/PsychologistLogin/PsychologistLogin';
 import PsychologistOnboarding from './pages/PsychologistOnboarding/PsychologistOnboarding';
 import PsychologistDashboard from './pages/PsychologistDashboard/PsychologistDashboard';
+import AgendarSesion from './pages/AgendarSesion/AgendarSesion';
 import Specialists from './pages/Specialists/Specialists';
 import SpecialistProfile from './pages/SpecialistProfile/SpecialistProfile';
 import MisCitas from './pages/MisCitas/MisCitas';
@@ -32,6 +33,7 @@ const App: React.FC = () => {
             <Route path="/motivation-survey" element={<MotivationSurvey />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/mi-perfil" element={<Profile />} />
+            <Route path="/agendar-sesion" element={<AgendarSesion />} />
             <Route path="/especialistas" element={<Specialists />} />
             <Route path="/especialista/:id" element={<SpecialistProfile />} />
             <Route path="/mis-citas" element={<MisCitas />} />
