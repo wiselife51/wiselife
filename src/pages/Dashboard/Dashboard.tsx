@@ -11,16 +11,19 @@ interface Profile {
   motivation: string | null;
 }
 
-const SPECIALTIES = [
-  'Relaciones interpersonales',
-  'Ansiedad',
-  'Depresion',
-  'Sexualidad',
-  'Traumas',
-  'Cambios de Vida',
-  'Autolesion',
-  'Duelo',
-  'Autoestima',
+const SPECIALTIES: { label: string; value: string }[] = [
+  { label: 'Relaciones', value: 'Relaciones interpersonales' },
+  { label: 'Ansiedad', value: 'Ansiedad' },
+  { label: 'Depresión', value: 'Depresion' },
+  { label: 'Sexualidad', value: 'Sexualidad' },
+  { label: 'Traumas', value: 'Traumas' },
+  { label: 'Cambios de vida', value: 'Cambios de Vida' },
+  { label: 'Autolesión', value: 'Autolesion' },
+  { label: 'Duelo', value: 'Duelo' },
+  { label: 'Autoestima', value: 'Autoestima' },
+  { label: 'Pareja', value: 'Terapia de pareja' },
+  { label: 'Estrés', value: 'Estres laboral' },
+  { label: 'TDAH', value: 'TDAH' },
 ];
 
 type MoodKey = 'muy_mal' | 'mal' | 'neutral' | 'bien' | 'muy_bien';
@@ -156,6 +159,16 @@ const Dashboard: React.FC = () => {
           {moodSaved && (
             <p className="dash-home-diary-saved">Registrado. Gracias por compartir.</p>
           )}
+          <div className="dash-home-promo">
+            <h3>Tu bienestar empieza hoy</h3>
+            <p>
+              Agenda tu primera sesion con un especialista y da el primer paso
+              hacia una vida mas plena.
+            </p>
+            <button className="dash-home-promo-btn" type="button" onClick={() => navigate('/especialistas')}>
+              {'Agendar sesion ->'}
+            </button>
+          </div>
         </section>
 
         {/* Buscar especialistas */}
@@ -174,10 +187,10 @@ const Dashboard: React.FC = () => {
           </div>
           <ul className="dash-home-list">
             {SPECIALTIES.map((s) => (
-              <li key={s}>
-                <button className="dash-home-list-item" type="button" onClick={() => navigate(`/especialistas?especialidad=${encodeURIComponent(s)}`)}>
+              <li key={s.value}>
+                <button className="dash-home-list-item" type="button" onClick={() => navigate(`/especialistas?especialidad=${encodeURIComponent(s.value)}`)}>
                   <span className="dash-home-list-dot" aria-hidden="true" />
-                  <span className="dash-home-list-label">{s}</span>
+                  <span className="dash-home-list-label">{s.label}</span>
                   <svg className="dash-home-list-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <polyline points="9 18 15 12 9 6" />
                   </svg>
@@ -186,21 +199,6 @@ const Dashboard: React.FC = () => {
             ))}
           </ul>
         </section>
-        </div>
-
-        {/* Banner promocional */}
-        <div className="dash-home-banner">
-          <div className="dash-home-banner-text">
-            <h3>Tu bienestar empieza hoy</h3>
-            <p>
-              Agenda tu primera sesion con un especialista y da el primer paso
-              hacia una vida mas plena.
-            </p>
-            <button className="dash-home-banner-btn" type="button" onClick={() => navigate('/especialistas')}>
-              {'Agendar sesion ->'}
-            </button>
-          </div>
-          <div className="dash-home-banner-accent" />
         </div>
 
         {/* Accesos rapidos */}

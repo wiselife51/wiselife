@@ -546,3 +546,56 @@
   .dash-home-row .dash-home-diary { justify-content: center; gap: 1.25rem; }
   .dash-home-row .dash-home-moods { max-width: none; }
 }
+
+/* Saludo centrado, bienestar dentro del diario y especialidades en cuadricula 2x6 agrupada */
+.dash-home-greeting { text-align: center; }
+.dash-home-hello { margin-bottom: 0.2rem; }
+.dash-home-top { margin-bottom: 0; }
+
+.dash-home-promo {
+  margin-top: auto;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(126, 87, 194, 0.3);
+  background: linear-gradient(135deg, rgba(92, 61, 143, 0.7) 0%, rgba(126, 87, 194, 0.6) 60%, rgba(192, 132, 219, 0.5) 100%);
+  color: #ffffff;
+}
+.dash-home-promo h3 { margin: 0 0 0.3rem; font-size: 0.9375rem; font-weight: 700; color: #ffffff; }
+.dash-home-promo p { margin: 0 0 0.7rem; font-size: 0.78rem; line-height: 1.5; color: rgba(255, 255, 255, 0.85); }
+.dash-home-promo-btn {
+  padding: 0.45rem 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.dash-home-promo-btn:hover,
+.dash-home-promo-btn:focus-visible { background: rgba(255, 255, 255, 0.24); border-color: rgba(255, 255, 255, 0.6); outline: none; }
+
+.dash-home-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: rgba(126, 87, 194, 0.25);
+  border: 1px solid rgba(126, 87, 194, 0.25);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.dash-home-list li { background: rgba(18, 24, 42, 0.95); display: flex; }
+.dash-home-list-item {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  padding: 0.7rem 0.75rem;
+  min-height: 2.75rem;
+}
+.dash-home-list-item:hover,
+.dash-home-list-item:focus-visible { background: rgba(126, 87, 194, 0.24); border: none; }
+@media (max-width: 480px) {
+  .dash-home-list-item { gap: 0.45rem; padding-inline: 0.6rem; }
+  .dash-home-list-chevron { display: none; }
+}
