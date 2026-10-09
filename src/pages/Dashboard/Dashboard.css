@@ -552,50 +552,76 @@
 .dash-home-hello { margin-bottom: 0.2rem; }
 .dash-home-top { margin-bottom: 0; }
 
+.dash-home-diary-head { align-items: center; text-align: center; }
+.dash-home-diary-label,
+.dash-home-diary-title { text-align: center; }
+
+/* Sin fondo; el boton replica el diseño de "Cerrar sesion" */
 .dash-home-promo {
   margin-top: auto;
-  padding: 0.9rem 1rem;
-  border-radius: 12px;
-  border: 1px solid rgba(126, 87, 194, 0.3);
-  background: linear-gradient(135deg, rgba(92, 61, 143, 0.7) 0%, rgba(126, 87, 194, 0.6) 60%, rgba(192, 132, 219, 0.5) 100%);
-  color: #ffffff;
+  padding: 0.25rem 0 0;
+  border: none;
+  background: none;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.dash-home-promo h3 { margin: 0 0 0.3rem; font-size: 0.9375rem; font-weight: 700; color: #ffffff; }
-.dash-home-promo p { margin: 0 0 0.7rem; font-size: 0.78rem; line-height: 1.5; color: rgba(255, 255, 255, 0.85); }
+.dash-home-promo h3 { margin: 0 0 0.3rem; font-size: 0.9375rem; font-weight: 600; color: #f4f1ff; text-align: center; }
+.dash-home-promo p { margin: 0 0 0.85rem; font-size: 0.78rem; line-height: 1.5; color: rgba(255, 255, 255, 0.58); text-align: center; }
 .dash-home-promo-btn {
-  padding: 0.45rem 0.9rem;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  border-radius: 100px;
-  background: rgba(255, 255, 255, 0.12);
-  color: #ffffff;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 0.625rem;
+  padding: 0.7rem 0.875rem;
+  border: 1px solid rgba(126, 87, 194, 0.2);
+  border-radius: 12px;
+  background: var(--psy-surface, rgba(18, 24, 42, 0.95));
+  color: #b388ff;
   font-family: 'Inter', sans-serif;
   font-size: 0.8125rem;
   font-weight: 600;
+  text-align: center;
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
+.dash-home-promo-btn svg { position: absolute; left: 0.875rem; }
 .dash-home-promo-btn:hover,
-.dash-home-promo-btn:focus-visible { background: rgba(255, 255, 255, 0.24); border-color: rgba(255, 255, 255, 0.6); outline: none; }
+.dash-home-promo-btn:focus-visible {
+  background: rgba(126, 87, 194, 0.12);
+  border-color: rgba(126, 87, 194, 0.35);
+  outline: none;
+}
 
+/* Especialidades: botones tipo pildora separados, en 2 columnas x 6 filas */
 .dash-home-list {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1px;
-  background: rgba(126, 87, 194, 0.25);
-  border: 1px solid rgba(126, 87, 194, 0.25);
-  border-radius: 12px;
-  overflow: hidden;
-}
-.dash-home-list li { background: rgba(18, 24, 42, 0.95); display: flex; }
-.dash-home-list-item {
+  gap: 0.5rem;
+  background: none;
   border: none;
   border-radius: 0;
-  background: transparent;
-  padding: 0.7rem 0.75rem;
-  min-height: 2.75rem;
+  overflow: visible;
+}
+.dash-home-list li { background: none; display: flex; }
+.dash-home-list-item {
+  justify-content: center;
+  text-align: center;
+  padding: 0.55rem 0.9rem;
+  min-height: 2.5rem;
+  border: 1px solid rgba(126, 87, 194, 0.28);
+  border-radius: 100px;
+  background: rgba(126, 87, 194, 0.1);
+  color: #e6dcff;
 }
 .dash-home-list-item:hover,
-.dash-home-list-item:focus-visible { background: rgba(126, 87, 194, 0.24); border: none; }
-@media (max-width: 480px) {
-  .dash-home-list-item { gap: 0.45rem; padding-inline: 0.6rem; }
-  .dash-home-list-chevron { display: none; }
+.dash-home-list-item:focus-visible {
+  background: rgba(126, 87, 194, 0.28);
+  border: 1px solid rgba(179, 136, 255, 0.6);
+  color: #ffffff;
 }
+.dash-home-list-dot,
+.dash-home-list-chevron { display: none; }
+.dash-home-list-label { flex: 0 1 auto; }
