@@ -625,3 +625,45 @@
 .dash-home-list-dot,
 .dash-home-list-chevron { display: none; }
 .dash-home-list-label { flex: 0 1 auto; }
+
+/* Encabezado de especialistas centrado, botones con el diseño de "Cerrar sesion" y bloques mas compactos */
+.dash-home-specialties-head { flex-direction: column; align-items: center; gap: 0.15rem; text-align: center; }
+.dash-home-specialties-head h3,
+.dash-home-specialties-head p { text-align: center; margin: 0; }
+
+.dash-home-diary,
+.dash-home-specialties { padding: 0.75rem 0.9rem; gap: 0.6rem; }
+.dash-home-diary-head { gap: 0.1rem; }
+.dash-home-mood { width: 38px; height: 38px; }
+.dash-home-mood svg { width: 22px; height: 22px; }
+.dash-home-promo { padding-top: 0; }
+.dash-home-promo h3 { margin-bottom: 0.15rem; font-size: 0.875rem; }
+.dash-home-promo p { margin-bottom: 0.55rem; font-size: 0.75rem; line-height: 1.4; }
+.dash-home-promo-btn { padding: 0.55rem 0.875rem; }
+
+.dash-home-list { gap: 0.4rem; }
+.dash-home-list-item {
+  min-height: 2.25rem;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid rgba(126, 87, 194, 0.2);
+  border-radius: 12px;
+  background: var(--psy-surface, rgba(18, 24, 42, 0.95));
+  color: #b388ff;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.dash-home-list-item:hover,
+.dash-home-list-item:focus-visible {
+  background: rgba(126, 87, 194, 0.12);
+  border: 1px solid rgba(126, 87, 194, 0.35);
+  color: #b388ff;
+}
+@media (max-width: 480px) {
+  .dash-home-diary,
+  .dash-home-specialties { padding: 0.7rem 0.75rem; }
+  .dash-home-list-item { font-size: 0.78rem; padding-inline: 0.4rem; }
+}
+
+/* Contenido del diario agrupado y centrado verticalmente, sin hueco entre emociones y bienestar */
+.dash-home-row .dash-home-diary { justify-content: center; gap: 0.7rem; }
+.dash-home-row .dash-home-promo { margin-top: 0.4rem; }
