@@ -34,17 +34,6 @@ const NAV_ITEMS: { to: string; label: string; icon: React.ReactNode }[] = [
     ),
   },
   {
-    to: '/especialistas',
-    label: 'Especialistas',
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <circle cx="9" cy="8" r="3" />
-        <circle cx="17" cy="10" r="2" />
-        <path d="M3 20c.7-3.2 2.7-5 6-5s5.3 1.8 6 5M14 16c2.5-.2 4.5 1.2 5 4" />
-      </svg>
-    ),
-  },
-  {
     to: '/mis-citas',
     label: 'Mis citas',
     icon: (

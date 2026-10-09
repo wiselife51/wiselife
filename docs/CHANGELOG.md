@@ -3,6 +3,16 @@
 **Propósito:** historial de cambios documentales y del proyecto.
 **Responsable:** Documentador Técnico. **Estado:** Activo; requiere mantenerlo en cada entrega.
 
+## 2026-10-09 — Pago directo al psicólogo, comprobante y comisión del 5%
+- Navegación: "Agendar sesión" en Inicio lleva siempre a `/agendar-sesion`; se elimina el módulo Especialistas (`Specialists`, `SpecialistProfile`) y el antiguo `NequiPaymentModal`. Los estilos compartidos del modal de cita pasan a `src/pages/AgendarSesion/BookingShared.css`.
+- Tarjetas de `/agendar-sesion`: especialidad como texto liviano bajo el nombre, días del horario como "Dom Lun Mar" y rangos de hora con letra más pequeña. El modal "Confirmar cita" usa el mismo diseño de botones que "Cerrar sesion".
+- Flujo de pago: el paciente transfiere por Nequi directamente al psicólogo (número configurado en su perfil), sube el comprobante (JPG/PNG/WebP, máx. 5 MB) al bucket privado `payment-proofs` y la cita queda en `procesando` mediante la función `submit_payment_proof`.
+- Panel del psicólogo: en el detalle de la cita, botón "Ver comprobante" (URL firmada de 5 minutos) y botón "Cita pagada" que confirma la cita y la marca como pagada.
+- Comisión: al marcarse la cita como pagada, atendida o completada, el trigger `appointments_commission_guard` calcula el 5% (`commission_amount`) y deja `commission_status = 'pendiente'`. En "Pendientes" el psicólogo ve el total y cada comisión, transfiere por Nequi a la plataforma y pulsa "Ya transferí" (opcionalmente con referencia) para pasarla a `reportada`. El trigger impide que paciente o psicólogo alteren el monto o salten estados.
+- Base de datos: columnas `payment_proof_path`, `commission_amount`, `commission_status`, `commission_reference` en `appointments`; bucket `payment-proofs` con RLS (el paciente sube a su carpeta; paciente y psicólogo de la cita pueden leer). Migración `direct_payment_proof_and_commission` (también en `supabase/migrations/20261009000100_direct_payment_proof.sql`). Las citas ya pagadas o atendidas se migraron a `pendiente`.
+- Pendiente de confirmar por negocio: la plataforma aún no verifica automáticamente que la comisión fue transferida (`reportada` es declarativo).
+- Validación: `tsc --noEmit` sin errores. Sin verificación visual en navegador; revisar en móvil el modal de pago, el visor de comprobante y la sección de comisión en Pendientes.
+
 ## 2026-10-09 — Perfil del psicólogo en tarjetas y datos de demostración
 - Tarjetas de `/agendar-sesion`: los tres botones (Perfil, Opiniones, Agendar) usan el mismo diseño del botón "Cerrar sesion". Nuevo botón "Perfil" que abre `ProfileModal.tsx`: popup con foto, nombre, especialidades, calificación, datos (experiencia, ciudad, idiomas) y la presentación del psicólogo, con botón para agendar.
 - Panel del psicólogo (módulo Perfil): nuevo campo "Mi perfil para pacientes" (`profile_text`, máx. 1200 caracteres; los párrafos se separan con una línea en blanco).

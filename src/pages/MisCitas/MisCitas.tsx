@@ -374,7 +374,7 @@ const MisCitas: React.FC = () => {
             </svg>
             <h3>No tienes citas aun</h3>
             <p>Busca un especialista y agenda tu primera sesion.</p>
-            <button className="mc-empty-btn" onClick={() => navigate('/especialistas')} type="button">
+            <button className="mc-empty-btn" onClick={() => navigate('/agendar-sesion')} type="button">
               Buscar especialista
             </button>
           </div>

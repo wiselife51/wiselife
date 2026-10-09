@@ -29,7 +29,7 @@ import type {
   ExistingAppointment,
   ScheduleBlock,
 } from './booking';
-import '../SpecialistProfile/SpecialistProfile.css';
+import './BookingShared.css';
 import './AgendarSesion.css';
 
 const STEPS = ['Especialista', 'Horario', 'Pago'];
@@ -42,7 +42,7 @@ const AgendarSesion: React.FC = () => {
   const [psychologists, setPsychologists] = useState<BookingPsychologist[]>([]);
   const [loadingList, setLoadingList] = useState(true);
   const [search, setSearch] = useState('');
-  const [specialty, setSpecialty] = useState('');
+  const [specialty, setSpecialty] = useState(() => searchParams.get('especialidad') || '');
   const [ratings, setRatings] = useState<Record<string, RatingSummary>>({});
   const [reviewsFor, setReviewsFor] = useState<BookingPsychologist | null>(null);
   const [profileFor, setProfileFor] = useState<BookingPsychologist | null>(null);
@@ -272,7 +272,7 @@ const AgendarSesion: React.FC = () => {
                         <div className="ag-psy-info">
                           <strong>{psy.full_name}</strong>
                           {(psy.specialties || [])[0] && (
-                            <span className="ag-tag">{psy.specialties[0]}</span>
+                            <p className="ag-specialty">{psy.specialties.slice(0, 2).join(' · ')}</p>
                           )}
                         </div>
                       </div>

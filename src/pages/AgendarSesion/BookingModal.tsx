@@ -1,14 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { toDateStr } from '../../lib/date';
-import {
-  PLATFORM_NAME,
-  PLATFORM_NEQUI_PHONE,
-  formatNequiPhone,
-  splitPayment,
-  toLocalNequiNumber,
-} from '../../config/payments';
+import { formatNequiPhone, toLocalNequiNumber } from '../../config/payments';
 import {
   MODALITY_LABELS,
   PATIENT_TYPE_LABELS,
@@ -19,72 +13,31 @@ import type { AvailabilitySlot, BookingDay, BookingPsychologist } from './bookin
 
 type Step = 'confirm' | 'payment' | 'success';
 
-interface TransferCardProps {
-  step: number;
-  title: string;
-  caption: string;
-  amount: number;
-  phone: string;
-  refValue: string;
-  onRefChange: (value: string) => void;
-  inputId: string;
-}
+const MAX_PROOF_BYTES = 5 * 1024 * 1024;
+const ALLOWED_PROOF_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
-const TransferCard: React.FC<TransferCardProps> = ({ step, title, caption, amount, phone, refValue, onRefChange, inputId }) => {
-  const [copied, setCopied] = useState<'phone' | 'amount' | null>(null);
+const CopyRow: React.FC<{ label: string; value: string; copyValue: string }> = ({ label, value, copyValue }) => {
+  const [copied, setCopied] = useState(false);
 
-  const copy = async (kind: 'phone' | 'amount', value: string) => {
+  const copy = async () => {
     try {
-      await navigator.clipboard.writeText(value);
-      setCopied(kind);
-      window.setTimeout(() => setCopied(null), 1800);
+      await navigator.clipboard.writeText(copyValue);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
     } catch {
-      setCopied(null);
+      setCopied(false);
     }
   };
 
   return (
-    <div className="sp-transfer-card">
-      <div className="sp-transfer-head">
-        <span className="sp-step-num">{step}</span>
-        <div className="sp-transfer-title">
-          <strong>{title}</strong>
-          <span>{caption}</span>
-        </div>
+    <div className="sp-pay-row">
+      <div className="sp-pay-row-text">
+        <span className="sp-pay-label">{label}</span>
+        <span className="sp-pay-value">{value}</span>
       </div>
-      <div className="sp-transfer-rows">
-        <div className="sp-transfer-row">
-          <div>
-            <span className="sp-transfer-label">Monto exacto</span>
-            <span className="sp-transfer-value">${amount.toLocaleString('es-CO')} COP</span>
-          </div>
-          <button type="button" className="sp-copy-btn" onClick={() => copy('amount', String(amount))}>
-            {copied === 'amount' ? 'Copiado' : 'Copiar'}
-          </button>
-        </div>
-        <div className="sp-transfer-row">
-          <div>
-            <span className="sp-transfer-label">Número Nequi</span>
-            <span className="sp-transfer-value">{phone ? formatNequiPhone(phone) : 'No configurado'}</span>
-          </div>
-          {phone && (
-            <button type="button" className="sp-copy-btn" onClick={() => copy('phone', toLocalNequiNumber(phone))}>
-              {copied === 'phone' ? 'Copiado' : 'Copiar'}
-            </button>
-          )}
-        </div>
-      </div>
-      <div className="sp-payment-ref">
-        <label htmlFor={inputId}>Referencia del comprobante</label>
-        <input
-          id={inputId}
-          type="text"
-          autoComplete="off"
-          placeholder="Ej: M1234567"
-          value={refValue}
-          onChange={(e) => onRefChange(e.target.value)}
-        />
-      </div>
+      <button type="button" className="sp-copy-btn" onClick={copy}>
+        {copied ? 'Copiado' : 'Copiar'}
+      </button>
     </div>
   );
 };
@@ -113,10 +66,36 @@ const BookingModal: React.FC<BookingModalProps> = ({ patientId, psy, day, slot, 
   const [step, setStep] = useState<Step>('confirm');
   const [loading, setLoading] = useState(false);
   const [appointmentId, setAppointmentId] = useState<string | null>(null);
-  const [paymentRef, setPaymentRef] = useState('');
-  const [commissionRef, setCommissionRef] = useState('');
+  const [proofFile, setProofFile] = useState<File | null>(null);
+  const [proofPreview, setProofPreview] = useState<string | null>(null);
   const [error, setError] = useState('');
-  const { platformFee, psychologistAmount } = splitPayment(amount);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!proofFile) {
+      setProofPreview(null);
+      return;
+    }
+    const url = URL.createObjectURL(proofFile);
+    setProofPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [proofFile]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null;
+    e.target.value = '';
+    if (!file) return;
+    if (!ALLOWED_PROOF_TYPES.includes(file.type)) {
+      setError('El comprobante debe ser una imagen JPG, PNG o WEBP.');
+      return;
+    }
+    if (file.size > MAX_PROOF_BYTES) {
+      setError('La imagen supera los 5 MB. Sube una más liviana.');
+      return;
+    }
+    setError('');
+    setProofFile(file);
+  };
 
   const handleCreate = async () => {
     setLoading(true);
@@ -167,24 +146,23 @@ const BookingModal: React.FC<BookingModalProps> = ({ patientId, psy, day, slot, 
     window.location.href = 'nequi://';
   };
 
-  const handleConfirmPayment = async () => {
-    if (!appointmentId) return;
-    const psychologistRef = paymentRef.trim();
-    const platformRef = commissionRef.trim();
-    if (!psychologistRef || !platformRef) {
-      setError('Ingresa la referencia de las dos transferencias.');
-      return;
-    }
-    if (psychologistRef === platformRef) {
-      setError('Cada transferencia tiene su propia referencia. Revisa los comprobantes.');
-      return;
-    }
+  const handleSubmitProof = async () => {
+    if (!appointmentId || !proofFile) return;
     setError('');
     setLoading(true);
-    const { error: rpcError } = await supabase.rpc('register_nequi_payment', {
+    const extension = proofFile.type === 'image/png' ? 'png' : proofFile.type === 'image/webp' ? 'webp' : 'jpg';
+    const path = `${patientId}/${appointmentId}-${Date.now()}.${extension}`;
+    const { error: uploadError } = await supabase.storage
+      .from('payment-proofs')
+      .upload(path, proofFile, { contentType: proofFile.type, upsert: false });
+    if (uploadError) {
+      setLoading(false);
+      setError('No se pudo subir el comprobante. Intenta de nuevo.');
+      return;
+    }
+    const { error: rpcError } = await supabase.rpc('submit_payment_proof', {
       p_appointment_id: appointmentId,
-      p_psychologist_reference: psychologistRef,
-      p_commission_reference: platformRef,
+      p_path: path,
     });
     setLoading(false);
     if (rpcError) {
@@ -245,52 +223,77 @@ const BookingModal: React.FC<BookingModalProps> = ({ patientId, psy, day, slot, 
         {step === 'payment' && (
           <>
             <div className="sp-modal-header">
-              <h3>Pago con Nequi</h3>
+              <h3>Pago por Nequi</h3>
               <button className="sp-modal-close" onClick={onClose} type="button" aria-label="Cerrar"><CloseIcon /></button>
             </div>
-            <div className="sp-modal-body">
-              <div className="sp-payment-section">
-                <div className="sp-nequi-logo"><div className="sp-nequi-badge">Nequi</div></div>
-                <p className="sp-payment-amount">${amount.toLocaleString('es-CO')} COP</p>
-                <p className="sp-payment-subtitle">Total de la sesión, dividido en dos transferencias Nequi</p>
-                <button className="sp-nequi-btn" onClick={handleOpenNequi} type="button">Abrir Nequi</button>
-                <div className="sp-transfer-list">
-                  <TransferCard
-                    step={1}
-                    title={`Para ${psy.full_name}`}
-                    caption="95% de la sesión"
-                    amount={psychologistAmount}
-                    phone={psy.phone || ''}
-                    refValue={paymentRef}
-                    onRefChange={setPaymentRef}
-                    inputId="ag-payment-ref"
-                  />
-                  <TransferCard
-                    step={2}
-                    title={`Para ${PLATFORM_NAME}`}
-                    caption="5% de comisión de la plataforma"
-                    amount={platformFee}
-                    phone={PLATFORM_NEQUI_PHONE}
-                    refValue={commissionRef}
-                    onRefChange={setCommissionRef}
-                    inputId="ag-commission-ref"
-                  />
-                </div>
-                <p className="sp-payment-ref-help">
-                  Haz las dos transferencias desde tu app Nequi con el monto exacto y pega aquí la referencia de cada comprobante.
-                </p>
-                {error && <p className="sp-payment-error" role="alert">{error}</p>}
+            <div className="sp-modal-body sp-pay-body">
+              <div className="sp-pay-hero">
+                <span className="sp-pay-hero-label">Total a transferir</span>
+                <strong>${amount.toLocaleString('es-CO')} COP</strong>
+                <span className="sp-pay-hero-sub">Directo a {psy.full_name}</span>
               </div>
+
+              <section className="sp-pay-card" aria-labelledby="pay-step-1">
+                <div className="sp-pay-card-head">
+                  <span className="sp-step-num">1</span>
+                  <h4 id="pay-step-1">Haz la transferencia</h4>
+                </div>
+                {psy.phone ? (
+                  <>
+                    <CopyRow label="Número Nequi" value={formatNequiPhone(psy.phone)} copyValue={toLocalNequiNumber(psy.phone)} />
+                    <CopyRow label="Monto exacto" value={`$${amount.toLocaleString('es-CO')} COP`} copyValue={String(amount)} />
+                    <button className="sp-btn-secondary sp-btn-full" onClick={handleOpenNequi} type="button">Abrir Nequi</button>
+                  </>
+                ) : (
+                  <p className="sp-pay-empty">Este especialista aún no configuró su número Nequi. Escríbele por WhatsApp desde "Mis citas".</p>
+                )}
+              </section>
+
+              <section className="sp-pay-card" aria-labelledby="pay-step-2">
+                <div className="sp-pay-card-head">
+                  <span className="sp-step-num">2</span>
+                  <h4 id="pay-step-2">Sube tu comprobante</h4>
+                </div>
+                <input
+                  ref={fileInputRef}
+                  className="sp-pay-file"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={handleFileChange}
+                  aria-label="Comprobante de pago"
+                />
+                {proofPreview ? (
+                  <div className="sp-pay-preview">
+                    <img src={proofPreview} alt="Vista previa del comprobante" />
+                    <button type="button" className="sp-copy-btn" onClick={() => fileInputRef.current?.click()}>Cambiar imagen</button>
+                  </div>
+                ) : (
+                  <button type="button" className="sp-pay-drop" onClick={() => fileInputRef.current?.click()}>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="17 8 12 3 7 8" />
+                      <line x1="12" y1="3" x2="12" y2="15" />
+                    </svg>
+                    <span>Toca para adjuntar la captura</span>
+                    <small>JPG, PNG o WEBP · máx. 5 MB</small>
+                  </button>
+                )}
+              </section>
+
+              <p className="sp-payment-ref-help">
+                El psicólogo revisará tu comprobante y marcará la cita como pagada para continuar.
+              </p>
+              {error && <p className="sp-payment-error" role="alert">{error}</p>}
             </div>
             <div className="sp-modal-footer">
               <button className="sp-btn-secondary" onClick={onClose} type="button">Cancelar</button>
               <button
                 className="sp-btn-primary"
-                onClick={handleConfirmPayment}
-                disabled={loading || !paymentRef.trim() || !commissionRef.trim()}
+                onClick={handleSubmitProof}
+                disabled={loading || !proofFile || !psy.phone}
                 type="button"
               >
-                {loading ? 'Confirmando...' : 'Confirmar pago'}
+                {loading ? 'Enviando...' : 'Enviar comprobante'}
               </button>
             </div>
           </>
@@ -311,7 +314,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ patientId, psy, day, slot, 
                 <span>{formatDateLong(day.date)}</span>
                 <span>{formatTime(slot.start_time)} - {formatTime(slot.end_time)}</span>
               </div>
-              <p className="sp-success-note">El psicologo verificara tu pago y recibiras una confirmacion. Podras comunicarte por WhatsApp desde la seccion "Mis citas".</p>
+              <p className="sp-success-note">Tu comprobante fue enviado. El psicólogo verificará el pago y marcará tu cita como pagada. Podrás escribirle por WhatsApp desde "Mis citas".</p>
             </div>
             <div className="sp-modal-footer">
               <button className="sp-btn-primary sp-btn-full" onClick={() => navigate('/mis-citas')} type="button">Ver mis citas</button>
