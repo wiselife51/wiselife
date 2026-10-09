@@ -11,16 +11,19 @@ interface Profile {
   motivation: string | null;
 }
 
-const SPECIALTIES = [
-  'Relaciones interpersonales',
-  'Ansiedad',
-  'Depresion',
-  'Sexualidad',
-  'Traumas',
-  'Cambios de Vida',
-  'Autolesion',
-  'Duelo',
-  'Autoestima',
+const SPECIALTIES: { label: string; value: string }[] = [
+  { label: 'Relaciones', value: 'Relaciones interpersonales' },
+  { label: 'Ansiedad', value: 'Ansiedad' },
+  { label: 'Depresión', value: 'Depresion' },
+  { label: 'Sexualidad', value: 'Sexualidad' },
+  { label: 'Traumas', value: 'Traumas' },
+  { label: 'Cambios de vida', value: 'Cambios de Vida' },
+  { label: 'Autolesión', value: 'Autolesion' },
+  { label: 'Duelo', value: 'Duelo' },
+  { label: 'Autoestima', value: 'Autoestima' },
+  { label: 'Pareja', value: 'Terapia de pareja' },
+  { label: 'Estrés', value: 'Estres laboral' },
+  { label: 'TDAH', value: 'TDAH' },
 ];
 
 type MoodKey = 'muy_mal' | 'mal' | 'neutral' | 'bien' | 'muy_bien';
@@ -124,39 +127,83 @@ const Dashboard: React.FC = () => {
             <h2 className="dash-home-hello">{getGreeting(firstName)}</h2>
             <p className="dash-home-sub">Nos alegra que estes aqui.</p>
           </div>
-
-          {/* Tags de especialidades */}
-          <div className="dash-home-specialties">
-            <h3>Buscar especialistas en</h3>
-            <div className="dash-home-tags">
-              {SPECIALTIES.map((s) => (
-                <button key={s} className="dash-home-tag" type="button" onClick={() => navigate(`/especialistas?especialidad=${encodeURIComponent(s)}`)}>
-                  {s}
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
 
-        {/* Banner promocional */}
-        <div className="dash-home-banner">
-          <div className="dash-home-banner-text">
+        <div className="dash-home-row">
+        {/* Diario emocional */}
+        <section className="dash-home-diary" aria-labelledby="dash-diary-title">
+          <div className="dash-home-diary-head">
+            <h3 className="dash-home-diary-label" id="dash-diary-title">Mi diario emocional</h3>
+            <p className="dash-home-diary-title">Como te sentiste hoy?</p>
+          </div>
+          <div className="dash-home-moods">
+            {MOODS.map((m) => (
+              <button
+                key={m.key}
+                className={`dash-home-mood ${selectedMood === m.key ? 'dash-home-mood--selected' : ''} ${moodSaved && selectedMood !== m.key ? 'dash-home-mood--faded' : ''}`}
+                type="button"
+                onClick={() => handleMoodSelect(m.key)}
+                disabled={moodSaved}
+                aria-label={m.label}
+                title={m.label}
+              >
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <circle cx="9" cy="9" r="0.5" fill="currentColor" />
+                  <circle cx="15" cy="9" r="0.5" fill="currentColor" />
+                  <path d={m.face} />
+                </svg>
+              </button>
+            ))}
+          </div>
+          {moodSaved && (
+            <p className="dash-home-diary-saved">Registrado. Gracias por compartir.</p>
+          )}
+          <div className="dash-home-promo">
             <h3>Tu bienestar empieza hoy</h3>
             <p>
               Agenda tu primera sesion con un especialista y da el primer paso
               hacia una vida mas plena.
             </p>
-            <button className="dash-home-banner-btn" type="button" onClick={() => navigate('/especialistas')}>
-              {'Agendar sesion ->'}
+            <button className="dash-home-promo-btn" type="button" onClick={() => navigate('/agendar-sesion')}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+              <span>Agendar sesion</span>
             </button>
           </div>
-          <div className="dash-home-banner-accent" />
+        </section>
+
+        {/* Buscar especialistas */}
+        <section className="dash-home-specialties" aria-labelledby="dash-specialties-title">
+          <div className="dash-home-specialties-head">
+            <h3 id="dash-specialties-title">Buscar especialistas en</h3>
+            <p>Elige un tema y encuentra al profesional ideal para ti.</p>
+          </div>
+          <ul className="dash-home-list">
+            {SPECIALTIES.map((s) => (
+              <li key={s.value}>
+                <button className="dash-home-list-item" type="button" onClick={() => navigate(`/agendar-sesion?especialidad=${encodeURIComponent(s.value)}`)}>
+                  <span className="dash-home-list-dot" aria-hidden="true" />
+                  <span className="dash-home-list-label">{s.label}</span>
+                  <svg className="dash-home-list-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
         </div>
 
         {/* Accesos rapidos */}
-        <h3 className="dash-home-section-title">Accesos rapidos</h3>
+        <section className="dash-home-quick" aria-labelledby="dash-quick-title">
+        <h3 className="dash-home-section-title" id="dash-quick-title">Accesos rapidos</h3>
         <div className="dash-home-shortcuts">
-          <button className="dash-home-shortcut" type="button" onClick={() => navigate('/especialistas')}>
+          <button className="dash-home-shortcut" type="button" onClick={() => navigate('/agendar-sesion')}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
               <line x1="16" y1="2" x2="16" y2="6" />
@@ -186,38 +233,10 @@ const Dashboard: React.FC = () => {
               <path d="M12 20h9" />
               <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
             </svg>
-            <span>Mi diario emocional</span>
+            <span>Mi Diario</span>
           </button>
         </div>
-
-        {/* Diario emocional */}
-        <div className="dash-home-diary">
-          <p className="dash-home-diary-label">Mi diario emocional</p>
-          <h3 className="dash-home-diary-title">Como te sentiste hoy?</h3>
-          <div className="dash-home-moods">
-            {MOODS.map((m) => (
-              <button
-                key={m.key}
-                className={`dash-home-mood ${selectedMood === m.key ? 'dash-home-mood--selected' : ''} ${moodSaved && selectedMood !== m.key ? 'dash-home-mood--faded' : ''}`}
-                type="button"
-                onClick={() => handleMoodSelect(m.key)}
-                disabled={moodSaved}
-                aria-label={m.label}
-                title={m.label}
-              >
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10" />
-                  <circle cx="9" cy="9" r="0.5" fill="currentColor" />
-                  <circle cx="15" cy="9" r="0.5" fill="currentColor" />
-                  <path d={m.face} />
-                </svg>
-              </button>
-            ))}
-          </div>
-          {moodSaved && (
-            <p className="dash-home-diary-saved">Registrado. Gracias por compartir.</p>
-          )}
-        </div>
+        </section>
       </div>
     </DashboardLayout>
   );

@@ -44,7 +44,7 @@
 
 - Público: `Home`, `Specialists`, `SpecialistProfile`.
 - Autenticación: `Login`, `AuthCallback`, `PsychologistLogin`.
-- Paciente: `Onboarding`, `Dashboard`, `Profile`, `MotivationSurvey`, `ReferralSurvey`, `MisCitas`.
+- Paciente: `Onboarding`, `Dashboard`, `Profile`, `MotivationSurvey`, `ReferralSurvey`, `MisCitas`, `AgendarSesion` (con `BookingModal` y utilidades en `booking.ts`).
 - Psicólogo: `PsychologistOnboarding`, `PsychologistDashboard`.
 
 Rutas y nombres deben mantenerse alineados con `src/pages` hasta que exista una migración aprobada. No documentar como implementado un componente que solo esté en el backlog.

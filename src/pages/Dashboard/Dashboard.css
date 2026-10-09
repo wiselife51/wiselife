@@ -400,3 +400,314 @@
 .dash-home-mood { width: 42px; height: 42px; border-width: 1px; }
 .dash-home-mood svg { width: 24px; height: 24px; }
 .dash-home-diary-saved { font-size: 0.75rem; }
+
+/* Diario emocional bajo el saludo y bloque "Buscar especialistas en" rediseñado */
+.dash-home-top { flex-direction: column; gap: 0; }
+.dash-home-diary {
+  align-items: stretch;
+  gap: 0.85rem;
+  padding: 1rem 1.1rem;
+}
+.dash-home-diary-head { display: flex; flex-direction: column; gap: 0.2rem; }
+.dash-home-diary-label {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #f4f1ff;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.dash-home-diary-title {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.58);
+}
+.dash-home-moods {
+  width: 100%;
+  max-width: 28rem;
+  margin: 0;
+  justify-content: space-between;
+}
+.dash-home-diary-saved { margin: 0; }
+
+.dash-home-specialties {
+  width: 100%;
+  max-width: none;
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+.dash-home-specialties-head { display: flex; align-items: center; gap: 0.75rem; }
+.dash-home-specialties-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(126, 87, 194, 0.18);
+  border: 1px solid rgba(126, 87, 194, 0.3);
+  color: #b388ff;
+}
+.dash-home-specialties-head h3 {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #f4f1ff;
+}
+.dash-home-specialties-head p {
+  margin: 0.15rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.58);
+}
+.dash-home-tags { gap: 0.5rem; }
+.dash-home-tag {
+  padding: 0.4rem 0.85rem;
+  font-size: 0.75rem;
+  background: rgba(126, 87, 194, 0.1);
+  border: 1px solid rgba(126, 87, 194, 0.28);
+  color: #e6dcff;
+}
+.dash-home-tag:hover,
+.dash-home-tag:focus-visible {
+  background: rgba(126, 87, 194, 0.28);
+  border-color: rgba(179, 136, 255, 0.6);
+  color: #ffffff;
+  outline: none;
+}
+
+@media (max-width: 480px) {
+  .dash-home-diary,
+  .dash-home-specialties { padding: 0.9rem; }
+  .dash-home-mood { width: 40px; height: 40px; }
+  .dash-home-mood svg { width: 22px; height: 22px; }
+  .dash-home-specialties-head p { font-size: 0.72rem; }
+}
+
+/* Diario y especialistas lado a lado en escritorio; especialidades como lista ordenada */
+.dash-home-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+  align-items: stretch;
+}
+@media (min-width: 900px) {
+  .dash-home-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); }
+}
+.dash-home-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr));
+  gap: 0.4rem;
+}
+.dash-home-list-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  background: rgba(126, 87, 194, 0.08);
+  border: 1px solid rgba(126, 87, 194, 0.2);
+  border-radius: 10px;
+  color: #e6dcff;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.dash-home-list-dot {
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #b388ff;
+}
+.dash-home-list-label { flex: 1; min-width: 0; line-height: 1.3; }
+.dash-home-list-chevron { flex-shrink: 0; color: rgba(255, 255, 255, 0.4); transition: transform 0.2s, color 0.2s; }
+.dash-home-list-item:hover,
+.dash-home-list-item:focus-visible {
+  background: rgba(126, 87, 194, 0.24);
+  border-color: rgba(179, 136, 255, 0.55);
+  color: #ffffff;
+  outline: none;
+}
+.dash-home-list-item:hover .dash-home-list-chevron,
+.dash-home-list-item:focus-visible .dash-home-list-chevron { color: #ffffff; transform: translateX(2px); }
+
+@media (min-width: 900px) {
+  .dash-home-row .dash-home-diary { justify-content: center; gap: 1.25rem; }
+  .dash-home-row .dash-home-moods { max-width: none; }
+}
+
+/* Saludo centrado, bienestar dentro del diario y especialidades en cuadricula 2x6 agrupada */
+.dash-home-greeting { text-align: center; }
+.dash-home-hello { margin-bottom: 0.2rem; }
+.dash-home-top { margin-bottom: 0; }
+
+.dash-home-diary-head { align-items: center; text-align: center; }
+.dash-home-diary-label,
+.dash-home-diary-title { text-align: center; }
+
+/* Sin fondo; el boton replica el diseño de "Cerrar sesion" */
+.dash-home-promo {
+  margin-top: auto;
+  padding: 0.25rem 0 0;
+  border: none;
+  background: none;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.dash-home-promo h3 { margin: 0 0 0.3rem; font-size: 0.9375rem; font-weight: 600; color: #f4f1ff; text-align: center; }
+.dash-home-promo p { margin: 0 0 0.85rem; font-size: 0.78rem; line-height: 1.5; color: rgba(255, 255, 255, 0.58); text-align: center; }
+.dash-home-promo-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 0.625rem;
+  padding: 0.7rem 0.875rem;
+  border: 1px solid rgba(126, 87, 194, 0.2);
+  border-radius: 12px;
+  background: var(--psy-surface, rgba(18, 24, 42, 0.95));
+  color: #b388ff;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.dash-home-promo-btn svg { position: absolute; left: 0.875rem; }
+.dash-home-promo-btn:hover,
+.dash-home-promo-btn:focus-visible {
+  background: rgba(126, 87, 194, 0.12);
+  border-color: rgba(126, 87, 194, 0.35);
+  outline: none;
+}
+
+/* Especialidades: botones tipo pildora separados, en 2 columnas x 6 filas */
+.dash-home-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  border-radius: 0;
+  overflow: visible;
+}
+.dash-home-list li { background: none; display: flex; }
+.dash-home-list-item {
+  justify-content: center;
+  text-align: center;
+  padding: 0.55rem 0.9rem;
+  min-height: 2.5rem;
+  border: 1px solid rgba(126, 87, 194, 0.28);
+  border-radius: 100px;
+  background: rgba(126, 87, 194, 0.1);
+  color: #e6dcff;
+}
+.dash-home-list-item:hover,
+.dash-home-list-item:focus-visible {
+  background: rgba(126, 87, 194, 0.28);
+  border: 1px solid rgba(179, 136, 255, 0.6);
+  color: #ffffff;
+}
+.dash-home-list-dot,
+.dash-home-list-chevron { display: none; }
+.dash-home-list-label { flex: 0 1 auto; }
+
+/* Encabezado de especialistas centrado, botones con el diseño de "Cerrar sesion" y bloques mas compactos */
+.dash-home-specialties-head { flex-direction: column; align-items: center; gap: 0.15rem; text-align: center; }
+.dash-home-specialties-head h3,
+.dash-home-specialties-head p { text-align: center; margin: 0; }
+
+.dash-home-diary,
+.dash-home-specialties { padding: 0.75rem 0.9rem; gap: 0.6rem; }
+.dash-home-diary-head { gap: 0.1rem; }
+.dash-home-mood { width: 38px; height: 38px; }
+.dash-home-mood svg { width: 22px; height: 22px; }
+.dash-home-promo { padding-top: 0; }
+.dash-home-promo h3 { margin-bottom: 0.15rem; font-size: 0.875rem; }
+.dash-home-promo p { margin-bottom: 0.55rem; font-size: 0.75rem; line-height: 1.4; }
+.dash-home-promo-btn { padding: 0.55rem 0.875rem; }
+
+.dash-home-list { gap: 0.4rem; }
+.dash-home-list-item {
+  min-height: 2.25rem;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid rgba(126, 87, 194, 0.2);
+  border-radius: 12px;
+  background: var(--psy-surface, rgba(18, 24, 42, 0.95));
+  color: #b388ff;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.dash-home-list-item:hover,
+.dash-home-list-item:focus-visible {
+  background: rgba(126, 87, 194, 0.12);
+  border: 1px solid rgba(126, 87, 194, 0.35);
+  color: #b388ff;
+}
+@media (max-width: 480px) {
+  .dash-home-diary,
+  .dash-home-specialties { padding: 0.7rem 0.75rem; }
+  .dash-home-list-item { font-size: 0.78rem; padding-inline: 0.4rem; }
+}
+
+/* Contenido del diario agrupado y centrado verticalmente, sin hueco entre emociones y bienestar */
+.dash-home-row .dash-home-diary { justify-content: center; gap: 0.7rem; }
+.dash-home-row .dash-home-promo { margin-top: 0.4rem; }
+
+/* Accesos rapidos dentro de un bloque, con botones del diseño de "Cerrar sesion" */
+.dash-home-quick {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.75rem 0.9rem;
+  background: rgba(18, 24, 42, 0.78);
+  border: 1px solid rgba(126, 87, 194, 0.22);
+  border-radius: 12px;
+  min-width: 0;
+}
+.dash-home-quick .dash-home-section-title { text-align: center; font-size: 0.9375rem; }
+.dash-home-quick .dash-home-shortcuts {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+.dash-home-quick .dash-home-shortcut {
+  flex-direction: row;
+  justify-content: center;
+  gap: 0.625rem;
+  min-height: 2.25rem;
+  padding: 0.55rem 0.875rem;
+  border: 1px solid rgba(126, 87, 194, 0.2);
+  border-radius: 12px;
+  background: var(--psy-surface, rgba(18, 24, 42, 0.95));
+  color: #b388ff;
+}
+.dash-home-quick .dash-home-shortcut svg { flex-shrink: 0; width: 18px; height: 18px; color: #b388ff; }
+.dash-home-quick .dash-home-shortcut span { font-size: 0.8125rem; font-weight: 600; color: #b388ff; }
+.dash-home-quick .dash-home-shortcut:hover,
+.dash-home-quick .dash-home-shortcut:focus-visible {
+  background: rgba(126, 87, 194, 0.12);
+  border-color: rgba(126, 87, 194, 0.35);
+  outline: none;
+}
+@media (max-width: 900px) {
+  .dash-home-quick .dash-home-shortcuts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 480px) {
+  .dash-home-quick { padding: 0.7rem 0.75rem; }
+  .dash-home-quick .dash-home-shortcut { padding-inline: 0.4rem; gap: 0.4rem; }
+  .dash-home-quick .dash-home-shortcut span { font-size: 0.75rem; }
+}
