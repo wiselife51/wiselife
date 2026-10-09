@@ -6,6 +6,7 @@ import { toDateStr } from '../../lib/date';
 import DashboardLayout from '../../components/DashboardLayout/DashboardLayout';
 import BookingModal from './BookingModal';
 import ReviewsModal from './ReviewsModal';
+import ProfileModal from './ProfileModal';
 import StarRating from '../../components/StarRating/StarRating';
 import { fetchRatingSummaries } from '../../lib/reviews';
 import type { RatingSummary } from '../../lib/reviews';
@@ -44,6 +45,7 @@ const AgendarSesion: React.FC = () => {
   const [specialty, setSpecialty] = useState('');
   const [ratings, setRatings] = useState<Record<string, RatingSummary>>({});
   const [reviewsFor, setReviewsFor] = useState<BookingPsychologist | null>(null);
+  const [profileFor, setProfileFor] = useState<BookingPsychologist | null>(null);
 
   const [selected, setSelected] = useState<BookingPsychologist | null>(null);
   const [availability, setAvailability] = useState<AvailabilitySlot[]>([]);
@@ -67,7 +69,7 @@ const AgendarSesion: React.FC = () => {
     const fetchList = async () => {
       const { data } = await supabase
         .from('psychologists')
-        .select('id, full_name, avatar_url, phone, specialties, session_price, session_prices, session_duration, modality, city, years_experience, license_number')
+        .select('id, full_name, avatar_url, phone, specialties, session_price, session_prices, session_duration, modality, city, years_experience, license_number, profile_text, bio, languages')
         .eq('is_active', true)
         .eq('onboarding_completed', true)
         .order('full_name');
@@ -300,10 +302,13 @@ const AgendarSesion: React.FC = () => {
                       </dl>
 
                       <div className="ag-psy-actions">
-                        <button type="button" className="ag-psy-btn ag-psy-btn--ghost" onClick={() => setReviewsFor(psy)}>
+                        <button type="button" className="ag-psy-btn" onClick={() => setProfileFor(psy)}>
+                          Perfil
+                        </button>
+                        <button type="button" className="ag-psy-btn" onClick={() => setReviewsFor(psy)}>
                           Opiniones
                         </button>
-                        <button type="button" className="ag-psy-btn ag-psy-btn--primary" onClick={() => chooseSpecialist(psy)}>
+                        <button type="button" className="ag-psy-btn" onClick={() => chooseSpecialist(psy)}>
                           Agendar
                         </button>
                       </div>
@@ -426,6 +431,19 @@ const AgendarSesion: React.FC = () => {
           </section>
         )}
       </div>
+
+      {profileFor && (
+        <ProfileModal
+          psy={profileFor}
+          summary={ratings[profileFor.id]}
+          onClose={() => setProfileFor(null)}
+          onSchedule={() => {
+            const target = profileFor;
+            setProfileFor(null);
+            chooseSpecialist(target);
+          }}
+        />
+      )}
 
       {reviewsFor && (
         <ReviewsModal

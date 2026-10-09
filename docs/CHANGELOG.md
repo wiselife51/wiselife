@@ -3,6 +3,13 @@
 **Propósito:** historial de cambios documentales y del proyecto.
 **Responsable:** Documentador Técnico. **Estado:** Activo; requiere mantenerlo en cada entrega.
 
+## 2026-10-09 — Perfil del psicólogo en tarjetas y datos de demostración
+- Tarjetas de `/agendar-sesion`: los tres botones (Perfil, Opiniones, Agendar) usan el mismo diseño del botón "Cerrar sesion". Nuevo botón "Perfil" que abre `ProfileModal.tsx`: popup con foto, nombre, especialidades, calificación, datos (experiencia, ciudad, idiomas) y la presentación del psicólogo, con botón para agendar.
+- Panel del psicólogo (módulo Perfil): nuevo campo "Mi perfil para pacientes" (`profile_text`, máx. 1200 caracteres; los párrafos se separan con una línea en blanco).
+- Base de datos: columna `psychologists.profile_text`; en `psychologist_reviews` se añade `is_demo boolean` y `appointment_id` / `patient_id` pasan a ser opcionales (solo para reseñas de demostración). Migración aplicada vía Supabase: `psychologist_profile_text_and_demo_reviews`.
+- Datos de demostración: presentación inventada para los 5 psicólogos y 18 reseñas ficticias (`is_demo = true`) con calificaciones entre 3 y 5; las de pacientes reales con citas atendidas se vinculan a su cita. Para retirarlas: `delete from public.psychologist_reviews where is_demo;`.
+- Validación: `tsc --noEmit` sin errores. La verificación visual en el navegador no se pudo completar (el preview devolvió "sandbox not found"); revisar en móvil los botones de las tarjetas, el popup de Perfil y el campo nuevo del panel del psicólogo.
+
 ## 2026-10-08 — Calificaciones de psicólogos y módulo Pendientes
 - Nueva tabla `public.psychologist_reviews` (una reseña por cita, `rating` 1-5, comentario opcional de hasta 600 caracteres) y vista `public.psychologist_rating_summary` (promedio y conteo, `security_invoker`). Migración en `supabase/migrations/20261008000100_psychologist_reviews.sql`.
 - RLS: cualquier usuario autenticado puede leer reseñas; solo el paciente dueño de la cita puede insertar, y únicamente si la cita está `completada` o tiene `attended_at`.

@@ -11,6 +11,9 @@ export interface BookingPsychologist {
   city: string | null;
   years_experience: number;
   license_number: string;
+  profile_text?: string | null;
+  bio?: string | null;
+  languages?: string[] | null;
 }
 
 export interface AvailabilitySlot {
