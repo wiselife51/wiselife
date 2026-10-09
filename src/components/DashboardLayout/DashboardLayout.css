@@ -3,6 +3,14 @@
    Aquí solo vive el contenedor con scroll del contenido del paciente. */
 .pt-page { min-height: 0; }
 
+/* En el menu del psicologo los items son <button>; en el paciente son
+   <a> (NavLink) y el navegador los subraya como hipervinculo. */
+a.psy-dash-nav-item,
+a.psy-dash-nav-item:hover,
+a.psy-dash-nav-item:focus-visible {
+  text-decoration: none;
+}
+
 .pt-scroll {
   flex: 1 1 auto;
   min-height: 0;
@@ -21,5 +29,3 @@
 @media (max-width: 768px) {
   .pt-scroll { padding-right: 0.15rem; }
 }
-
-.psy-dash-sidebar.pt-sidebar .psy-dash-profile { border-bottom: 0; }

@@ -66,7 +66,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, profile }) => {
   return (
     <>
       <aside
-        className={`psy-dash-sidebar pt-sidebar ${isOpen ? 'psy-dash-sidebar--open' : ''}`}
+        className={`psy-dash-sidebar ${isOpen ? 'psy-dash-sidebar--open' : ''}`}
         style={isOpen ? { position: 'fixed', inset: '0 auto 0 0', zIndex: 1000, transform: 'translate3d(0, 0, 0)' } : undefined}
       >
         <div className="psy-dash-sidebar-header">
