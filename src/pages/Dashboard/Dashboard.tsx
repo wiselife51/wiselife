@@ -133,7 +133,7 @@ const Dashboard: React.FC = () => {
         {/* Diario emocional */}
         <section className="dash-home-diary" aria-labelledby="dash-diary-title">
           <div className="dash-home-diary-head">
-            <h3 className="dash-home-diary-label" id="dash-diary-title">Mi Diario Emocional</h3>
+            <h3 className="dash-home-diary-label" id="dash-diary-title">Mi diario emocional</h3>
             <p className="dash-home-diary-title">Como te sentiste hoy?</p>
           </div>
           <div className="dash-home-moods">
@@ -233,7 +233,7 @@ const Dashboard: React.FC = () => {
               <path d="M12 20h9" />
               <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
             </svg>
-            <span>Mi Diario Emocional</span>
+            <span>Mi Diario</span>
           </button>
         </div>
         </section>
