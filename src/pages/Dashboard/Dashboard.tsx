@@ -200,7 +200,8 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Accesos rapidos */}
-        <h3 className="dash-home-section-title">Accesos rapidos</h3>
+        <section className="dash-home-quick" aria-labelledby="dash-quick-title">
+        <h3 className="dash-home-section-title" id="dash-quick-title">Accesos rapidos</h3>
         <div className="dash-home-shortcuts">
           <button className="dash-home-shortcut" type="button" onClick={() => navigate('/especialistas')}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -235,6 +236,7 @@ const Dashboard: React.FC = () => {
             <span>Mi Diario Emocional</span>
           </button>
         </div>
+        </section>
       </div>
     </DashboardLayout>
   );
