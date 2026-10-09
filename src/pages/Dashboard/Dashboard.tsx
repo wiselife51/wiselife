@@ -126,6 +126,7 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
+        <div className="dash-home-row">
         {/* Diario emocional */}
         <section className="dash-home-diary" aria-labelledby="dash-diary-title">
           <div className="dash-home-diary-head">
@@ -171,14 +172,21 @@ const Dashboard: React.FC = () => {
               <p>Elige un tema y encuentra al profesional ideal para ti.</p>
             </div>
           </div>
-          <div className="dash-home-tags">
+          <ul className="dash-home-list">
             {SPECIALTIES.map((s) => (
-              <button key={s} className="dash-home-tag" type="button" onClick={() => navigate(`/especialistas?especialidad=${encodeURIComponent(s)}`)}>
-                {s}
-              </button>
+              <li key={s}>
+                <button className="dash-home-list-item" type="button" onClick={() => navigate(`/especialistas?especialidad=${encodeURIComponent(s)}`)}>
+                  <span className="dash-home-list-dot" aria-hidden="true" />
+                  <span className="dash-home-list-label">{s}</span>
+                  <svg className="dash-home-list-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </button>
+              </li>
             ))}
-          </div>
+          </ul>
         </section>
+        </div>
 
         {/* Banner promocional */}
         <div className="dash-home-banner">
