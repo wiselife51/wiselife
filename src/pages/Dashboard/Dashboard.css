@@ -400,3 +400,90 @@
 .dash-home-mood { width: 42px; height: 42px; border-width: 1px; }
 .dash-home-mood svg { width: 24px; height: 24px; }
 .dash-home-diary-saved { font-size: 0.75rem; }
+
+/* Diario emocional bajo el saludo y bloque "Buscar especialistas en" rediseñado */
+.dash-home-top { flex-direction: column; gap: 0; }
+.dash-home-diary {
+  align-items: stretch;
+  gap: 0.85rem;
+  padding: 1rem 1.1rem;
+}
+.dash-home-diary-head { display: flex; flex-direction: column; gap: 0.2rem; }
+.dash-home-diary-label {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #f4f1ff;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.dash-home-diary-title {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.58);
+}
+.dash-home-moods {
+  width: 100%;
+  max-width: 28rem;
+  margin: 0;
+  justify-content: space-between;
+}
+.dash-home-diary-saved { margin: 0; }
+
+.dash-home-specialties {
+  width: 100%;
+  max-width: none;
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+.dash-home-specialties-head { display: flex; align-items: center; gap: 0.75rem; }
+.dash-home-specialties-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(126, 87, 194, 0.18);
+  border: 1px solid rgba(126, 87, 194, 0.3);
+  color: #b388ff;
+}
+.dash-home-specialties-head h3 {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #f4f1ff;
+}
+.dash-home-specialties-head p {
+  margin: 0.15rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.58);
+}
+.dash-home-tags { gap: 0.5rem; }
+.dash-home-tag {
+  padding: 0.4rem 0.85rem;
+  font-size: 0.75rem;
+  background: rgba(126, 87, 194, 0.1);
+  border: 1px solid rgba(126, 87, 194, 0.28);
+  color: #e6dcff;
+}
+.dash-home-tag:hover,
+.dash-home-tag:focus-visible {
+  background: rgba(126, 87, 194, 0.28);
+  border-color: rgba(179, 136, 255, 0.6);
+  color: #ffffff;
+  outline: none;
+}
+
+@media (max-width: 480px) {
+  .dash-home-diary,
+  .dash-home-specialties { padding: 0.9rem; }
+  .dash-home-mood { width: 40px; height: 40px; }
+  .dash-home-mood svg { width: 22px; height: 22px; }
+  .dash-home-specialties-head p { font-size: 0.72rem; }
+}

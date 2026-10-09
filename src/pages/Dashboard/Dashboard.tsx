@@ -124,19 +124,61 @@ const Dashboard: React.FC = () => {
             <h2 className="dash-home-hello">{getGreeting(firstName)}</h2>
             <p className="dash-home-sub">Nos alegra que estes aqui.</p>
           </div>
+        </div>
 
-          {/* Tags de especialidades */}
-          <div className="dash-home-specialties">
-            <h3>Buscar especialistas en</h3>
-            <div className="dash-home-tags">
-              {SPECIALTIES.map((s) => (
-                <button key={s} className="dash-home-tag" type="button" onClick={() => navigate(`/especialistas?especialidad=${encodeURIComponent(s)}`)}>
-                  {s}
-                </button>
-              ))}
+        {/* Diario emocional */}
+        <section className="dash-home-diary" aria-labelledby="dash-diary-title">
+          <div className="dash-home-diary-head">
+            <h3 className="dash-home-diary-label" id="dash-diary-title">Mi Diario Emocional</h3>
+            <p className="dash-home-diary-title">Como te sentiste hoy?</p>
+          </div>
+          <div className="dash-home-moods">
+            {MOODS.map((m) => (
+              <button
+                key={m.key}
+                className={`dash-home-mood ${selectedMood === m.key ? 'dash-home-mood--selected' : ''} ${moodSaved && selectedMood !== m.key ? 'dash-home-mood--faded' : ''}`}
+                type="button"
+                onClick={() => handleMoodSelect(m.key)}
+                disabled={moodSaved}
+                aria-label={m.label}
+                title={m.label}
+              >
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <circle cx="9" cy="9" r="0.5" fill="currentColor" />
+                  <circle cx="15" cy="9" r="0.5" fill="currentColor" />
+                  <path d={m.face} />
+                </svg>
+              </button>
+            ))}
+          </div>
+          {moodSaved && (
+            <p className="dash-home-diary-saved">Registrado. Gracias por compartir.</p>
+          )}
+        </section>
+
+        {/* Buscar especialistas */}
+        <section className="dash-home-specialties" aria-labelledby="dash-specialties-title">
+          <div className="dash-home-specialties-head">
+            <span className="dash-home-specialties-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="7" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </span>
+            <div>
+              <h3 id="dash-specialties-title">Buscar especialistas en</h3>
+              <p>Elige un tema y encuentra al profesional ideal para ti.</p>
             </div>
           </div>
-        </div>
+          <div className="dash-home-tags">
+            {SPECIALTIES.map((s) => (
+              <button key={s} className="dash-home-tag" type="button" onClick={() => navigate(`/especialistas?especialidad=${encodeURIComponent(s)}`)}>
+                {s}
+              </button>
+            ))}
+          </div>
+        </section>
 
         {/* Banner promocional */}
         <div className="dash-home-banner">
@@ -186,37 +228,8 @@ const Dashboard: React.FC = () => {
               <path d="M12 20h9" />
               <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
             </svg>
-            <span>Mi diario emocional</span>
+            <span>Mi Diario Emocional</span>
           </button>
-        </div>
-
-        {/* Diario emocional */}
-        <div className="dash-home-diary">
-          <p className="dash-home-diary-label">Mi diario emocional</p>
-          <h3 className="dash-home-diary-title">Como te sentiste hoy?</h3>
-          <div className="dash-home-moods">
-            {MOODS.map((m) => (
-              <button
-                key={m.key}
-                className={`dash-home-mood ${selectedMood === m.key ? 'dash-home-mood--selected' : ''} ${moodSaved && selectedMood !== m.key ? 'dash-home-mood--faded' : ''}`}
-                type="button"
-                onClick={() => handleMoodSelect(m.key)}
-                disabled={moodSaved}
-                aria-label={m.label}
-                title={m.label}
-              >
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10" />
-                  <circle cx="9" cy="9" r="0.5" fill="currentColor" />
-                  <circle cx="15" cy="9" r="0.5" fill="currentColor" />
-                  <path d={m.face} />
-                </svg>
-              </button>
-            ))}
-          </div>
-          {moodSaved && (
-            <p className="dash-home-diary-saved">Registrado. Gracias por compartir.</p>
-          )}
         </div>
       </div>
     </DashboardLayout>
