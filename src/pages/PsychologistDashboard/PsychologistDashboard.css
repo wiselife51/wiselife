@@ -4710,7 +4710,7 @@ body:has(.psy-dash) {
 .psy-proof-error { margin: 0; font-size: 0.78rem; color: #ff8a80; }
 .psy-confirm-pay-btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; }
 .psy-appt-modal-layer .psy-proof-btn { background: var(--psy-surface); }
-.psy-proof-layer { display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.psy-proof-layer { display: flex; align-items: center; justify-content: center; padding: 1rem; z-index: 5200 !important; }
 .psy-proof-modal { display: flex; flex-direction: column; width: 100%; max-width: 440px; max-height: 90vh; border: 1px solid rgba(126, 87, 194, 0.3); border-radius: 16px; background: #0f1524; overflow: hidden; }
 .psy-proof-head { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; border-bottom: 1px solid var(--psy-border); color: #fff; font-size: 0.9rem; }
 .psy-proof-close { display: inline-flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border: 0; border-radius: 8px; background: transparent; color: rgba(255, 255, 255, 0.7); cursor: pointer; }
