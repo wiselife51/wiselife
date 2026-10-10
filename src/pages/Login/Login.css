@@ -52,22 +52,23 @@
 .login-back {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  background: none;
-  border: none;
-  color: rgba(255, 255, 255, 0.7);
-  font-family: 'Inter', sans-serif;
-  font-size: 0.875rem;
-  font-weight: 500;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 2rem;
+  height: 2rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.75);
   cursor: pointer;
   padding: 0;
   transition: all 0.3s var(--transition-smooth);
-  align-self: flex-start;
 }
 
 .login-back:hover {
   color: rgba(255, 255, 255, 1);
-  transform: translateX(-4px);
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateX(-2px);
 }
 
 /* ===== Card ===== */
@@ -330,51 +331,32 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.875rem;
-  background: var(--gradient-primary);
-  border: none;
+  gap: 0.625rem;
+  width: 100%;
+  padding: 0.7rem 0.875rem;
+  background: rgba(17, 24, 39, 0.52);
+  border: 1px solid rgba(126, 87, 194, 0.2);
   border-radius: 12px;
-  color: white;
+  color: #b388ff;
   font-family: 'Inter', sans-serif;
-  font-size: 0.9375rem;
+  font-size: 0.8125rem;
   font-weight: 600;
+  text-align: center;
   cursor: pointer;
-  transition: all 0.3s var(--transition-smooth);
-  box-shadow: 0 4px 16px rgba(126, 87, 194, 0.3);
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
   position: relative;
-  overflow: hidden;
   margin-top: 0.25rem;
 }
 
-.login-submit::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.login-submit:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(126, 87, 194, 0.45);
-}
-
-.login-submit:hover::before {
-  opacity: 1;
-}
-
-.login-submit:active {
-  transform: translateY(0);
-}
-
 .login-submit svg {
-  transition: transform 0.3s var(--transition-smooth);
+  position: absolute;
+  left: 0.875rem;
 }
 
-.login-submit:hover svg {
-  transform: translateX(4px);
+.login-submit:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(126, 87, 194, 0.2);
 }
 
 /* ===== Card Footer ===== */
@@ -463,8 +445,8 @@
   }
 
   .login-submit {
-    padding: 0.75rem;
-    font-size: 0.875rem;
+    padding: 0.7rem 0.875rem;
+    font-size: 0.8125rem;
   }
 }
 
@@ -492,7 +474,7 @@
   }
 
   .login-submit {
-    padding: 0.75rem;
+    padding: 0.7rem 0.875rem;
   }
 }
 

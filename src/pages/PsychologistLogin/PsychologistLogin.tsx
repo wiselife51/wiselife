@@ -58,16 +58,14 @@ const PsychologistLogin: React.FC = () => {
       <div className="login-overlay" />
 
       <div className="login-content">
-        <button className="login-back" onClick={() => navigate('/')} type="button">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-          </svg>
-          <span>Volver</span>
-        </button>
-
         <div className="login-card">
           <div className="login-card-header">
             <div className="login-logo">
+              <button className="login-back" onClick={() => navigate('/')} type="button" aria-label="Volver al inicio">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+                  <path d="M19 12H5M12 19l-7-7 7-7" />
+                </svg>
+              </button>
               <div className="login-logo-icon">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" strokeWidth="2">
                   <defs>
@@ -179,7 +177,7 @@ const PsychologistLogin: React.FC = () => {
               {loading ? (
                 <><span className="login-btn-spinner" /><span>Cargando...</span></>
               ) : (
-                <><span>{mode === 'login' ? 'Ingresar al Panel' : 'Crear Cuenta Profesional'}</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg></>
+                <><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" /><polyline points="10 17 15 12 10 7" /><line x1="15" y1="12" x2="3" y2="12" /></svg><span>{mode === 'login' ? 'Ingresar al Panel' : 'Crear Cuenta Profesional'}</span></>
               )}
             </button>
           </form>
