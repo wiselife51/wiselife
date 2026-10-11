@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import DashboardLayout from '../../components/DashboardLayout/DashboardLayout';
 import { DOC_BUCKET } from '../../components/DocumentUpload/DocumentUpload';
+import CommissionReviews from './CommissionReviews';
 import './Admin.css';
 
 type VerificationStatus = 'pending' | 'submitted' | 'approved' | 'rejected';
@@ -90,6 +91,7 @@ const Admin: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<VerificationStatus | 'all'>('all');
   const [reloadKey, setReloadKey] = useState(0);
+  const [view, setView] = useState<'psychologists' | 'commissions'>('psychologists');
 
   const [selected, setSelected] = useState<PsychologistRow | null>(null);
   const [docs, setDocs] = useState<DocumentRow[]>([]);
@@ -235,6 +237,31 @@ const Admin: React.FC = () => {
           </div>
         </header>
 
+        <div className="admin__filters" role="tablist" aria-label="Secciones de administración">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={view === 'psychologists'}
+            className={`admin__filter ${view === 'psychologists' ? 'admin__filter--active' : ''}`}
+            onClick={() => setView('psychologists')}
+          >
+            Psicólogos
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={view === 'commissions'}
+            className={`admin__filter ${view === 'commissions' ? 'admin__filter--active' : ''}`}
+            onClick={() => setView('commissions')}
+          >
+            Comisiones
+          </button>
+        </div>
+
+        {view === 'commissions' ? (
+          <CommissionReviews />
+        ) : (
+          <>
         <div className="admin__filters">
           {FILTERS.map((f) => (
             <button
@@ -274,6 +301,8 @@ const Admin: React.FC = () => {
               </button>
             ))}
           </div>
+        )}
+          </>
         )}
       </div>
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
@@ -386,8 +387,10 @@ interface Appointment {
   payment_amount: number | null;
   payment_proof_path: string | null;
   commission_amount: number | null;
-  commission_status: 'no_aplica' | 'pendiente' | 'reportada';
+  commission_status: 'no_aplica' | 'pendiente' | 'reportada' | 'verificada';
   commission_reference: string | null;
+  commission_proof_path: string | null;
+  commission_review_note: string | null;
   notes: string | null;
   patient: {
     id: string;
@@ -487,6 +490,8 @@ const PsychologistDashboard: React.FC = () => {
   const [proofLoading, setProofLoading] = useState(false);
   const [proofError, setProofError] = useState('');
   const [commissionRefs, setCommissionRefs] = useState<Record<string, string>>({});
+  const [commissionFiles, setCommissionFiles] = useState<Record<string, File>>({});
+  const [commissionErrors, setCommissionErrors] = useState<Record<string, string>>({});
   const [reportingId, setReportingId] = useState<string | null>(null);
 
   // Warnings for appointments without clinical record
@@ -707,7 +712,7 @@ const PsychologistDashboard: React.FC = () => {
 
     // Si no tiene disponibilidad, crear la por defecto automáticamente HORA POR HORA
     if (!existingAvail || existingAvail.length === 0) {
-      console.log('🔄 Creando disponibilidad por defecto automáticamente (hora por hora)...');
+      console.log('��� Creando disponibilidad por defecto automáticamente (hora por hora)...');
       const defaultSlots = [];
 
       // Lunes a Viernes (1-5) - NO sábado
@@ -1149,13 +1154,56 @@ const PsychologistDashboard: React.FC = () => {
   };
 
   const handleReportCommission = async (apptId: string) => {
+    const file = commissionFiles[apptId];
+    if (!file) {
+      setCommissionErrors((prev) => ({ ...prev, [apptId]: 'Adjunta la foto del comprobante de la transferencia.' }));
+      return;
+    }
+    if (!/^image\/(jpeg|png|webp)$/.test(file.type) || file.size > 5 * 1024 * 1024) {
+      setCommissionErrors((prev) => ({ ...prev, [apptId]: 'Usa una imagen JPG, PNG o WebP de máximo 5 MB.' }));
+      return;
+    }
+
     setReportingId(apptId);
+    setCommissionErrors((prev) => ({ ...prev, [apptId]: '' }));
     const reference = (commissionRefs[apptId] || '').trim();
-    await supabase.from('appointments').update({
+
+    const { data: userData } = await supabase.auth.getUser();
+    const userId = userData.user?.id;
+    if (!userId) {
+      setReportingId(null);
+      setCommissionErrors((prev) => ({ ...prev, [apptId]: 'Tu sesión expiró. Vuelve a iniciar sesión.' }));
+      return;
+    }
+
+    const extension = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg';
+    const path = `${userId}/${apptId}-${Date.now()}.${extension}`;
+    const { error: uploadError } = await supabase.storage
+      .from('commission-proofs')
+      .upload(path, file, { contentType: file.type, upsert: false });
+    if (uploadError) {
+      setReportingId(null);
+      setCommissionErrors((prev) => ({ ...prev, [apptId]: 'No se pudo subir la foto. Inténtalo de nuevo.' }));
+      return;
+    }
+
+    const { error: updateError } = await supabase.from('appointments').update({
       commission_status: 'reportada',
       commission_reference: reference || null,
+      commission_proof_path: path,
     }).eq('id', apptId);
+
     setReportingId(null);
+    if (updateError) {
+      setCommissionErrors((prev) => ({ ...prev, [apptId]: 'No se pudo enviar a verificación. Inténtalo de nuevo.' }));
+      return;
+    }
+
+    setCommissionFiles((prev) => {
+      const next = { ...prev };
+      delete next[apptId];
+      return next;
+    });
     fetchData();
   };
 
@@ -1281,6 +1329,7 @@ const PsychologistDashboard: React.FC = () => {
   const pendingPayments = appointments.filter((a) => a.payment_status !== 'pagado' && a.status !== 'cancelada');
   const commissionDue = appointments.filter((a) => a.commission_status === 'pendiente');
   const commissionDueTotal = commissionDue.reduce((sum, a) => sum + Number(a.commission_amount || 0), 0);
+  const commissionInReview = appointments.filter((a) => a.commission_status === 'reportada');
   const pendingBadgeCount = warnings.length + commissionDue.length;
   const formatCurrency = (value: number) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(value);
 
@@ -1544,6 +1593,25 @@ const PsychologistDashboard: React.FC = () => {
               onMenu={() => setShowMobileMenu(!showMobileMenu)}
               menuOpen={showMobileMenu}
             />
+            <div className="psy-alert-list psy-pending-scroll">
+            {commissionInReview.length > 0 && (
+              <section className="psy-comm" aria-label="Comisiones en verificación">
+                <div className="psy-comm-list">
+                  {commissionInReview.map((a) => (
+                    <article key={a.id} className="psy-comm-item psy-comm-item--review">
+                      <div className="psy-comm-item-top">
+                        <span className="psy-comm-item-text">
+                          <strong>{a.patient?.full_name || 'Paciente'}</strong>
+                          <small>{a.appointment_date.split('-').reverse().join('/')} · Comisión {formatCurrency(Number(a.commission_amount || 0))}</small>
+                        </span>
+                        <span className="psy-comm-badge psy-comm-badge--review">En verificación</span>
+                      </div>
+                      <small className="psy-comm-note">El administrador está revisando tu comprobante.</small>
+                    </article>
+                  ))}
+                </div>
+              </section>
+            )}
             {commissionDue.length > 0 && (
               <section className="psy-comm" aria-label="Comisión pendiente de la plataforma">
                 <div className="psy-comm-hero">
@@ -1569,15 +1637,38 @@ const PsychologistDashboard: React.FC = () => {
                         onChange={(e) => setCommissionRefs((prev) => ({ ...prev, [a.id]: e.target.value }))}
                         aria-label={`Referencia de la transferencia de ${a.patient?.full_name || 'paciente'}`}
                       />
+                      {a.commission_review_note && (
+                        <p className="psy-comm-rejected" role="status">
+                          Comprobante rechazado: {a.commission_review_note}
+                        </p>
+                      )}
+                      <label className="psy-comm-file">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" /></svg>
+                        <span>{commissionFiles[a.id] ? commissionFiles[a.id].name : 'Adjuntar foto del comprobante'}</span>
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          className="psy-comm-file-input"
+                          aria-label={`Foto del comprobante de la comisión de ${a.patient?.full_name || 'paciente'}`}
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            setCommissionFiles((prev) => ({ ...prev, [a.id]: file }));
+                            setCommissionErrors((prev) => ({ ...prev, [a.id]: '' }));
+                          }}
+                        />
+                      </label>
+                      {commissionErrors[a.id] && <p className="psy-proof-error" role="alert">{commissionErrors[a.id]}</p>}
                       <button type="button" className="psy-comm-btn" disabled={reportingId === a.id} onClick={() => handleReportCommission(a.id)}>
-                        {reportingId === a.id ? 'Guardando...' : 'Ya transferí'}
+                        {reportingId === a.id ? 'Subiendo...' : 'Enviar a verificación'}
                       </button>
                     </article>
                   ))}
                 </div>
               </section>
             )}
-            {warnings.length === 0 && commissionDue.length === 0 ? <div className="psy-dash-empty"><p>No tienes pendientes importantes.</p></div> : warnings.length === 0 ? null : <div className="psy-alert-list">{warnings.map((warning) => { const appt = appointments.find((a) => a.id === warning.appointmentId); const isVerify = warning.type === 'verify_attendance'; return <button key={`${warning.type}-${warning.appointmentId}`} type="button" className="psy-alert-card psy-alert-card--warning" onClick={() => { if (!appt) return; if (isVerify) { setSelectedAppt(appt); } else { setPendingAppointmentToComplete(appt); setShowClinicalRecordModal(true); } }}><span className="psy-dash-pending-avatar" aria-hidden="true">!</span><span className="psy-alert-card-text"><strong>{warning.message.split(' - ')[0]}</strong><small>{warning.message.split(' - ').slice(1).join(' - ')}</small></span><span className="psy-dash-pending-status">{isVerify ? '?' : 'HC'}</span></button>; })}</div>}
+            {warnings.length === 0 && commissionDue.length === 0 && commissionInReview.length === 0 ? <div className="psy-dash-empty"><p>No tienes pendientes importantes.</p></div> : warnings.length === 0 ? null : <div className="psy-alert-stack">{warnings.map((warning) => { const appt = appointments.find((a) => a.id === warning.appointmentId); const isVerify = warning.type === 'verify_attendance'; return <button key={`${warning.type}-${warning.appointmentId}`} type="button" className="psy-alert-card psy-alert-card--warning" onClick={() => { if (!appt) return; if (isVerify) { setSelectedAppt(appt); } else { setPendingAppointmentToComplete(appt); setShowClinicalRecordModal(true); } }}><span className="psy-dash-pending-avatar" aria-hidden="true">!</span><span className="psy-alert-card-text"><strong>{warning.message.split(' - ')[0]}</strong><small>{warning.message.split(' - ').slice(1).join(' - ')}</small></span><span className="psy-dash-pending-status">{isVerify ? '?' : 'HC'}</span></button>; })}</div>}
+            </div>
           </section>
         )}
 
@@ -1844,19 +1935,27 @@ const PsychologistDashboard: React.FC = () => {
       </main>
 
       {/* Appointment Detail Modal */}
-      {proofUrl && (
-  <div className="psy-dash-modal-backdrop psy-proof-layer" style={{ zIndex: 5200 }} onClick={() => setProofUrl(null)}>
-    <div className="psy-proof-modal" role="dialog" aria-modal="true" aria-label="Comprobante de pago" onClick={(e) => e.stopPropagation()}>
-      <div className="psy-proof-head">
-        <strong>Comprobante de pago</strong>
-        <button type="button" className="psy-proof-close" onClick={() => setProofUrl(null)} aria-label="Cerrar comprobante">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
-        </button>
-      </div>
-      <img src={proofUrl} alt="Comprobante de pago enviado por el paciente" className="psy-proof-img" />
-    </div>
-  </div>
-)}
+      {proofUrl && createPortal(
+        <div className="psy-proof-overlay" onClick={() => setProofUrl(null)}>
+          <div className="psy-proof-modal" role="dialog" aria-modal="true" aria-label="Comprobante de pago" onClick={(e) => e.stopPropagation()}>
+            <div className="psy-proof-head">
+              <strong>Comprobante de pago</strong>
+              <button type="button" className="psy-proof-close" onClick={() => setProofUrl(null)} aria-label="Cerrar comprobante">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
+              </button>
+            </div>
+            <div className="psy-proof-body">
+              <img
+                src={proofUrl}
+                alt="Comprobante de pago enviado por el paciente"
+                className="psy-proof-img"
+                onError={() => { setProofUrl(null); setProofError('No se pudo mostrar la imagen del comprobante.'); }}
+              />
+            </div>
+          </div>
+        </div>,
+        document.body,
+      )}
 {selectedAppt && (
         <div className="psy-dash-modal-backdrop psy-appt-modal-layer" style={{ zIndex: 5000 }} onClick={() => setSelectedAppt(null)}>
           <div className="psy-dash-modal psy-dash-modal--wide psy-dash-sidebar psy-dash-appointment-detail" role="dialog" aria-modal="true" aria-labelledby="appointment-detail-title" onClick={(e) => e.stopPropagation()}>

@@ -334,7 +334,7 @@
   gap: 0.625rem;
   width: 100%;
   padding: 0.7rem 0.875rem;
-  background: rgba(17, 24, 39, 0.52);
+  background: rgba(17, 24, 39, 0.3);
   border: 1px solid rgba(126, 87, 194, 0.2);
   border-radius: 12px;
   color: #b388ff;
@@ -487,10 +487,13 @@
   box-sizing: border-box;
 }
 
+/* Casi transparente, como el módulo de Próximas citas: el fondo se alcanza a ver a través de la tarjeta. */
 .login-card {
-  background: rgba(11, 18, 31, 0.72);
-  border-color: rgba(148, 163, 184, 0.2);
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.46);
+  background: rgba(17, 24, 39, 0.18);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  border-color: rgba(126, 87, 194, 0.24);
+  box-shadow: 0 22px 55px rgba(0, 0, 0, 0.2);
 }
 
 .login-tab:focus-visible,
@@ -509,4 +512,42 @@
   .login-social { flex-direction: column; }
   .login-social-btn { width: 100%; }
   .login-label-row { align-items: flex-start; gap: 0.5rem; flex-wrap: wrap; }
+}
+
+/* Tarjeta de acceso un poco mas alta, con la flecha de volver en el borde izquierdo. */
+.login-container {
+  align-items: center;
+}
+
+.login-content {
+  padding-block: 1.5rem;
+}
+
+.login-card {
+  justify-content: center;
+  min-height: min(720px, calc(100dvh - 3rem));
+  padding-block: 2.75rem;
+  overflow-y: auto;
+}
+
+.login-card-header {
+  position: relative;
+}
+
+.login-back {
+  position: absolute;
+  top: 0.125rem;
+  left: 0;
+}
+
+@media (max-width: 480px) {
+  .login-content {
+    padding-inline: 0.75rem;
+  }
+
+  .login-card {
+    min-height: calc(100dvh - 2rem);
+    padding-inline: 1.25rem;
+    padding-block: 2rem;
+  }
 }
