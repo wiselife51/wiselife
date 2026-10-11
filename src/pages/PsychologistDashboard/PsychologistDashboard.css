@@ -4686,11 +4686,13 @@ body:has(.psy-dash) {
 }
 
 /* ---- Comision de plataforma y comprobante de pago ---- */
-.psy-comm { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem; }
-.psy-comm-hero { display: flex; flex-direction: column; gap: 0.2rem; padding: 1rem; border: 1px solid rgba(126, 87, 194, 0.35); border-radius: 14px; background: linear-gradient(135deg, rgba(92, 107, 192, 0.18), rgba(156, 39, 176, 0.14)); }
-.psy-comm-hero-label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.02em; color: rgba(255, 255, 255, 0.65); }
-.psy-comm-hero strong { font-size: 1.6rem; font-weight: 700; color: #fff; line-height: 1.15; }
-.psy-comm-hero-sub { font-size: 0.78rem; color: #c49bff; }
+.psy-comm { display: flex; flex-direction: column; gap: 0.6rem; }
+.psy-pending-scroll { gap: 0.8rem; }
+.psy-alert-stack { display: flex; flex-direction: column; gap: 0.8rem; }
+.psy-comm-hero { display: grid; grid-template-columns: 1fr auto; align-items: center; column-gap: 0.75rem; row-gap: 0.1rem; padding: 0.6rem 0.875rem; border: 1px solid rgba(126, 87, 194, 0.22); border-radius: 12px; background: rgba(18, 24, 42, 0.78); }
+.psy-comm-hero-label { font-size: 0.75rem; font-weight: 600; color: rgba(255, 255, 255, 0.7); }
+.psy-comm-hero strong { grid-row: 1; grid-column: 2; font-size: 0.9375rem; font-weight: 600; color: #ffd45c; line-height: 1.2; white-space: nowrap; }
+.psy-comm-hero-sub { grid-column: 1 / -1; font-size: 0.72rem; color: #b388ff; }
 .psy-comm-list { display: flex; flex-direction: column; gap: 0.6rem; }
 .psy-comm-item { display: flex; flex-direction: column; gap: 0.6rem; padding: 0.8rem 0.875rem; border: 1px solid rgba(126, 87, 194, 0.22); border-radius: 12px; background: rgba(18, 24, 42, 0.78); }
 .psy-comm-item-top { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; }

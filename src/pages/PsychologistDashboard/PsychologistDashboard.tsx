@@ -1593,6 +1593,7 @@ const PsychologistDashboard: React.FC = () => {
               onMenu={() => setShowMobileMenu(!showMobileMenu)}
               menuOpen={showMobileMenu}
             />
+            <div className="psy-alert-list psy-pending-scroll">
             {commissionInReview.length > 0 && (
               <section className="psy-comm" aria-label="Comisiones en verificación">
                 <div className="psy-comm-list">
@@ -1666,7 +1667,8 @@ const PsychologistDashboard: React.FC = () => {
                 </div>
               </section>
             )}
-            {warnings.length === 0 && commissionDue.length === 0 && commissionInReview.length === 0 ? <div className="psy-dash-empty"><p>No tienes pendientes importantes.</p></div> : warnings.length === 0 ? null : <div className="psy-alert-list">{warnings.map((warning) => { const appt = appointments.find((a) => a.id === warning.appointmentId); const isVerify = warning.type === 'verify_attendance'; return <button key={`${warning.type}-${warning.appointmentId}`} type="button" className="psy-alert-card psy-alert-card--warning" onClick={() => { if (!appt) return; if (isVerify) { setSelectedAppt(appt); } else { setPendingAppointmentToComplete(appt); setShowClinicalRecordModal(true); } }}><span className="psy-dash-pending-avatar" aria-hidden="true">!</span><span className="psy-alert-card-text"><strong>{warning.message.split(' - ')[0]}</strong><small>{warning.message.split(' - ').slice(1).join(' - ')}</small></span><span className="psy-dash-pending-status">{isVerify ? '?' : 'HC'}</span></button>; })}</div>}
+            {warnings.length === 0 && commissionDue.length === 0 && commissionInReview.length === 0 ? <div className="psy-dash-empty"><p>No tienes pendientes importantes.</p></div> : warnings.length === 0 ? null : <div className="psy-alert-stack">{warnings.map((warning) => { const appt = appointments.find((a) => a.id === warning.appointmentId); const isVerify = warning.type === 'verify_attendance'; return <button key={`${warning.type}-${warning.appointmentId}`} type="button" className="psy-alert-card psy-alert-card--warning" onClick={() => { if (!appt) return; if (isVerify) { setSelectedAppt(appt); } else { setPendingAppointmentToComplete(appt); setShowClinicalRecordModal(true); } }}><span className="psy-dash-pending-avatar" aria-hidden="true">!</span><span className="psy-alert-card-text"><strong>{warning.message.split(' - ')[0]}</strong><small>{warning.message.split(' - ').slice(1).join(' - ')}</small></span><span className="psy-dash-pending-status">{isVerify ? '?' : 'HC'}</span></button>; })}</div>}
+            </div>
           </section>
         )}
 
