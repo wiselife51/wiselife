@@ -487,10 +487,11 @@
   box-sizing: border-box;
 }
 
+/* Mismo fondo, borde y sombra que la tarjeta de Próximas citas del módulo de psicólogo. */
 .login-card {
-  background: rgba(11, 18, 31, 0.72);
-  border-color: rgba(148, 163, 184, 0.2);
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.46);
+  background: rgba(17, 24, 39, 0.52);
+  border-color: rgba(126, 87, 194, 0.24);
+  box-shadow: 0 22px 55px rgba(0, 0, 0, 0.2);
 }
 
 .login-tab:focus-visible,
