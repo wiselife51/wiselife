@@ -14,3 +14,16 @@
 
 /* Keep the psychologist auth badge aligned with the shared auth card. */
 .login-psy-badge { max-width: 100%; box-sizing: border-box; }
+
+/* Leyenda del portal con el mismo estilo de texto que el subtitulo del acceso. */
+.login-psy-badge {
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #b388ff;
+  letter-spacing: 0;
+  text-transform: none;
+}

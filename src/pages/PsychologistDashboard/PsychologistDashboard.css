@@ -4716,3 +4716,18 @@ body:has(.psy-dash) {
 .psy-proof-close { display: inline-flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border: 0; border-radius: 8px; background: transparent; color: rgba(255, 255, 255, 0.7); cursor: pointer; }
 .psy-proof-close:hover { background: rgba(255, 255, 255, 0.08); }
 .psy-proof-img { display: block; width: 100%; max-height: calc(90vh - 3.5rem); object-fit: contain; background: #000; }
+
+.psy-proof-overlay { position: fixed; inset: 0; z-index: 2147483000; display: flex; align-items: center; justify-content: center; padding: 1rem; background: rgba(5, 8, 18, 0.82); backdrop-filter: blur(4px); }
+.psy-proof-overlay .psy-proof-modal { max-height: calc(100dvh - 2rem); }
+.psy-proof-body { display: flex; align-items: center; justify-content: center; min-height: 12rem; overflow: auto; background: #000; }
+.psy-proof-overlay .psy-proof-img { width: auto; max-width: 100%; height: auto; max-height: calc(100dvh - 6rem); }
+
+.psy-comm-item--review { border-color: rgba(255, 212, 92, 0.3); }
+.psy-comm-badge { display: inline-flex; align-items: center; padding: 0.25rem 0.6rem; border-radius: 999px; font-size: 0.7rem; font-weight: 600; white-space: nowrap; }
+.psy-comm-badge--review { background: rgba(255, 212, 92, 0.14); border: 1px solid rgba(255, 212, 92, 0.4); color: #ffd45c; }
+.psy-comm-note { font-size: 0.72rem; color: rgba(255, 255, 255, 0.55); }
+.psy-comm-rejected { margin: 0; padding: 0.5rem 0.7rem; border: 1px solid rgba(255, 138, 128, 0.35); border-radius: 10px; background: rgba(255, 138, 128, 0.08); color: #ff8a80; font-size: 0.78rem; }
+.psy-comm-file { position: relative; display: flex; align-items: center; gap: 0.5rem; min-height: 2.5rem; padding: 0.5rem 0.75rem; border: 1px dashed rgba(138, 92, 246, 0.5); border-radius: 10px; background: rgba(255, 255, 255, 0.03); color: #c49bff; font-size: 0.82rem; cursor: pointer; overflow: hidden; }
+.psy-comm-file span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.psy-comm-file:focus-within { border-color: var(--psy-accent); }
+.psy-comm-file-input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
