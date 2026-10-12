@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import {
-  AdminData,
   isUpcoming,
   setAppointmentsStatus,
   sortByDateAsc,
@@ -10,6 +9,7 @@ import {
   formatDate,
   formatTime,
 } from './adminData';
+import type { AdminData } from './adminData';
 import { AppointmentsList } from './AdminAppointments';
 import { Avatar, ConfirmDialog, ErrorNote, FilterChips, SearchInput } from './AdminUi';
 

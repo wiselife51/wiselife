@@ -1,6 +1,10 @@
 import React, { useMemo } from 'react';
 import type { AdminTab } from './Admin';
-import { AdminData, isUpcoming, todayKey } from './adminData';
+import {
+  isUpcoming,
+  todayKey,
+} from './adminData';
+import type { AdminData } from './adminData';
 
 interface Props {
   data: AdminData;

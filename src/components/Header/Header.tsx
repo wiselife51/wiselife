@@ -186,6 +186,12 @@ const Header: React.FC = () => {
           </svg>
           <span>Soy Paciente</span>
         </button>
+        <button className="btn btn--outline-accent" type="button" onClick={() => navigate('/login?role=admin')}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+          <span>Admin</span>
+        </button>
         <button className="btn btn--primary" type="button" onClick={() => navigate('/login')}>
           <span>Agendar Cita</span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -199,7 +205,7 @@ const Header: React.FC = () => {
         className={`hamburger ${isMenuOpen ? 'hamburger--active' : ''}`}
         onClick={toggleMenu}
         aria-expanded={isMenuOpen}
-        aria-label={isMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
+        aria-label={isMenuOpen ? 'Cerrar men��' : 'Abrir menú'}
         type="button"
       >
         <span className="hamburger__line" />
@@ -247,6 +253,12 @@ const Header: React.FC = () => {
               <circle cx="12" cy="7" r="4" />
             </svg>
             <span>Soy Paciente</span>
+          </button>
+          <button className="btn btn--outline-accent btn--full" onClick={() => { handleLinkClick(); navigate('/login?role=admin'); }} type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+            <span>Admin</span>
           </button>
           <button className="btn btn--primary btn--full" onClick={() => { handleLinkClick(); navigate('/login'); }} type="button">
             <span>Agendar Cita</span>

@@ -1,8 +1,5 @@
 import React, { useMemo, useState } from 'react';
 import {
-  AdminAppointment,
-  AdminData,
-  AppointmentStatus,
   STATUS_META,
   deleteAppointment,
   formatCurrency,
@@ -10,6 +7,7 @@ import {
   formatTime,
   setAppointmentsStatus,
 } from './adminData';
+import type { AdminAppointment, AdminData, AppointmentStatus } from './adminData';
 import { Avatar, ConfirmDialog, ErrorNote, Modal } from './AdminUi';
 
 interface ListProps {

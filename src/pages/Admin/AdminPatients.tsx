@@ -1,5 +1,9 @@
 import React, { useMemo, useState } from 'react';
-import { AdminData, formatDate, sortByDateDesc } from './adminData';
+import {
+  formatDate,
+  sortByDateDesc,
+} from './adminData';
+import type { AdminData } from './adminData';
 import { AppointmentsList } from './AdminAppointments';
 import { Avatar, Modal, SearchInput } from './AdminUi';
 

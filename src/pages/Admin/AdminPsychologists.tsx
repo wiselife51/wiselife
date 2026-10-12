@@ -2,12 +2,10 @@ import React, { useMemo, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { DOC_BUCKET } from '../../components/DocumentUpload/DocumentUpload';
 import {
-  AdminData,
-  AdminPsychologist,
   VERIFICATION_LABELS,
-  VerificationStatus,
   formatDate,
 } from './adminData';
+import type { AdminData, AdminPsychologist, VerificationStatus } from './adminData';
 import { Avatar, ErrorNote, FilterChips, Modal, SearchInput } from './AdminUi';
 
 interface DocumentRow {

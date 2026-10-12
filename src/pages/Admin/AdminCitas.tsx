@@ -1,5 +1,11 @@
 import React, { useMemo, useState } from 'react';
-import { AdminData, AppointmentStatus, isUpcoming, sortByDateAsc, sortByDateDesc, todayKey } from './adminData';
+import {
+  isUpcoming,
+  sortByDateAsc,
+  sortByDateDesc,
+  todayKey,
+} from './adminData';
+import type { AdminData, AppointmentStatus } from './adminData';
 import { AppointmentsList } from './AdminAppointments';
 import { FilterChips, SearchInput } from './AdminUi';
 
