@@ -1813,7 +1813,7 @@ const PsychologistDashboard: React.FC = () => {
         )}
 
         {activeTab === 'ingresos' && (
-          <IncomeModule appointments={appointments} onMenu={() => setShowMobileMenu(!showMobileMenu)} />
+          <IncomeModule appointments={appointments} psychologistName={profile?.full_name} onMenu={() => setShowMobileMenu(!showMobileMenu)} />
         )}
 
         {activeTab === 'perfil' && profile && (

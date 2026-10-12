@@ -2,31 +2,34 @@ import { useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { supabase } from '../../../lib/supabase';
 import { DashboardModuleHeader } from './DashboardModuleHeader';
+import { IncomeCharts } from './IncomeCharts';
+import {
+  COMMISSION_LABEL,
+  PAYMENT_LABEL,
+  amountOf,
+  buildGroups,
+  commissionOf,
+  formatCurrency,
+  formatDate,
+  formatHour,
+  monthLabel,
+  parseKey,
+  patientIdOf,
+  patientNameOf,
+  paymentStateOf,
+  periodRange,
+  summarize,
+  toKey,
+  weekLabel,
+  type IncomeAppointment,
+  type PaymentState,
+  type Period,
+  type ProofBucket,
+  type View,
+} from './incomeUtils';
 import './IncomeModule.css';
 
-export interface IncomeAppointment {
-  id: string;
-  appointment_date: string;
-  start_time: string;
-  end_time: string;
-  status: string;
-  payment_status: string;
-  payment_method: string | null;
-  payment_reference: string | null;
-  payment_amount: number | null;
-  payment_proof_path: string | null;
-  commission_amount: number | null;
-  commission_status: string;
-  commission_reference: string | null;
-  commission_proof_path: string | null;
-  commission_review_note: string | null;
-  patient: { id: string; full_name: string | null } | null;
-}
-
-type PaymentState = 'pagado' | 'por_verificar' | 'sin_pago' | 'cancelada';
-type Period = 'todo' | 'hoy' | 'semana' | 'mes' | 'mes_anterior' | 'anio' | 'rango';
-type View = 'movimientos' | 'pacientes' | 'meses' | 'semanas' | 'comisiones';
-type ProofBucket = 'payment-proofs' | 'commission-proofs';
+export type { IncomeAppointment };
 
 const PAGE_SIZE = 30;
 
@@ -41,6 +44,7 @@ const PERIOD_OPTIONS: { value: Period; label: string }[] = [
 ];
 
 const VIEW_OPTIONS: { value: View; label: string }[] = [
+  { value: 'resumen', label: 'Resumen' },
   { value: 'movimientos', label: 'Movimientos' },
   { value: 'pacientes', label: 'Por paciente' },
   { value: 'meses', label: 'Por mes' },
@@ -48,119 +52,6 @@ const VIEW_OPTIONS: { value: View; label: string }[] = [
   { value: 'comisiones', label: 'Comisiones' },
 ];
 
-const PAYMENT_LABEL: Record<PaymentState, string> = {
-  pagado: 'Pagado por el paciente',
-  por_verificar: 'Por verificar',
-  sin_pago: 'Sin pago',
-  cancelada: 'Cancelada',
-};
-
-const COMMISSION_LABEL: Record<string, string> = {
-  verificada: 'Comisión pagada',
-  reportada: 'Comisión en revisión',
-  pendiente: 'Comisión por pagar',
-  no_aplica: 'Sin comisión',
-};
-
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(value);
-
-const pad = (n: number) => String(n).padStart(2, '0');
-const toKey = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-const parseKey = (key: string) => {
-  const [y, m, d] = key.split('-').map(Number);
-  return new Date(y, m - 1, d);
-};
-const formatDate = (key: string) => key.split('-').reverse().join('/');
-const formatHour = (t: string) => t.slice(0, 5);
-
-function weekStartKey(key: string): string {
-  const date = parseKey(key);
-  const offset = (date.getDay() + 6) % 7;
-  date.setDate(date.getDate() - offset);
-  return toKey(date);
-}
-
-function weekLabel(startKey: string): string {
-  const start = parseKey(startKey);
-  const end = new Date(start);
-  end.setDate(end.getDate() + 6);
-  const short = (d: Date) => d.toLocaleDateString('es-CO', { day: 'numeric', month: 'short' }).replace('.', '');
-  return `${short(start)} – ${short(end)} ${end.getFullYear()}`;
-}
-
-function monthLabel(monthKey: string): string {
-  const [y, m] = monthKey.split('-').map(Number);
-  const label = new Date(y, m - 1, 1).toLocaleDateString('es-CO', { month: 'long', year: 'numeric' });
-  return label.charAt(0).toUpperCase() + label.slice(1);
-}
-
-function periodRange(period: Period, from: string, to: string): [string, string] | null {
-  const now = new Date();
-  switch (period) {
-    case 'hoy':
-      return [toKey(now), toKey(now)];
-    case 'semana': {
-      const start = weekStartKey(toKey(now));
-      const end = parseKey(start);
-      end.setDate(end.getDate() + 6);
-      return [start, toKey(end)];
-    }
-    case 'mes':
-      return [toKey(new Date(now.getFullYear(), now.getMonth(), 1)), toKey(new Date(now.getFullYear(), now.getMonth() + 1, 0))];
-    case 'mes_anterior':
-      return [toKey(new Date(now.getFullYear(), now.getMonth() - 1, 1)), toKey(new Date(now.getFullYear(), now.getMonth(), 0))];
-    case 'anio':
-      return [`${now.getFullYear()}-01-01`, `${now.getFullYear()}-12-31`];
-    case 'rango':
-      return [from || '0000-01-01', to || '9999-12-31'];
-    default:
-      return null;
-  }
-}
-
-function paymentStateOf(a: IncomeAppointment): PaymentState {
-  if (a.payment_status === 'pagado') return 'pagado';
-  if (a.status === 'cancelada') return 'cancelada';
-  return a.payment_proof_path ? 'por_verificar' : 'sin_pago';
-}
-
-const amountOf = (a: IncomeAppointment) => Number(a.payment_amount || 0);
-const commissionOf = (a: IncomeAppointment) => Number(a.commission_amount || 0);
-
-function summarize(rows: IncomeAppointment[]) {
-  const totals = {
-    count: rows.length,
-    paid: 0, paidCount: 0,
-    verify: 0, verifyCount: 0,
-    unpaid: 0, unpaidCount: 0,
-    commPaid: 0, commPaidCount: 0,
-    commReview: 0, commReviewCount: 0,
-    commPending: 0, commPendingCount: 0,
-    net: 0,
-  };
-  for (const a of rows) {
-    const state = paymentStateOf(a);
-    const amount = amountOf(a);
-    const commission = commissionOf(a);
-    if (state === 'pagado') {
-      totals.paid += amount; totals.paidCount += 1;
-      if (a.commission_status !== 'no_aplica') totals.net -= commission;
-      totals.net += amount;
-    } else if (state === 'por_verificar') {
-      totals.verify += amount; totals.verifyCount += 1;
-    } else if (state === 'sin_pago') {
-      totals.unpaid += amount; totals.unpaidCount += 1;
-    }
-    if (a.commission_status === 'verificada') { totals.commPaid += commission; totals.commPaidCount += 1; }
-    else if (a.commission_status === 'reportada') { totals.commReview += commission; totals.commReviewCount += 1; }
-    else if (a.commission_status === 'pendiente') { totals.commPending += commission; totals.commPendingCount += 1; }
-  }
-  return totals;
-}
-
-const patientIdOf = (a: IncomeAppointment) => a.patient?.id || 'sin-paciente';
-const patientNameOf = (a: IncomeAppointment) => a.patient?.full_name || 'Paciente sin nombre';
 
 function csvCell(value: string | number | null): string {
   if (value === null || value === '') return '""';
@@ -280,11 +171,13 @@ function MovementRow({ appointment: a, expanded, loadingKey, onToggle, onProof }
 
 interface IncomeModuleProps {
   appointments: IncomeAppointment[];
+  psychologistName?: string;
   onMenu: () => void;
 }
 
-export function IncomeModule({ appointments, onMenu }: IncomeModuleProps) {
-  const [view, setView] = useState<View>('movimientos');
+export function IncomeModule({ appointments, psychologistName, onMenu }: IncomeModuleProps) {
+  const [view, setView] = useState<View>('resumen');
+  const [generatingPdf, setGeneratingPdf] = useState(false);
   const [period, setPeriod] = useState<Period>('todo');
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
@@ -324,21 +217,31 @@ export function IncomeModule({ appointments, onMenu }: IncomeModuleProps) {
 
   const totals = useMemo(() => summarize(rows), [rows]);
 
-  const groups = useMemo(() => {
-    const build = (keyOf: (a: IncomeAppointment) => string) => {
-      const map = new Map<string, IncomeAppointment[]>();
-      rows.forEach((a) => {
-        const key = keyOf(a);
-        map.set(key, [...(map.get(key) || []), a]);
-      });
-      return [...map.entries()].map(([key, list]) => ({ key, rows: list, totals: summarize(list) }));
-    };
-    return {
-      pacientes: build(patientIdOf).sort((x, y) => y.totals.paid - x.totals.paid),
-      meses: build((a) => a.appointment_date.slice(0, 7)).sort((x, y) => y.key.localeCompare(x.key)),
-      semanas: build((a) => weekStartKey(a.appointment_date)).sort((x, y) => y.key.localeCompare(x.key)),
-    };
-  }, [rows]);
+  const groups = useMemo(() => buildGroups(rows), [rows]);
+
+  const filterLines = useMemo(() => {
+    const lines: string[] = [];
+    const periodLabel = PERIOD_OPTIONS.find((o) => o.value === period)?.label;
+    if (period === 'rango') lines.push(`Periodo: ${from ? formatDate(from) : 'inicio'} a ${to ? formatDate(to) : 'hoy'}`);
+    else if (period !== 'todo' && periodLabel) lines.push(`Periodo: ${periodLabel}`);
+    if (patient !== 'all') lines.push(`Paciente: ${patients.find(([id]) => id === patient)?.[1] || ''}`);
+    if (payFilter !== 'all') lines.push(`Pago: ${PAYMENT_LABEL[payFilter]}`);
+    if (commFilter !== 'all') lines.push(`Comisión: ${COMMISSION_LABEL[commFilter] || commFilter}`);
+    if (search.trim()) lines.push(`Búsqueda: ${search.trim()}`);
+    return lines;
+  }, [period, from, to, patient, payFilter, commFilter, search, patients]);
+
+  const downloadPdf = async () => {
+    setGeneratingPdf(true);
+    try {
+      const { generateIncomeReportPdf } = await import('./incomeReportPdf');
+      generateIncomeReportPdf({ rows, psychologistName: psychologistName || 'Psicólogo', filterLines });
+    } catch {
+      setProofError('No se pudo generar el PDF. Inténtalo de nuevo.');
+    } finally {
+      setGeneratingPdf(false);
+    }
+  };
 
   const hasFilters = period !== 'todo' || patient !== 'all' || payFilter !== 'all' || commFilter !== 'all' || search.trim() !== '';
 
@@ -473,10 +376,13 @@ export function IncomeModule({ appointments, onMenu }: IncomeModuleProps) {
         subtitle="Pagos de pacientes, comisiones y soportes en un solo lugar."
         onMenu={onMenu}
         action={
-          <button type="button" className="inc-export-btn" onClick={() => downloadReport(rows)} disabled={rows.length === 0}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14" /></svg>
-            Descargar informe
-          </button>
+          <div className="inc-export-group">
+            <button type="button" className="inc-export-btn inc-export-btn--primary" onClick={downloadPdf} disabled={rows.length === 0 || generatingPdf} aria-label="Descargar informe en PDF">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14" /></svg>
+              {generatingPdf ? 'Generando...' : 'PDF'}
+            </button>
+            <button type="button" className="inc-export-btn" onClick={() => downloadReport(rows)} disabled={rows.length === 0} aria-label="Descargar movimientos en CSV">CSV</button>
+          </div>
         }
       />
 
@@ -558,7 +464,16 @@ export function IncomeModule({ appointments, onMenu }: IncomeModuleProps) {
         {proofError && <p className="inc-error" role="alert">{proofError}</p>}
 
         <div className="inc-content" role="tabpanel">
-          {appointments.length === 0 ? renderEmpty('Aún no tienes movimientos registrados.') : view === 'movimientos' ? (
+          {appointments.length === 0 ? renderEmpty('Aún no tienes movimientos registrados.') : view === 'resumen' ? (
+            rows.length === 0 ? renderEmpty('No hay movimientos para los filtros seleccionados.') : (
+              <IncomeCharts
+                totals={totals}
+                months={groups.meses}
+                patients={groups.pacientes}
+                onPatient={(id) => { setPatient(id); setView('movimientos'); setVisible(PAGE_SIZE); }}
+              />
+            )
+          ) : view === 'movimientos' ? (
             rows.length === 0 ? renderEmpty('No hay movimientos para los filtros seleccionados.') : (
               <>
                 <p className="inc-count">Mostrando {Math.min(visible, rows.length)} de {rows.length} movimientos</p>
