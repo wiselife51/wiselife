@@ -67,13 +67,30 @@ export interface AdminBlock {
   reason: string | null;
 }
 
+export interface AdminRole {
+  user_id: string;
+  role_code: string;
+  granted_at: string | null;
+}
+
 export interface AdminData {
   psychologists: AdminPsychologist[];
   profiles: AdminProfile[];
   appointments: AdminAppointment[];
   blocks: AdminBlock[];
+  roles: AdminRole[];
   adminIds: string[];
 }
+
+export const KNOWN_ROLES: Record<string, string> = {
+  admin: 'Administrador',
+  psychologist: 'Psicólogo',
+  patient: 'Paciente',
+};
+
+export const roleLabel = (code: string): string => KNOWN_ROLES[code] ?? code;
+
+export const CUSTOM_ROLE_PATTERN = /^[a-z][a-z0-9_]{2,29}$/;
 
 export const STATUS_META: Record<AppointmentStatus, { label: string; badge: string }> = {
   pendiente_pago: { label: 'Pendiente de pago', badge: 'pending' },
@@ -142,10 +159,11 @@ async function fetchAdminData(): Promise<{ data: AdminData; error: string }> {
       .select('id, psychologist_id, block_date, start_time, end_time, reason')
       .gte('block_date', todayKey())
       .order('block_date', { ascending: true }),
-    supabase.from('user_roles').select('user_id').eq('role_code', 'admin'),
+    supabase.from('user_roles').select('user_id, role_code, granted_at'),
   ]);
 
   const firstError = [appts, psys, profs, blocks, roles].find((r) => r.error)?.error;
+  const roleRows = (roles.data as AdminRole[]) || [];
 
   return {
     error: firstError?.message ?? '',
@@ -154,12 +172,20 @@ async function fetchAdminData(): Promise<{ data: AdminData; error: string }> {
       psychologists: (psys.data as AdminPsychologist[]) || [],
       profiles: (profs.data as AdminProfile[]) || [],
       blocks: (blocks.data as AdminBlock[]) || [],
-      adminIds: ((roles.data as { user_id: string }[]) || []).map((r) => r.user_id),
+      roles: roleRows,
+      adminIds: roleRows.filter((r) => r.role_code === 'admin').map((r) => r.user_id),
     },
   };
 }
 
-const EMPTY: AdminData = { psychologists: [], profiles: [], appointments: [], blocks: [], adminIds: [] };
+const EMPTY: AdminData = {
+  psychologists: [],
+  profiles: [],
+  appointments: [],
+  blocks: [],
+  roles: [],
+  adminIds: [],
+};
 
 export function useAdminData(enabled: boolean) {
   const [data, setData] = useState<AdminData>(EMPTY);
@@ -194,6 +220,18 @@ export async function setAppointmentsStatus(
   status: AppointmentStatus,
 ): Promise<string> {
   const { error } = await supabase.from('appointments').update({ status }).in('id', ids);
+  return error?.message ?? '';
+}
+
+export async function grantRole(userId: string, roleCode: string, grantedBy: string): Promise<string> {
+  const { error } = await supabase
+    .from('user_roles')
+    .upsert({ user_id: userId, role_code: roleCode, granted_by: grantedBy }, { onConflict: 'user_id,role_code' });
+  return error?.message ?? '';
+}
+
+export async function revokeRole(userId: string, roleCode: string): Promise<string> {
+  const { error } = await supabase.from('user_roles').delete().eq('user_id', userId).eq('role_code', roleCode);
   return error?.message ?? '';
 }
 

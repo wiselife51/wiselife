@@ -12,8 +12,9 @@ import AdminPsychologists from './AdminPsychologists';
 import AdminPatients from './AdminPatients';
 import CommissionReviews from './CommissionReviews';
 import AdminSummary from './AdminSummary';
+import AdminRoles from './AdminRoles';
 
-export type AdminTab = 'resumen' | 'citas' | 'agendas' | 'psicologos' | 'pacientes' | 'comisiones';
+export type AdminTab = 'resumen' | 'citas' | 'agendas' | 'psicologos' | 'pacientes' | 'comisiones' | 'roles';
 
 const TAB_COPY: Record<AdminTab, { title: string; subtitle: string }> = {
   resumen: { title: 'Resumen', subtitle: 'Vista general de la plataforma.' },
@@ -22,6 +23,7 @@ const TAB_COPY: Record<AdminTab, { title: string; subtitle: string }> = {
   psicologos: { title: 'Psicólogos', subtitle: 'Verifica documentos y administra las cuentas.' },
   pacientes: { title: 'Pacientes', subtitle: 'Consulta pacientes y sus citas.' },
   comisiones: { title: 'Comisiones', subtitle: 'Revisa los comprobantes enviados por los psicólogos.' },
+  roles: { title: 'Roles', subtitle: 'Asigna administradores y otros roles a los usuarios.' },
 };
 
 const NAV_ICONS: Record<AdminTab, React.ReactNode> = {
@@ -31,9 +33,10 @@ const NAV_ICONS: Record<AdminTab, React.ReactNode> = {
   psicologos: <><circle cx="12" cy="8" r="3" /><path d="M5 20c.8-3.2 3.1-5 7-5s6.2 1.8 7 5" /></>,
   pacientes: <><circle cx="9" cy="8" r="3" /><circle cx="17" cy="10" r="2" /><path d="M3 20c.7-3.2 2.7-5 6-5s5.3 1.8 6 5M14 16c2.5-.2 4.5 1.2 5 4" /></>,
   comisiones: <><path d="M3 6h18v12H3z" /><path d="M3 10h18M7 14h3" /></>,
+  roles: <><path d="M12 3l8 3v6c0 4.5-3.2 7.9-8 9-4.8-1.1-8-4.5-8-9V6l8-3z" /><path d="M9 12l2 2 4-4" /></>,
 };
 
-const NAV_ORDER: AdminTab[] = ['resumen', 'citas', 'agendas', 'psicologos', 'pacientes', 'comisiones'];
+const NAV_ORDER: AdminTab[] = ['resumen', 'citas', 'agendas', 'psicologos', 'pacientes', 'comisiones', 'roles'];
 
 const Admin: React.FC = () => {
   const { user, loading: authLoading, signOut } = useAuth();
@@ -206,6 +209,7 @@ const Admin: React.FC = () => {
               )}
               {activeTab === 'pacientes' && <AdminPatients data={data} reload={reload} />}
               {activeTab === 'comisiones' && <CommissionReviews onReviewed={reload} />}
+              {activeTab === 'roles' && <AdminRoles data={data} reload={reload} currentUserId={user?.id ?? ''} />}
             </>
           )}
         </section>

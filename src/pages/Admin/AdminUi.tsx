@@ -16,7 +16,7 @@ export const Modal: React.FC<{
   createPortal(
     <div className="psy-dash-modal-backdrop" role="dialog" aria-modal="true" aria-label={title} onClick={onClose}>
       <div className="psy-dash-modal adm-modal" onClick={(e) => e.stopPropagation()}>
-        <header className="adm-modal-head">
+        <div className="adm-modal-head">
           <div className="adm-modal-copy">
             <h3>{title}</h3>
             {subtitle && <p>{subtitle}</p>}
@@ -27,7 +27,7 @@ export const Modal: React.FC<{
               <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           </button>
-        </header>
+        </div>
         {children}
       </div>
     </div>,
