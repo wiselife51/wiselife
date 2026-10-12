@@ -9,6 +9,7 @@ import ClinicalHistoryView from '../../components/ClinicalHistoryView/ClinicalHi
 import './PsychologistDashboard.css';
 import { DashboardModuleHeader } from './components/DashboardModuleHeader';
 import { AgendaModule } from './components/AgendaModule';
+import { IncomeModule } from './components/IncomeModule';
 import { BlocksModule, type CreateBlocksInput } from './components/BlocksModule';
 import type { CreateSlotsInput } from './components/AddSlotModal';
 import { MONTH_CLOSED_REASON, datesOfMonth, isWeekendKey } from './components/scheduleUtils';
@@ -1324,9 +1325,6 @@ const PsychologistDashboard: React.FC = () => {
   const upcomingAppts = appointments.filter(
     (a) => a.appointment_date >= toDateStr(today) && (a.status === 'confirmada' || a.status === 'pendiente_pago')
   );
-  const paidAppointments = appointments.filter((a) => a.payment_status === 'pagado');
-  const totalIncome = paidAppointments.reduce((sum, a) => sum + Number(a.payment_amount || 0), 0);
-  const pendingPayments = appointments.filter((a) => a.payment_status !== 'pagado' && a.status !== 'cancelada');
   const commissionDue = appointments.filter((a) => a.commission_status === 'pendiente');
   const commissionDueTotal = commissionDue.reduce((sum, a) => sum + Number(a.commission_amount || 0), 0);
   const commissionInReview = appointments.filter((a) => a.commission_status === 'reportada');
@@ -1815,16 +1813,7 @@ const PsychologistDashboard: React.FC = () => {
         )}
 
         {activeTab === 'ingresos' && (
-          <section className="psy-income-page">
-            <DashboardModuleHeader title="Ingresos" subtitle="Resumen de pagos registrados en tus citas." onMenu={() => setShowMobileMenu(!showMobileMenu)} />
-            <div className="psy-income-summary-grid">
-              <article className="psy-income-summary-card"><span>Total registrado</span><strong>{formatCurrency(totalIncome)}</strong><small>{paidAppointments.length} citas pagadas</small></article>
-              <article className="psy-income-summary-card"><span>Pagos pendientes</span><strong>{pendingPayments.length}</strong><small>Citas por confirmar</small></article>
-            </div>
-            <div className="psy-income-list-card"><div className="psy-income-list-heading"><h2>Movimientos recientes</h2><span>{appointments.length} citas</span></div>
-              {appointments.length === 0 ? <div className="psy-dash-empty"><p>Aún no tienes movimientos registrados.</p></div> : <div className="psy-income-list">{appointments.map((appointment) => <div key={appointment.id} className="psy-income-row"><span className="psy-income-row-date">{appointment.appointment_date.split('-').reverse().join('/')}</span><span className="psy-income-row-patient"><strong>{appointment.patient?.full_name || 'Paciente'}</strong><small>{appointment.payment_status === 'pagado' ? 'Pago confirmado' : 'Pago pendiente'}</small></span><strong className="psy-income-row-amount">{formatCurrency(Number(appointment.payment_amount || 0))}</strong></div>)}</div>}
-            </div>
-          </section>
+          <IncomeModule appointments={appointments} onMenu={() => setShowMobileMenu(!showMobileMenu)} />
         )}
 
         {activeTab === 'perfil' && profile && (
