@@ -1,104 +1,50 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
-import DashboardLayout from '../../components/DashboardLayout/DashboardLayout';
-import { DOC_BUCKET } from '../../components/DocumentUpload/DocumentUpload';
-import CommissionReviews from './CommissionReviews';
+import { DashboardModuleHeader } from '../PsychologistDashboard/components/DashboardModuleHeader';
+import '../PsychologistDashboard/PsychologistDashboard.css';
 import './Admin.css';
+import { isUpcoming, todayKey, useAdminData } from './adminData';
+import AdminCitas from './AdminCitas';
+import AdminAgendas from './AdminAgendas';
+import AdminPsychologists from './AdminPsychologists';
+import AdminPatients from './AdminPatients';
+import CommissionReviews from './CommissionReviews';
+import AdminSummary from './AdminSummary';
 
-type VerificationStatus = 'pending' | 'submitted' | 'approved' | 'rejected';
+export type AdminTab = 'resumen' | 'citas' | 'agendas' | 'psicologos' | 'pacientes' | 'comisiones';
 
-interface PsychologistRow {
-  id: string;
-  user_id: string;
-  full_name: string;
-  email: string;
-  phone: string | null;
-  license_number: string | null;
-  education: string | null;
-  years_experience: number | null;
-  city: string | null;
-  specialties: string[] | null;
-  verification_status: VerificationStatus;
-  verification_submitted_at: string | null;
-  verified_at: string | null;
-  rejection_reason: string | null;
-  created_at: string;
-}
-
-interface DocumentRow {
-  id: string;
-  psychologist_id: string;
-  doc_type: string;
-  storage_path: string;
-  original_name: string | null;
-  mime_type: string | null;
-  size_bytes: number | null;
-}
-
-const DOC_LABELS: Record<string, string> = {
-  professional_license: 'Tarjeta profesional',
-  id_document: 'Documento de identidad',
-  diploma: 'Diploma / acta de grado',
-  other: 'Otro documento',
+const TAB_COPY: Record<AdminTab, { title: string; subtitle: string }> = {
+  resumen: { title: 'Resumen', subtitle: 'Vista general de la plataforma.' },
+  citas: { title: 'Citas', subtitle: 'Consulta, confirma, cancela o elimina cualquier cita.' },
+  agendas: { title: 'Agendas', subtitle: 'Revisa y gestiona la agenda de cualquier psicólogo.' },
+  psicologos: { title: 'Psicólogos', subtitle: 'Verifica documentos y administra las cuentas.' },
+  pacientes: { title: 'Pacientes', subtitle: 'Consulta pacientes y sus citas.' },
+  comisiones: { title: 'Comisiones', subtitle: 'Revisa los comprobantes enviados por los psicólogos.' },
 };
 
-const STATUS_LABELS: Record<VerificationStatus, string> = {
-  pending: 'Sin documentos',
-  submitted: 'En revision',
-  approved: 'Aprobado',
-  rejected: 'Rechazado',
+const NAV_ICONS: Record<AdminTab, React.ReactNode> = {
+  resumen: <><rect x="3" y="3" width="7" height="9" rx="1" /><rect x="14" y="3" width="7" height="5" rx="1" /><rect x="14" y="12" width="7" height="9" rx="1" /><rect x="3" y="16" width="7" height="5" rx="1" /></>,
+  citas: <><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></>,
+  agendas: <><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></>,
+  psicologos: <><circle cx="12" cy="8" r="3" /><path d="M5 20c.8-3.2 3.1-5 7-5s6.2 1.8 7 5" /></>,
+  pacientes: <><circle cx="9" cy="8" r="3" /><circle cx="17" cy="10" r="2" /><path d="M3 20c.7-3.2 2.7-5 6-5s5.3 1.8 6 5M14 16c2.5-.2 4.5 1.2 5 4" /></>,
+  comisiones: <><path d="M3 6h18v12H3z" /><path d="M3 10h18M7 14h3" /></>,
 };
 
-const FILTERS: { key: VerificationStatus | 'all'; label: string }[] = [
-  { key: 'submitted', label: 'En revision' },
-  { key: 'approved', label: 'Aprobados' },
-  { key: 'rejected', label: 'Rechazados' },
-  { key: 'pending', label: 'Sin documentos' },
-  { key: 'all', label: 'Todos' },
-];
-
-function formatDate(iso: string | null): string {
-  if (!iso) return '—';
-  const d = new Date(iso);
-  return d.toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' });
-}
-
-const PSY_COLUMNS =
-  'id, user_id, full_name, email, phone, license_number, education, years_experience, city, ' +
-  'specialties, verification_status, verification_submitted_at, verified_at, rejection_reason, created_at';
-
-/** Fuera del componente para no llamar a setState de forma sincrona en el efecto. */
-async function fetchPsychologists(filter: VerificationStatus | 'all'): Promise<PsychologistRow[]> {
-  let query = supabase
-    .from('psychologists')
-    .select(PSY_COLUMNS)
-    .order('verification_submitted_at', { ascending: false, nullsFirst: false });
-
-  if (filter !== 'all') query = query.eq('verification_status', filter);
-
-  const { data } = await query;
-  return (data as unknown as PsychologistRow[]) || [];
-}
+const NAV_ORDER: AdminTab[] = ['resumen', 'citas', 'agendas', 'psicologos', 'pacientes', 'comisiones'];
 
 const Admin: React.FC = () => {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
 
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
-  const [rows, setRows] = useState<PsychologistRow[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<VerificationStatus | 'all'>('all');
-  const [reloadKey, setReloadKey] = useState(0);
-  const [view, setView] = useState<'psychologists' | 'commissions'>('psychologists');
+  const [activeTab, setActiveTab] = useState<AdminTab>('resumen');
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [agendaPsychologistId, setAgendaPsychologistId] = useState<string | null>(null);
 
-  const [selected, setSelected] = useState<PsychologistRow | null>(null);
-  const [docs, setDocs] = useState<DocumentRow[]>([]);
-  const [docsLoading, setDocsLoading] = useState(false);
-  const [rejectReason, setRejectReason] = useState('');
-  const [acting, setActing] = useState(false);
-  const [actionError, setActionError] = useState('');
+  const { data, loading, error, reload } = useAdminData(isAdmin === true);
 
   useEffect(() => {
     if (!authLoading && !user) navigate('/login');
@@ -113,280 +59,158 @@ const Admin: React.FC = () => {
       .eq('user_id', user.id)
       .eq('role_code', 'admin')
       .maybeSingle()
-      .then(({ data }) => setIsAdmin(Boolean(data)));
+      .then(({ data: row }) => setIsAdmin(Boolean(row)));
   }, [user]);
 
-  useEffect(() => {
-    if (!isAdmin) return;
-    let cancelled = false;
+  const badges = useMemo(() => {
+    const today = todayKey();
+    return {
+      citas: data.appointments.filter((a) => isUpcoming(a, today)).length,
+      psicologos: data.psychologists.filter((p) => p.verification_status === 'submitted').length,
+      comisiones: data.appointments.filter((a) => a.commission_status === 'reportada').length,
+    } as Partial<Record<AdminTab, number>>;
+  }, [data]);
 
-    (async () => {
-      const rows = await fetchPsychologists(filter);
-      if (!cancelled) {
-        setRows(rows);
-        setLoading(false);
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [isAdmin, filter, reloadKey]);
-
-  const reload = () => {
-    setLoading(true);
-    setReloadKey((k) => k + 1);
+  const goTo = (tab: AdminTab) => {
+    setActiveTab(tab);
+    if (tab !== 'agendas') setAgendaPsychologistId(null);
+    setShowMobileMenu(false);
   };
 
-  const openDetail = async (row: PsychologistRow) => {
-    setSelected(row);
-    setRejectReason(row.rejection_reason || '');
-    setActionError('');
-    setDocsLoading(true);
-
-    const { data } = await supabase
-      .from('psychologist_documents')
-      .select('*')
-      .eq('psychologist_id', row.id)
-      .order('uploaded_at', { ascending: true });
-
-    setDocs((data as DocumentRow[]) || []);
-    setDocsLoading(false);
+  const viewAgenda = (psychologistId: string) => {
+    setAgendaPsychologistId(psychologistId);
+    setActiveTab('agendas');
+    setShowMobileMenu(false);
   };
 
-  // El bucket es privado: se genera una URL firmada de corta duracion por clic.
-  const openDocument = async (doc: DocumentRow) => {
-    const { data, error } = await supabase.storage
-      .from(DOC_BUCKET)
-      .createSignedUrl(doc.storage_path, 120);
-
-    if (error || !data) {
-      setActionError(`No se pudo abrir el documento: ${error?.message ?? 'sin URL'}`);
-      return;
-    }
-    window.open(data.signedUrl, '_blank', 'noopener');
-  };
-
-  const decide = async (status: 'approved' | 'rejected') => {
-    if (!selected || !user) return;
-
-    if (status === 'rejected' && !rejectReason.trim()) {
-      setActionError('Indica el motivo del rechazo. El psicologo lo va a leer.');
-      return;
-    }
-
-    setActing(true);
-    setActionError('');
-
-    const { error } = await supabase.rpc('admin_set_psychologist_verification', {
-      p_psychologist_id: selected.id,
-      p_status: status,
-      p_notes: status === 'rejected' ? rejectReason.trim() : null,
-    });
-
-    if (error) {
-      setActing(false);
-      setActionError(error.message);
-      return;
-    }
-
-    // El RPC valida al administrador y el trigger aplica el estado de verificacion.
-    if (status === 'approved') {
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .upsert(
-          { user_id: selected.user_id, role_code: 'psychologist', granted_by: user.id },
-          { onConflict: 'user_id,role_code' }
-        );
-
-      if (roleError) {
-        setActing(false);
-        setActionError(`Psicologo aprobado, pero no se pudo asignar el rol: ${roleError.message}`);
-        return;
-      }
-    }
-
-    setActing(false);
-    setSelected(null);
-    reload();
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
   };
 
   if (authLoading || isAdmin === null) return null;
 
   if (!isAdmin) {
     return (
-      <DashboardLayout pageTitle="Verificacion de psicologos">
-        <div className="admin-denied">
-          <h1>Acceso restringido</h1>
-          <p>Esta seccion es solo para administradores de la plataforma.</p>
-        </div>
-      </DashboardLayout>
+      <div className="adm-denied">
+        <h1>Acceso restringido</h1>
+        <p>Esta sección es solo para administradores de la plataforma.</p>
+        <button type="button" className="psy-dash-btn-primary" onClick={handleSignOut}>
+          Cerrar sesión
+        </button>
+      </div>
     );
   }
 
+  const adminName = data.profiles.find((p) => p.id === user?.id)?.full_name || 'Administrador';
+  const copy = TAB_COPY[activeTab];
+
   return (
-    <DashboardLayout pageTitle="Verificacion de psicologos">
-      <div className="admin">
-        <header className="admin__header">
-          <div>
-            <h1 className="admin__title">Verificacion de psicologos</h1>
-            <p className="admin__subtitle">
-              Revisa los documentos antes de habilitar a un profesional. Un psicologo aprobado
-              puede abrir historias clinicas.
-            </p>
-          </div>
-        </header>
+    <div className="psy-dash">
+      <video className="psy-dash-video" autoPlay loop muted playsInline aria-hidden="true">
+        <source src="/assets/VideoFondo.mp4" type="video/mp4" />
+      </video>
+      <div className="psy-dash-video-overlay" aria-hidden="true" />
 
-        <div className="admin__filters" role="tablist" aria-label="Secciones de administración">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={view === 'psychologists'}
-            className={`admin__filter ${view === 'psychologists' ? 'admin__filter--active' : ''}`}
-            onClick={() => setView('psychologists')}
-          >
-            Psicólogos
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={view === 'commissions'}
-            className={`admin__filter ${view === 'commissions' ? 'admin__filter--active' : ''}`}
-            onClick={() => setView('commissions')}
-          >
-            Comisiones
-          </button>
+      <aside
+        className={`psy-dash-sidebar ${showMobileMenu ? 'psy-dash-sidebar--open' : ''}`}
+        style={showMobileMenu ? { position: 'fixed', inset: '0 auto 0 0', zIndex: 1000, transform: 'translate3d(0, 0, 0)' } : undefined}
+      >
+        <div className="psy-dash-sidebar-header">
+          <div className="psy-dash-brand">
+            <div className="psy-dash-logo">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" strokeWidth="2" aria-hidden="true">
+                <defs>
+                  <linearGradient id="admin-logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#4dd0e1" />
+                    <stop offset="50%" stopColor="#42a5f5" />
+                    <stop offset="100%" stopColor="#7e57c2" />
+                  </linearGradient>
+                </defs>
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="url(#admin-logo-grad)" />
+              </svg>
+              <span>Vida Sabia</span>
+            </div>
+            <div className="psy-dash-badge">Administrador</div>
+          </div>
         </div>
 
-        {view === 'commissions' ? (
-          <CommissionReviews />
-        ) : (
-          <>
-        <div className="admin__filters">
-          {FILTERS.map((f) => (
-            <button
-              key={f.key}
-              type="button"
-              className={`admin__filter ${filter === f.key ? 'admin__filter--active' : ''}`}
-              onClick={() => {
-                setLoading(true);
-                setFilter(f.key);
-              }}
-            >
-              {f.label}
-            </button>
-          ))}
+        <div className="psy-dash-profile">
+          <div className="psy-dash-avatar">
+            <span>{adminName.charAt(0)}</span>
+          </div>
+          <h3 className="psy-dash-name">{adminName}</h3>
+          <p className="psy-dash-email">{user?.email}</p>
         </div>
 
-        {loading ? (
-          <p className="admin__empty">Cargando...</p>
-        ) : rows.length === 0 ? (
-          <p className="admin__empty">No hay solicitudes en este estado.</p>
-        ) : (
-          <div className="admin__list">
-            {rows.map((row) => (
-              <button key={row.id} type="button" className="admin-card" onClick={() => openDetail(row)}>
-                <div className="admin-card__main">
-                  <p className="admin-card__name">{row.full_name}</p>
-                  <p className="admin-card__meta">
-                    {row.license_number || 'Sin licencia'} · {row.city || 'Sin ciudad'}
-                  </p>
-                  <p className="admin-card__meta admin-card__meta--dim">
-                    Enviado {formatDate(row.verification_submitted_at)}
-                  </p>
-                </div>
-                <span className={`admin-badge admin-badge--${row.verification_status}`}>
-                  {STATUS_LABELS[row.verification_status]}
-                </span>
-              </button>
-            ))}
-          </div>
-        )}
-          </>
-        )}
-      </div>
-
-      {selected && (
-        <div className="admin-modal" role="dialog" aria-modal="true">
-          <div className="admin-modal__backdrop" onClick={() => setSelected(null)} />
-          <div className="admin-modal__panel">
-            <header className="admin-modal__head">
-              <div>
-                <h2>{selected.full_name}</h2>
-                <p>{selected.email}</p>
-              </div>
-              <button type="button" className="admin-modal__close" onClick={() => setSelected(null)} aria-label="Cerrar">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+        <nav className="psy-dash-nav">
+          {NAV_ORDER.map((tab) => {
+            const badge = badges[tab];
+            return (
+              <button
+                key={tab}
+                type="button"
+                className={`psy-dash-nav-item ${activeTab === tab ? 'psy-dash-nav-item--active' : ''}`}
+                onClick={() => goTo(tab)}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  {NAV_ICONS[tab]}
                 </svg>
+                <span>{TAB_COPY[tab].title}</span>
+                {badge ? (
+                  <span className={`psy-dash-nav-badge ${tab === 'psicologos' || tab === 'comisiones' ? 'psy-dash-nav-badge--warning' : ''}`}>
+                    {badge}
+                  </span>
+                ) : null}
               </button>
-            </header>
+            );
+          })}
+        </nav>
 
-            <dl className="admin-modal__facts">
-              <div><dt>Tarjeta profesional</dt><dd>{selected.license_number || '—'}</dd></div>
-              <div><dt>Formacion</dt><dd>{selected.education || '—'}</dd></div>
-              <div><dt>Experiencia</dt><dd>{selected.years_experience ?? 0} anos</dd></div>
-              <div><dt>Telefono</dt><dd>{selected.phone || '—'}</dd></div>
-              <div><dt>Ciudad</dt><dd>{selected.city || '—'}</dd></div>
-              <div><dt>Estado</dt><dd>{STATUS_LABELS[selected.verification_status]}</dd></div>
-            </dl>
+        <button type="button" className="psy-dash-signout" onClick={handleSignOut}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+          <span>Cerrar sesion</span>
+        </button>
+      </aside>
 
-            <section className="admin-modal__docs">
-              <h3>Documentos</h3>
-              {docsLoading ? (
-                <p className="admin__empty">Cargando documentos...</p>
-              ) : docs.length === 0 ? (
-                <p className="admin__empty">Este profesional no ha cargado documentos. Puedes aprobarlo solo si es una cuenta de prueba o si verificaste sus datos por otro medio.</p>
-              ) : (
-                docs.map((d) => (
-                  <button key={d.id} type="button" className="admin-doc" onClick={() => openDocument(d)}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                      <polyline points="14 2 14 8 20 8" />
-                    </svg>
-                    <span className="admin-doc__label">{DOC_LABELS[d.doc_type] || d.doc_type}</span>
-                    <span className="admin-doc__name">{d.original_name}</span>
-                    <span className="admin-doc__open">Abrir</span>
-                  </button>
-                ))
-              )}
-            </section>
-
-            <section className="admin-modal__decision">
-              <label htmlFor="reject-reason">Motivo (obligatorio para rechazar)</label>
-              <textarea
-                id="reject-reason"
-                rows={2}
-                value={rejectReason}
-                onChange={(e) => setRejectReason(e.target.value)}
-                placeholder="Ej: la tarjeta profesional no es legible"
-              />
-
-              {actionError && <p className="admin-modal__error">{actionError}</p>}
-
-              <div className="admin-modal__actions">
-                <button
-                  type="button"
-                  className="admin-btn admin-btn--reject"
-                  disabled={acting}
-                  onClick={() => decide('rejected')}
-                >
-                  Rechazar
-                </button>
-                <button
-                  type="button"
-                  className="admin-btn admin-btn--approve"
-                  disabled={acting}
-                  onClick={() => decide('approved')}
-                >
-                  {acting ? 'Guardando...' : 'Aprobar y habilitar'}
-                </button>
-              </div>
-            </section>
-          </div>
-        </div>
+      {showMobileMenu && (
+        <button type="button" className="psy-mobile-menu-backdrop" aria-label="Cerrar menú" onClick={() => setShowMobileMenu(false)} />
       )}
-    </DashboardLayout>
+
+      <main className="psy-dash-main psy-dash-main--flush">
+        <section className="psy-alert-page adm-page">
+          <DashboardModuleHeader
+            title={copy.title}
+            subtitle={copy.subtitle}
+            onMenu={() => setShowMobileMenu(!showMobileMenu)}
+            menuOpen={showMobileMenu}
+          />
+
+          {error && <p className="adm-error" role="alert">{error}</p>}
+
+          {loading ? (
+            <p className="adm-muted">Cargando...</p>
+          ) : (
+            <>
+              {activeTab === 'resumen' && <AdminSummary data={data} onNavigate={goTo} />}
+              {activeTab === 'citas' && <AdminCitas data={data} reload={reload} />}
+              {activeTab === 'agendas' && (
+                <AdminAgendas data={data} reload={reload} selectedId={agendaPsychologistId} onSelect={setAgendaPsychologistId} />
+              )}
+              {activeTab === 'psicologos' && (
+                <AdminPsychologists data={data} reload={reload} adminUserId={user?.id ?? ''} onViewAgenda={viewAgenda} />
+              )}
+              {activeTab === 'pacientes' && <AdminPatients data={data} reload={reload} />}
+              {activeTab === 'comisiones' && <CommissionReviews onReviewed={reload} />}
+            </>
+          )}
+        </section>
+      </main>
+    </div>
   );
 };
 
