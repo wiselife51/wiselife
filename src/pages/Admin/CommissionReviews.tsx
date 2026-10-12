@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { supabase } from '../../lib/supabase';
+import { formatCurrency, formatDate } from './adminData';
+import { ErrorNote } from './AdminUi';
 
 interface CommissionRow {
   id: string;
@@ -15,12 +17,7 @@ interface CommissionRow {
   patient_name: string | null;
 }
 
-const formatCurrency = (value: number | null) =>
-  new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(Number(value || 0));
-
-const formatDate = (iso: string) => iso.split('-').reverse().join('/');
-
-const CommissionReviews: React.FC = () => {
+const CommissionReviews: React.FC<{ onReviewed?: () => void }> = ({ onReviewed }) => {
   const [rows, setRows] = useState<CommissionRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -31,11 +28,8 @@ const CommissionReviews: React.FC = () => {
 
   const load = useCallback(async () => {
     const { data, error: rpcError } = await supabase.rpc('admin_list_commission_reviews');
-    if (rpcError) {
-      setError(rpcError.message);
-    } else {
-      setRows((data as CommissionRow[]) || []);
-    }
+    if (rpcError) setError(rpcError.message);
+    else setRows((data as CommissionRow[]) || []);
     setLoading(false);
   }, []);
 
@@ -73,47 +67,54 @@ const CommissionReviews: React.FC = () => {
     setRejectingId(null);
     setRejectNote('');
     load();
+    onReviewed?.();
   };
 
-  if (loading) return <p className="admin__empty">Cargando...</p>;
+  if (loading) return <p className="adm-muted">Cargando...</p>;
 
   return (
     <>
-      {error && <p className="admin-modal__error" role="alert">{error}</p>}
+      <ErrorNote message={error} />
       {rows.length === 0 ? (
-        <p className="admin__empty">No hay comisiones enviadas a verificación.</p>
+        <div className="psy-dash-empty">
+          <p>No hay comisiones enviadas a verificación.</p>
+        </div>
       ) : (
-        <div className="admin__list">
-          {rows.map((row) => (
-            <article key={row.id} className="admin-card admin-card--static">
-              <div className="admin-card__main">
-                <p className="admin-card__name">{row.psychologist_name || 'Psicólogo'}</p>
-                <p className="admin-card__meta">
-                  Paciente: {row.patient_name || '—'} · Sesión {formatDate(row.appointment_date)}
-                </p>
-                <p className="admin-card__meta">
-                  Comisión {formatCurrency(row.commission_amount)} sobre {formatCurrency(row.payment_amount)}
-                  {row.commission_reference ? ` · Ref. ${row.commission_reference}` : ''}
-                </p>
+        <div className="psy-patients-scroll">
+          <div className="adm-list">
+            {rows.map((row) => (
+              <article key={row.id} className="adm-block">
+                <div className="adm-block-top">
+                  <span className="adm-card-text">
+                    <strong>{row.psychologist_name || 'Psicólogo'}</strong>
+                    <small>
+                      Paciente: {row.patient_name || '—'} · Sesión {formatDate(row.appointment_date)}
+                    </small>
+                    <small>
+                      Comisión {formatCurrency(row.commission_amount)} sobre {formatCurrency(row.payment_amount)}
+                      {row.commission_reference ? ` · Ref. ${row.commission_reference}` : ''}
+                    </small>
+                  </span>
+                  <span
+                    className={`psy-dash-mini-status psy-dash-mini-status--${row.commission_status === 'verificada' ? 'confirmed' : 'verify'}`}
+                  >
+                    {row.commission_status === 'verificada' ? 'Verificada' : 'En verificación'}
+                  </span>
+                </div>
 
                 {row.commission_status === 'reportada' && (
-                  <div className="admin-commission__actions">
+                  <div className="adm-actions adm-actions--wrap">
                     {row.commission_proof_path && (
-                      <button type="button" className="admin-btn" onClick={() => openProof(row.commission_proof_path as string)}>
+                      <button type="button" className="psy-dash-btn-outline" onClick={() => openProof(row.commission_proof_path as string)}>
                         Ver comprobante
                       </button>
                     )}
-                    <button
-                      type="button"
-                      className="admin-btn admin-btn--approve"
-                      disabled={reviewingId === row.id}
-                      onClick={() => review(row.id, true)}
-                    >
+                    <button type="button" className="psy-dash-btn-primary" disabled={reviewingId === row.id} onClick={() => review(row.id, true)}>
                       Verificar
                     </button>
                     <button
                       type="button"
-                      className="admin-btn admin-btn--reject"
+                      className="adm-btn adm-btn--danger"
                       disabled={reviewingId === row.id}
                       onClick={() => {
                         setRejectingId(rejectingId === row.id ? null : row.id);
@@ -127,41 +128,35 @@ const CommissionReviews: React.FC = () => {
                 )}
 
                 {rejectingId === row.id && (
-                  <div className="admin-commission__reject">
-                    <label htmlFor={`reject-${row.id}`}>Motivo del rechazo</label>
+                  <div className="adm-reject">
+                    <label className="adm-label" htmlFor={`reject-${row.id}`}>Motivo del rechazo</label>
                     <textarea
                       id={`reject-${row.id}`}
+                      className="adm-textarea"
                       rows={2}
                       value={rejectNote}
                       onChange={(e) => setRejectNote(e.target.value)}
                       placeholder="Ej: la foto no es legible o el valor no coincide"
                     />
-                    <button
-                      type="button"
-                      className="admin-btn admin-btn--reject"
-                      disabled={reviewingId === row.id}
-                      onClick={() => review(row.id, false)}
-                    >
+                    <button type="button" className="adm-btn adm-btn--danger" disabled={reviewingId === row.id} onClick={() => review(row.id, false)}>
                       {reviewingId === row.id ? 'Guardando...' : 'Confirmar rechazo'}
                     </button>
                   </div>
                 )}
-              </div>
-              <span className={`admin-badge admin-badge--${row.commission_status === 'verificada' ? 'approved' : 'pending'}`}>
-                {row.commission_status === 'verificada' ? 'Verificada' : 'En verificación'}
-              </span>
-            </article>
-          ))}
+              </article>
+            ))}
+          </div>
         </div>
       )}
 
       {proofUrl &&
         createPortal(
-          <div className="admin-proof-overlay" onClick={() => setProofUrl(null)}>
-            <div className="admin-proof-dialog" role="dialog" aria-modal="true" aria-label="Comprobante de comisión" onClick={(e) => e.stopPropagation()}>
-              <button type="button" className="admin-proof-close" onClick={() => setProofUrl(null)} aria-label="Cerrar comprobante">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+          <div className="psy-dash-modal-backdrop" onClick={() => setProofUrl(null)}>
+            <div className="adm-proof" role="dialog" aria-modal="true" aria-label="Comprobante de comisión" onClick={(e) => e.stopPropagation()}>
+              <button type="button" className="adm-icon-btn adm-proof-close" onClick={() => setProofUrl(null)} aria-label="Cerrar comprobante">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
               </button>
               <img src={proofUrl} alt="Comprobante de la comisión enviado por el psicólogo" />
